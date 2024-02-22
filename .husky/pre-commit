@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd cdk && ./node_modules/.bin/lint-staged --no-stash
