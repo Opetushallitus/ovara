@@ -81,5 +81,5 @@ if [[ "${deploy}" == "true" ]]; then
 
    echo "Building code, synhesizing CDK code and deploying to environment: $environment"
    cd "${git_root}/cdk/"
-   aws-vault exec $aws_profile -- cdk deploy NetworkStack -c "environment=$environment"
+   cdk deploy NetworkStack -c "environment=$environment" --profile $aws_profile
 fi
