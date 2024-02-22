@@ -10,7 +10,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', "unused-imports"],
   env: {
     node: true,
   },
@@ -67,7 +67,8 @@ module.exports = {
     'no-implicit-coercion': 'error',
     'no-var': 'error',
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["off"]
+    "@typescript-eslint/no-unused-vars": ["off"],
+    "unused-imports/no-unused-imports": "error"
   },
   overrides: [
     {
