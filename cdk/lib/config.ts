@@ -11,7 +11,7 @@ export interface Config {
   publicHostedZone: string;
 }
 
-export const getConfig = (
+export const getOpiskelijavalinnanRaportointiStackProps = (
   environment: string
 ): OpiskelijavalinnanRaportointiStackProps => {
   const filename: string =

@@ -1,5 +1,5 @@
 {
-  "name": "Opiskelijavalinnan raportointi",
+  "name": "opiskelijavalinnan-raportointi",
   "version": "0.1.0",
   "bin": {
     "cdk": "bin/cdk.js"
