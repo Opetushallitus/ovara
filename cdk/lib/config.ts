@@ -14,8 +14,7 @@ export interface Config {
 export const getOpiskelijavalinnanRaportointiStackProps = (
   environment: string
 ): OpiskelijavalinnanRaportointiStackProps => {
-  const filename: string =
-    environment === 'tuotanto' ? '../config/tuotanto.json' : 'config/testi.json';
+  const filename: string = `config/${environment}.json`;
   const fileContent: string = readFileSync(filename, 'utf8');
   const config: Config = JSON.parse(fileContent);
   return { config: config };
