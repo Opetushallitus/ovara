@@ -2,11 +2,6 @@ import * as cdk from 'aws-cdk-lib';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
-<<<<<<< ours
-export class VpcStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
-=======
 import { Config, OpiskelijavalinnanRaportointiStackProps } from './config';
 
 export class NetworkStack extends cdk.Stack {
@@ -26,6 +21,5 @@ export class NetworkStack extends cdk.Stack {
         zoneName: config.publicHostedZone,
       }
     );
->>>>>>> theirs
   }
 }
