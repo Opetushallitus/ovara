@@ -2,8 +2,6 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 
-//import { AuroraStack } from '../lib/aurora-stack';
-import { BastionStack } from '../lib/bastion-stack';
 import { getConfig } from '../lib/config';
 import { NetworkStack } from '../lib/network-stack';
 
