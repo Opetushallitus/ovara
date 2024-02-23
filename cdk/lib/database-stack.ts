@@ -83,13 +83,13 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
-    const dbCnameRecord = new route53.CnameRecord(this, 'DbCnameRecord', {
+    new route53.CnameRecord(this, 'DbCnameRecord', {
       recordName: `db`,
       zone: publicHostedZone,
       domainName: auroraCluster.clusterEndpoint.hostname,
     });
 
-    const postgresEndpoint = new CfnOutput(this, 'PostgresEndpoint', {
+    new CfnOutput(this, 'PostgresEndpoint', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-db-dns`,
       description: 'Aurora endpoint',
       value: `db.${config.publicHostedZone}`,

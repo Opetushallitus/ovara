@@ -42,13 +42,13 @@ export class BastionStack extends cdk.Stack {
       },
     });
 
-    const dbCnameRecord = new route53.CnameRecord(this, 'BastionCnameRecord', {
+    new route53.CnameRecord(this, 'BastionCnameRecord', {
       recordName: `bastion`,
       zone: publicHostedZone,
       domainName: bastionHostLinux.instancePublicDnsName,
     });
 
-    const postgresEndpoint = new CfnOutput(this, 'BastionEndpoint', {
+    new CfnOutput(this, 'BastionEndpoint', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-bastion-dns`,
       description: 'Bastion endpoint',
       value: `bastion.${config.publicHostedZone}`,
