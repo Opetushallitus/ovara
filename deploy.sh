@@ -108,7 +108,7 @@ if [[ "${delete}" == "true" ]]; then
 
    echo "Deleting stack from environment: $environment"
    cd "${git_root}/cdk/"
-   cdk destroy NetworkStack -c "environment=$environment" --profile $aws_profile
+   cdk destroy BastionStack -c "environment=$environment" --profile $aws_profile
    #cdk destroy DatabaseStack -c "environment=$environment" --profile $aws_profile
    #cdk destroy --all -c "environment=$environment" --profile $aws_profile
 fi

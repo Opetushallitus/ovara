@@ -1,19 +1,16 @@
 import * as cdk from 'aws-cdk-lib';
-import { CfnOutput } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
-import { IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
 
 export interface DatabaseStackProps extends GenericStackProps {
-  bastionSecurityGroup: ISecurityGroup;
-  publicHostedZone: IHostedZone;
-  vpc: IVpc;
+  bastionSecurityGroup: ec2.ISecurityGroup;
+  publicHostedZone: route53.IHostedZone;
+  vpc: ec2.IVpc;
 }
 
 export class DatabaseStack extends cdk.Stack {
@@ -40,7 +37,7 @@ export class DatabaseStack extends cdk.Stack {
       'DB sallittu bastionille'
     );
 
-    new CfnOutput(this, 'PostgresSecurityGroupId', {
+    new cdk.CfnOutput(this, 'PostgresSecurityGroupId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-securitygroupid`,
       description: 'Postgres security group id',
       value: auroraSecurityGroup.securityGroupId,
@@ -62,7 +59,7 @@ export class DatabaseStack extends cdk.Stack {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_15_5,
         }),
-        serverlessV2MinCapacity: 0.5,
+        serverlessV2MinCapacity: 2,
         serverlessV2MaxCapacity: 16,
         deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
         removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
@@ -87,9 +84,10 @@ export class DatabaseStack extends cdk.Stack {
       recordName: `db`,
       zone: publicHostedZone,
       domainName: auroraCluster.clusterEndpoint.hostname,
+      ttl: cdk.Duration.seconds(300),
     });
 
-    new CfnOutput(this, 'PostgresEndpoint', {
+    new cdk.CfnOutput(this, 'PostgresEndpoint', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-db-dns`,
       description: 'Aurora endpoint',
       value: `db.${config.publicHostedZone}`,

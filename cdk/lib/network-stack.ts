@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { SubnetType } from 'aws-cdk-lib/aws-ec2';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
@@ -29,22 +28,12 @@ export class NetworkStack extends cdk.Stack {
       maxAzs: 3,
       subnetConfiguration: [
         {
-          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
-          name: `${config.environment}-Vpc-Subnet1`,
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+          name: `${config.environment}-Vpc-Subnet-Private`,
           cidrMask: 24,
         },
         {
-          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
-          name: `${config.environment}-Vpc-Subnet2`,
-          cidrMask: 24,
-        },
-        {
-          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
-          name: `${config.environment}-Vpc-Subnet3`,
-          cidrMask: 24,
-        },
-        {
-          subnetType: SubnetType.PUBLIC,
+          subnetType: ec2.SubnetType.PUBLIC,
           name: `${config.environment}-Vpc-Subnet-Public`,
           cidrMask: 24,
         },
