@@ -1,25 +1,31 @@
 import * as cdk from 'aws-cdk-lib';
 import { CfnOutput } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { Alias } from 'aws-cdk-lib/aws-kms';
+import { IVpc } from 'aws-cdk-lib/aws-ec2';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import { IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
-import { Config, OpiskelijavalinnanRaportointiStackProps } from './config';
+import { Config, GenericStackProps } from './config';
+
+export interface DatabaseStackProps extends GenericStackProps {
+  publicHostedZone: IHostedZone;
+  vpc: IVpc;
+}
 
 export class DatabaseStack extends cdk.Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: OpiskelijavalinnanRaportointiStackProps
-  ) {
+  constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
     const config: Config = props.config;
 
-    const vpc = ec2.Vpc.fromLookup(this, `Vpc`, {
-      vpcName: `NetworkStack/${config.environment}-Vpc`,
-    });
+    const vpc = props.vpc;
+    const publicHostedZone = props.publicHostedZone;
+
+    const kmsKey = new kms.Key(this, 'rds-key');
+    kmsKey.addAlias(`alias/${config.environment}/rds`);
 
     const auroraSecurityGroup = new ec2.SecurityGroup(this, 'PostgresSecurityGroup', {
       securityGroupName: `${config.environment}-opiskelijavalinnanraportointi-aurora`,
@@ -42,32 +48,44 @@ export class DatabaseStack extends cdk.Stack {
       },
     });
 
-    new rds.DatabaseCluster(this, 'OpiskelijavalinnanraportointiAuroraCluster', {
-      engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_15_5,
-      }),
-      serverlessV2MinCapacity: 0.5,
-      serverlessV2MaxCapacity: 16,
-      deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
-      writer: rds.ClusterInstance.serverlessV2('Writer', {
-        caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
-        enablePerformanceInsights: true,
-      }),
-      // TODO: lisää readeri tuotantosetuppiin
-      vpc,
-      vpcSubnets: {
-        subnets: vpc.isolatedSubnets,
-      },
-      securityGroups: [auroraSecurityGroup],
-      credentials: rds.Credentials.fromUsername('oph'),
-      storageEncrypted: true,
-      storageEncryptionKey: Alias.fromAliasName(
-        this,
-        'rds-key',
-        `alias/${config.environment}/rds`
-      ),
-      parameterGroup,
+    const auroraCluster = new rds.DatabaseCluster(
+      this,
+      'OpiskelijavalinnanraportointiAuroraCluster',
+      {
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_15_5,
+        }),
+        serverlessV2MinCapacity: 0.5,
+        serverlessV2MaxCapacity: 16,
+        deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
+        removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
+        writer: rds.ClusterInstance.serverlessV2('Writer', {
+          caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
+          enablePerformanceInsights: true,
+        }),
+        // TODO: lisää readeri tuotantosetuppiin
+        vpc,
+        vpcSubnets: {
+          subnets: vpc.privateSubnets,
+        },
+        securityGroups: [auroraSecurityGroup],
+        credentials: rds.Credentials.fromUsername('oph'),
+        storageEncrypted: true,
+        storageEncryptionKey: kmsKey,
+        parameterGroup,
+      }
+    );
+
+    const dbCnameRecord = new route53.CnameRecord(this, 'DbCnameRecord', {
+      recordName: `db`,
+      zone: publicHostedZone,
+      domainName: auroraCluster.clusterEndpoint.hostname,
+    });
+
+    const postgresEndpoint = new CfnOutput(this, 'PostgresEndpoint', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-db-dns`,
+      description: 'Aurora endpoint',
+      value: `db.${config.publicHostedZone}`,
     });
   }
 }

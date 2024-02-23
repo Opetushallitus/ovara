@@ -4,23 +4,26 @@ import { SubnetType } from 'aws-cdk-lib/aws-ec2';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
-import { Config, OpiskelijavalinnanRaportointiStackProps } from './config';
+import { Config, GenericStackProps } from './config';
 
 export class NetworkStack extends cdk.Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: OpiskelijavalinnanRaportointiStackProps
-  ) {
+  public readonly publicHostedZone: route53.HostedZone;
+  public readonly vpc: ec2.Vpc;
+
+  constructor(scope: Construct, id: string, props: GenericStackProps) {
     super(scope, id, props);
 
     const config: Config = props.config;
 
-    new route53.HostedZone(this, 'OpiskelijavalinnanRaportointiHostedZone', {
-      zoneName: config.publicHostedZone,
-    });
+    this.publicHostedZone = new route53.HostedZone(
+      this,
+      'OpiskelijavalinnanRaportointiHostedZone',
+      {
+        zoneName: config.publicHostedZone,
+      }
+    );
 
-    new ec2.Vpc(this, `${config.environment}-Vpc`, {
+    this.vpc = new ec2.Vpc(this, `${config.environment}-Vpc`, {
       natGateways: 0,
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
       maxAzs: 3,
