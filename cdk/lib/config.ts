@@ -7,8 +7,10 @@ export interface OpiskelijavalinnanRaportointiStackProps extends cdk.StackProps 
 }
 
 export interface Config {
+  accountId: string;
   environment: string;
   publicHostedZone: string;
+  region: string;
 }
 
 export const getOpiskelijavalinnanRaportointiStackProps = (
@@ -17,5 +19,11 @@ export const getOpiskelijavalinnanRaportointiStackProps = (
   const filename: string = `config/${environment}.json`;
   const fileContent: string = readFileSync(filename, 'utf8');
   const config: Config = JSON.parse(fileContent);
-  return { config: config };
+  return {
+    config: config,
+    env: {
+      account: config.accountId,
+      region: config.region,
+    },
+  };
 };

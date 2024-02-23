@@ -1,4 +1,6 @@
 {
+  "accountId": "471112673652",
   "environment": "tuotanto",
-  "publicHostedZone": "opiskelijavalinnan-raportointi.opintopolku.fi"
+  "publicHostedZone": "opiskelijavalinnan-raportointi.opintopolku.fi",
+  "region": "eu-west-1"
 }

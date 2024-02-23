@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import { SubnetType } from 'aws-cdk-lib/aws-ec2';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
@@ -19,8 +20,27 @@ export class NetworkStack extends cdk.Stack {
       zoneName: config.publicHostedZone,
     });
 
-    new ec2.Vpc(this, `${config.environment}-private-Vpc`, {
+    new ec2.Vpc(this, `${config.environment}-Vpc`, {
       natGateways: 0,
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+      maxAzs: 3,
+      subnetConfiguration: [
+        {
+          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+          name: `${config.environment}-Vpc-Subnet1`,
+          cidrMask: 24,
+        },
+        {
+          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+          name: `${config.environment}-Vpc-Subnet2`,
+          cidrMask: 24,
+        },
+        {
+          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+          name: `${config.environment}-Vpc-Subnet3`,
+          cidrMask: 24,
+        },
+      ],
     });
   }
 }
