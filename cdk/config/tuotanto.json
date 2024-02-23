@@ -1,6 +1,7 @@
 {
   "accountId": "471112673652",
   "environment": "tuotanto",
+  "profile": "oph-opiskelijavalinnan-raportointi-prod",
   "publicHostedZone": "opiskelijavalinnan-raportointi.opintopolku.fi",
   "region": "eu-west-1"
 }

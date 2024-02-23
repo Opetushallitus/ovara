@@ -2,7 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 
-//import { BastionStack } from '../lib/bastion-stack';
+import { BastionStack } from '../lib/bastion-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
 import { NetworkStack } from '../lib/network-stack';
@@ -12,9 +12,14 @@ const environmentName = app.node.tryGetContext('environment') || process.env.ENV
 const props = getGenericStackProps(environmentName);
 
 const networkStack = new NetworkStack(app, 'NetworkStack', props);
-new DatabaseStack(app, 'DatabaseStack', {
+const bastionStack = new BastionStack(app, 'BastionStack', {
   publicHostedZone: networkStack.publicHostedZone,
   vpc: networkStack.vpc,
   ...props,
 });
-//new BastionStack(app, 'BastionStack', props);
+new DatabaseStack(app, 'DatabaseStack', {
+  bastionSecurityGroup: bastionStack.bastionSecurityGroup,
+  publicHostedZone: networkStack.publicHostedZone,
+  vpc: networkStack.vpc,
+  ...props,
+});

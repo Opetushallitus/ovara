@@ -43,6 +43,11 @@ export class NetworkStack extends cdk.Stack {
           name: `${config.environment}-Vpc-Subnet3`,
           cidrMask: 24,
         },
+        {
+          subnetType: SubnetType.PUBLIC,
+          name: `${config.environment}-Vpc-Subnet-Public`,
+          cidrMask: 24,
+        },
       ],
     });
   }

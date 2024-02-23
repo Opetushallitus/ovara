@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { CfnOutput } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { IVpc } from 'aws-cdk-lib/aws-ec2';
+import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
@@ -11,6 +11,7 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface DatabaseStackProps extends GenericStackProps {
+  bastionSecurityGroup: ISecurityGroup;
   publicHostedZone: IHostedZone;
   vpc: IVpc;
 }
@@ -23,6 +24,7 @@ export class DatabaseStack extends cdk.Stack {
 
     const vpc = props.vpc;
     const publicHostedZone = props.publicHostedZone;
+    const bastionSecurityGroup = props.bastionSecurityGroup;
 
     const kmsKey = new kms.Key(this, 'rds-key');
     kmsKey.addAlias(`alias/${config.environment}/rds`);
@@ -32,6 +34,11 @@ export class DatabaseStack extends cdk.Stack {
       vpc: vpc,
       allowAllOutbound: true,
     });
+    auroraSecurityGroup.addIngressRule(
+      bastionSecurityGroup,
+      ec2.Port.tcp(5432),
+      'DB sallittu bastionille'
+    );
 
     new CfnOutput(this, 'PostgresSecurityGroupId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-securitygroupid`,

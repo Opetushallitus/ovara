@@ -1,6 +1,7 @@
 {
   "accountId": "654654623010",
   "environment": "testi",
+  "profile": "oph-opiskelijavalinnan-raportointi-qa",
   "publicHostedZone": "opiskelijavalinnan-raportointi.testiopintopolku.fi",
   "region": "eu-west-1"
 }
