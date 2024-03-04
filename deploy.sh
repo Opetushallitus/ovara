@@ -90,7 +90,8 @@ if [[ "${deploy}" == "true" ]]; then
    echo "Building code, synhesizing CDK code and deploying to environment: $environment"
    cd "${git_root}/cdk/"
    #cdk deploy NetworkStack -c "environment=$environment" --profile $aws_profile
-   cdk deploy DatabaseStack -c "environment=$environment" --profile $aws_profile
+   #cdk deploy DatabaseStack -c "environment=$environment" --profile $aws_profile
+   cdk deploy S3Stack -c "environment=$environment" --profile $aws_profile
    #cdk deploy --all -c "environment=$environment" --profile $aws_profile
 fi
 

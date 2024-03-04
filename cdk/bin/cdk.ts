@@ -6,6 +6,7 @@ import { BastionStack } from '../lib/bastion-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
 import { NetworkStack } from '../lib/network-stack';
+import { S3Stack } from '../lib/s3-stack';
 
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
@@ -23,3 +24,4 @@ new DatabaseStack(app, 'DatabaseStack', {
   vpc: networkStack.vpc,
   ...props,
 });
+new S3Stack(app, 'S3Stack', { ...props });
