@@ -26,11 +26,13 @@ export class BastionStack extends cdk.Stack {
       description: 'Security group for bastion host',
       securityGroupName: 'BastionSecurityGroup',
     });
+    /*
     this.bastionSecurityGroup.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(22),
       'SSH access'
     );
+    */
 
     const bastionHostLinux = new ec2.BastionHostLinux(this, 'BastionHostLinux', {
       vpc: vpc,
