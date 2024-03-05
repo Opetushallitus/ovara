@@ -21,8 +21,6 @@ else
     profile="oph-opiskelijavalinnan-raportointi-qa"
 fi
 
-echo "Profile: ${profile}"
-
 instanceId=`aws ec2 describe-instances --profile ${profile} --filters 'Name=tag:Name,Values=Bastion' --output text --query 'Reservations[*].Instances[*].InstanceId'`
 
 aws ssm start-session --profile ${profile} --document-name AWS-StartInteractiveCommand --parameters command="bash -l" --target ${instanceId}
