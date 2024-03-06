@@ -42,12 +42,12 @@ export class S3Stack extends cdk.Stack {
 
     const bucketResourceStatement = new iam.PolicyStatement();
     bucketResourceStatement.addResources(siirtotiedostotS3Bucket.bucketArn);
-    bucketResourceStatement.addActions('s3:*');
+    bucketResourceStatement.addActions('s3:*Bucket*');
     s3CrossAccountRole.addToPolicy(bucketResourceStatement);
 
     const objectResourceStatement = new iam.PolicyStatement();
     objectResourceStatement.addResources(`${siirtotiedostotS3Bucket.bucketArn}/*`);
-    objectResourceStatement.addActions('s3:*');
+    objectResourceStatement.addActions('s3:*Object*');
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
 
     siirtotiedostotS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
