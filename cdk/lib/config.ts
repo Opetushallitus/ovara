@@ -9,6 +9,7 @@ export interface GenericStackProps extends cdk.StackProps {
 export interface Config {
   accountId: string;
   environment: string;
+  opintopolkuAccountId: string;
   profile: string;
   publicHostedZone: string;
   region: string;
