@@ -22,7 +22,9 @@ export class DatabaseStack extends cdk.Stack {
     const vpc = props.vpc;
     const publicHostedZone = props.publicHostedZone;
 
-    const kmsKey = new kms.Key(this, 'rds-key');
+    const kmsKey = new kms.Key(this, 'rds-key', {
+      enableKeyRotation: true,
+    });
     kmsKey.addAlias(`alias/${config.environment}/rds`);
 
     this.auroraSecurityGroup = new ec2.SecurityGroup(this, 'PostgresSecurityGroup', {

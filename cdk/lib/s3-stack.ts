@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
@@ -20,7 +21,13 @@ export class S3Stack extends cdk.Stack {
       bucketName: siirtotiedostotBucketName,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryptionKey: new kms.Key(this, `${siirtotiedostotBucketName}-s3BucketKMSKey`),
+      encryptionKey: new kms.Key(this, `${siirtotiedostotBucketName}-s3BucketKMSKey`, {
+        enableKeyRotation: true,
+      }),
+      serverAccessLogsBucket: new s3.Bucket(
+        this,
+        `${siirtotiedostotBucketName}-server-access-logs`
+      ),
     });
 
     const s3CrossAccountRole = new iam.Role(
@@ -55,7 +62,21 @@ export class S3Stack extends cdk.Stack {
       bucketName: deploymentS3BucketName,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryptionKey: new kms.Key(this, `${deploymentS3BucketName}-s3BucketKMSKey`),
+      encryptionKey: new kms.Key(this, `${deploymentS3BucketName}-s3BucketKMSKey`, {
+        enableKeyRotation: true,
+      }),
+      serverAccessLogsBucket: new s3.Bucket(
+        this,
+        `${deploymentS3BucketName}-server-access-logs`
+      ),
     });
+
+    cdkNag.NagSuppressions.addStackSuppressions(this, [
+      { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
+      {
+        id: 'AwsSolutions-IAM5',
+        reason: 'Account assuming the role delegates only needed access rights',
+      },
+    ]);
   }
 }

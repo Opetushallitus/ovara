@@ -1,8 +1,13 @@
 import * as cdk from 'aws-cdk-lib';
+import * as asg from 'aws-cdk-lib/aws-autoscaling';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { Protocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
@@ -46,12 +51,55 @@ export class BastionStack extends cdk.Stack {
       'DB sallittu bastionille'
     );
 
-    const bastionHostLinux = new ec2.BastionHostLinux(
+    const bastionNlbSecurityGroup = new ec2.SecurityGroup(
       this,
-      `${config.environment}-BastionHostLinux`,
+      `${config.environment}-BastionNlbSecurityGroup`,
       {
         vpc: vpc,
-        instanceName: `${config.environment}-Bastion`,
+        allowAllOutbound: true,
+        description: 'Security group for bastion host',
+        securityGroupName: `${config.environment}-BastionNlbSecurityGroup`,
+      }
+    );
+
+    const nlbAccessLogsBucketName = `${config.environment}-bastion-nlb-access-logs`;
+    const nlbAccessLogsBucket = new s3.Bucket(this, nlbAccessLogsBucketName, {
+      bucketName: nlbAccessLogsBucketName,
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryptionKey: new kms.Key(this, `${nlbAccessLogsBucketName}-s3BucketKMSKey`, {
+        enableKeyRotation: true,
+      }),
+      serverAccessLogsBucket: new s3.Bucket(
+        this,
+        `${nlbAccessLogsBucketName}-server-access-logs`
+      ),
+    });
+
+    const bastionNetworkLoadBalancer = new elb.NetworkLoadBalancer(
+      this,
+      `${config.environment}-bastion-nlb`,
+      {
+        loadBalancerName: `${config.environment}-bastion-nlb`,
+        vpc: vpc,
+        internetFacing: true,
+        ipAddressType: elb.IpAddressType.IPV4,
+        crossZoneEnabled: true,
+        securityGroups: [bastionNlbSecurityGroup],
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        },
+      }
+    );
+
+    bastionNetworkLoadBalancer.logAccessLogs(nlbAccessLogsBucket);
+
+    const bastionAutoScalingGroup = new asg.AutoScalingGroup(
+      this,
+      `${config.environment}-BastionAutoScalingGroup`,
+      {
+        autoScalingGroupName: `${config.environment}-BastionAutoScalingGroup`,
+        vpc: vpc,
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),
         machineImage: ec2.MachineImage.latestAmazonLinux2023({
           cpuType: ec2.AmazonLinuxCpuType.ARM_64,
@@ -59,43 +107,67 @@ export class BastionStack extends cdk.Stack {
         blockDevices: [
           {
             deviceName: '/dev/xvda',
-            volume: ec2.BlockDeviceVolume.ebs(20, {
+            volume: asg.BlockDeviceVolume.ebs(20, {
               encrypted: true,
-              volumeType: ec2.EbsDeviceVolumeType.GP3,
+              volumeType: asg.EbsDeviceVolumeType.GP3,
               deleteOnTermination: true,
             }),
           },
         ],
         requireImdsv2: true,
         securityGroup: bastionSecurityGroup,
-        subnetSelection: {
-          subnetType: ec2.SubnetType.PUBLIC,
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
+        maxCapacity: 1,
+        minCapacity: 1,
+        instanceMonitoring: asg.Monitoring.BASIC,
       }
     );
-    /*
-    bastionHostLinux.instance.userData.addCommands(`
-      echo "Installing psql" && \
-      sudo dnf install -y postgresql15 && \
-      echo "Downloading files from S3" && \
-      aws s3 sync s3://testi-deployment/bastion /home/ssm-user/bastion
-    `);
-    */
-    /*
-    bastionHostLinux.instance.userData.addS3DownloadCommand({
-      bucket: props.deploymentS3Bucket,
-      bucketKey: '/bastion/update-postgres-db-roles.sh',
-      localFile: '/home/ssm-user/update-postgres-db-roles.sh',
-      region: config.region,
-    });
-     */
 
-    props.deploymentS3Bucket.grantRead(bastionHostLinux.grantPrincipal);
+    const nlbListener = bastionNetworkLoadBalancer.addListener(
+      `${config.environment}-bastion-nlb-ssh-listener`,
+      {
+        port: 22,
+      }
+    );
+
+    const bastionNetworkTargetGroup = new elb.NetworkTargetGroup(
+      this,
+      `${config.environment}-bastion-nlb-target-group`,
+      {
+        port: 22,
+        protocol: Protocol.TCP,
+        connectionTermination: true,
+        vpc: vpc,
+      }
+    );
+
+    bastionAutoScalingGroup.attachToNetworkTargetGroup(bastionNetworkTargetGroup);
+
+    nlbListener.addTargetGroups(
+      `${config.environment}-bastion-nlb-target-groups`,
+      bastionNetworkTargetGroup
+    );
+
+    [
+      '54.195.163.193/32', // Opintopolku AWS VPN
+      '3.251.15.161/32', // Opintopolku AWS VPN
+      '54.72.176.32/32', // Opintopolku AWS VPN
+    ].forEach((ipAddress) => {
+      bastionNlbSecurityGroup.addIngressRule(
+        ec2.Peer.ipv4(ipAddress),
+        ec2.Port.tcp(22),
+        'Allow SSH access from trusted ip addresses'
+      );
+    });
+
+    props.deploymentS3Bucket.grantRead(bastionAutoScalingGroup.grantPrincipal);
 
     new route53.CnameRecord(this, `${config.environment}-BastionCnameRecord`, {
       recordName: `${config.environment}-bastion`,
       zone: publicHostedZone,
-      domainName: bastionHostLinux.instancePublicIp,
+      domainName: bastionNetworkLoadBalancer.loadBalancerDnsName,
       ttl: cdk.Duration.seconds(300),
     });
 
@@ -105,12 +177,12 @@ export class BastionStack extends cdk.Stack {
       value: `bastion.${config.publicHostedZone}`,
     });
 
-    const createSshKeyCommand = 'ssh-keygen -t rsa -f my_rsa_key';
-    const pushSshKeyCommand = `aws ec2-instance-connect send-ssh-public-key --region ${cdk.Aws.REGION} --instance-id ${bastionHostLinux.instanceId} --availability-zone ${bastionHostLinux.instanceAvailabilityZone} --instance-os-user ec2-user --ssh-public-key file://my_rsa_key.pub ${config.profile ? `--profile ${config.profile}` : ''}`;
-    const sshCommand = `ssh -o "IdentitiesOnly=yes" -i my_rsa_key ec2-user@${bastionHostLinux.instancePublicDnsName}`;
-
-    new cdk.CfnOutput(this, 'CreateSshKeyCommand', { value: createSshKeyCommand });
-    new cdk.CfnOutput(this, 'PushSshKeyCommand', { value: pushSshKeyCommand });
-    new cdk.CfnOutput(this, 'SshCommand', { value: sshCommand });
+    cdkNag.NagSuppressions.addStackSuppressions(this, [
+      { id: 'AwsSolutions-IAM5', reason: 'Wildcard rights are only for internal use.' },
+      { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
+      { id: 'AwsSolutions-L1', reason: 'TODO: Fix or add proper reason' },
+      { id: 'AwsSolutions-AS3', reason: 'TODO: Fix or add proper reason' },
+      { id: 'AwsSolutions-IAM4', reason: 'TODO: Fix or add proper reason' },
+    ]);
   }
 }
