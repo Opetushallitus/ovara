@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
+import { AwsSolutionsChecks } from 'cdk-nag';
 
 import { BastionStack } from '../lib/bastion-stack';
 import { getGenericStackProps } from '../lib/config';
@@ -27,3 +28,4 @@ const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`,
   vpc: networkStack.vpc,
   ...props,
 });
+cdk.Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
