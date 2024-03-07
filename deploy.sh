@@ -24,7 +24,7 @@ positional arguments:
   delete                deletes the stack from target environment, environment must be supplied.
   build                 only builds the Lambda & synthesizes CDK (useful when developing)
   stack                 name of the stack (BastionStack, DatabaseStack, NetworkStack or All)
-  environment           Environment name (tuotanto or testi)
+  environment           Environment name (tuotanto, testi or kehitys)
 
 optional arguments:
   -h, --help            Show this help message and exit
@@ -66,13 +66,15 @@ stack_parameter=${POSITIONAL[~-2]}
 if [[ "${stack_parameter}" =~ "all" ]]; then
   stack="--all"
 else
-  stack=$stack_parameter
+  stack="$environment-$stack_parameter"
 fi
 
 ## Profiles are defined in user's .aws/config
 if [[ "${environment}" =~ ^(tuotanto)$ ]]; then
     aws_profile="oph-opiskelijavalinnan-raportointi-prod"
 elif [[ "${environment}" =~ ^(testi)$ ]]; then
+    aws_profile="oph-opiskelijavalinnan-raportointi-qa"
+elif [[ "${environment}" =~ ^(kehitys)$ ]]; then
     aws_profile="oph-opiskelijavalinnan-raportointi-qa"
 else
     echo "Unknown environment: ${environment}"

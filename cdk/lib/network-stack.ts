@@ -16,7 +16,7 @@ export class NetworkStack extends cdk.Stack {
 
     this.publicHostedZone = new route53.HostedZone(
       this,
-      'OpiskelijavalinnanRaportointiHostedZone',
+      `${config.environment}-OpiskelijavalinnanRaportointiHostedZone`,
       {
         zoneName: config.publicHostedZone,
       }

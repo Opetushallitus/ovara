@@ -9,6 +9,7 @@ import { Config, GenericStackProps } from './config';
 export interface S3Props extends GenericStackProps {}
 
 export class S3Stack extends cdk.Stack {
+  public readonly deploymentS3Bucket: s3.IBucket;
   constructor(scope: Construct, id: string, props: S3Props) {
     super(scope, id, props);
 
@@ -22,10 +23,16 @@ export class S3Stack extends cdk.Stack {
       encryptionKey: new kms.Key(this, `${siirtotiedostotBucketName}-s3BucketKMSKey`),
     });
 
-    const s3CrossAccountRole = new iam.Role(this, 'OpintopolkuS3CrossAcountRole', {
-      assumedBy: new iam.ArnPrincipal(`arn:aws:iam::${config.opintopolkuAccountId}:root`),
-      roleName: 'opintopolku-s3-cross-account-role',
-    });
+    const s3CrossAccountRole = new iam.Role(
+      this,
+      `${config.environment}-OpintopolkuS3CrossAccountRole`,
+      {
+        assumedBy: new iam.ArnPrincipal(
+          `arn:aws:iam::${config.opintopolkuAccountId}:root`
+        ),
+        roleName: `${config.environment}-opintopolku-s3-cross-account-role`,
+      }
+    );
 
     const assumeStatement = new iam.PolicyStatement();
     assumeStatement.addResources(siirtotiedostotS3Bucket.bucketArn);
@@ -42,5 +49,13 @@ export class S3Stack extends cdk.Stack {
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
 
     siirtotiedostotS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
+
+    const deploymentS3BucketName = `${config.environment}-deployment`;
+    this.deploymentS3Bucket = new s3.Bucket(this, deploymentS3BucketName, {
+      bucketName: deploymentS3BucketName,
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryptionKey: new kms.Key(this, `${deploymentS3BucketName}-s3BucketKMSKey`),
+    });
   }
 }
