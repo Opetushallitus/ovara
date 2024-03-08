@@ -28,13 +28,18 @@ export class NetworkStack extends cdk.Stack {
     });
 
     this.vpc = new ec2.Vpc(this, `${config.environment}-Vpc`, {
-      natGateways: 0,
+      natGateways: config.vpc.netGateways,
       ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
-      maxAzs: 3,
+      maxAzs: config.vpc.maxAzs,
       subnetConfiguration: [
         {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-          name: `${config.environment}-Vpc-Subnet-Private`,
+          name: `${config.environment}-Vpc-Subnet-Private1`,
+          cidrMask: 24,
+        },
+        {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+          name: `${config.environment}-Vpc-Subnet-Private2`,
           cidrMask: 24,
         },
         {

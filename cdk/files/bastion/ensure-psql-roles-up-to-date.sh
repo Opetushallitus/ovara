@@ -15,6 +15,9 @@ master_pw=$3
 app_pw=$4
 readonly_pw=$5
 
+echo "Creating database $db if it does not exists"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname postgres --command "create database $db";
+echo ""
 echo "Ensure user 'app' exists; this command fails when it does already exist."
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create role app;"
 echo ""

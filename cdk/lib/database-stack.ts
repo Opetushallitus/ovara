@@ -3,6 +3,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
@@ -88,5 +89,11 @@ export class DatabaseStack extends cdk.Stack {
       description: 'Aurora endpoint',
       value: `raportointi.db.${config.publicHostedZone}`,
     });
+
+    cdkNag.NagSuppressions.addStackSuppressions(this, [
+      { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
+      { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
+      { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
+    ]);
   }
 }

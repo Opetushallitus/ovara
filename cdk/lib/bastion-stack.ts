@@ -7,6 +7,7 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -125,7 +126,22 @@ export class BastionStack extends cdk.Stack {
         ssmSessionPermissions: true,
       }
     );
-    bastionAutoScalingGroup.addUserData('sudo dnf -y install postgresql@15');
+
+    bastionAutoScalingGroup.userData.addCommands(
+      'sudo dnf -y install postgresql15 cronie'
+    );
+    bastionAutoScalingGroup.userData.addCommands(
+      'sudo -u ec2-user aws s3 sync s3://testi-deployment/bastion /home/ec2-user/bastion'
+    );
+    bastionAutoScalingGroup.userData.addCommands('chmod u+x /home/ec2-user/bastion/*.sh');
+    bastionAutoScalingGroup.userData.addCommands(
+      'sudo -u ec2-user aws secretsmanager get-secret-value --secret-id "bastion/public_keys" | jq -cr \'.SecretString\' > /home/ec2-user/.ssh/authorized_keys2'
+    );
+    bastionAutoScalingGroup.userData.addCommands('sudo systemctl enable crond.service');
+    bastionAutoScalingGroup.userData.addCommands('sudo systemctl start crond.service');
+    bastionAutoScalingGroup.userData.addCommands(
+      'sudo mkdir -p /etc/cron.d && echo "*/1 * * * * ec2-user aws secretsmanager get-secret-value --secret-id bastion/public_key | jq -cr \'.SecretString\' > /home/ec2-user/.ssh/authorized_keys2" | sudo tee /etc/cron.d/update-ec2-user-ssh-public-keys > /dev/null'
+    );
 
     const nlbListener = bastionNetworkLoadBalancer.addListener(
       `${config.environment}-bastion-nlb-ssh-listener`,
@@ -157,6 +173,8 @@ export class BastionStack extends cdk.Stack {
       '54.195.163.193/32', // Opintopolku AWS VPN
       '3.251.15.161/32', // Opintopolku AWS VPN
       '54.72.176.32/32', // Opintopolku AWS VPN
+      '194.136.110.100/32', // Knowit (Helsinki)
+      '185.93.49.68/32', // Knowit (Tampere)
     ].forEach((ipAddress) => {
       bastionExternalSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(ipAddress),
@@ -184,6 +202,13 @@ export class BastionStack extends cdk.Stack {
       description: 'Bastion endpoint',
       value: `bastion.${config.publicHostedZone}`,
     });
+
+    const publicKeySecret = secretsmanager.Secret.fromSecretCompleteArn(
+      this,
+      `${config.environment}-bastion-public-keys`,
+      'arn:aws:secretsmanager:eu-west-1:654654623010:secret:bastion/public_keys-t4jUjo'
+    );
+    publicKeySecret.grantRead(bastionAutoScalingGroup.role);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: 'Wildcard rights are only for internal use.' },

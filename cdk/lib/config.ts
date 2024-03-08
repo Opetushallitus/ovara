@@ -13,6 +13,10 @@ export interface Config {
   profile: string;
   publicHostedZone: string;
   region: string;
+  vpc: {
+    maxAzs: number;
+    netGateways: number;
+  };
 }
 
 export const getGenericStackProps = (environment: string): GenericStackProps => {
