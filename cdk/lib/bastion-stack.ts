@@ -34,31 +34,31 @@ export class BastionStack extends cdk.Stack {
       destinationKeyPrefix: 'bastion',
     });
 
-    const bastionSecurityGroup = new ec2.SecurityGroup(
+    const bastionInternalSecurityGroup = new ec2.SecurityGroup(
       this,
       `${config.environment}-BastionSecurityGroup`,
       {
         vpc: vpc,
         allowAllOutbound: true,
-        description: 'Security group for bastion host',
+        description: 'Internal security group for bastion host',
         securityGroupName: `${config.environment}-BastionSecurityGroup`,
       }
     );
 
     props.auroraSecurityGroup.addIngressRule(
-      bastionSecurityGroup,
+      bastionInternalSecurityGroup,
       ec2.Port.tcp(5432),
       'DB sallittu bastionille'
     );
 
-    const bastionNlbSecurityGroup = new ec2.SecurityGroup(
+    const bastionExternalSecurityGroup = new ec2.SecurityGroup(
       this,
-      `${config.environment}-BastionNlbSecurityGroup`,
+      `${config.environment}-BastionExternalSecurityGroup`,
       {
         vpc: vpc,
         allowAllOutbound: true,
-        description: 'Security group for bastion host',
-        securityGroupName: `${config.environment}-BastionNlbSecurityGroup`,
+        description: 'External security group for bastion host',
+        securityGroupName: `${config.environment}-BastionExternalSecurityGroup`,
       }
     );
 
@@ -85,9 +85,9 @@ export class BastionStack extends cdk.Stack {
         internetFacing: true,
         ipAddressType: elb.IpAddressType.IPV4,
         crossZoneEnabled: true,
-        securityGroups: [bastionNlbSecurityGroup],
+        securityGroups: [bastionExternalSecurityGroup],
         vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+          subnetType: ec2.SubnetType.PUBLIC,
         },
       }
     );
@@ -115,15 +115,17 @@ export class BastionStack extends cdk.Stack {
           },
         ],
         requireImdsv2: true,
-        securityGroup: bastionSecurityGroup,
+        securityGroup: bastionInternalSecurityGroup,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         maxCapacity: 1,
         minCapacity: 1,
         instanceMonitoring: asg.Monitoring.BASIC,
+        ssmSessionPermissions: true,
       }
     );
+    bastionAutoScalingGroup.addUserData('sudo dnf -y install postgresql@15');
 
     const nlbListener = bastionNetworkLoadBalancer.addListener(
       `${config.environment}-bastion-nlb-ssh-listener`,
@@ -136,8 +138,9 @@ export class BastionStack extends cdk.Stack {
       this,
       `${config.environment}-bastion-nlb-target-group`,
       {
+        targetGroupName: `${config.environment}-bastion-nlb-target-group`,
         port: 22,
-        protocol: Protocol.TCP,
+        protocol: Protocol.TCP_UDP,
         connectionTermination: true,
         vpc: vpc,
       }
@@ -155,7 +158,12 @@ export class BastionStack extends cdk.Stack {
       '3.251.15.161/32', // Opintopolku AWS VPN
       '54.72.176.32/32', // Opintopolku AWS VPN
     ].forEach((ipAddress) => {
-      bastionNlbSecurityGroup.addIngressRule(
+      bastionExternalSecurityGroup.addIngressRule(
+        ec2.Peer.ipv4(ipAddress),
+        ec2.Port.tcp(22),
+        'Allow SSH access from trusted ip addresses'
+      );
+      bastionInternalSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(ipAddress),
         ec2.Port.tcp(22),
         'Allow SSH access from trusted ip addresses'
@@ -165,7 +173,7 @@ export class BastionStack extends cdk.Stack {
     props.deploymentS3Bucket.grantRead(bastionAutoScalingGroup.grantPrincipal);
 
     new route53.CnameRecord(this, `${config.environment}-BastionCnameRecord`, {
-      recordName: `${config.environment}-bastion`,
+      recordName: `bastion`,
       zone: publicHostedZone,
       domainName: bastionNetworkLoadBalancer.loadBalancerDnsName,
       ttl: cdk.Duration.seconds(300),
