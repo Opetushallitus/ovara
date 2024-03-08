@@ -1,0 +1,23 @@
+config:
+  send_anonymous_usage_stats: false
+  partial_parse: true
+
+opiskelijavalinnan_raportointi:
+  target: test
+  outputs:
+    test:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST_TEST') }}"
+      user: "{{ env_var('DBT_USERNAME') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      port: 5432
+      database: test
+      schema: "{{ env_var('POSTGRES_DB_TEST') }}"
+    prod:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST_PROD') }}"
+      user: "{{ env_var('DBT_USERNAME') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      port: 5432
+      database: "{{ env_var('POSTGRES_DB_PROD') }}"
+      schema: "{{ env_var('DBT_SCHEMA') }}"

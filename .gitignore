@@ -1,0 +1,3 @@
+dbt_packages/
+.env
+.python-version
