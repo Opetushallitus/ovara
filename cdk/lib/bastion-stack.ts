@@ -135,12 +135,12 @@ export class BastionStack extends cdk.Stack {
     );
     bastionAutoScalingGroup.userData.addCommands('chmod u+x /home/ec2-user/bastion/*.sh');
     bastionAutoScalingGroup.userData.addCommands(
-      'sudo -u ec2-user aws secretsmanager get-secret-value --secret-id "bastion/public_keys" | jq -cr \'.SecretString\' > /home/ec2-user/.ssh/authorized_keys2'
+      "aws secretsmanager get-secret-value --secret-id bastion/public_keys | jq -cr '.SecretString' | sudo -u ec2-user tee /home/ec2-user/.ssh/authorized_keys > /dev/null"
     );
     bastionAutoScalingGroup.userData.addCommands('sudo systemctl enable crond.service');
     bastionAutoScalingGroup.userData.addCommands('sudo systemctl start crond.service');
     bastionAutoScalingGroup.userData.addCommands(
-      'sudo mkdir -p /etc/cron.d && echo "*/1 * * * * ec2-user aws secretsmanager get-secret-value --secret-id bastion/public_key | jq -cr \'.SecretString\' > /home/ec2-user/.ssh/authorized_keys2" | sudo tee /etc/cron.d/update-ec2-user-ssh-public-keys > /dev/null'
+      'sudo mkdir -p /etc/cron.d && echo "*/15 * * * * root aws secretsmanager get-secret-value --secret-id bastion/public_keys | jq -cr \'.SecretString\' | sudo -u ec2-user tee /home/ec2-user/.ssh/authorized_keys > /dev/null" | sudo tee /etc/cron.d/update-ec2-user-ssh-public-keys > /dev/null'
     );
 
     const nlbListener = bastionNetworkLoadBalancer.addListener(
@@ -174,7 +174,7 @@ export class BastionStack extends cdk.Stack {
       '3.251.15.161/32', // Opintopolku AWS VPN
       '54.72.176.32/32', // Opintopolku AWS VPN
       '194.136.110.100/32', // Knowit (Helsinki)
-      '185.93.49.68/32', // Knowit (Tampere)
+      '185.93.49.68/32', // Knowit (Tampere + VPN)
     ].forEach((ipAddress) => {
       bastionExternalSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(ipAddress),

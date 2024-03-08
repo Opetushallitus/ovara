@@ -24,7 +24,7 @@ fi
 domain=$(jq -cr ".publicHostedZone" "${script_dir}/../cdk/config/${environment}.json")
 host="raportointi.db.${domain}"
 
-master_password=$(aws secretsmanager get-secret-value --secret-id "testiOpiskelijavalinnanrapo-UKMEpyFWIyNW" --profile "${aws_profile}" --region eu-west-1 | jq -cr '.SecretString' | jq -cr '.password')
+master_password=$(aws ssm get-parameter --name "/${environment}/aurora/raportointi/master-user-password" --with-decryption --region eu-west-1 --profile "${aws_profile}" | jq -cr ".Parameter.Value")
 app_password=$(aws ssm get-parameter --name "/${environment}/aurora/raportointi/app-user-password" --with-decryption --region eu-west-1 --profile "${aws_profile}" | jq -cr ".Parameter.Value")
 readonly_password=$(aws ssm get-parameter --name "/${environment}/aurora/raportointi/readonly-user-password" --with-decryption --region eu-west-1 --profile "${aws_profile}" | jq -cr ".Parameter.Value")
 

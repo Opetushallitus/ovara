@@ -70,7 +70,12 @@ export class DatabaseStack extends cdk.Stack {
           subnets: vpc.privateSubnets,
         },
         securityGroups: [this.auroraSecurityGroup],
-        credentials: rds.Credentials.fromUsername('oph'),
+        credentials: {
+          username: 'oph',
+          password: cdk.SecretValue.ssmSecure(
+            `/${config.environment}/aurora/raportointi/master-user-password`
+          ),
+        },
         storageEncrypted: true,
         storageEncryptionKey: kmsKey,
         parameterGroup,
