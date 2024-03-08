@@ -1,5 +1,3 @@
-dbt/target/
-dbt/dbt_packages/
-logs/
-.python-version
+dbt_packages/
 .env
+.python-version
