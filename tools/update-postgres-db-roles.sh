@@ -30,4 +30,4 @@ readonly_password=$(aws ssm get-parameter --name "/${environment}/aurora/raporto
 
 remote_cmd="/home/ec2-user/bastion/ensure-psql-roles-up-to-date.sh ${host} ${db} ${master_password} ${app_password} ${readonly_password} | tee /home/ec2-user/ensure-psql-roles-up-to-date.log"
 
-ssh ec2-user@bastion.opiskelijavalinnan-raportointi.testiopintopolku.fi "${remote_cmd}"
+ssh ec2-user@bastion.ovara.testiopintopolku.fi "${remote_cmd}"

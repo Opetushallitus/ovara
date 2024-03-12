@@ -65,7 +65,6 @@ export class BastionStack extends cdk.Stack {
 
     const nlbAccessLogsBucketName = `${config.environment}-bastion-nlb-access-logs`;
     const nlbAccessLogsBucket = new s3.Bucket(this, nlbAccessLogsBucketName, {
-      bucketName: nlbAccessLogsBucketName,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryptionKey: new kms.Key(this, `${nlbAccessLogsBucketName}-s3BucketKMSKey`, {

@@ -3,7 +3,7 @@
   "environment": "testi",
   "opintopolkuAccountId": "153563371259",
   "profile": "oph-opiskelijavalinnan-raportointi-qa",
-  "publicHostedZone": "opiskelijavalinnan-raportointi.testiopintopolku.fi",
+  "publicHostedZone": "ovara.testiopintopolku.fi",
   "region": "eu-west-1",
   "vpc": {
     "maxAzs": 2,
