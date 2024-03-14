@@ -27,16 +27,13 @@ with _latest_hash_per_key as (
 
 select 
 
-{%- set column_names = dbt_utils.get_filtered_columns_in_relation(from=this, except=['_row_order']) %}
+{%- set column_names = dbt_utils.get_filtered_columns_in_relation(from=ref(model_name), except=['_row_order']) %}
 {% for column_name in column_names -%}
    {{ column_name }}
    {%- if not loop.last %}
     ,
     {%- endif -%}
-{% endfor -%}
-
-
-
+{% endfor %}
 from _latest_hash_per_key
 where _row_order = 1
 
