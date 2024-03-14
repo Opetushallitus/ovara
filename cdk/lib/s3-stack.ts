@@ -1,6 +1,10 @@
+import path = require('path');
+
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -78,5 +82,27 @@ export class S3Stack extends cdk.Stack {
         reason: 'Account assuming the role delegates only needed access rights',
       },
     ]);
+
+    const sharedLayer = new lambda.LayerVersion(this, 'shared-layer', {
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/layers')),
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_9],
+      layerVersionName: 'shared-layer',
+    });
+
+    const fileLoaderLambda = new lambda.Function(this, 'Transferfile loader', {
+      functionName: `${config.environment}-transfer-file-loader`,
+      runtime: lambda.Runtime.PYTHON_3_9,
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/siirtotiedosto')),
+      handler: 'lataa.lambda_handler',
+      layers: [sharedLayer],
+    });
+
+    const s3PutEventSource = new lambdaEventSources.S3EventSource(
+      siirtotiedostotS3Bucket,
+      {
+        events: [s3.EventType.OBJECT_CREATED_PUT],
+      }
+    );
+    fileLoaderLambda.addEventSource(s3PutEventSource);
   }
 }
