@@ -17,4 +17,6 @@ clean-targets:
 
 models:
   ovara:
-    +materialized: view
+    stg:
+      +schema: stg
+      +materialized: table
