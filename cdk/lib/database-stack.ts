@@ -15,6 +15,7 @@ export interface DatabaseStackProps extends GenericStackProps {
 
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
+  public readonly dbClusterResourceId: string;
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
@@ -79,9 +80,10 @@ export class DatabaseStack extends cdk.Stack {
         storageEncrypted: true,
         storageEncryptionKey: kmsKey,
         parameterGroup,
+        iamAuthentication: true,
       }
     );
-
+    this.dbClusterResourceId = auroraCluster.clusterResourceIdentifier;
     new route53.CnameRecord(this, `${config.environment}-DbCnameRecord`, {
       recordName: `raportointi.db`,
       zone: publicHostedZone,

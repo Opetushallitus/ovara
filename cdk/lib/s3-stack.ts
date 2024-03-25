@@ -2,6 +2,7 @@ import path = require('path');
 
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
@@ -11,7 +12,10 @@ import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
 
-export interface S3Props extends GenericStackProps {}
+export interface S3Props extends GenericStackProps {
+  dbClusterResourceId: string;
+  dbUser: string;
+}
 
 export class S3Stack extends cdk.Stack {
   public readonly deploymentS3Bucket: s3.IBucket;
@@ -95,6 +99,15 @@ export class S3Stack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/siirtotiedosto')),
       handler: 'lataa.lambda_handler',
       layers: [sharedLayer],
+      initialPolicy: [
+        new iam.PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: [
+            `arn:aws:rds-db:${props.config.region}:${props.config.accountId}:dbuser:${props.dbClusterResourceId}/${props.dbUser}`,
+          ],
+          actions: ['rds-db:connect'],
+        }),
+      ],
     });
 
     const s3PutEventSource = new lambdaEventSources.S3EventSource(

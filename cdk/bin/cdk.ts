@@ -19,11 +19,15 @@ const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`,
 
 const networkStack = new NetworkStack(app, `${config.environment}-NetworkStack`, props);
 
-const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, { ...props });
-
 const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
   publicHostedZone: route53Stack.publicHostedZone,
   vpc: networkStack.vpc,
+  ...props,
+});
+
+const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
+  dbClusterResourceId: databaseStack.dbClusterResourceId,
+  dbUser: 'app',
   ...props,
 });
 
@@ -34,5 +38,4 @@ const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`,
   vpc: networkStack.vpc,
   ...props,
 });
-
 cdk.Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
