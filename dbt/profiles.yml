@@ -2,22 +2,22 @@ config:
   send_anonymous_usage_stats: false
   partial_parse: true
 
-opiskelijavalinnan_raportointi:
+ovara:
   target: test
   outputs:
     test:
       type: postgres
       host: "{{ env_var('POSTGRES_HOST_TEST') }}"
-      user: "{{ env_var('DBT_USERNAME') }}"
-      password: "{{ env_var('DBT_PASSWORD') }}"
-      port: 5432
-      database: test
-      schema: "{{ env_var('POSTGRES_DB_TEST') }}"
+      user: "{{ env_var('DBT_USERNAME_TEST') }}"
+      password: "{{ env_var('DBT_PASSWORD_TEST') }}"
+      port: "{{ env_var('DBT_PORT_TEST') | int }}"
+      database: ovara
+      schema: "{{ env_var('POSTGRES_SCHEMA_TEST') }}"
     prod:
       type: postgres
       host: "{{ env_var('POSTGRES_HOST_PROD') }}"
-      user: "{{ env_var('DBT_USERNAME') }}"
-      password: "{{ env_var('DBT_PASSWORD') }}"
-      port: 5432
-      database: "{{ env_var('POSTGRES_DB_PROD') }}"
-      schema: "{{ env_var('DBT_SCHEMA') }}"
+      user: "{{ env_var('DBT_USERNAME_PROD') }}"
+      password: "{{ env_var('DBT_PASSWORD_PROD') }}"
+      port: "{{ env_var('DBT_PORT_PROD') | int }}"
+      database: ovara
+      schema: pub

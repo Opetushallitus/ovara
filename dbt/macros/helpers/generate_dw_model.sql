@@ -26,10 +26,10 @@
 
 with _final as (
     select *,
-    {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} as dw_metadata_{{base_model_name}}_hash,
-    {{ dbt_utils.generate_surrogate_key(key_columns_list) }} as dw_metadata_{{base_model_name}}_key,
-    coalesce(dw_metadata_source_timestamp_at, dw_metadata_dbt_copied_at) as dw_metadata_{{ base_model_name }}_timestamp,
-    current_timestamp as dw_metadata_{{ base_model_name }}_dw_stored_at
+    {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} as dw_metadata_hash,
+    {{ dbt_utils.generate_surrogate_key(key_columns_list) }} as dw_metadata_key,
+    coalesce(dw_metadata_source_timestamp_at, dw_metadata_dbt_copied_at) as dw_metadata_timestamp,
+    current_timestamp as dw_metadata_dw_stored_at
     from {{ stage_model }}
     {% if is_incremental() -%}
     where
@@ -37,9 +37,9 @@ with _final as (
         (dw_metadata_dbt_copied_at >= coalesce((select max(dw_metadata_dbt_copied_at) from {{ this }}),date('1900-01-01'))
             or dw_metadata_dbt_copied_at is null) and
         {# and only rows which has different hash #}
-        dw_metadata_{{ base_model_name }}_hash not in (select distinct last_value(dw_metadata_{{base_model_name}}_hash) over
-            (partition by dw_metadata_{{base_model_name}}_key
-            order by dw_metadata_{{base_model_name}}_timestamp asc) as latest_hash
+        {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} not in (select distinct last_value(dw_metadata_hash) over
+            (partition by dw_metadata_key
+            order by dw_metadata_timestamp asc) as latest_hash
             from {{ this }})
     {%- endif %}
 )

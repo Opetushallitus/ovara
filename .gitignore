@@ -1,6 +1,7 @@
 dbt_packages/
 .env
 .python-version
+.user.yml
 .idea
 *.iml
 node_modules
