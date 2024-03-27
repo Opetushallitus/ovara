@@ -20,6 +20,8 @@ models:
     stg:
       +schema: stg
       +materialized: incremental
+    dw:
+      +schema: dw
     int:
       +schema: int
     pub:

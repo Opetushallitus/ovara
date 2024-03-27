@@ -24,15 +24,24 @@
     )
 }}
 
-with _final as (
+with 
+
+_raw as (
+    select 
+    *,
+    row_number() over (partition by oid order by muokattu,dw_metadata_dbt_copied_at) as rownr
+    from 
+    {{ stage_model }}
+),
+_final as (
     select *,
     {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} as dw_metadata_hash,
     {{ dbt_utils.generate_surrogate_key(key_columns_list) }} as dw_metadata_key,
     coalesce(dw_metadata_source_timestamp_at, dw_metadata_dbt_copied_at) as dw_metadata_timestamp,
     current_timestamp as dw_metadata_dw_stored_at
-    from {{ stage_model }}
+    from _raw where rownr=1
     {% if is_incremental() -%}
-    where
+    and
         {# Only rows which are newer than the rows in dw model table already #}
         (dw_metadata_dbt_copied_at >= coalesce((select max(dw_metadata_dbt_copied_at) from {{ this }}),date('1900-01-01'))
             or dw_metadata_dbt_copied_at is null) and

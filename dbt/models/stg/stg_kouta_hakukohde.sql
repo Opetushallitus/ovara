@@ -1,5 +1,11 @@
 with source as (
       select * from {{ source('ovara', 'kouta_hakukohde') }}
+ 
+      {% if is_incremental() %}
+
+       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+
+    {% endif %}
 ),
 
 final as 
@@ -51,6 +57,6 @@ select * from final
 
 {% if is_incremental() %}
 
-where dw_metadata_dbt_copied_at >= (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
 
 {% endif %}
