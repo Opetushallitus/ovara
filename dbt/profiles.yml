@@ -11,13 +11,13 @@ ovara:
       user: "{{ env_var('DBT_USERNAME_TEST') }}"
       password: "{{ env_var('DBT_PASSWORD_TEST') }}"
       port: "{{ env_var('DBT_PORT_TEST') | int }}"
-      database: ovara_staging
+      database: ovara
       schema: "{{ env_var('POSTGRES_SCHEMA_TEST') }}"
     prod:
       type: postgres
       host: "{{ env_var('POSTGRES_HOST_PROD') }}"
       user: "{{ env_var('DBT_USERNAME_PROD') }}"
       password: "{{ env_var('DBT_PASSWORD_PROD') }}"
-      port: 5432
-      database: ovara_raportointi
+      port: "{{ env_var('DBT_PORT_PROD') | int }}"
+      database: ovara
       schema: pub

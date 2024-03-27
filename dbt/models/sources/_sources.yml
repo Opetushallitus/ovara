@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: ovara
-    database: ovara_staging
+    database: ovara
     schema: raw
     tables: 
     - name: kouta_hakukohde

@@ -19,4 +19,9 @@ models:
   ovara:
     stg:
       +schema: stg
+      +materialized: incremental
+    int:
+      +schema: int
+    pub:
+      +schema: pub
       +materialized: table
