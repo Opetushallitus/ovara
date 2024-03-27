@@ -2,3 +2,17 @@ dbt_packages/
 .env
 .python-version
 .user.yml
+.idea
+*.iml
+node_modules
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+
+#Mac metadata
+.DS_Store

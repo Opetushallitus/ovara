@@ -1,0 +1,12 @@
+{
+  "accountId": "471112673652",
+  "environment": "tuotanto",
+  "opintopolkuAccountId": "225588084137",
+  "profile": "oph-opiskelijavalinnan-raportointi-prod",
+  "publicHostedZone": "opiskelijavalinnan-raportointi.opintopolku.fi",
+  "region": "eu-west-1",
+  "vpc": {
+    "maxAzs": 3,
+    "netGateways": 1
+  }
+}
