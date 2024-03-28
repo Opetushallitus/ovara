@@ -17,13 +17,19 @@ export class S3Stack extends cdk.Stack {
     const config: Config = props.config;
 
     const siirtotiedostotBucketName = `${config.environment}-siirtotiedostot`;
+    const siirtotiedostotKmsKey = new kms.Key(
+      this,
+      `${siirtotiedostotBucketName}-s3BucketKMSKey`,
+      {
+        alias: `${siirtotiedostotBucketName}-s3-bucket-kms-key`,
+        enableKeyRotation: true,
+      }
+    );
     const siirtotiedostotS3Bucket = new s3.Bucket(this, siirtotiedostotBucketName, {
       bucketName: siirtotiedostotBucketName,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryptionKey: new kms.Key(this, `${siirtotiedostotBucketName}-s3BucketKMSKey`, {
-        enableKeyRotation: true,
-      }),
+      encryptionKey: siirtotiedostotKmsKey,
       serverAccessLogsBucket: new s3.Bucket(
         this,
         `${siirtotiedostotBucketName}-server-access-logs`
@@ -54,6 +60,21 @@ export class S3Stack extends cdk.Stack {
     objectResourceStatement.addResources(`${siirtotiedostotS3Bucket.bucketArn}/*`);
     objectResourceStatement.addActions('s3:*Object*');
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
+
+    const kmsAssumeStatement = new iam.PolicyStatement();
+    kmsAssumeStatement.addResources(siirtotiedostotKmsKey.keyArn);
+    s3CrossAccountRole.addToPrincipalPolicy(kmsAssumeStatement);
+
+    const kmsResourceStatement = new iam.PolicyStatement();
+    kmsResourceStatement.addResources(siirtotiedostotKmsKey.keyArn);
+    kmsResourceStatement.addActions(
+      'kms:Encrypt',
+      'kms:Decrypt',
+      'kms:ReEncrypt*',
+      'kms:GenerateDataKey*',
+      'kms:DescribeKey'
+    );
+    s3CrossAccountRole.addToPolicy(kmsResourceStatement);
 
     siirtotiedostotS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
 
