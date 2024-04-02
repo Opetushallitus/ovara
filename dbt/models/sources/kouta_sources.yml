@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: ovara
+    database: ovara
+    schema: raw
+    tables: 
+    - name: kouta_hakukohde
+      description: Hakukohteiden tiedot
+    - name: kouta_haku
+      description: Hakujen tiedot
+    - name: kouta_koulutus
+      description: Koulutusten tiedot

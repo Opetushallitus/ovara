@@ -15,9 +15,6 @@ final as
         data ->> 'hakuOid'::varchar as hakuOid,
         data ->> 'tila'::varchar as tila,
         (data ->> 'esikatselu')::boolean as esikatselu,
-        data -> 'nimi' ->> 'fi' ::varchar as nimi_fi,
-        data -> 'nimi' ->> 'sv' ::varchar as nimi_sv,
-        data -> 'nimi' ->> 'en' ::varchar as nimi_en,
         data ->> 'jarjestyspaikkaOid'::varchar as jarjestyspaikkaOid,
         data -> 'hakulomakeKuvaus' as hakulomakeKuvaus,
         data -> 'hakulomakeLinkki' as hakulomakeLinkki,
@@ -45,18 +42,12 @@ final as
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data -> 'kielivalinta' as kielivalinta,
         (data ->> 'modified')::timestamptz as muokattu,
-        data -> 'enrichedData' -> 'esitysnimi' ->> 'fi'::varchar as esitysnimi_fi,
-        data -> 'enrichedData' -> 'esitysnimi' ->> 'sv'::varchar as esitysnimi_sv,
-        data -> 'enrichedData' -> 'esitysnimi' ->> 'en'::varchar as esitysnimi_en,
+        data -> 'enrichedData' -> 'esitysnimi' ->> 'fi'::varchar as nimi_fi,
+        data -> 'enrichedData' -> 'esitysnimi' ->> 'sv'::varchar as nimi_sv,
+        data -> 'enrichedData' -> 'esitysnimi' ->> 'en'::varchar as nimi_en,
         data -> 'enrichedData' ->> 'muokkaajanNimi'::varchar as muokkaajanNimi,
         {{ metadata_columns() }}
     from source
 )
 
 select * from final
-
-{% if is_incremental() %}
-
-where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
-
-{% endif %}

@@ -29,7 +29,7 @@ with
 _raw as (
     select 
     *,
-    row_number() over (partition by oid order by muokattu,dw_metadata_dbt_copied_at) as rownr
+    row_number() over (partition by oid, muokattu order by dw_metadata_dbt_copied_at desc) as rownr
     from 
     {{ stage_model }}
 ),
