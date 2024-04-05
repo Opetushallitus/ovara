@@ -32,6 +32,12 @@ _raw as (
     row_number() over (partition by oid, muokattu order by dw_metadata_dbt_copied_at desc) as rownr
     from 
     {{ stage_model }}
+    {% if is_incremental() -%}
+    {# Only rows which are newer than the rows in dw model table already #}
+    where (dw_metadata_dbt_copied_at >= coalesce((select max(dw_metadata_dw_stored_at) from {{ this }}),date('1900-01-01'))
+            or dw_metadata_dbt_copied_at is null)
+    {%- endif %}
+
 ),
 _final as (
     select *,
@@ -42,9 +48,6 @@ _final as (
     from _raw where rownr=1
     {% if is_incremental() -%}
     and
-        {# Only rows which are newer than the rows in dw model table already #}
-        (dw_metadata_dbt_copied_at >= coalesce((select max(dw_metadata_dbt_copied_at) from {{ this }}),date('1900-01-01'))
-            or dw_metadata_dbt_copied_at is null) and
         {# and only rows which has different hash #}
         {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} not in (select distinct last_value(dw_metadata_hash) over
             (partition by dw_metadata_key

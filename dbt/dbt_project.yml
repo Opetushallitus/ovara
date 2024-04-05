@@ -22,6 +22,9 @@ models:
       +materialized: incremental
     dw:
       +schema: dw
+      # materialized=incremental set in dw macro
+      +indexes: 
+        - columns: [oid,muokattu]
     int:
       +schema: int
     pub:
