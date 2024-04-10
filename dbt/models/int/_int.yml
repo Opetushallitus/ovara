@@ -1,0 +1,40 @@
+models:
+  - name: int_hakuaika
+    description: Tässä mallissa on kaikki hakuajat listattu. Samaa hakuaikaa voidaan
+      käyttää sekä hauissa että hakukohteissa, ja hakukohteella saattaa olla
+      useampi hakuaika.
+    columns:
+      - name: hakuaika_id
+        description: hash-arvo josta muodostuu uniikki avain, hashissa on mukana alkaa
+          jaa paattyy-kentät
+        data_type: text
+      - name: alkaa
+        description: aika jolloin haku alkaa
+        data_type: timestamp with time zone
+      - name: paattyy
+        description: aika jolloin haku päättyy
+        data_type: timestamp with time zone
+      - name: luotu
+        description: ""
+        data_type: timestamp with time zone
+      - name: muokattu
+        description: ""
+        data_type: timestamp with time zone
+  - name: int_haku_hakuaika
+    description: Kaikkien hakujen hakuaika-tiedot
+    columns:
+      - name: hakuaika_id
+        description: hash-arvo joka toimii avaimena hakuajoille
+        data_type: text
+      - name: oid
+        description: haun oid
+        data_type: text
+  - name: int_hakukohde_hakuaika
+    description: hakukohteiden linkitys hakuaikoihin
+    columns:
+      - name: hakuaika_id
+        description: hash-arvo joka yksilöi hakuajan
+        data_type: text
+      - name: oid
+        description: hakukohteen oid
+        data_type: text

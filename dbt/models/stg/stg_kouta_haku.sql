@@ -25,7 +25,7 @@ final as
         data -> 'hakulomakeLinkki' as hakulomakeLinkki,
         data -> 'metadata' as metadata,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
-        data -> 'hakuajat' as hakuajat,
+        (data -> 'hakuajat')::jsonb as hakuajat,
         data ->> 'muokkaaja' as muokkaaja,
         data -> 'kielivalinta' as kielivalinta,
         (data ->> 'modified')::timestamptz as muokattu,

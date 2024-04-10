@@ -28,7 +28,7 @@ final as
         (data ->> 'liitteetOnkoSamaToimitusosoite')::boolean as liitteetOnkoSamaToimitusosoite,
         data -> 'liitteet' as liitteet,
         data -> 'valintakokeet' as valintakokeet,
-        data -> 'hakuajat' as hakuajat,
+        (data -> 'hakuajat')::jsonb as hakuajat,
         data -> 'metadata' -> 'valintakokeidenYleiskuvaus' as valintakokeidenYleiskuvaus,
         data -> 'metadata' -> 'valintaperusteenValintakokeidenLisatilaisuudet' as valintaperusteenValintakokeidenLisatilaisuudet,
         data -> 'metadata' -> 'kynnysehto' as kynnysehto,

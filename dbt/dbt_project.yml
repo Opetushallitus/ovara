@@ -27,6 +27,7 @@ models:
         - columns: [oid,muokattu]
     int:
       +schema: int
+      +materialized: table
     pub:
       +schema: pub
       +materialized: table
