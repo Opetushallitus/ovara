@@ -56,6 +56,20 @@ _final as (
     {%- endif %}
 )
 
-select * from _final
+select 
+
+{%- set columns = adapter.get_columns_in_relation(stage_model) -%}
+
+    {%- for col in columns %}
+        {{ col.column }}
+        {%- if not loop.last -%}
+        ,
+        {%- endif -%}
+    {% endfor %},
+    dw_metadata_hash,
+    dw_metadata_key,
+    dw_metadata_timestamp,
+    dw_metadata_dw_stored_at
+ from _final
 
 {% endmacro -%}
