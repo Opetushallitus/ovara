@@ -1,5 +1,5 @@
 with source as (
-      select * from {{ source('ovara', 'kouta_koulutus') }}
+      select * from {{ source('ovara', 'kouta_oppilaitoksetjaosat') }}
  
       {% if is_incremental() %}
 

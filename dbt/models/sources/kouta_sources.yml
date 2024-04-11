@@ -17,3 +17,5 @@ sources:
       description: Oppilaitosten lisätietoja
     - name: kouta_pistehistoria  
       description: Hakukohteiden pistehistoriatiedot
+    - name: kouta_sorakuvaus
+      description: Hakukohteiden pistehistoriatiedot      
