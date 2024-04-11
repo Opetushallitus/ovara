@@ -20,14 +20,20 @@ models:
     stg:
       +schema: stg
       +materialized: incremental
+      +docs:
+        node_color: "#00008b"
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
       +indexes: 
         - columns: [oid,muokattu]
+      +docs:
+        node_color: "#00008b"
     int:
       +schema: int
       +materialized: table
+      +docs:
+        node_color: "#ADD8E6"
     pub:
       +schema: pub
       +materialized: table

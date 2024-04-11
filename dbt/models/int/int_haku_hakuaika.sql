@@ -6,7 +6,16 @@
 with raw as (
     select
     oid,
-    jsonb_array_elements(hakuajat) hakuaika from {{ref("dw_kouta_haku")}}
+    hakuajat,
+    row_number() over (partition by oid order by muokattu desc) as rownr
+    from {{ref("dw_kouta_haku")}}
+),
+int as (
+    select
+    oid,
+    jsonb_array_elements(hakuajat) hakuaika 
+    from raw
+    where rownr=1
 ),
 hakuajat as
 (	
@@ -14,7 +23,8 @@ hakuajat as
 	oid,
     (hakuaika ->> 'alkaa')::timestamptz as alkaa,
     (hakuaika ->> 'paattyy')::timestamptz as paattyy
-    from raw
+    from int
+ 
 )
 ,
 final as
