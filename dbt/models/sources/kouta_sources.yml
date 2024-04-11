@@ -13,3 +13,5 @@ sources:
       description: Koulutusten tiedot
     - name: kouta_toteutus
       description: Toteutusten tiedot
+    - name: kouta_oppilaitoksetjaosat  
+      description: Oppilaitosten lisätietoja
