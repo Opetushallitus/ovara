@@ -24,7 +24,7 @@ final as
         data -> 'metadata' -> 'kuvaus' ->> 'en'::varchar as kuvaus_en,
         data -> 'metadata' ->> 'koulutusalaKoodiUri'::varchar as koulutusalaKoodiUri,
         (data -> 'metadata' -> 'koulutusKoodiUrit')::jsonb as koulutusKoodiUrit,
-        coalesce((data -> 'metadata' ->> 'isMuokkaajaOphVirkailija')::boolean,false) as isMuokkaajaOphVirkailija,
+        (data -> 'metadata' ->> 'isMuokkaajaOphVirkailija')::boolean as isMuokkaajaOphVirkailija,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data ->> 'muokkaaja'::varchar as muokkaaja,
         {{ muokattu_column()}},
