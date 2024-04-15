@@ -786,3 +786,106 @@ models:
       - name: dw_metadata_file_row_number
         description: ""
         data_type: integer
+  - name: stg_kouta_valintaperuste
+    description: ""
+    columns:
+      - name: id
+        description: ""
+        data_type: uuid
+        tests:
+          - not_null      
+      - name: externalid
+        description: ""
+        data_type: text
+      - name: tila
+        description: ""
+        data_type: text
+      - name: esikatselu
+        description: ""
+        data_type: boolean
+      - name: koulutustyyppi
+        description: ""
+        data_type: text
+      - name: hakutapakoodiuri
+        description: ""
+        data_type: text
+      - name: kohdejoukkokoodiuri
+        description: ""
+        data_type: text
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: julkinen
+        description: ""
+        data_type: boolean
+      - name: valintakokeet
+        description: ""
+        data_type: jsonb
+      - name: tyyppi
+        description: ""
+        data_type: text
+      - name: sisalto
+        description: ""
+        data_type: jsonb
+      - name: valintatavat
+        description: ""
+        data_type: jsonb
+      - name: kuvaus_fi
+        description: ""
+        data_type: text
+      - name: kuvaus_sv
+        description: ""
+        data_type: text
+      - name: kuvaus_en
+        description: ""
+        data_type: text
+      - name: hakukelpoisuus
+        description: ""
+        data_type: jsonb
+      - name: lisatiedot
+        description: ""
+        data_type: jsonb
+      - name: valintakokeidenyleiskuvaus
+        description: ""
+        data_type: jsonb
+      - name: ismuokkaajaophvirkailija
+        description: ""
+        data_type: text
+      - name: organisaatiooid
+        description: ""
+        data_type: text
+      - name: muokkaaja
+        description: ""
+        data_type: text
+      - name: kielivalinta
+        description: ""
+        data_type: jsonb
+      - name: muokattu
+        description: ""
+        data_type: timestamp with time zone
+        tests:
+          - not_null        
+      - name: muokkaajannimi
+        description: ""
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        description: ""
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        description: ""
+        data_type: integer
