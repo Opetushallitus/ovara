@@ -29,7 +29,14 @@ with
 _raw as (
     select 
     *,
-    row_number() over (partition by oid, muokattu order by dw_metadata_dbt_copied_at desc) as rownr
+    row_number() over (partition by 
+    {% for column in key_columns_list -%}
+        {{column}}
+        {%- if not loop.last -%}
+        ,
+        {%- endif -%}
+    {%- endfor -%},    
+    muokattu order by dw_metadata_dbt_copied_at desc) as rownr
     from 
     {{ stage_model }}
     {% if is_incremental() -%}

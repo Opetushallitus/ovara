@@ -1,5 +1,5 @@
 with source as (
-      select * from {{ source('ovara', 'kouta_koulutus') }}
+      select * from {{ source('ovara', 'kouta_oppilaitoksetjaosat') }}
  
       {% if is_incremental() %}
 
@@ -12,8 +12,9 @@ final as
 (
     select 
         data ->> 'oid'::varchar as oid,
+        data ->> 'parentOppilaitosOid'::varchar as parentOppilaitosOid,
         data ->> 'tila'::varchar as tila,
-        data ->> 'esikatselu'::varchar as esikatselu,
+        (data ->> 'esikatselu')::boolean as esikatselu,
         (data -> 'metadata' -> 'tietoaOpiskelusta')::jsonb as tietoaOpiskelusta,
         data -> 'metadada' -> 'wwwSivu -> nimi ' ->> 'fi'::varchar wwwSivu_nimi_fi, 
         data -> 'metadada' -> 'wwwSivu -> url ' ->> 'fi'::varchar wwwSivu_url_fi,
@@ -37,12 +38,12 @@ final as
         (data -> 'metadata' ->> 'isMuokkaajaOphVirkailija')::boolean as isMuokkaajaOphVirkailija,
         (data -> 'metadata' ->> 'jarjestaaUrheilijanAmmKoulutusta')::boolean as jarjestaaUrheilijanAmmKoulutusta,
         (data -> 'metadata' -> 'kampus')::jsonb as kampus,
+        data ->> 'teemakuva'::varchar as teemakuva,
+        data ->> 'logo'::varchar as logo,
         (data -> 'kielivalinta')::jsonb as kielivalinta,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data ->> 'muokkaaja'::varchar as muokkaaja,
-        data ->> 'teemakuva'::varchar as teemakuva,
-        data ->> 'logo'::varchar as logo,
-        (data ->> 'modified')::timestamptz as muokattu,
+        {{muokattu_column()}},
         data -> 'enrichedData' ->> 'muokkaajanNimi'::varchar as muokkaajanNimi,
         {{ metadata_columns() }}
     from source
