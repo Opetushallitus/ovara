@@ -793,7 +793,7 @@ models:
         description: ""
         data_type: uuid
         tests:
-          - not_null
+          - not_null      
       - name: externalid
         description: ""
         data_type: text
@@ -870,7 +870,7 @@ models:
         description: ""
         data_type: timestamp with time zone
         tests:
-          - not_null
+          - not_null        
       - name: muokkaajannimi
         description: ""
         data_type: text
