@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: ovara
+    database: ovara
+    schema: raw
+    tables: 
+    - name: valintapiste_service_pistetieto
+      description: Valintojen pistetietoja
