@@ -12,6 +12,7 @@ final as
 (   
     select 
         data ->> 'hakemusOid'::varchar as oid,
+        (data ->> 'id')::int as versio_id,
         (data ->> 'form_key')::uuid as lomake_id,
         (data ->> 'form')::int as lomakeversio_id,
         (data -> 'keyValues')::jsonb as tiedot,
@@ -21,7 +22,6 @@ final as
         (data ->> 'submitted')::timestamptz as jatetty,
         data ->> 'lang'::varchar as kieli,
         (data ->> 'application_hakukohde_reviews')::jsonb as kasittelymerkinnat,
-        (data ->> 'id')::int as hakemusversio_id,
         data ->> 'hakuOid'::varchar as haku_oid,
         (data -> 'hakukohde')::jsonb as hakukohde,
         data ->> 'person_oid'::varchar as henkilo_oid,
