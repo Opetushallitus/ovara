@@ -8,9 +8,10 @@ with source as (
     {% endif %}
 ),
 
-int as 
+final as
 (
     select 
+        data -> 'valinnanVaihe' ->> 'valinnanVaiheOid'::varchar as valinnanvaihe_id,
         data ->> 'hakukohdeOid'::varchar as hakukohde_oid,
         data ->> 'hakuOid'::varchar as haku_oid,
         data ->> 'tarjoajaOid'::varchar as tarjoaja_oid,
@@ -18,7 +19,6 @@ int as
         (data -> 'hakukohteenValintaperuste')::jsonb as hakukohteenValintaperuste,
         data -> 'valinnanVaihe' ->> 'nimi'::varchar as valinnanvaihe_nimi,
         (data -> 'valinnanVaihe' ->> 'valinnanVaiheJarjestysluku')::int as valinnanvaihe_jarjestysluku,
-        data -> 'valinnanVaihe' ->> 'valinnanVaiheOid'::varchar as valinnanvaihe_id,
         data -> 'valinnanVaihe' ->> 'valinnanVaiheTyyppi'::varchar as valinnanVaiheTyyppi,
         (data -> 'valinnanVaihe' ->> 'valintatapajono')::jsonb as valintatapajono,
         (data -> 'valinnanVaihe' ->> 'valintakoe')::jsonb as valintakoe,
@@ -28,13 +28,6 @@ int as
         {{ metadata_columns() }}
     from source
 
-),
-
-final as (
-    select
-    {{ dbt_utils.generate_surrogate_key(['hakukohde_oid','valinnanvaihe_id']) }} as id,
-    *
-    from int
 )
 
 select * from final
