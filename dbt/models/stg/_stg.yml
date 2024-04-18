@@ -918,8 +918,8 @@ models:
   - name: stg_valintaperusteet_hakukohde
     description: ""
     columns:
-      - name: id
-        description: hashattu Yhdistelmäavain, hakukohde_oid ja valinnanvaihe_id
+      - name: valinnanvaihe_id
+        description: ""
         data_type: text
         tests:
           - not_null
@@ -944,9 +944,6 @@ models:
       - name: valinnanvaihe_jarjestysluku
         description: ""
         data_type: integer
-      - name: valinnanvaihe_id
-        description: ""
-        data_type: text
       - name: valinnanvaihetyyppi
         description: ""
         data_type: text

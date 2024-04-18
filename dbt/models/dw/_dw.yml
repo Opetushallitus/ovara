@@ -221,12 +221,11 @@ models:
       duplikaatti jos sama tiedosto luetaan useaan kertaan, joten tämä DW-malli
       on erilainen.
     columns:
-      - name: id
-        description: id on hashattu yhdistelmä hakukohde_oid-valintaperuste_id
+      - name: valinnanvaihe_id
+        description: ""
         data_type: text
         tests:
           - not_null
-          - unique
       - name: hakukohde_oid
         description: ""
         data_type: text
@@ -248,9 +247,6 @@ models:
       - name: valinnanvaihe_jarjestysluku
         description: ""
         data_type: integer
-      - name: valinnanvaihe_id
-        description: ""
-        data_type: text
       - name: valinnanvaihetyyppi
         description: ""
         data_type: text
@@ -271,6 +267,8 @@ models:
           muutostietoja. Tämä tarkoittaa sitä että tällä voin olla
           duplikaattiarvoja (sama tiedosto luettu useampaan kertaan)
         data_type: timestamp with time zone
+        tests:
+          - not_null
       - name: dw_metadata_source_timestamp_at
         description: ""
         data_type: timestamp with time zone
