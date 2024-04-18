@@ -35,8 +35,8 @@ _raw as (
         {%- if not loop.last -%}
         ,
         {%- endif -%}
-    {%- endfor -%},    
-    muokattu order by dw_metadata_dbt_copied_at desc) as rownr
+    {%- endfor %}    
+    order by dw_metadata_dbt_copied_at desc) as rownr
     from 
     {{ stage_model }}
     {% if is_incremental() -%}
