@@ -132,10 +132,10 @@ models:
         description: ""
         data_type: boolean
   - name: int_koodisto_hakukelpoisuusvaatimus
-    description: '{{ doc("versioitu_koodiuri") }}'
+    description: ""
     columns:
       - name: versioitu_koodiuri
-        description: ""
+        description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
         tests:
           - dbt_constraints.primary_key

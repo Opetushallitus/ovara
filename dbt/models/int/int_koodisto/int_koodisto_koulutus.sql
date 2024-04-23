@@ -7,113 +7,117 @@
   )
 }}
 
-with koodisto as
-(
-    select 
-    koodiarvo,
-    koodiuri,
-    koodiversio,
-    koodistouri
+with koodisto as (
+    select
+        koodiarvo,
+        koodiuri,
+        koodiversio,
+        koodistouri
     from {{ ref('dw_koodisto_koodi') }}
 ),
 
-relaatio as
-(
-    select 
-    id,
-    alakoodiuri,
-    alakoodiversio,
-    relaatioversio,
-    ylakoodiuri,
-    ylakoodiversio
-     from {{ ref('dw_koodisto_relaatio') }}
-),
-koulutuskoodi as
-(
-    select 
-    koodiuri || '#' || koodiversio::varchar as versioitu_koodiuri,
-    koodiuri,
-    koodiarvo::int,
-    koodiversio
-    from koodisto
-    where koodistouri='koulutus'
+relaatio as (
+    select
+        id,
+        alakoodiuri,
+        alakoodiversio,
+        relaatioversio,
+        ylakoodiuri,
+        ylakoodiversio
+    from {{ ref('dw_koodisto_relaatio') }}
 ),
 
-kansallinenkoulutusluokitus2016koulutusastetaso1 as
-(
-    select
-    r.ylakoodiuri,
-    r.ylakoodiversio,
-    koodiarvo,
-    koodiuri,
-    koodiversio
-    from koodisto k
-    join relaatio r on k.koodiuri=r.alakoodiuri and k.koodiversio=r.alakoodiversio
-    where koodistouri='kansallinenkoulutusluokitus2016koulutusastetaso1'
+koulutuskoodi as (
+    select -- noqa: ST06
+        koodiuri || '#' || koodiversio::varchar as versioitu_koodiuri,
+        koodiuri,
+        koodiarvo::int,
+        koodiversio
+    from koodisto
+    where koodistouri = 'koulutus'
 ),
-kansallinenkoulutusluokitus2016koulutusastetaso2 as
-(
+
+kansallinenkoulutusluokitus2016koulutusastetaso1 as (
     select
-    r.ylakoodiuri,
-    r.ylakoodiversio,
-    koodiarvo,
-    koodiuri,
-    koodiversio
-    from koodisto k
-    join relaatio r on k.koodiuri=r.alakoodiuri and k.koodiversio=r.alakoodiversio
-    where koodistouri='kansallinenkoulutusluokitus2016koulutusastetaso2'
+        rela.ylakoodiuri,
+        rela.ylakoodiversio,
+        kood.koodiarvo,
+        kood.koodiuri,
+        kood.koodiversio
+    from koodisto as kood
+    inner join relaatio as rela on kood.koodiuri = rela.alakoodiuri and kood.koodiversio = rela.alakoodiversio
+    where kood.koodistouri = 'kansallinenkoulutusluokitus2016koulutusastetaso1'
 ),
-kansallinenkoulutusluokitus2016koulutusalataso1 as
-(
+
+kansallinenkoulutusluokitus2016koulutusastetaso2 as (
     select
-    r.ylakoodiuri,
-    r.ylakoodiversio,
-    koodiarvo,
-    koodiuri,
-    koodiversio
-    from koodisto k
-    join relaatio r on k.koodiuri=r.alakoodiuri and k.koodiversio=r.alakoodiversio
-    where koodistouri='kansallinenkoulutusluokitus2016koulutusalataso1'
+        rela.ylakoodiuri,
+        rela.ylakoodiversio,
+        kood.koodiarvo,
+        kood.koodiuri,
+        kood.koodiversio
+    from koodisto as kood
+    inner join relaatio as rela on kood.koodiuri = rela.alakoodiuri and kood.koodiversio = rela.alakoodiversio
+    where kood.koodistouri = 'kansallinenkoulutusluokitus2016koulutusastetaso2'
 ),
-kansallinenkoulutusluokitus2016koulutusalataso2 as
-(
+
+kansallinenkoulutusluokitus2016koulutusalataso1 as (
     select
-    r.ylakoodiuri,
-    r.ylakoodiversio,
-    koodiarvo,
-    koodiuri,
-    koodiversio
-    from koodisto k
-    join relaatio r on k.koodiuri=r.alakoodiuri and k.koodiversio=r.alakoodiversio
-    where koodistouri='kansallinenkoulutusluokitus2016koulutusalataso2'
+        rela.ylakoodiuri,
+        rela.ylakoodiversio,
+        kood.koodiarvo,
+        kood.koodiuri,
+        kood.koodiversio
+    from koodisto as kood
+    inner join relaatio as rela on kood.koodiuri = rela.alakoodiuri and kood.koodiversio = rela.alakoodiversio
+    where kood.koodistouri = 'kansallinenkoulutusluokitus2016koulutusalataso1'
 ),
-kansallinenkoulutusluokitus2016koulutusalataso3 as
-(
+
+kansallinenkoulutusluokitus2016koulutusalataso2 as (
     select
-    r.ylakoodiuri,
-    r.ylakoodiversio,
-    koodiarvo,
-    koodiuri,
-    koodiversio
-    from koodisto k
-    join relaatio r on k.koodiuri=r.alakoodiuri and k.koodiversio=r.alakoodiversio
-    where koodistouri='kansallinenkoulutusluokitus2016koulutusalataso3'
+        rela.ylakoodiuri,
+        rela.ylakoodiversio,
+        kood.koodiarvo,
+        kood.koodiuri,
+        kood.koodiversio
+    from koodisto as kood
+    inner join relaatio as rela on kood.koodiuri = rela.alakoodiuri and kood.koodiversio = rela.alakoodiversio
+    where kood.koodistouri = 'kansallinenkoulutusluokitus2016koulutusalataso2'
+),
+
+kansallinenkoulutusluokitus2016koulutusalataso3 as (
+    select
+        rela.ylakoodiuri,
+        rela.ylakoodiversio,
+        kood.koodiarvo,
+        kood.koodiuri,
+        kood.koodiversio
+    from koodisto as kood
+    inner join relaatio as rela on kood.koodiuri = rela.alakoodiuri and kood.koodiversio = rela.alakoodiversio
+    where kood.koodistouri = 'kansallinenkoulutusluokitus2016koulutusalataso3'
+),
+
+final as (
+    select
+        kood.versioitu_koodiuri,
+        kood.koodiuri,
+        kood.koodiarvo,
+        kas1.koodiarvo as kansallinenkoulutusluokitus2016koulutusastetaso1,
+        kas2.koodiarvo as kansallinenkoulutusluokitus2016koulutusastetaso2,
+        kal1.koodiarvo as kansallinenkoulutusluokitus2016koulutusalataso1,
+        kal2.koodiarvo as kansallinenkoulutusluokitus2016koulutusalataso2,
+        kal3.koodiarvo as kansallinenkoulutusluokitus2016koulutusalataso3
+    from koulutuskoodi as kood
+    inner join kansallinenkoulutusluokitus2016koulutusastetaso1 as kas1
+        on kood.koodiuri = kas1.ylakoodiuri and kood.koodiversio = kas1.ylakoodiversio
+    inner join kansallinenkoulutusluokitus2016koulutusastetaso2 as kas2
+        on kood.koodiuri = kas2.ylakoodiuri and kood.koodiversio = kas2.ylakoodiversio
+    inner join kansallinenkoulutusluokitus2016koulutusalataso1 as kal1
+        on kood.koodiuri = kal1.ylakoodiuri and kood.koodiversio = kal1.ylakoodiversio
+    inner join kansallinenkoulutusluokitus2016koulutusalataso2 as kal2
+        on kood.koodiuri = kal2.ylakoodiuri and kood.koodiversio = kal2.ylakoodiversio
+    inner join kansallinenkoulutusluokitus2016koulutusalataso3 as kal3
+        on kood.koodiuri = kal3.ylakoodiuri and kood.koodiversio = kal3.ylakoodiversio
 )
 
-
-select 
-k.versioitu_koodiuri,
-k.koodiuri,
-k.koodiarvo,
-kaste1.koodiarvo as  kansallinenkoulutusluokitus2016koulutusastetaso1,
-kaste2.koodiarvo as  kansallinenkoulutusluokitus2016koulutusastetaso2,
-kala1.koodiarvo as  kansallinenkoulutusluokitus2016koulutusalataso1,
-kala2.koodiarvo as  kansallinenkoulutusluokitus2016koulutusalataso2,
-kala3.koodiarvo as  kansallinenkoulutusluokitus2016koulutusalataso3
-from 
-koulutuskoodi k
-join kansallinenkoulutusluokitus2016koulutusastetaso1 kaste1 on k.koodiuri=kaste1.ylakoodiuri and k.koodiversio=kaste1.ylakoodiversio
-join kansallinenkoulutusluokitus2016koulutusastetaso2 kaste2 on k.koodiuri=kaste2.ylakoodiuri and k.koodiversio=kASTE2.ylakoodiversio
-join kansallinenkoulutusluokitus2016koulutusalataso1 kala1 on k.koodiuri=kala1.ylakoodiuri and k.koodiversio=kala1.ylakoodiversio
-join kansallinenkoulutusluokitus2016koulutusalataso2 kala2 on k.koodiuri=kala2.ylakoodiuri and k.koodiversio=kala2.ylakoodiversio
-join kansallinenkoulutusluokitus2016koulutusalataso3 kala3 on k.koodiuri=kala3.ylakoodiuri and k.koodiversio=kala3.ylakoodiversio
+select * from final

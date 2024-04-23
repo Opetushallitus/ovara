@@ -1,11 +1,9 @@
 with
-kunta as
-(
+kunta as (
     select * from {{ ref('int_koodisto_kunta') }}
 ),
 
-maakunta as 
-(
+maakunta as (
     select * from {{ ref('int_koodisto_maakunta') }}
 ),
 
@@ -14,26 +12,30 @@ rel as (
     where ylakoodiuri like 'kunta_%'
 ),
 
+kunta_maakunta_relaatio as (
+    select
+        knta.versioitu_koodiuri as kunta_versioitu_koodiuri,
+        knta.koodiuri as kunta_koodiuri,
+        knta.koodiarvo as kunta_koodiarvo,
+        knta.koodiversio as kunta_koodiversio,
+        mkta.versioitu_koodiuri as maakunta_versioitu_koodiuri,
+        mkta.koodiuri as maakunta_koodiuri,
+        mkta.koodiarvo as maakunta_koodiarvo,
+        mkta.koodiversio as maakunta_koodiversio
+    from kunta as knta
+    inner join rel as rela on knta.koodiuri = rela.ylakoodiuri and knta.koodiversio = rela.ylakoodiversio
+    inner join maakunta as mkta on rela.alakoodiuri = mkta.koodiuri and rela.alakoodiversio = mkta.koodiversio
+),
+
 final as (
     select
-    kunta.versioitu_koodiuri as kunta_versioitu_koodiuri,
-    kunta.koodiuri as kunta_koodiuri,
-    kunta.koodiarvo as kunta_koodiarvo,
-    kunta.koodiversio as kunta_koodiversio,
-    maakunta.versioitu_koodiuri as maakunta_versioitu_koodiuri,
-    maakunta.koodiuri as maakunta_koodiuri,
-    maakunta.koodiarvo as maakunta_koodiarvo,
-    maakunta.koodiversio as maakunta_koodiversio
-    from kunta
-    join rel on kunta.koodiuri = rel.ylakoodiuri and kunta.koodiversio=rel.ylakoodiversio
-    join maakunta on maakunta.koodiuri = rel.alakoodiuri and maakunta.koodiversio=rel.alakoodiversio
+        {{ dbt_utils.generate_surrogate_key([
+        'kunta_versioitu_koodiuri',
+        'maakunta_versioitu_koodiuri'
+        ]
+        ) }} as id,
+        *
+    from kunta_maakunta_relaatio
 )
 
-select 
-    {{ dbt_utils.generate_surrogate_key([
-    'kunta_versioitu_koodiuri',
-    'maakunta_versioitu_koodiuri'
-    ]
-    ) }} as id,
-    * 
-from final
+select * from final
