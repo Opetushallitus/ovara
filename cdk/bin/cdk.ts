@@ -17,18 +17,20 @@ const environmentName = app.node.tryGetContext('environment') || process.env.ENV
 const props = getGenericStackProps(environmentName);
 const config = props.config;
 
-const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`, props);
+const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`, {
+  ...props,
+});
 
 const certificateStack = new CertificateStack(
   app,
   `${config.environment}-CertificateStack`,
   {
+    ...props,
     env: {
       region: 'us-east-1',
+      account: `${config.accountId}`,
     },
     crossRegionReferences: true,
-    publicHostedZone: route53Stack.publicHostedZone,
-    ...props,
   }
 );
 
@@ -40,10 +42,10 @@ const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
 });
 
 const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
-  crossRegionReferences: true,
   siirtotiedostoLambda: lamdaStack.siirtotiedostoLambda,
   ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
+  crossRegionReferences: true,
 });
 
 const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {

@@ -3,5 +3,9 @@
     "eu-west-1a",
     "eu-west-1b",
     "eu-west-1c"
-  ]
+  ],
+  "hosted-zone:account=654654623010:domainName=ovara.testiopintopolku.fi:region=us-east-1": {
+    "Id": "/hostedzone/Z02953483K87ZBZSNH2B8",
+    "Name": "ovara.testiopintopolku.fi."
+  }
 }
