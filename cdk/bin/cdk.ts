@@ -6,6 +6,7 @@ import { AwsSolutionsChecks } from 'cdk-nag';
 import { BastionStack } from '../lib/bastion-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
+import { LambdaStack } from '../lib/lambda-stack';
 import { NetworkStack } from '../lib/network-stack';
 import { Route53Stack } from '../lib/route53-stack';
 import { S3Stack } from '../lib/s3-stack';
@@ -19,15 +20,20 @@ const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`,
 
 const networkStack = new NetworkStack(app, `${config.environment}-NetworkStack`, props);
 
-const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
-  publicHostedZone: route53Stack.publicHostedZone,
+const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
   ...props,
 });
 
 const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
-  dbClusterResourceId: databaseStack.dbClusterResourceId,
-  dbUser: 'app',
+  siirtotiedostoLambda: lamdaStack.siirtotiedostoLambda,
+  ...props,
+});
+
+const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
+  publicHostedZone: route53Stack.publicHostedZone,
+  vpc: networkStack.vpc,
+  siirtotiedostoLambda: lamdaStack.siirtotiedostoLambda,
   ...props,
 });
 
