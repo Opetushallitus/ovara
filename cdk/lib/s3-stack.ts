@@ -1,10 +1,15 @@
 import path = require('path');
 
 import * as cdk from 'aws-cdk-lib';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
+import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
+import { ARecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -13,6 +18,8 @@ import { Config, GenericStackProps } from './config';
 
 export interface S3Props extends GenericStackProps {
   siirtotiedostoLambda: lambda.IFunction;
+  ovaraWildcardCertificate: acm.ICertificate;
+  zone: IHostedZone;
 }
 
 export class S3Stack extends cdk.Stack {
@@ -117,6 +124,35 @@ export class S3Stack extends cdk.Stack {
       ),
     });
 
+    const dokumentaatioBucket = new s3.Bucket(
+      this,
+      `${config.environment}-dokumentaatio`,
+      {
+        enforceSSL: true,
+        bucketName: `${config.environment}-ovara-dokumentaatio`,
+      }
+    );
+
+    const dokumentaatioCloudFrontToS3 = new cloudFront.Distribution(
+      this,
+      `${config.environment}-dokumentaatio-cloudfront-to-s3`,
+      {
+        defaultRootObject: 'index.html',
+        defaultBehavior: {
+          origin: new S3Origin(dokumentaatioBucket),
+        },
+        domainNames: [`dokumentaatio.${config.publicHostedZone}`],
+        minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
+        certificate: props.ovaraWildcardCertificate,
+      }
+    );
+
+    new ARecord(this, `${config.environment}-dokumentaatio-arecord`, {
+      zone: props.zone,
+      recordName: 'dokumentaatio',
+      target: RecordTarget.fromAlias(new CloudFrontTarget(dokumentaatioCloudFrontToS3)),
+    });
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
       {
@@ -126,6 +162,14 @@ export class S3Stack extends cdk.Stack {
       {
         id: 'AwsSolutions-IAM5',
         reason: 'Account assuming the role delegates only needed access rights',
+      },
+      {
+        id: 'AwsSolutions-S1',
+        reason: 'Not interested in access logs',
+      },
+      {
+        id: 'AwsSolutions-CFR3',
+        reason: 'Not interested in access logs',
       },
     ]);
   }

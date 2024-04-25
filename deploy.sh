@@ -91,7 +91,7 @@ if [[ "${build}" == "true" ]]; then
     export ENVIRONMENT=$environment
     cd "${git_root}/cdk/"
     npm run build
-    npx cdk synth
+    cdk synth
 fi
 
 if [[ "${deploy}" == "true" ]]; then
