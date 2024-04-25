@@ -1,30 +1,41 @@
 models:
   - name: int_koodisto_koulutus
-    description: Koulutuskoodit ja niiden astetasot ja alatasot yhdistetty
+    description: Koulutuksen tiedot
     columns:
       - name: versioitu_koodiuri
-        description: '{{ doc("versioitu_koodiuri") }}'
+        description: Koodiuri jossa on mukana koodisto, koodiarvo ja koodistoversio
+          muodossa <koodisto>_<koodiarvo>#<koodistoversio>. Toimii taulun
+          primary key:na
         data_type: text
         tests:
-          - not_null
+          - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusastetaso1
+        tests:
+          - not_null
+      - name: koodiarvo
         description: ""
         data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        tests:
+          - not_null
+      - name: nimi_fi
         description: ""
         data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+      - name: nimi_sv
         description: ""
         data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+      - name: nimi_en
         description: ""
         data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusalataso3
+      - name: viimeisin_versio
         description: ""
-        data_type: text
+        data_type: boolean
   - name: int_koodisto_maa_2
     description: Koodistosta kaikkien maiden koodi ja koodistoversiot. Tämä käyttää
       koodisto maatjavaltiot2 jossa maakoodina on numeerinen arvo
@@ -1043,22 +1054,22 @@ models:
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
         tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
         tests:
-        - not_null
+          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
         tests:
-        - not_null
+          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
         tests:
-        - not_null
+          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -1071,3 +1082,65 @@ models:
       - name: viimeisin_versio
         description: ""
         data_type: boolean
+  - name: int_koodisto_koulutus_alat_ja_asteet
+    description: Koulutkselle haetuu kaikki koulutusalat ja koulutusasteet
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        tests:
+          - not_null
+      - name: koodiuri
+        description: ""
+        data_type: text
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso1
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso3
+        description: ""
+        data_type: text
+  - name: int_koodisto_kkl2016koulutusalataso1_relaatio_koulutus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+        description: ""
+        data_type: text
+  - name: int_koodisto_kkl2016koulutusalataso2_relaatio_koulutus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+        description: ""
+        data_type: text
+  - name: int_koodisto_kkl2016koulutusalataso3_relaatio_koulutus
+    description: ""
+    columns: []
+  - name: int_koodisto_kkl2016koulutusastetaso1_relaatio_koulutus
+    description: ""
+    columns: []
+  - name: int_koodisto_kkl2016koulutusastetaso2_relaatio_koulutus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        description: ""
+        data_type: text
