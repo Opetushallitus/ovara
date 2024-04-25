@@ -1,6 +1,9 @@
 import path = require('path');
 
+import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 import * as cdk from 'aws-cdk-lib';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -13,6 +16,7 @@ import { Config, GenericStackProps } from './config';
 
 export interface S3Props extends GenericStackProps {
   siirtotiedostoLambda: lambda.IFunction;
+  ovaraWildcardCertificate: acm.ICertificate;
 }
 
 export class S3Stack extends cdk.Stack {
@@ -116,6 +120,21 @@ export class S3Stack extends cdk.Stack {
         `${deploymentS3BucketName}-server-access-logs`
       ),
     });
+
+    const dokumentaatioCloudFrontToS3 = new CloudFrontToS3(
+      this,
+      `${config.environment}-dokumentaatio-cloudfront-to-s3`,
+      {
+        bucketProps: {
+          bucketName: `${config.environment}-dokumentaatio`,
+        },
+        cloudFrontDistributionProps: {
+          domainNames: [`dokumentaatio.${config.publicHostedZone}`],
+          minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
+          certificate: props.ovaraWildcardCertificate,
+        },
+      }
+    );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },

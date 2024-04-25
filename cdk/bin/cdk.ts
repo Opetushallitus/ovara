@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
 import { BastionStack } from '../lib/bastion-stack';
+import { CertificateStack } from '../lib/certificate-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
 import { LambdaStack } from '../lib/lambda-stack';
@@ -18,6 +19,19 @@ const config = props.config;
 
 const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`, props);
 
+const certificateStack = new CertificateStack(
+  app,
+  `${config.environment}-CertificateStack`,
+  {
+    env: {
+      region: 'us-east-1',
+    },
+    crossRegionReferences: true,
+    publicHostedZone: route53Stack.publicHostedZone,
+    ...props,
+  }
+);
+
 const networkStack = new NetworkStack(app, `${config.environment}-NetworkStack`, props);
 
 const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
@@ -26,7 +40,9 @@ const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
 });
 
 const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
+  crossRegionReferences: true,
   siirtotiedostoLambda: lamdaStack.siirtotiedostoLambda,
+  ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
 });
 
@@ -44,4 +60,5 @@ const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`,
   vpc: networkStack.vpc,
   ...props,
 });
+
 cdk.Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
