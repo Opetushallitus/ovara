@@ -46,6 +46,7 @@ const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
   ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
   crossRegionReferences: true,
+  zone: route53Stack.publicHostedZone,
 });
 
 const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
