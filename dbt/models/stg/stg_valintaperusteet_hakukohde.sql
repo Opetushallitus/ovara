@@ -1,16 +1,15 @@
 with source as (
-      select * from {{ source('ovara', 'valintaperusteet_hakukohde') }}
- 
-      {% if is_incremental() %}
+    select * from {{ source('ovara', 'valintaperusteet_hakukohde') }}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-final as
-(
-    select 
+final as (
+    select
         data -> 'valinnanVaihe' ->> 'valinnanVaiheOid'::varchar as valinnanvaihe_id,
         data ->> 'hakukohdeOid'::varchar as hakukohde_oid,
         data ->> 'hakuOid'::varchar as haku_oid,

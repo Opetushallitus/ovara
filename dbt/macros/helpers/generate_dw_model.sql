@@ -56,7 +56,7 @@ _final as (
     {% if is_incremental() -%}
     and
         {# and only rows which has different hash #}
-        {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} not in (select distinct last_value(dw_metadata_hash) over
+        {{ dbt_utils.generate_surrogate_key(columns_to_hash) }} not in (select last_value(dw_metadata_hash) over
             (partition by dw_metadata_key
             order by dw_metadata_timestamp asc) as latest_hash
             from {{ this }})

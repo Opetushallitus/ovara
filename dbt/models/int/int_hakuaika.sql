@@ -5,47 +5,41 @@
    )
 }}
 
-with hakukohde as 
-(
-    select 
-    jsonb_array_elements(hakuajat) hakuaika from {{ref('dw_kouta_hakukohde')}}
-),
-haku as 
-(
-    select 
-    jsonb_array_elements(hakuajat) hakuaika from {{ref('dw_kouta_haku')}}
+with hakukohde as (
+    select jsonb_array_elements(hakuajat) as hakuaika from {{ ref('dw_kouta_hakukohde') }}
 ),
 
-hakuajat as 
-(
-    select distinct  
-    (hakuaika ->> 'alkaa')::timestamptz as alkaa,
-    (hakuaika ->> 'paattyy')::timestamptz as paattyy
+haku as (
+    select jsonb_array_elements(hakuajat) as hakuaika from {{ ref('dw_kouta_haku') }}
+),
+
+hakuajat as (
+    select distinct
+        (hakuaika ->> 'alkaa')::timestamptz as alkaa,
+        (hakuaika ->> 'paattyy')::timestamptz as paattyy
     from hakukohde
     union all
-    select distinct  
-    (hakuaika ->> 'alkaa')::timestamptz as alkaa,
-    (hakuaika ->> 'paattyy')::timestamptz as paattyy
+    select distinct
+        (hakuaika ->> 'alkaa')::timestamptz as alkaa,
+        (hakuaika ->> 'paattyy')::timestamptz as paattyy
     from haku
+),
 
- ),
- final as 
- (
-    select 
-    {{ dbt_utils.generate_surrogate_key(
-      ['alkaa',
-      'paattyy']
-  ) }} as hakuaika_id,
-    alkaa,
-    paattyy,
-    current_timestamp::timestamptz as luotu,
-    current_timestamp::timestamptz as muokattu
+final as (
+    select
+        {{ dbt_utils.generate_surrogate_key(
+            ['alkaa',
+            'paattyy']
+            ) }} as hakuaika_id,
+        alkaa,
+        paattyy,
+        current_timestamp::timestamptz as luotu,
+        current_timestamp::timestamptz as muokattu
     from hakuajat
- )
+)
 
 select final.* from final
 {% if is_incremental() -%}
-    right join {{this}} this on final.hakuaika_id=this.hakuaika_id
+    right join {{ this }} as this on final.hakuaika_id = this.hakuaika_id -- noqa: CV08
     where this.alkaa is null
 {% endif %}
-
