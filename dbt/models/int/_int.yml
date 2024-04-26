@@ -61,5 +61,17 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Viimeksi tallennettu versio. Lähdejärjestelmästä ei tule muutosaikaleimaa, joten tämä aikaleima kertoo tallennusajankohdan tähän tauluun
+        description: Viimeksi tallennettu versio. Lähdejärjestelmästä ei tule
+          muutosaikaleimaa, joten tämä aikaleima kertoo tallennusajankohdan
+          tähän tauluun
         data_type: timestamp with time zone
+  - name: int_koulutus_koulutuskoodi
+    description: Koulutusten koulutuskoodit purettu auki tauluun
+    columns:
+      - name: oid
+        description: Koulutuksen oid
+        data_type: text
+      - name: koulutuskoodiuri
+        description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla
+          useampi koulutuskoodi
+        data_type: text
