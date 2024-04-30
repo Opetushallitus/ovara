@@ -5,6 +5,7 @@ import { Duration } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -54,8 +55,21 @@ export class LambdaStack extends cdk.Stack {
       'DB sallittu lambdoille'
     );
 
+    const auroraClusterResourceId = cdk.Fn.importValue(
+      `${config.environment}-opiskelijavalinnanraportointi-aurora-cluster-resourceid`
+    );
+
+    const dbConnectStatement = new iam.PolicyStatement();
+    dbConnectStatement.addResources(
+      `arn:aws:rds-db:${props.config.region}:${props.config.accountId}:dbuser:${auroraClusterResourceId}/insert_raw_user`
+    );
+    dbConnectStatement.addActions('rds-db:connect');
+    const dbConnectPolicyDocument = new iam.PolicyDocument();
+    dbConnectPolicyDocument.addStatements(dbConnectStatement);
+
     const executionRole = new iam.Role(this, `${config.environment}-LambdaRole`, {
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      inlinePolicies: { dbConnectPolicyDocument },
     });
     executionRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName(
@@ -63,24 +77,26 @@ export class LambdaStack extends cdk.Stack {
       )
     );
 
-    this.siirtotiedostoLambda = new lambda.Function(this, 'Transferfile loader', {
-      functionName: `${config.environment}-transfer-file-loader`,
-      runtime: lambda.Runtime.PYTHON_3_12,
+    const dbEndpointName = cdk.Fn.importValue(
+      `${config.environment}-opiskelijavalinnanraportointi-database-endpoint`
+    );
+
+    this.siirtotiedostoLambda = new NodejsFunction(this, 'Transferfile loader', {
+      entry: '../../lambda/siirtotiedosto/TransferfileToDatabase.ts',
+      handler: 'main',
+      runtime: lambda.Runtime.NODEJS_20_X,
       architecture: lambda.Architecture.ARM_64,
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/siirtotiedosto')),
-      handler: 'AddDataToDatabase.lambda_handler',
-      layers: [sharedLayer],
+      timeout: Duration.seconds(300),
+      memorySize: 512,
       vpc: props.vpc,
       securityGroups: [lambdaSecurityGroup],
       role: executionRole,
       environment: {
-        host: '',
+        host: dbEndpointName,
         database: 'ovara',
         user: 'insert_raw_user',
         port: '5432',
       },
-      memorySize: 512,
-      timeout: Duration.seconds(300),
     });
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [

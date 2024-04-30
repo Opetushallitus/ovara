@@ -1,6 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
@@ -86,6 +85,19 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
+    new cdk.CfnOutput(this, 'AuroraClusterResourceId', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-cluster-resourceid`,
+      description: 'Aurora cluster resource id',
+      value: auroraCluster.clusterResourceIdentifier,
+    });
+
+    new cdk.CfnOutput(this, 'DatabaseEndpointName', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-database-endpoint`,
+      description: 'Database endpoint name',
+      value: auroraCluster.clusterEndpoint.hostname,
+    });
+
+    /*
     const dbConnectStatement = new iam.PolicyStatement();
     dbConnectStatement.addResources(
       `arn:aws:rds-db:${props.config.region}:${props.config.accountId}:dbuser:${auroraCluster.clusterResourceIdentifier}/insert_raw_user`
@@ -96,6 +108,7 @@ export class DatabaseStack extends cdk.Stack {
       'LambdaExecutionRole',
       props.siirtotiedostoLambda.role!.roleArn
     ).addToPrincipalPolicy(dbConnectStatement);
+    */
 
     new route53.CnameRecord(this, `${config.environment}-DbCnameRecord`, {
       recordName: `raportointi.db`,

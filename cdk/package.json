@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "20.11.17",
+    "@types/pg": "^8.11.5",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "aws-cdk": "2.129.0",
@@ -36,8 +37,14 @@
     "typescript": "~5.3.3"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.556.0",
+    "@aws-sdk/rds-signer": "^3.556.0",
     "aws-cdk-lib": "^2.139.0",
     "constructs": "^10.0.0",
+    "date-fns": "^3.6.0",
+    "fs": "^0.0.1-security",
+    "pg": "^8.11.5",
+    "pg-promise": "^11.6.0",
     "source-map-support": "^0.5.21"
   },
   "lint-staged": {
