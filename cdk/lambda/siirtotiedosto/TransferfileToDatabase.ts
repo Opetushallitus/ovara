@@ -1,6 +1,9 @@
+import * as fs from 'fs';
+
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Signer } from '@aws-sdk/rds-signer';
 import { Handler } from 'aws-cdk-lib/aws-lambda';
+import { S3Event } from 'aws-lambda';
 import { parse } from 'date-fns';
 import { Client } from 'pg';
 import * as pgPromise from 'pg-promise';
@@ -14,7 +17,7 @@ const DEFAULT_DB_POOL_PARAMS = {
   connectionTimeoutMillis: 10000,
 };
 
-export const main: Handler = async (event, _context) => {
+export const main: Handler = async (event: S3Event) => {
   const startTime = new Date().getTime();
   const bucket = event.Records[0].s3.bucket.name;
   const key: string = event.Records[0].s3.object.key;
@@ -58,7 +61,7 @@ export const main: Handler = async (event, _context) => {
     password: token,
     ssl: {
       rejectUnauthorized: false,
-      cert: 'eu-west-1-bundle.pem',
+      cert: fs.readFileSync(__dirname + 'eu-west-1-bundle.pem').toString(),
     },
   };
   const dbClient = new Client(config);

@@ -36,13 +36,7 @@ const certificateStack = new CertificateStack(
 
 const networkStack = new NetworkStack(app, `${config.environment}-NetworkStack`, props);
 
-const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
-  vpc: networkStack.vpc,
-  ...props,
-});
-
 const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
-  siirtotiedostoLambda: lamdaStack.siirtotiedostoLambda,
   ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
   crossRegionReferences: true,
@@ -52,7 +46,12 @@ const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
 const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
   publicHostedZone: route53Stack.publicHostedZone,
   vpc: networkStack.vpc,
-  siirtotiedostoLambda: lamdaStack.siirtotiedostoLambda,
+  ...props,
+});
+
+const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
+  vpc: networkStack.vpc,
+  siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
   ...props,
 });
 

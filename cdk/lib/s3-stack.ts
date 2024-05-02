@@ -6,7 +6,6 @@ import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import { ARecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -17,13 +16,13 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface S3Props extends GenericStackProps {
-  siirtotiedostoLambda: lambda.IFunction;
   ovaraWildcardCertificate: acm.ICertificate;
   zone: IHostedZone;
 }
 
 export class S3Stack extends cdk.Stack {
   public readonly deploymentS3Bucket: s3.IBucket;
+  public readonly siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
   constructor(scope: Construct, id: string, props: S3Props) {
     super(scope, id, props);
 
@@ -78,6 +77,11 @@ export class S3Stack extends cdk.Stack {
       's3:PutObjectTagging'
     );
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
+    new cdk.CfnOutput(this, 'SiirtotiedostoBucketContentArn', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-content-arn`,
+      description: 'Siirtotiedosto bucket content arn',
+      value: `${siirtotiedostoS3Bucket.bucketArn}/*`,
+    });
 
     const kmsResourceStatement = new iam.PolicyStatement();
     kmsResourceStatement.addResources(siirtotiedostotKmsKey.keyArn);
@@ -88,18 +92,15 @@ export class S3Stack extends cdk.Stack {
       'kms:DescribeKey'
     );
     s3CrossAccountRole.addToPolicy(kmsResourceStatement);
-
-    const lambdaExecutionRole = iam.Role.fromRoleArn(
-      this,
-      'LambdaExecutionRole',
-      props.siirtotiedostoLambda.role!.roleArn
-    );
-    lambdaExecutionRole.addToPrincipalPolicy(objectResourceStatement);
-    lambdaExecutionRole.addToPrincipalPolicy(kmsResourceStatement);
+    new cdk.CfnOutput(this, 'SiirtotiedostoKeyArn', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-key-arn`,
+      description: 'Siirtotiedosto key arn',
+      value: siirtotiedostotKmsKey.keyArn,
+    });
 
     siirtotiedostoS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
 
-    const s3PutEventSource = new lambdaEventSources.S3EventSource(
+    this.siirtotiedostoPutEventSource = new lambdaEventSources.S3EventSource(
       siirtotiedostoS3Bucket,
       {
         events: [
@@ -108,7 +109,6 @@ export class S3Stack extends cdk.Stack {
         ],
       }
     );
-    props.siirtotiedostoLambda.addEventSource(s3PutEventSource);
 
     const deploymentS3BucketName = `${config.environment}-deployment`;
     this.deploymentS3Bucket = new s3.Bucket(this, deploymentS3BucketName, {

@@ -13,20 +13,14 @@ import { Config, GenericStackProps } from './config';
 
 export interface LambdaProps extends GenericStackProps {
   vpc: ec2.IVpc;
+  siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
 }
 
 export class LambdaStack extends cdk.Stack {
-  public readonly siirtotiedostoLambda: lambda.IFunction;
   constructor(scope: Construct, id: string, props: LambdaProps) {
     super(scope, id, props);
 
     const config: Config = props.config;
-
-    const sharedLayer = new lambda.LayerVersion(this, 'shared-layer', {
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/layers')),
-      compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
-      layerVersionName: 'shared-layer',
-    });
 
     const lambdaSecurityGroup = new ec2.SecurityGroup(
       this,
@@ -55,6 +49,38 @@ export class LambdaStack extends cdk.Stack {
       'DB sallittu lambdoille'
     );
 
+    const siirtotiedostoBucketContentArn = cdk.Fn.importValue(
+      `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-content-arn`
+    );
+    const siirtotiedostoBucketContentStatement = new iam.PolicyStatement();
+    siirtotiedostoBucketContentStatement.addResources(siirtotiedostoBucketContentArn);
+    siirtotiedostoBucketContentStatement.addActions(
+      's3:GetObject',
+      's3:PutObject',
+      's3:GetObjectAttributes',
+      's3:ListMultipartUploadParts',
+      's3:AbortMultipartUpload',
+      's3:PutObjectTagging'
+    );
+    const siirtotiedostoBucketContentDocument = new iam.PolicyDocument();
+    siirtotiedostoBucketContentDocument.addStatements(
+      siirtotiedostoBucketContentStatement
+    );
+
+    const siirtotiedostoKeyArn = cdk.Fn.importValue(
+      `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-key-arn`
+    );
+    const siirtotiedostoKeyStatement = new iam.PolicyStatement();
+    siirtotiedostoKeyStatement.addResources(siirtotiedostoKeyArn);
+    siirtotiedostoKeyStatement.addActions(
+      'kms:Encrypt',
+      'kms:Decrypt',
+      'kms:GenerateDataKey',
+      'kms:DescribeKey'
+    );
+    const siirtotiedostoKeyDocument = new iam.PolicyDocument();
+    siirtotiedostoKeyDocument.addStatements(siirtotiedostoKeyStatement);
+
     const auroraClusterResourceId = cdk.Fn.importValue(
       `${config.environment}-opiskelijavalinnanraportointi-aurora-cluster-resourceid`
     );
@@ -69,7 +95,11 @@ export class LambdaStack extends cdk.Stack {
 
     const executionRole = new iam.Role(this, `${config.environment}-LambdaRole`, {
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
-      inlinePolicies: { dbConnectPolicyDocument },
+      inlinePolicies: {
+        dbConnectPolicyDocument,
+        siirtotiedostoBucketContentDocument,
+        siirtotiedostoKeyDocument,
+      },
     });
     executionRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName(
@@ -81,8 +111,8 @@ export class LambdaStack extends cdk.Stack {
       `${config.environment}-opiskelijavalinnanraportointi-database-endpoint`
     );
 
-    this.siirtotiedostoLambda = new NodejsFunction(this, 'Transferfile loader', {
-      entry: '../../lambda/siirtotiedosto/TransferfileToDatabase.ts',
+    const siirtotiedostoLambda = new NodejsFunction(this, 'Transferfile loader', {
+      entry: 'lambda/siirtotiedosto/TransferfileToDatabase.ts',
       handler: 'main',
       runtime: lambda.Runtime.NODEJS_20_X,
       architecture: lambda.Architecture.ARM_64,
@@ -98,6 +128,7 @@ export class LambdaStack extends cdk.Stack {
         port: '5432',
       },
     });
+    siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {

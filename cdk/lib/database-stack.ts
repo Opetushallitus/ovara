@@ -1,7 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as kms from 'aws-cdk-lib/aws-kms';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as cdkNag from 'cdk-nag';
@@ -12,7 +11,6 @@ import { Config, GenericStackProps } from './config';
 export interface DatabaseStackProps extends GenericStackProps {
   publicHostedZone: route53.IHostedZone;
   vpc: ec2.IVpc;
-  siirtotiedostoLambda: lambda.IFunction;
 }
 
 export class DatabaseStack extends cdk.Stack {
@@ -96,19 +94,6 @@ export class DatabaseStack extends cdk.Stack {
       description: 'Database endpoint name',
       value: auroraCluster.clusterEndpoint.hostname,
     });
-
-    /*
-    const dbConnectStatement = new iam.PolicyStatement();
-    dbConnectStatement.addResources(
-      `arn:aws:rds-db:${props.config.region}:${props.config.accountId}:dbuser:${auroraCluster.clusterResourceIdentifier}/insert_raw_user`
-    );
-    dbConnectStatement.addActions('rds-db:connect');
-    iam.Role.fromRoleArn(
-      this,
-      'LambdaExecutionRole',
-      props.siirtotiedostoLambda.role!.roleArn
-    ).addToPrincipalPolicy(dbConnectStatement);
-    */
 
     new route53.CnameRecord(this, `${config.environment}-DbCnameRecord`, {
       recordName: `raportointi.db`,
