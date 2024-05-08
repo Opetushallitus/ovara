@@ -49,11 +49,15 @@ export class LambdaStack extends cdk.Stack {
       'DB sallittu lambdoille'
     );
 
-    const siirtotiedostoBucketContentArn = cdk.Fn.importValue(
-      `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-content-arn`
+    const siirtotiedostoBucketArn = cdk.Fn.importValue(
+      `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-arn`
     );
+    const siirtotiedostoBucketStatement = new iam.PolicyStatement();
+    siirtotiedostoBucketStatement.addResources(siirtotiedostoBucketArn);
+    siirtotiedostoBucketStatement.addActions('s3:ListBucket', 's3:ListBucketVersions');
+
     const siirtotiedostoBucketContentStatement = new iam.PolicyStatement();
-    siirtotiedostoBucketContentStatement.addResources(siirtotiedostoBucketContentArn);
+    siirtotiedostoBucketContentStatement.addResources(`${siirtotiedostoBucketArn}/*`);
     siirtotiedostoBucketContentStatement.addActions(
       's3:GetObject',
       's3:PutObject',
@@ -64,6 +68,7 @@ export class LambdaStack extends cdk.Stack {
     );
     const siirtotiedostoBucketContentDocument = new iam.PolicyDocument();
     siirtotiedostoBucketContentDocument.addStatements(
+      siirtotiedostoBucketStatement,
       siirtotiedostoBucketContentStatement
     );
 
@@ -103,6 +108,11 @@ export class LambdaStack extends cdk.Stack {
     });
     executionRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName(
+        'service-role/AWSLambdaBasicExecutionRole'
+      )
+    );
+    executionRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
         'service-role/AWSLambdaVPCAccessExecutionRole'
       )
     );
@@ -126,6 +136,16 @@ export class LambdaStack extends cdk.Stack {
         database: 'ovara',
         user: 'insert_raw_user',
         port: '5432',
+        batch_size: '100',
+      },
+      bundling: {
+        commandHooks: {
+          beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
+          beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
+          afterBundling: (inputDir: string, outputDir: string): Array<string> => [
+            `cp ${inputDir}/lambda/siirtotiedosto/eu-west-1-bundle.pem ${outputDir}`,
+          ],
+        },
       },
     });
     siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
@@ -134,6 +154,10 @@ export class LambdaStack extends cdk.Stack {
       {
         id: 'AwsSolutions-IAM4',
         reason: 'Account assuming the role delegates only needed access rights',
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        reason: 'Wildcard used only for bucket contents',
       },
     ]);
   }

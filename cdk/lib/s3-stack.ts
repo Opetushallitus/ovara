@@ -77,10 +77,10 @@ export class S3Stack extends cdk.Stack {
       's3:PutObjectTagging'
     );
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
-    new cdk.CfnOutput(this, 'SiirtotiedostoBucketContentArn', {
-      exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-content-arn`,
-      description: 'Siirtotiedosto bucket content arn',
-      value: `${siirtotiedostoS3Bucket.bucketArn}/*`,
+    new cdk.CfnOutput(this, 'SiirtotiedostoBucketArn', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-arn`,
+      description: 'Siirtotiedosto bucket arn',
+      value: `${siirtotiedostoS3Bucket.bucketArn}`,
     });
 
     const kmsResourceStatement = new iam.PolicyStatement();
@@ -161,7 +161,7 @@ export class S3Stack extends cdk.Stack {
       },
       {
         id: 'AwsSolutions-IAM5',
-        reason: 'Account assuming the role delegates only needed access rights',
+        reason: 'Wildcard used only for bucket contents',
       },
       {
         id: 'AwsSolutions-S1',

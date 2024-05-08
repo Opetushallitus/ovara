@@ -5,29 +5,78 @@ import { Signer } from '@aws-sdk/rds-signer';
 import { Handler } from 'aws-cdk-lib/aws-lambda';
 import { S3Event } from 'aws-lambda';
 import { parse } from 'date-fns';
-import { Client } from 'pg';
-import * as pgPromise from 'pg-promise';
+import * as pg from 'pg';
+import { Sequelize, DataTypes, Model } from 'sequelize';
 
 const client = new S3Client({});
 
 const DEFAULT_DB_POOL_PARAMS = {
   max: 1,
   min: 0,
-  idleTimeoutMillis: 120000,
-  connectionTimeoutMillis: 10000,
+  idle: 120000,
+  acquire: 10000,
 };
+
+class Raw extends Model {}
+
+const initRaw = (sequelize: Sequelize, rawTableName: string) => {
+  Raw.init(
+    {
+      data: {
+        type: DataTypes.JSON,
+      },
+      dw_metadata_source_timestamp_at: {
+        type: DataTypes.DATE,
+      },
+      dw_metadata_dbt_copied_at: {
+        type: DataTypes.DATE,
+      },
+      dw_metadata_filename: {
+        type: DataTypes.STRING,
+      },
+      dw_metadata_file_row_number: {
+        type: DataTypes.INTEGER,
+      },
+    },
+    {
+      schema: 'raw',
+      timestamps: false,
+      tableName: rawTableName,
+      sequelize,
+    }
+  );
+  Raw.removeAttribute('id');
+};
+
+const row = (
+  json: object,
+  exportTime: Date,
+  copyTime: Date,
+  filename: string,
+  counter: number
+) => ({
+  data: json,
+  dw_metadata_source_timestamp_at: exportTime,
+  dw_metadata_dbt_copied_at: copyTime,
+  dw_metadata_filename: filename,
+  dw_metadata_file_row_number: counter,
+});
 
 export const main: Handler = async (event: S3Event) => {
   const startTime = new Date().getTime();
   const bucket = event.Records[0].s3.bucket.name;
-  const key: string = event.Records[0].s3.object.key;
+  const key: string = event.Records[0].s3.object.key.replace('%2B', '+');
 
+  console.log(`processing key ${key}`);
   const host = process.env.host || '';
-  const user = process.env.user || '';
+  const username = process.env.user || '';
   const database = process.env.database || '';
 
   const portStr = process.env.port;
   const port = portStr ? Number(portStr) : 5432;
+
+  const batchSizeStr = process.env.batch_size || '';
+  const batchSize = batchSizeStr ? Number(batchSizeStr) : 100;
 
   const command = new GetObjectCommand({
     Bucket: bucket,
@@ -42,14 +91,13 @@ export const main: Handler = async (event: S3Event) => {
     console.error(err);
     return { statusCode: 500, body: 'Siirtotiedoston luku epaonnistui' };
   }
-  const contentJson: Array<object> = JSON.parse(contents);
-  const filename = key.replace('%2B', '+');
-  const rawTable = filename.split('__')[0].split('/')[-1];
-  const exportTimeStr = filename.split('__')[1];
-  const exportTime = parse(exportTimeStr, 'yyyy-MM-dd_HH:mm:ss xx', new Date());
-  const source = filename.split('/')[1];
+  const rawTableSplit = key.split('__')[0].split('/');
+  const rawTable = rawTableSplit[rawTableSplit.length - 1];
+  const exportTimeStr = key.split('__')[1];
+  const exportTime = parse(exportTimeStr, 'yyyy-MM-dd_HH.mm.ssX', new Date());
+  const source = key.split('/')[0];
 
-  const signer = new Signer({ hostname: host, port, username: user });
+  const signer = new Signer({ hostname: host, port, username });
   const token = await signer.getAuthToken();
 
   const config = {
@@ -57,59 +105,74 @@ export const main: Handler = async (event: S3Event) => {
     host,
     port,
     database,
-    user,
+    username,
     password: token,
-    ssl: {
-      rejectUnauthorized: false,
-      cert: fs.readFileSync(__dirname + 'eu-west-1-bundle.pem').toString(),
+    dialectModule: pg,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        //enableTrace: true,
+        rejectUnauthorized: false,
+        cert: fs.readFileSync(__dirname + '/eu-west-1-bundle.pem').toString(),
+      },
     },
   };
-  const dbClient = new Client(config);
-  await dbClient.connect();
 
+  let nbrOfRows = 0;
   try {
-    const pgp = pgPromise();
-    const db = pgp(dbClient);
-    const columns = new pgp.helpers.ColumnSet(
-      [
-        'data',
-        'dw_metadata_source_timestamp_at',
-        'dw_metadata_dbt_copied_at',
-        'dw_metadata_filename',
-        'dw_metadata_file_row_number',
-      ],
-      { table: `raw.${rawTable}` }
+    nbrOfRows = await saveToDb(
+      config,
+      rawTable,
+      contents,
+      exportTime,
+      key,
+      source,
+      batchSize
     );
-
-    const now = new Date();
-    let rowNumberCounter = 0;
-    const partitionedData = partition(contentJson, 2500);
-    partitionedData.forEach(async (partition) => {
-      const rows = partition.map((json) => ({
-        data: json,
-        dw_metadata_source_timestamp_at: exportTime,
-        dw_metadata_dbt_copied_at: now,
-        dw_metadata_filename: filename,
-        dw_metadata_file_row_number: (rowNumberCounter += 1),
-      }));
-      const insert = pgp.helpers.insert(rows, columns);
-      await db.none(insert);
-      console.log(
-        `Lisätty tietokantaan ${partition.length} riviä järjestelmästä ${source}`
-      );
-    });
   } catch (err) {
     console.error(err);
     return { statusCode: 500, body: 'Tietokantaan kirjoittaminen epaonnistui' };
-  } finally {
-    dbClient.end();
   }
 
   const duration = Math.round((new Date().getTime() - startTime) / 1000);
+  console.log(
+    `Kirjoitettu kantaan ${nbrOfRows} riviä tiedostosta ${key}, ajon kesto ${duration} sekuntia`
+  );
   return {
     statusCode: 200,
-    body: `Lahde: ${source}, rivien lukumaara: ${contentJson.length}, ajon kesto: ${duration}`,
+    body: `Lahde: ${source}, rivien lukumaara: ${nbrOfRows}, ajon kesto: ${duration}`,
   };
+};
+
+const saveToDb = async (
+  config: object,
+  rawTableName: string,
+  contents: string,
+  exportTime: Date,
+  filename: string,
+  sourceSystem: string,
+  batchSize: number
+) => {
+  const dbClient = new Sequelize(config);
+  await dbClient.authenticate();
+
+  initRaw(dbClient, rawTableName);
+
+  const now = new Date();
+  let rowNumberCounter = 0;
+  const partitionedData = partition(JSON.parse(contents), batchSize);
+  for (let idx = 0; idx < partitionedData.length; idx++) {
+    const batch = partitionedData[idx];
+    const rows = batch.map((json) => {
+      rowNumberCounter += 1;
+      return row(json, exportTime, now, filename, rowNumberCounter);
+    });
+    await Raw.bulkCreate(rows);
+    console.log(
+      `Lisätty tietokantaan ${batch.length} riviä järjestelmästä ${sourceSystem}`
+    );
+  }
+  return rowNumberCounter;
 };
 
 const partition = (array: Array<object>, partitionLen: number): Array<Array<object>> => {
