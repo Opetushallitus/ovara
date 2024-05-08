@@ -11,25 +11,25 @@ with raw as (
 ),
 
 sora_terveys as (
-	select
-		hakemus_oid,
-        versio_id,
-		split_part(key,'_',2) as hakukohde_oid,
-		value as sora_terveys
-	from raw,
-	jsonb_each_text(tiedot)
-	where key like '6a5e1a0f-f47e-479e-884a-765b85bd438c_%' or key like 'sora-terveys%'
+    select
+        raw.hakemus_oid,
+        raw.versio_id,
+        raw.split_part(tied.key, '_', 2) as hakukohde_oid,
+        tied.value as sora_terveys
+    from raw,
+        jsonb_each_text(raw.tiedot) as tied
+    where tied.key like '6a5e1a0f-f47e-479e-884a-765b85bd438c_%' or tied.key like 'sora-terveys%'
 ),
 
 sora_aiempi as (
-	select
-		hakemus_oid,
-        versio_id,
-		split_part(key,'_',2) as hakukohde_oid,
-		value as sora_aiempi
-	from raw,
-	jsonb_each_text(tiedot)
-	where key like '66a6855f-d807-4331-98ea-f14098281fc1_%' or key like 'sora-aiempi%'
+    select
+        raw.hakemus_oid,
+        raw.versio_id,
+        raw.split_part(tied.key, '_', 2) as hakukohde_oid,
+        tied.value as sora_aiempi
+    from raw,
+        jsonb_each_text(raw.tiedot) as tied
+    where tied.key like '66a6855f-d807-4331-98ea-f14098281fc1_%' or tied.key like 'sora-aiempi%'
 ),
 
 hakutoive as (
@@ -47,8 +47,14 @@ select
     sote.sora_terveys,
     soai.sora_aiempi,
     current_timestamp::timestamptz as muokattu
-from hakutoive hato
-join sora_terveys sote on hato.hakukohde_oid=sote.hakukohde_oid and hato.hakemus_oid=sote.hakemus_oid and hato.versio_id=sote.versio_id
-join sora_aiempi soai on hato.hakukohde_oid=soai.hakukohde_oid and hato.hakemus_oid=soai.hakemus_oid and hato.versio_id=soai.versio_id
-
-
+from hakutoive as hato
+inner join sora_terveys as sote
+    on
+        hato.hakukohde_oid = sote.hakukohde_oid
+        and hato.hakemus_oid = sote.hakemus_oid
+        and hato.versio_id = sote.versio_id
+inner join sora_aiempi as soai
+    on
+        hato.hakukohde_oid = soai.hakukohde_oid
+        and hato.hakemus_oid = soai.hakemus_oid
+        and hato.versio_id = soai.versio_id
