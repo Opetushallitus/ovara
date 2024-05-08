@@ -1,16 +1,16 @@
 with source as (
       select * from {{ source('ovara', 'ataru_hakemus') }}
- 
+
       {% if is_incremental() %}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-final as 
-(   
-    select 
+final as
+(
+    select
         data ->> 'hakemusOid'::varchar as oid,
         (data ->> 'id')::int as versio_id,
         (data ->> 'form_key')::uuid as lomake_id,
@@ -37,7 +37,7 @@ final as
         (data -> 'keyValues' ->> 'home-town')::int as kotikunta,
         (data -> 'keyValues' ->> 'country-of-residence')::int as asuinmaa,
         (data -> 'keyValues' ->> 'gender')::int as sukupuoli,
-        (data -> 'keyValues' ->> 'nationality_group0')::int as kansalaisuus,
+        (data -> 'keyValues' -> 'nationality')::jsonb as kansalaisuus,
         (lower((data -> 'keyValues'->> 'sahkoisen-asioinnin-lupa'::varchar)) = 'kyllä') as sahkoinenviestintalupa,
         (lower((data -> 'keyValues'->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
         (lower((data -> 'keyValues'->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä') as valintatuloksen_julkaisulupa,
