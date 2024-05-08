@@ -37,7 +37,7 @@ final as
         (data -> 'keyValues' ->> 'home-town')::int as kotikunta,
         (data -> 'keyValues' ->> 'country-of-residence')::int as asuinmaa,
         (data -> 'keyValues' ->> 'gender')::int as sukupuoli,
-        (data -> 'keyValues' ->> 'nationality_group0')::int as kansalaisuus,
+        (data -> 'keyValues' -> 'nationality')::jsonb as kansalaisuus,
         (lower((data -> 'keyValues'->> 'sahkoisen-asioinnin-lupa'::varchar)) = 'kyllä') as sahkoinenviestintalupa,
         (lower((data -> 'keyValues'->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
         (lower((data -> 'keyValues'->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä') as valintatuloksen_julkaisulupa,

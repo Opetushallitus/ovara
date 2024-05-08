@@ -6,7 +6,7 @@ models:
         description: ""
         data_type: text
         tests:
-          - not_null      
+          - not_null
       - name: lomake_id
         description: ""
         data_type: uuid
@@ -86,7 +86,7 @@ models:
         data_type: integer
       - name: kansalaisuus
         description: ""
-        data_type: integer
+        data_type: jsonb
       - name: sahkoinenviestintalupa
         description: ""
         data_type: boolean
