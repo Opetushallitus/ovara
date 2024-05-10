@@ -17,7 +17,7 @@ final as
         (data ->> 'form')::int as lomakeversio_id,
         (data -> 'keyValues')::jsonb as tiedot,
         (data -> 'attachments')::jsonb as liitteet,
-        (data ->> 'created_time')::timestamptz as muokattu,
+        (data ->> 'created_time')::timestamptz as luotu,
         data ->> 'state'::varchar as tila,
         (data ->> 'submitted')::timestamptz as jatetty,
         data ->> 'lang'::varchar as kieli,
@@ -46,6 +46,7 @@ final as
         data -> 'keyValues' ->> 'phone'::varchar as puhelin,
         data -> 'keyValues' ->> 'secondary-completed-base-education–country'::varchar as pohjakoulutuksen_maa_toinen_aste,
         (data -> 'keyValues')::jsonb as keyvalues,
+        (data ->> 'modified_time')::timestamptz as muokattu,
         {{ metadata_columns() }}
 
         from source
