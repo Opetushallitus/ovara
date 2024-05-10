@@ -1,0 +1,120 @@
+models:
+  - name: int_ataru_hakutoive
+    description: Tämä taulu sisältää hakemuksen viimeisessä versiossa olevat
+      hakukohteet järjestyksessä, ja näille on lisätty hakutoivenumero
+    columns:
+      - name: hakutoive_id
+        description: hashattu kenttä johon on yhdistetty hakemus_oid ja hakukohde_oid.
+        data_type: text
+        tests:
+          - dbt_constraints.primary_key
+      - name: hakemus_oid
+        description: Hakemuksen oid
+        data_type: text
+      - name: hakukohde_oid
+        description: Hakukohteen oid
+        data_type: text
+      - name: hakutoivenumero
+        description: Hakukohteen järjestysnumero hakemuksessa
+        data_type: bigint
+  - name: int_ataru_maksuvelvollisuus
+    description: Tämä taulu sisältää maksuvelvollisuustiedot hakutoiveille
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        description: hashattu kenttä johon on yhdistetty hakemus_oid ja hakukohde_oid.
+        tests:
+          - dbt_constraints.primary_key
+      - name: hakemus_oid
+        description: ""
+        data_type: text
+        tests:
+        - not_null
+      - name: hakukohde_oid
+        description: ""
+        data_type: text
+        tests:
+        - not_null
+      - name: tila
+        description: ""
+        data_type: text
+  - name: int_ataru_kansalaisuus
+    description: Tässä taulussa on listattu kaikki henkilön kansallisuudet. Tähän on
+      myös laitettu kansalaisuudet järjestykseen niin että saadaan helpost esiin
+      halutuin kansalaisuus järjestyksessä Suomi, EU/ETA-maa, muut maat.
+    columns:
+      - name: henkilotieto_id
+        description: Yhdistelmä hakemus_oid ja henkilo_oid
+        data_type: text
+      - name: hakemus_oid
+        description: ""
+        data_type: text
+      - name: henkilo_oid
+        description: ""
+        data_type: text
+      - name: kansalaisuus
+        description: ""
+        data_type: integer
+      - name: haluttu_kansalaisuus
+        description: Tässä on kansalaisuudet järjestetty Suomi, EU/ETA ja muut niin että
+          se hakemusten kannalta paras saa numeron 1
+        data_type: bigint
+  - name: int_ataru_henkilotieto
+    description: ""
+    columns:
+      - name: henkilotieto_id
+        description: Yhdistelmä hakemus_oid ja henkilo_oid
+        data_type: text
+        tests:
+          - dbt_constraints.primary_key
+      - name: hakemus_oid
+        description: ""
+        data_type: text
+      - name: henkilo_oid
+        description: ""
+        data_type: text
+      - name: asiointikieli
+        description: ""
+        data_type: integer
+      - name: etunimet
+        description: ""
+        data_type: text
+      - name: kutsumanimi
+        description: ""
+        data_type: text
+      - name: sukunimi
+        description: ""
+        data_type: text
+      - name: hetu
+        description: ""
+        data_type: text
+      - name: lahiosoite
+        description: ""
+        data_type: text
+      - name: postinumero
+        description: ""
+        data_type: text
+      - name: postitoimipaikka
+        description: ""
+        data_type: text
+      - name: ulk_kunta
+        description: ""
+        data_type: text
+      - name: kotikunta
+        description: ""
+        data_type: integer
+      - name: asuinmaa
+        description: ""
+        data_type: integer
+      - name: sukupuoli
+        description: ""
+        data_type: integer
+      - name: sahkoposti
+        description: ""
+        data_type: text
+      - name: puhelin
+        description: ""
+        data_type: text
+      - name: kansalaisuus
+        description: ""
+        data_type: integer
