@@ -296,3 +296,77 @@ models:
       - name: dw_metadata_dw_stored_at
         description: ""
         data_type: timestamp with time zone
+  - name: dw_sure_arvosanat
+    description: Sisältää Suoritusrekisterin arvosana tietoja
+    columns:
+      - name: resourceid
+        data_type: text
+        description: ""
+        tests:
+          - not_null
+      - name: suoritus
+        description: ""
+        data_type: text
+      - name: arvosana
+        description: ""
+        data_type: text
+      - name: asteikko
+        description: ""
+        data_type: text
+      - name: aine
+        description: ""
+        data_type: text
+      - name: lisatieto
+        description: ""
+        data_type: text
+      - name: valinnainen
+        description: ""
+        data_type: boolean
+      - name: inserted
+        description: "Hetki, jolloin tämä versio on tallennettu kantaan."
+        data_type: timestamp with time zone
+      - name: deleted
+        description: ""
+        data_type: boolean
+      - name: pisteet
+        description: ""
+        data_type: text
+      - name: myonnetty
+        description: ""
+        data_type: text
+      - name: source
+        description: ""
+        data_type: text
+      - name: jarjestys
+        description: ""
+        data_type: text
+      - name: arvot
+        description: ""
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        description: ""
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        description: ""
+        data_type: integer
+      - name: dw_metadata_hash
+        description: ""
+        data_type: text
+      - name: dw_metadata_key
+        description: ""
+        data_type: text
+      - name: dw_metadata_timestamp
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        description: ""
+        data_type: timestamp with time zone

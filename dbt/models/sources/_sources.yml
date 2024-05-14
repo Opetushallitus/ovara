@@ -13,3 +13,5 @@ sources:
       description: Koodistojen koodiarvoja
     - name: koodisto_relaatio
       description: Koodistojen relaatioita
+    - name: sure_arvosana
+      description: Suoritusrekisterin arvosanat
