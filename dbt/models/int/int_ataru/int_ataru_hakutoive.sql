@@ -1,43 +1,69 @@
+{{
+  config(
+    indexes = [
+        {'columns': ['muokattu']}
+    ],
+    materialized = 'incremental',
+    incremental_strategy = 'merge',
+    unique_key = 'hakutoive_id',
+    merge_exclude_columns = [
+        'dw_metadata_dbt_copied_at'
+    ]
+    )
+}}
+
 with raw as (
     select
         oid,
         hakukohde,
-        row_number() over (partition by oid order by versio_id desc, muokattu desc) as row_nr
-    from {{ ref('dw_ataru_hakemus') }}
+        muokattu,
+        dw_metadata_dbt_copied_at
+    from {{ ref('int_ataru_hakemus') }}
+    {% if is_incremental() %}
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+    {% endif %}
 ),
 
 latest_hakemus as (
     select
         oid,
-        hakukohde
+        hakukohde,
+        muokattu,
+        dw_metadata_dbt_copied_at
     from raw
-    where row_nr = 1
 ),
 
 hakutoive_raw as (
     select
-        oid,
+        oid as hakemus_oid,
+        muokattu,
+        dw_metadata_dbt_copied_at,
         jsonb_array_elements_text(hakukohde) as hakukohde_oid
     from latest_hakemus
 ),
 
 hakutoivenro as (
     select
-        oid as hakemus_oid,
+        {{ dbt_utils.generate_surrogate_key(
+            ['hakemus_oid',
+            'hakukohde_oid']
+        ) }} as hakutoive_id,
+        hakemus_oid,
         hakukohde_oid,
-        row_number() over (partition by oid) as hakutoivenumero
+        muokattu,
+        dw_metadata_dbt_copied_at,
+        row_number() over (partition by hakemus_oid) as hakutoivenumero
     from hakutoive_raw
 ),
 
 final as (
     select
-        {{ dbt_utils.generate_surrogate_key(
-            ['hakemus_oid',
-            'hakukohde_oid']
-            ) }} as hakutoive_id,
+        hakutoive_id,
         hakemus_oid,
         hakukohde_oid,
-        hakutoivenumero
+        hakutoivenumero,
+        muokattu,
+        dw_metadata_dbt_copied_at
     from hakutoivenro
 )
 

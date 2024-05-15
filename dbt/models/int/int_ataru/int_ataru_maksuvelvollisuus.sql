@@ -1,9 +1,8 @@
 with raw as (
     select
         oid,
-        kasittelymerkinnat,
-        row_number() over (partition by oid order by versio_id desc, muokattu desc) as row_nr
-    from {{ ref('dw_ataru_hakemus') }}
+        kasittelymerkinnat
+    from {{ ref('int_ataru_hakemus') }}
 ),
 
 maksuvelvollisuus as (
@@ -14,7 +13,6 @@ maksuvelvollisuus as (
     from raw, jsonb_array_elements(raw.kasittelymerkinnat) as km    --noqa: AL05
     where
         km ->> 'requirement' = 'payment-obligation'                 --noqa: RF02
-        and raw.row_nr = 1
 ),
 
 final as (

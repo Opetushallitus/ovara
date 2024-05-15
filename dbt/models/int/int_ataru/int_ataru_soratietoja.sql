@@ -2,9 +2,8 @@ with raw as (
     select
         oid as hakemus_oid,
         hakukohde,
-        tiedot,
-        row_number() over (partition by oid order by versio_id desc, muokattu desc) as row_nr
-    from {{ ref('dw_ataru_hakemus') }}
+        tiedot
+    from {{ ref('int_ataru_hakemus') }}
 ),
 
 sora_terveys as (
@@ -16,7 +15,6 @@ sora_terveys as (
         jsonb_each_text(raw.tiedot) as tied
     where
         (tied.key like '6a5e1a0f-f47e-479e-884a-765b85bd438c_%' or tied.key like 'sora-terveys%')
-        and raw.row_nr = 1
 ),
 
 sora_aiempi as (
@@ -28,7 +26,6 @@ sora_aiempi as (
         jsonb_each_text(raw.tiedot) as tied
     where
         (tied.key like '66a6855f-d807-4331-98ea-f14098281fc1_%' or tied.key like 'sora-aiempi%')
-        and raw.row_nr = 1
 ),
 
 hakutoive as (

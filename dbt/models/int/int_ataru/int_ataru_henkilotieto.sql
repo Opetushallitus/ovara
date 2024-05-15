@@ -1,8 +1,20 @@
+{{
+  config(
+    indexes = [
+        {'columns': ['muokattu']}
+    ],
+    materialized = 'incremental',
+    incremental_strategy = 'merge',
+    unique_key = 'henkilotieto_id',
+    )
+}}
+
+
 with raw as (
-    select
-        *,
-        row_number() over (partition by oid order by versio_id desc, muokattu desc) as _row_nr
-    from {{ ref('dw_ataru_hakemus') }}
+    select * from {{ ref('int_ataru_hakemus') }}
+    {% if is_incremental() %}
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+    {% endif %}
 ),
 
 kansalaisuus as (
@@ -31,9 +43,10 @@ henkilo_tieto as (
         asuinmaa,
         sukupuoli,
         sahkoposti,
-        puhelin
+        puhelin,
+        muokattu,
+        dw_metadata_dbt_copied_at
     from raw
-    where _row_nr = 1
 ),
 
 final as (

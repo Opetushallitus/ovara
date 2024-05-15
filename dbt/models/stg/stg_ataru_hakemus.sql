@@ -1,15 +1,14 @@
 with source as (
-      select * from {{ source('ovara', 'ataru_hakemus') }}
+    select * from {{ source('ovara', 'ataru_hakemus') }}
 
-      {% if is_incremental() %}
+    {% if is_incremental() %}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-final as
-(
+final as (
     select
         data ->> 'hakemusOid'::varchar as oid,
         (data ->> 'id')::int as versio_id,
@@ -38,19 +37,20 @@ final as
         (data -> 'keyValues' ->> 'country-of-residence')::int as asuinmaa,
         (data -> 'keyValues' ->> 'gender')::int as sukupuoli,
         (data -> 'keyValues' -> 'nationality')::jsonb as kansalaisuus,
-        (lower((data -> 'keyValues'->> 'sahkoisen-asioinnin-lupa'::varchar)) = 'kyllä') as sahkoinenviestintalupa,
-        (lower((data -> 'keyValues'->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
-        (lower((data -> 'keyValues'->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä') as valintatuloksen_julkaisulupa,
+        (lower((data -> 'keyValues' ->> 'sahkoisen-asioinnin-lupa'::varchar)) = 'kyllä') as sahkoinenviestintalupa,
+        (lower((data -> 'keyValues' ->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
+        (lower((data -> 'keyValues' ->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä')
+        as valintatuloksen_julkaisulupa,
         (data -> 'keyValues' ->> 'asiointikieli')::int as asiointikieli,
         data -> 'keyValues' ->> 'email'::varchar as sahkoposti,
         data -> 'keyValues' ->> 'phone'::varchar as puhelin,
-        data -> 'keyValues' ->> 'secondary-completed-base-education–country'::varchar as pohjakoulutuksen_maa_toinen_aste,
+        data -> 'keyValues' ->> 'secondary-completed-base-education–country'::varchar
+        as pohjakoulutuksen_maa_toinen_aste,
         (data -> 'keyValues')::jsonb as keyvalues,
         (data ->> 'modified_time')::timestamptz as muokattu,
         {{ metadata_columns() }}
 
-        from source
-
+    from source
 )
 
 select * from final
