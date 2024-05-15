@@ -1,16 +1,34 @@
 {{
   config(
-    indexes=[{'columns':['henkilotieto_id','haluttu_kansalaisuus']}]
+    indexes=[{'columns':['henkilotieto_id','haluttu_kansalaisuus']}],
+    materialized = 'incremental',
+    incremental_strategy = 'merge',
+    unique_key = 'henkilotieto_kansalaisuus_id',
     )
 }}
 
 with raw as (
     select
         oid as hakemus_oid,
+        versio_id,
         henkilo_oid,
         kansalaisuus,
-        row_number() over (partition by oid order by versio_id desc, muokattu desc) as _row_nr
-    from {{ ref('dw_ataru_hakemus') }}
+        muokattu,
+        dw_metadata_dbt_copied_at
+    from {{ ref('int_ataru_hakemus') }}
+    {% if is_incremental() %}
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+    {% endif %}
+),
+
+hakemukset as (
+    select
+        hakemus_oid,
+        henkilo_oid,
+        kansalaisuus,
+        muokattu,
+        dw_metadata_dbt_copied_at
+    from raw
 ),
 
 maa_valtioryhma as (
@@ -27,8 +45,10 @@ kansalaisuus_riveille as (
             ) }} as henkilotieto_id,
         hakemus_oid,
         henkilo_oid,
+        muokattu,
+        dw_metadata_dbt_copied_at,
         (jsonb_array_elements(kansalaisuus) ->> 0)::int as kansalaisuus --noqa: CV11
-    from raw where _row_nr = 1
+    from hakemukset
 ),
 
 kansalaisuus_jarjestys as (
@@ -44,18 +64,32 @@ kansalaisuus_jarjestys as (
             ) then 2
             else 3
         end
-        as jarjestys
+        as jarjestys,
+        muokattu,
+        dw_metadata_dbt_copied_at
     from kansalaisuus_riveille
 ),
 
-final as (
+haluttu_kansalaisuus as (
     select
         henkilotieto_id,
         hakemus_oid,
         henkilo_oid,
         kansalaisuus,
-        row_number() over (partition by henkilotieto_id order by jarjestys) as haluttu_kansalaisuus
+        row_number() over (partition by henkilotieto_id order by jarjestys) as haluttu_kansalaisuus,
+        muokattu,
+        dw_metadata_dbt_copied_at
     from kansalaisuus_jarjestys
+),
+
+final as (
+    select
+        {{ dbt_utils.generate_surrogate_key(
+            ['henkilotieto_id',
+            'haluttu_kansalaisuus']
+         ) }} as henkilotieto_kansalaisuus_id,
+        *
+    from haluttu_kansalaisuus
 )
 
 select * from final

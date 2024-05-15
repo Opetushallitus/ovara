@@ -20,13 +20,18 @@ models:
     stg:
       +schema: stg
       +materialized: incremental
+      +incremental_strategy: 'append'
+      +indexes:
+        - columns: ['dw_metadata_dbt_copied_at']
       +docs:
         node_color: "#00008b"
+
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
-      +indexes: 
-        - columns: [oid,muokattu]
+      +indexes:
+        - columns: ['oid','muokattu']
+        - columns: ['dw_metadata_dbt_copied_at']
       +docs:
         node_color: "#00008b"
     int:
