@@ -4,8 +4,8 @@
     )
 }}
 
-{%- set stage_model = ref('stg_kouta_valintaperuste') -%}
-{%- set key_columns_list = ['id'] -%}
+{%- set stage_model = ref('stg_valintalaskenta_valintakoe_osallistuminen') -%}
+{%- set key_columns_list = ['id','muokattu'] -%}
 
 with current_rows as (
     {{ generate_dw_model(stage_model, key_columns_list) }}

@@ -13,7 +13,7 @@
     {%- set base_model_name = stage_model_name-%}
 {% endif -%}
 
-{%- set columns_to_hash = get_filtered_hash_column_list(stage_model, 'DW_METADATA_') -%}
+{%- set columns_to_hash = get_filtered_hash_column_list(stage_model, 'dw_metadata_') -%}
 
 {{
     config(
@@ -24,20 +24,20 @@
     )
 }}
 
-with 
+with
 
 _raw as (
-    select 
+    select
     *,
-    row_number() over (partition by 
+    row_number() over (partition by
     {% for column in key_columns_list -%}
         {{column}}
         {%- if not loop.last -%}
         ,
         {%- endif -%}
-    {%- endfor %}    
+    {%- endfor %}
     order by dw_metadata_dbt_copied_at desc) as rownr
-    from 
+    from
     {{ stage_model }}
     {% if is_incremental() -%}
     {# Only rows which are newer than the rows in dw model table already #}
@@ -63,7 +63,7 @@ _final as (
     {%- endif %}
 )
 
-select 
+select
 
 {%- set columns = adapter.get_columns_in_relation(stage_model) -%}
 
