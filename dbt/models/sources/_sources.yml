@@ -4,7 +4,7 @@ sources:
   - name: ovara
     database: ovara
     schema: raw
-    tables: 
+    tables:
     - name: valintapiste_service_pistetieto
       description: Valintojen pistetietoja
     - name: valintaperusteet_hakukohde
@@ -13,3 +13,7 @@ sources:
       description: Koodistojen koodiarvoja
     - name: koodisto_relaatio
       description: Koodistojen relaatioita
+    - name: onr_henkilo
+      description: ONR:n henkilötietoja
+    - name: onr_yhteystieto
+      description: ONR:n yhteystietoja
