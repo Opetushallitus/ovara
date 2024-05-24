@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: ovara
+    database: ovara
+    schema: raw
+    tables:
+    - name: organisaatio_organisaatio
+      description: Organisaatiopalvelun organisaatioiden perustietoja
+    - name: organisaatio_organisaatiosuhde
+      description: Organisaatiopalvelun organisaatioiden keskinäisiä suhteita
+
