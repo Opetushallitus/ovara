@@ -34,7 +34,7 @@ final as (
     koodinimi_fi as nimi_fi,
     koodinimi_sv as nimi_sv,
     koodinimi_en as nimi_en,
-    koodiversio=(select max(koodiversio) from raw where koodistouri='{{koodistouri}}') as viimeisin_versio
+    tila='LUONNOS' as viimeisin_versio
     from raw
 )
 
