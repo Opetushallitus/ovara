@@ -1,3 +1,11 @@
+{{
+  config(
+    indexes=[
+        {'columns':['hakemusOid','muokattu'] }
+    ]
+    )
+}}
+
 with source as (
     select * from {{ source('ovara', 'valintalaskenta_valintakoe_osallistuminen') }}
 
@@ -10,10 +18,7 @@ with source as (
 
 final as (
     select
-        (data ->> 'id')::uuid as id,
         data ->> 'hakemusOid'::varchar as hakemusOid,
-        data ->> 'hakijaOid'::varchar as hakijaOid,
-        data ->> 'hakuOid'::varchar as hakuOid,
         (data -> 'hakutoiveet')::jsonb as hakutoiveet,
         (data ->> 'createdAt')::timestamptz as muokattu,
         {{ metadata_columns() }}

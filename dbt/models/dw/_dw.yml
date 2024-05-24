@@ -297,54 +297,78 @@ models:
         description: ""
         data_type: timestamp with time zone
   - name: dw_valintalaskenta_valintakoe_osallistuminen
-    description: ""
     columns:
-      - name: id
-        description: ""
-        data_type: uuid
-        tests:
-        - not_null
       - name: hakemusoid
-        description: ""
         data_type: text
-      - name: hakijaoid
-        description: ""
-        data_type: text
-      - name: hakuoid
-        description: ""
-        data_type: text
+        tests:
+          - not_null
       - name: hakutoiveet
-        description: ""
         data_type: jsonb
       - name: muokattu
-        description: ""
         data_type: timestamp with time zone
         tests:
-        - not_null
+          - not_null
       - name: dw_metadata_source_timestamp_at
-        description: ""
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
-        description: ""
         data_type: timestamp with time zone
       - name: dw_metadata_dbt_copied_at
-        description: ""
         data_type: timestamp with time zone
       - name: dw_metadata_filename
-        description: ""
         data_type: character varying
       - name: dw_metadata_file_row_number
-        description: ""
         data_type: integer
       - name: dw_metadata_hash
-        description: ""
         data_type: text
       - name: dw_metadata_key
-        description: ""
         data_type: text
       - name: dw_metadata_timestamp
-        description: ""
         data_type: timestamp with time zone
       - name: dw_metadata_dw_stored_at
-        description: ""
+        data_type: timestamp with time zone
+  - name: int_valintakoe_osallistuminen
+    description: hakemusten valintakokeet purettu riveille
+    columns:
+      - name: osallistuminen_id
+        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen id:stä
+        data_type: text
+        tests:
+        - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+        tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        tests:
+          - not_null
+      - name: valinnanvaihe_jarjestysluku
+        data_type: text
+      - name: aktiivinen
+        data_type: boolean
+      - name: lahetetaanko_koekutsut
+        data_type: boolean
+      - name: nimi
+        data_type: text
+      - name: kuvaus_fi
+        data_type: text
+      - name: kuvaus_sv
+        data_type: text
+      - name: kuvaus_en
+        data_type: text
+      - name: laskentatila
+        data_type: text
+      - name: laskenta_tulos
+        data_type: boolean
+      - name: osallistuminen
+        data_type: text
+      - name: valintakoe_id
+        data_type: text
+        tests:
+          - not_null
+      - name: valintakoe_tunniste
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_int_stored_at
         data_type: timestamp with time zone

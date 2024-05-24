@@ -983,20 +983,11 @@ models:
   - name: stg_valintalaskenta_valintakoe_osallistuminen
     description: ""
     columns:
-      - name: id
-        description: ""
-        data_type: uuid
-        tests:
-          - not_null
       - name: hakemusoid
-        description: ""
+        description: Hakemuksen oid johon valintakoe liittyy
         data_type: text
-      - name: hakijaoid
-        description: ""
-        data_type: text
-      - name: hakuoid
-        description: ""
-        data_type: text
+        tests:
+        - not_null
       - name: hakutoiveet
         description: ""
         data_type: jsonb
