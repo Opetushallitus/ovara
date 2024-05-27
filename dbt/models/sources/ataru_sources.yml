@@ -7,6 +7,5 @@ sources:
     tables:
     - name: ataru_hakemus
       description: Hakemusten tietoja
-      identifier: view_ataru_hakemus
     - name: ataru_lomake
       description: Lomakkeiden tietoja
