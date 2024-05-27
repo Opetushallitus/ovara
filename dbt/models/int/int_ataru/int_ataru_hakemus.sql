@@ -13,9 +13,11 @@ with raw as (
 
 final as (
     select
-        {{ dbt_utils.star(from=ref('dw_ataru_hakemus'), except=['row-nr','_row_nr']) }}
+        {{ dbt_utils.star(from=ref('dw_ataru_hakemus')) }}
     from raw
-    where row_nr = 1
+    where
+        row_nr = 1
+        and henkilo_oid is not null
 )
 
 select * from final
