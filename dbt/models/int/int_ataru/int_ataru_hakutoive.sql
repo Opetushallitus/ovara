@@ -1,14 +1,20 @@
 {{
   config(
     indexes = [
-        {'columns': ['muokattu']}
+        {'columns': ['muokattu']},
     ],
     materialized = 'incremental',
     incremental_strategy = 'merge',
     unique_key = 'hakutoive_id',
-    merge_exclude_columns = [
-        'dw_metadata_dbt_copied_at'
-    ]
+    pre_hook =
+                """update {{this}}
+                set poistettu=true::boolean
+                where hakemus_oid in (
+                    select distinct oid from {{ ref('int_ataru_hakemus') }}
+                    {%- if is_incremental() %}
+                    where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+                    {%- endif -%}
+                )"""
     )
 }}
 
@@ -62,6 +68,7 @@ final as (
         hakemus_oid,
         hakukohde_oid,
         hakutoivenumero,
+        false::boolean as poistettu,
         muokattu,
         dw_metadata_dbt_copied_at
     from hakutoivenro

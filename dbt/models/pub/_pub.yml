@@ -1,0 +1,24 @@
+models:
+  - name: pub_hakutoive
+    description: Sisältää aktiiviset hakutoiveet
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        tests:
+        - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: hakutoivenumero
+        data_type: bigint
+      - name: poistettu
+        data_type: boolean
+      - name: sora_terveys
+        data_type: text
+      - name: sora_aiempi
+        data_type: text
+      - name: maksuvelvollinen
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone

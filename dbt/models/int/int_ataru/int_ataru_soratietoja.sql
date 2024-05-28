@@ -1,9 +1,25 @@
+{{
+  config(
+    materialized = 'incremental',
+    unique_key = 'hakutoive_id',
+    incremental_strategy='merge',
+    indexes = [
+        {'columns':['hakutoive_id']},
+        {'columns':['dw_metadata_dw_stored_at']}
+    ]
+    )
+}}
+
 with raw as (
     select
         oid as hakemus_oid,
         hakukohde,
-        tiedot
+        tiedot,
+        dw_metadata_dw_stored_at
     from {{ ref('int_ataru_hakemus') }}
+    {% if is_incremental() %}
+      where dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
+    {% endif %}
 ),
 
 sora_terveys as (
@@ -31,22 +47,32 @@ sora_aiempi as (
 hakutoive as (
     select
         hakemus_oid,
-        jsonb_array_elements_text(hakukohde) as hakukohde_oid
+        jsonb_array_elements_text(hakukohde) as hakukohde_oid,
+        dw_metadata_dw_stored_at
     from raw
+),
+
+final as (
+    select
+        {{ dbt_utils.generate_surrogate_key([
+                'hato.hakemus_oid',
+                'hato.hakukohde_oid'
+         ]) }}
+            as hakutoive_id,
+        hato.hakemus_oid,
+        hato.hakukohde_oid,
+        sote.sora_terveys,
+        soai.sora_aiempi,
+        hato.dw_metadata_dw_stored_at
+    from hakutoive as hato
+    inner join sora_terveys as sote
+        on
+            hato.hakukohde_oid = sote.hakukohde_oid
+            and hato.hakemus_oid = sote.hakemus_oid
+    inner join sora_aiempi as soai
+        on
+            hato.hakukohde_oid = soai.hakukohde_oid
+            and hato.hakemus_oid = soai.hakemus_oid
 )
 
-select
-    hato.hakemus_oid,
-    hato.hakukohde_oid,
-    sote.sora_terveys,
-    soai.sora_aiempi,
-    current_timestamp::timestamptz as muokattu
-from hakutoive as hato
-inner join sora_terveys as sote
-    on
-        hato.hakukohde_oid = sote.hakukohde_oid
-        and hato.hakemus_oid = sote.hakemus_oid
-inner join sora_aiempi as soai
-    on
-        hato.hakukohde_oid = soai.hakukohde_oid
-        and hato.hakemus_oid = soai.hakemus_oid
+select * from final
