@@ -1139,8 +1139,34 @@ models:
     description: ""
     columns:
       - name: versioitu_koodiuri
-        description: ""
+        description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
       - name: kansallinenkoulutusluokitus2016koulutusastetaso2
         description: ""
         data_type: text
+  - name: int_koodisto_organisaatiotyyppi
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+        tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        data_type: text
+        tests:
+        - not_null
+      - name: koodiarvo
+        data_type: text
+        tests:
+        - not_null
+      - name: koodiversio
+        data_type: integer
+        tests:
+        - not_null
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: viimeisin_versio
+        data_type: boolean

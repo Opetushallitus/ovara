@@ -3,7 +3,8 @@
     indexes = [{'columns':['valinnanvaihe_id','muokattu']}]
       )
 }}
-{%- set stage_model = ref('stg_valintaperusteet_hakukohde') -%}
+
+{%- set stage_model = ref('stg_valintalaskenta_valintalaskennan_tulos') -%}
 {%- set key_columns_list = ['valinnanvaihe_id','muokattu'] -%}
 
 with current_rows as (
