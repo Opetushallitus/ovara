@@ -2,10 +2,11 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns':['organisaatio_oid','organisaatio_oid']}
+        {'columns':['organisaatio_oid','osoitetyyppi','kieli']}
     ]
     )
 }}
+
 with osoite as (
     select * from {{ ref('dw_organisaatio_osoite') }}
 ),
@@ -22,6 +23,7 @@ final as (
     select
         osoi.organisaatio_oid,
         osoi.osoitetyyppi,
+        kiel.koodiarvo as kieli,
         osoi.osoite,
         post.koodiarvo as postinumero,
         case when kiel.koodiarvo = 'SV' then post.nimi_sv else post.nimi_fi end as postitoimipaikka,
