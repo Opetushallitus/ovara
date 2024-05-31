@@ -70,7 +70,8 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: Hetki jolloin tiedot poimittiin lähjdejärjestetelmästä. Tässä tiedossa ei ole mukana datan muokkaushetkeä
+        description: Hetki jolloin tiedot poimittiin lähdejärjestelmästä. Tässä
+          tiedossa ei ole mukana datan muokkaushetkeä
         tests:
           - not_null
         data_type: timestamp with time zone
@@ -88,4 +89,35 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         description: ""
+        data_type: integer
+  - name: stg_hakukohderyhmapalvelu_ryhma
+    description: Hakukohderyhmien tietoja
+    columns:
+      - name: oid
+        data_type: text
+        tests:
+        - not_null
+      - name: hakukohde_oid
+        data_type: jsonb
+      - name: jos_ylioppilastutkinto_ei_muita_pohjakoulutusliitepyyntoja
+        data_type: boolean
+      - name: max_hakukohteet
+        data_type: integer
+      - name: priorisoiva
+        data_type: boolean
+      - name: prioriteettijarjestys
+        data_type: jsonb
+      - name: rajaava
+        data_type: boolean
+      - name: yo_amm_autom_hakukelpoisuus
+        data_type: boolean
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
         data_type: integer
