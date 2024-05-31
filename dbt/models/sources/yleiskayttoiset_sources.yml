@@ -11,4 +11,12 @@ sources:
       description: Organisaatiopalvelun organisaatioiden keskinäisiä suhteita
     - name: organisaatio_osoite
       description: organisatioiden osoitteita
+    - name: koodisto_koodi
+      description: Koodistojen koodiarvoja
+    - name: koodisto_relaatio
+      description: Koodistojen relaatioita
+    - name: onr_henkilo
+      description: ONR:n henkilötietoja
+    - name: onr_yhteystieto
+      description: ONR:n yhteystietoja
 

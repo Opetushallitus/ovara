@@ -9,10 +9,6 @@ sources:
       description: Valintojen pistetietoja
     - name: valintaperusteet_hakukohde
       description: Valintaperustetiedot per hakukohde
-    - name: koodisto_koodi
-      description: Koodistojen koodiarvoja
-    - name: koodisto_relaatio
-      description: Koodistojen relaatioita
     - name: valintalaskenta_valintakoe_osallistuminen
       description: Valintakokeen osallistumistietoja
     - name: valintalaskenta_valintalaskennan_tulos
