@@ -7,14 +7,16 @@
     incremental_strategy = 'merge',
     unique_key = 'hakutoive_id',
     pre_hook =
-                """update {{this}}
+                """
+                {% if is_incremental() %}
+                update {{this}}
                 set poistettu=true::boolean
                 where hakemus_oid in (
                     select distinct oid from {{ ref('int_ataru_hakemus') }}
-                    {%- if is_incremental() %}
                     where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
-                    {%- endif -%}
-                )"""
+                )
+                {%- endif -%}
+                """
     )
 }}
 
