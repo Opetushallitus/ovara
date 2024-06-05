@@ -13,3 +13,5 @@ sources:
       description: Valintakokeen osallistumistietoja
     - name: valintalaskenta_valintalaskennan_tulos
       description: Valintakokeen osallistumistietoja
+    - name: hakukohderyhmapalvelu_ryhma
+      description: Hakukohderyhmien tietoja

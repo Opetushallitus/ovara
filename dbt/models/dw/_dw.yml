@@ -302,13 +302,13 @@ models:
       - name: oid
         description: ""
         tests:
-        - not_null
+          - not_null
         data_type: text
       - name: versio_id
         description: ""
         data_type: integer
         tests:
-        - not_null
+          - not_null
       - name: lomake_id
         description: ""
         data_type: uuid
@@ -325,7 +325,7 @@ models:
         description: ""
         data_type: timestamp with time zone
         tests:
-        - not_null
+          - not_null
       - name: tila
         description: ""
         data_type: text
@@ -471,10 +471,11 @@ models:
     description: hakemusten valintakokeet purettu riveille
     columns:
       - name: osallistuminen_id
-        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen id:stä
+        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen
+          id:stä
         data_type: text
         tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
         tests:
@@ -512,4 +513,44 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
       - name: dw_metadata_int_stored_at
+        data_type: timestamp with time zone
+  - name: dw_hakukohderyhmapalvelu_ryhma
+    columns:
+      - name: oid
+        data_type: text
+        tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: jsonb
+      - name: rajaava
+        data_type: boolean
+      - name: max_hakukohteet
+        data_type: integer
+      - name: yo_amm_autom_hakukelpoisuus
+        data_type: boolean
+      - name: jos_ylioppilastutkinto_ei_muita_pohjakoulutusliitepyyntoja
+        data_type: boolean
+      - name: priorisoiva
+        data_type: boolean
+      - name: prioriteettijarjestys
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_hash
+        data_type: text
+      - name: dw_metadata_key
+        data_type: text
+      - name: dw_metadata_timestamp
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
