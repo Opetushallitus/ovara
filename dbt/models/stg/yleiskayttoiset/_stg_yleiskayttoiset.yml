@@ -4,7 +4,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         tests:
-          - dbt_constraints.primary_key
+        - dbt_constraints.primary_key
       - name: alkupvm
         data_type: timestamp with time zone
       - name: nimi_fi
@@ -89,7 +89,7 @@ models:
       - name: henkilo_oid
         data_type: text
         tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: master_oid
         data_type: text
       - name: etunimet
@@ -120,4 +120,3 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
-
