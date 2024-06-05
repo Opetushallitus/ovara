@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: ovara
+    database: ovara
+    schema: raw
+    tables:
+    - name: organisaatio_organisaatio
+      description: Organisaatiopalvelun organisaatioiden perustietoja
+    - name: organisaatio_organisaatiosuhde
+      description: Organisaatiopalvelun organisaatioiden keskinäisiä suhteita
+    - name: organisaatio_osoite
+      description: organisatioiden osoitteita
+    - name: koodisto_koodi
+      description: Koodistojen koodiarvoja
+    - name: koodisto_relaatio
+      description: Koodistojen relaatioita
+    - name: onr_henkilo
+      description: ONR:n henkilötietoja
+    - name: onr_yhteystieto
+      description: ONR:n yhteystietoja
+
