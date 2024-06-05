@@ -75,3 +75,59 @@ models:
         description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla
           useampi koulutuskoodi
         data_type: text
+  - name: int_organisaatio_osoite
+    description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla
+      voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne
+      löytyvät eri taulusta.
+    columns:
+      - name: organisaatio_oid
+        description: Organisaation OID
+        data_type: text
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('int_organisaatio')
+              pk_column_name: organisaatio_oid
+      - name: osoitetyyppi
+        data_type: text
+      - name: kieli
+        data_type: text
+        description: Osoitteen kieli
+      - name: osoite
+        data_type: text
+      - name: postinumero
+        data_type: text
+      - name: postitoimipaikka
+        data_type: text
+      - name: ladattu
+        data_type: timestamptz
+  - name: int_organisaatio
+    description: Sisältää organisaatiopalvelun organisaatiot
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        description: Organisaation OID
+        tests:
+          - dbt_constraints.primary_key
+      - name: tila
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+  - name: int_onr_henkilo_kansalaisuus
+    description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä henkilöllä voi olla useampi kansalaisuus
+    columns:
+      - name: kansalaisuus_id
+        data_type: text
+        tests:
+        - dbt_constraints.primary_key
+      - name: henkilo_oid
+        data_type: text
+        tests:
+        - not_null
+      - name: kansalaisuus
+        data_type: text
+      - name: ladattu
+        data_type: timestamp with time zone
