@@ -81,6 +81,23 @@ models:
         data_type: text
         description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
         tests:
+          - dbt_constraints.primary_key
+      - name: hakukohderyhma_oid
+        data_type: text
+        tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        tests:
+          - not_null
+      - name: ladattu
+        data_type: timestamp with time zone
+  - name: int_hakukohderyhma_hakukohde
+    description: Hakukohderyhmäänm kuuluvat hakukohteet purettu auki riveille
+    columns:
+      - name: hakukohderyhma_id
+        data_type: text
+        tests:
         - dbt_constraints.primary_key
       - name: hakukohderyhma_oid
         data_type: text
@@ -90,5 +107,5 @@ models:
         data_type: text
         tests:
         - not_null
-      - name: ladattu
+      - name: muokattu
         data_type: timestamp with time zone

@@ -12,13 +12,14 @@ final as (
     select
         data ->> 'hakukohderyhma-oid' as oid,
         (data -> 'hakukohde-oids')::jsonb as hakukohde_oid,
+        (data -> 'settings' ->> 'rajaava')::boolean as rajaava,
+        (data -> 'settings' ->> 'max-hakukohteet')::int as max_hakukohteet,
+        (data -> 'settings' ->> 'yo-amm-autom-hakukelpoisuus')::boolean as yo_amm_autom_hakukelpoisuus,
         (data -> 'settings' ->> 'jos-ylioppilastutkinto-ei-muita-pohjakoulutusliitepyyntoja')::boolean
         as jos_ylioppilastutkinto_ei_muita_pohjakoulutusliitepyyntoja,
-        (data -> 'settings' ->> 'max-hakukohteet')::int as max_hakukohteet,
         (data -> 'settings' ->> 'priorisoiva')::boolean as priorisoiva,
         (data -> 'settings' -> 'prioriteettijarjestys')::jsonb as prioriteettijarjestys,
-        (data -> 'settings' ->> 'rajaava')::boolean as rajaava,
-        (data -> 'settings' ->> 'yo-amm-autom-hakukelpoisuus')::boolean as yo_amm_autom_hakukelpoisuus,
+        (data ->> 'last-modified')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 )
