@@ -4,7 +4,7 @@
     )
 }}
 
-{%- set stage_model = ref('stg_sure_arvosana') -%}
+{%- set stage_model = ref('stg_sure_opiskeluoikeus') -%}
 {%- set key_columns_list = ['resourceid','muokattu'] -%}
 
 with current_rows as (

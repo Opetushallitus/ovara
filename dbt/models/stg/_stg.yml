@@ -979,6 +979,50 @@ models:
       - name: dw_metadata_file_row_number
         description: ""
         data_type: integer
+  - name: stg_sure_suoritus
+    description: Sisältää Suoritusrekisterin suoritus tietoja
+    columns:
+      - name: resourceid
+        data_type: text
+        description: ""
+        tests:
+          - not_null
+      - name: komo
+        description: ""
+        data_type: text
+      - name: myontaja
+        description: ""
+        data_type: text
+      - name: tila
+        description: ""
+        data_type: text
+      - name: valmistuminen
+        description: ""
+        data_type: text
+      - name: henkiloOid
+        description: "Oppijan henkiloOid"
+        data_type: text
+      - name: yksilollistaminen
+        description: ""
+        data_type: text
+      - name: suoritusKieli
+        description: ""
+        data_type: text
+      - name: muokattu
+        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        data_type: timestamp with time zone
+      - name: deleted
+        description: ""
+        data_type: boolean
+      - name: source
+        description: ""
+        data_type: text
+      - name: vahvistettu
+        description: ""
+        data_type: boolean
+      - name: arvot
+        description: ""
+        data_type: text
   - name: stg_sure_arvosanat
     description: Sisältää Suoritusrekisterin arvosana tietoja
     columns:
@@ -1005,8 +1049,8 @@ models:
       - name: valinnainen
         description: ""
         data_type: boolean
-      - name: inserted
-        description: "Hetki, jolloin tämä versio on tallennettu kantaan."
+      - name: muokattu
+        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -1024,5 +1068,94 @@ models:
         description: ""
         data_type: text
       - name: arvot
+        description: ""
+        data_type: text
+  - name: stg_sure_opiskelija
+    description: Sisältää Suoritusrekisterin opiskelija tietoja
+    columns:
+      - name: resourceid
+        data_type: text
+        description: "Opiskelijan (luokkatiedon) tekninen yksilöivä tunniste (uuid)"
+        tests:
+          - not_null
+      - name: oppilaitosoid
+        description: "Sen oppilaitoksen organisaatioOid, jossa luokkaa suoritetaan"
+        data_type: text
+      - name: luokkataso
+        description: ""
+        data_type: text
+      - name: luokka
+        description: ""
+        data_type: text
+      - name: henkilooid
+        description: "Opiskelijan oid"
+        data_type: text
+      - name: alkupaiva
+        description: ""
+        data_type: timestamp with time zone
+      - name: loppupaiva
+        description: ""
+        data_type: timestamp with time zone
+      - name: muokattu
+        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        data_type: timestamp with time zone
+      - name: deleted
+        description: ""
+        data_type: boolean
+      - name: source
+        description: ""
+        data_type: text
+  - name: stg_sure_opiskeluoikeus
+    description: Sisältää Suoritusrekisterin opiskeluoikeus tietoja
+    columns:
+      - name: resourceid
+        data_type: text
+        description: "Opiskeluoikeuden yksilöivä tunniste (uuid)"
+        tests:
+          - not_null
+      - name: alkupaiva
+        description: ""
+        data_type: timestamp with time zone
+      - name: loppupaiva
+        description: ""
+        data_type: timestamp with time zone
+      - name: henkilooid
+        description: "Sen henkilön oid, jolle opiskeluoikeus kuuluu"
+        data_type: text
+      - name: komo
+        description: ""
+        data_type: text
+      - name: myontaja
+        description: ""
+        data_type: text
+      - name: source
+        description: ""
+        data_type: text
+      - name: muokattu
+        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        data_type: timestamp with time zone
+      - name: deleted
+        description: ""
+        data_type: boolean
+  - name: stg_sure_ensikertalainen
+    description: Sisältää Suoritusrekisterin ensikertalainen tietoja
+    columns:
+      - name: hakuoid
+        data_type: text
+        description: "Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty."
+        tests:
+          - not_null
+      - name: henkilooid
+        description: "Sen henkilön oid, jolle ensikertalaisuustieto kuuluu"
+        data_type: text
+        tests:
+          - not_null
+      - name: isensikertalainen
+        description: "Onko hakija ensikertalainen. Jos false, syy löytyy kentästä menettämisenPeruste."
+        data_type: boolean
+      - name: menettamisenperuste
+        description: ""
+        data_type: text
+      - name: menettamisenpaivamaara
         description: ""
         data_type: text
