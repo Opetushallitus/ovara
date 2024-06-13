@@ -1,6 +1,9 @@
 {{
   config(
-    materialized = 'table'
+    materialized = 'table',
+    indexes = [
+        {'columns': ['valintakoe_hakemus_id']}
+    ]
     )
 }}
 
@@ -64,5 +67,6 @@ final as (
 
 select
     {{ dbt_utils.generate_surrogate_key (['hakemus_oid','hakukohde_oid','valintakoe_id']) }} as osallistuminen_id,
+    {{ dbt_utils.generate_surrogate_key (['hakemus_oid','valintakoe_tunniste']) }} as valintakoe_hakemus_id,
     *
 from final
