@@ -1,16 +1,15 @@
 with source as (
-      select * from {{ source('ovara', 'koodisto_koodi') }}
- 
-      {% if is_incremental() %}
+    select * from {{ source('ovara', 'koodisto_koodi') }}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-int as 
-(   
-    select 
+int as (
+    select
         data ->> 'koodiarvo'::varchar as koodiarvo,
         data ->> 'koodinimi_fi'::varchar as koodinimi_fi,
         data ->> 'koodinimi_sv'::varchar as koodinimi_sv,
@@ -26,16 +25,14 @@ int as
         data ->> 'tila'::varchar as tila,
         (data ->> 'voimassaalkupvm')::timestamptz as voimassaalkupvm,
         {{ metadata_columns() }}
-
-        from source
-
+    from source
 ),
 
-final as 
-(
+final as (
     select
-    {{ dbt_utils.generate_surrogate_key(['koodistouri','koodiarvo','koodiversio']) }} as id,
-    * from int
+        {{ dbt_utils.generate_surrogate_key(['koodistouri','koodiarvo','koodiversio']) }} as id,
+        *
+    from int
 )
 
 select * from final

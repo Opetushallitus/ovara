@@ -4,7 +4,7 @@ sources:
   - name: ovara
     database: ovara
     schema: raw
-    tables: 
+    tables:
     - name: valintapiste_service_pistetieto
       description: Valintojen pistetietoja
     - name: valintaperusteet_hakukohde
@@ -23,3 +23,9 @@ sources:
       description: Suoritusrekisterin opiskeluoikeus
     - name: sure_ensikertalainen
       description: Suoritusrekisterin ensikertalainen
+    - name: valintalaskenta_valintakoe_osallistuminen
+      description: Valintakokeen osallistumistietoja
+    - name: valintalaskenta_valintalaskennan_tulos
+      description: Valintakokeen osallistumistietoja
+    - name: hakukohderyhmapalvelu_ryhma
+      description: Hakukohderyhmien tietoja
