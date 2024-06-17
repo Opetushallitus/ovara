@@ -78,19 +78,6 @@ export const main: Handler = async (event: S3Event) => {
   const batchSizeStr = process.env.batch_size || '';
   const batchSize = batchSizeStr ? Number(batchSizeStr) : 100;
 
-  const command = new GetObjectCommand({
-    Bucket: bucket,
-    Key: key,
-  });
-
-  let contents = '';
-  try {
-    const response = await client.send(command);
-    contents = (await response.Body?.transformToString()) || '';
-  } catch (err) {
-    console.error(err);
-    return { statusCode: 500, body: 'Siirtotiedoston luku epaonnistui' };
-  }
   const rawTableSplit = key.split('__')[0].split('/');
   const rawTable = rawTableSplit[rawTableSplit.length - 1];
   const exportTimeStr = key.split('__')[1];
@@ -116,14 +103,32 @@ export const main: Handler = async (event: S3Event) => {
         cert: fs.readFileSync(__dirname + '/eu-west-1-bundle.pem').toString(),
       },
     },
+    logging: false,
   };
+
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+
+  let partitionedContents = new Array<Array<object>>();
+  try {
+    const response = await client.send(command);
+    partitionedContents = partition(
+      JSON.parse((await response.Body?.transformToString()) || ''),
+      batchSize
+    );
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, body: 'Siirtotiedoston luku epaonnistui' };
+  }
 
   let nbrOfRows = 0;
   try {
     nbrOfRows = await saveToDb(
       config,
       rawTable,
-      contents,
+      partitionedContents,
       exportTime,
       key,
       source,
@@ -147,7 +152,7 @@ export const main: Handler = async (event: S3Event) => {
 const saveToDb = async (
   config: object,
   rawTableName: string,
-  contents: string,
+  partitionedData: Array<Array<object>>,
   exportTime: Date,
   filename: string,
   sourceSystem: string,
@@ -160,7 +165,6 @@ const saveToDb = async (
 
   const now = new Date();
   let rowNumberCounter = 0;
-  const partitionedData = partition(JSON.parse(contents), batchSize);
   for (let idx = 0; idx < partitionedData.length; idx++) {
     const batch = partitionedData[idx];
     const rows = batch.map((json) => {
