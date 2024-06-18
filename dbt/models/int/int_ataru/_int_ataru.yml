@@ -6,7 +6,7 @@ models:
       - name: hakutoive_id
         description: hashattu kenttä johon on yhdistetty hakemus_oid ja hakukohde_oid.
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: hakemus_oid
         description: Hakemuksen oid
@@ -23,17 +23,17 @@ models:
       - name: hakutoive_id
         data_type: text
         description: hashattu kenttä johon on yhdistetty hakemus_oid ja hakukohde_oid.
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: hakemus_oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: hakukohde_oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: tila
         description: ""
@@ -46,22 +46,22 @@ models:
     columns:
       - name: henkilotieto_kansalaisuus_id
         description: Yhdistelmä henkilotieto_id ja haluttu kansalaisuus. yksilöivä avain
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: henkilotieto_id
         description: Yhdistelmä hakemus_oid ja henkilo_oid
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: hakemus_oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: henkilo_oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: kansalaisuus
         description: ""
@@ -81,7 +81,7 @@ models:
       - name: henkilotieto_id
         description: Yhdistelmä hakemus_oid ja henkilo_oid
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: hakemus_oid
         description: ""
@@ -139,7 +139,7 @@ models:
     columns:
       - name: oid
         data_type: text
-        tests:
+        data_tests:
         - dbt_constraints.primary_key
       - name: versio_id
         data_type: integer
