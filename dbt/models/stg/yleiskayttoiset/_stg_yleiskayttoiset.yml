@@ -3,7 +3,7 @@ models:
     columns:
       - name: organisaatio_oid
         data_type: text
-        tests:
+        data_tests:
         - dbt_constraints.primary_key
       - name: alkupvm
         data_type: timestamp with time zone
@@ -31,15 +31,15 @@ models:
     columns:
       - name: suhdetyyppi
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: parent_oid
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: child_oid
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: alkupvm
         data_type: timestamp with time zone
@@ -57,15 +57,15 @@ models:
     columns:
       - name: organisaatio_oid
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: kieli
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: osoitetyyppi
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: osoite
         data_type: text
@@ -88,7 +88,7 @@ models:
     columns:
       - name: henkilo_oid
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: master_oid
         data_type: text

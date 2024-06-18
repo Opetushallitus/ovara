@@ -5,7 +5,7 @@ models:
       - name: oid
         data_type: text
         description: ""
-        tests:
+        data_tests:
           - not_null
       - name: tila
         description: ""
@@ -58,7 +58,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: muokkaajannimi
         description: ""
@@ -81,7 +81,7 @@ models:
       - name: oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: toteutusoid
         description: ""
@@ -176,7 +176,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -208,7 +208,7 @@ models:
       - name: oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: johtaatutkintoon
         description: ""
@@ -264,7 +264,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -296,7 +296,7 @@ models:
       - name: oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: parentoppilaitosoid
         description: ""
@@ -394,7 +394,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: muokkaajannimi
         description: ""
@@ -420,7 +420,7 @@ models:
       - name: id
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: tarjoaja
         description: ""
@@ -455,7 +455,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: dw_metadata_source_timestamp_at
         description: ""
@@ -478,7 +478,7 @@ models:
       - name: id
         description: ""
         data_type: uuid
-        tests:
+        data_tests:
           - not_null
       - name: externalid
         description: ""
@@ -528,7 +528,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: muokkaajannimi
         description: ""
@@ -554,7 +554,7 @@ models:
       - name: oid
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: externalid
         description: ""
@@ -757,7 +757,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -792,7 +792,7 @@ models:
       - name: id
         description: ""
         data_type: uuid
-        tests:
+        data_tests:
           - not_null
       - name: externalid
         description: ""
@@ -869,7 +869,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: muokkaajannimi
         description: ""
@@ -895,7 +895,7 @@ models:
       - name: hakemusoid
         description: Hakemuksen oid johon valintakoe liittyy
         data_type: text
-        tests:
+        data_tests:
         - not_null
       - name: hakutoiveet
         description: ""
@@ -903,7 +903,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
           - not_null
       - name: dw_metadata_source_timestamp_at
         description: ""
@@ -926,12 +926,12 @@ models:
       - name: valinnanvaihe_id
         description: ""
         data_type: text
-        tests:
+        data_tests:
         - not_null
       - name: hakuoid
         description: ""
         data_type: text
-        tests:
+        data_tests:
         - not_null
       - name: jarjestysnumero
         description: ""
@@ -951,7 +951,7 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        tests:
+        data_tests:
         - not_null
       - name: dw_metadata_source_timestamp_at
         description: ""

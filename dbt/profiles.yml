@@ -1,7 +1,3 @@
-config:
-  send_anonymous_usage_stats: false
-  partial_parse: true
-
 ovara:
   target: test
   outputs:
