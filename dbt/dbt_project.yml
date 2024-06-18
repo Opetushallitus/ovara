@@ -11,6 +11,10 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
+flags:
+  send_anonymous_usage_stats: false
+  partial_parse: true
+
 clean-targets:
   - "target"
   - "dbt_packages"
@@ -30,8 +34,7 @@ models:
       +schema: dw
       # materialized=incremental set in dw macro
       +indexes:
-        - columns: ['oid','muokattu']
-        - columns: ['dw_metadata_dbt_copied_at']
+        - columns: ['dw_metadata_dw_copied_at']
       +docs:
         node_color: "#00008b"
     int:
