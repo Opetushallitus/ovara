@@ -7,22 +7,22 @@ models:
           muodossa <koodisto>_<koodiarvo>#<koodistoversio>. Toimii taulun
           primary key:na
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -43,21 +43,21 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: koodiurissa on mukana sekä koodiston uri että koodiarvo
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: koodisssa oleva maakoodi
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: koodiston versio
-        tests:
+        data_tests:
           - not_null
         data_type: integer
       - name: nimi_fi
@@ -78,21 +78,21 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
-        tests:
+        data_tests:
           - not_null
         data_type: text
       - name: koodiversio
         description: ""
-        tests:
+        data_tests:
           - not_null
         data_type: integer
       - name: nimi_fi
@@ -113,22 +113,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -148,22 +148,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -183,22 +183,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -218,22 +218,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -253,22 +253,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -288,22 +288,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -323,22 +323,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -358,22 +358,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -393,22 +393,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -428,23 +428,23 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
           - not_null
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -464,7 +464,7 @@ models:
       - name: id
         description: yksilöivä hash, primary key
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: kunta_versioitu_koodiuri
         description: ""
@@ -496,22 +496,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -531,22 +531,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -566,22 +566,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -601,22 +601,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -636,22 +636,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -671,22 +671,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -706,22 +706,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -741,7 +741,7 @@ models:
       - name: id
         description: Taulu sisältää relaatiot maiden ja valtioryhmien välillä
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: maa_versioitu_koodiuri
         description: ""
@@ -773,22 +773,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -808,22 +808,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -843,22 +843,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -878,22 +878,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -913,22 +913,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -948,22 +948,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -983,22 +983,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -1018,22 +1018,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -1053,22 +1053,22 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        tests:
+        data_tests:
           - not_null
       - name: nimi_fi
         description: ""
@@ -1088,7 +1088,7 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: koodiuri
         description: ""
@@ -1148,19 +1148,19 @@ models:
     columns:
       - name: versioitu_koodiuri
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: koodiuri
         data_type: text
-        tests:
+        data_tests:
         - not_null
       - name: koodiarvo
         data_type: text
-        tests:
+        data_tests:
         - not_null
       - name: koodiversio
         data_type: integer
-        tests:
+        data_tests:
         - not_null
       - name: nimi_fi
         data_type: text
