@@ -189,7 +189,7 @@ models:
       - name: valintakoe_tunniste
         data_type: text
         data_tests:
-        - not null
+        - not_null
       - name: arvo
         data_type: text
       - name: osallistuminen
