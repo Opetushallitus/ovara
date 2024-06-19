@@ -181,15 +181,15 @@ models:
       - name: valintakoe_hakemus_id
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: hakemus_oid
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: valintakoe_tunniste
         data_type: text
         data_tests:
-        - not null
+          - not_null
       - name: arvo
         data_type: text
       - name: osallistuminen
@@ -323,7 +323,7 @@ models:
         description: ""
         data_type: text
       - name: henkiloOid
-        description: "Oppijan henkiloOid"
+        description: Oppijan henkiloOid
         data_type: text
       - name: yksilollistaminen
         description: ""
@@ -332,7 +332,9 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
+          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
+          kanssa.
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -400,7 +402,9 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
+          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
+          kanssa.
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -566,11 +570,11 @@ models:
     columns:
       - name: resourceid
         data_type: text
-        description: "Opiskelijan (luokkatiedon) tekninen yksilöivä tunniste (uuid)"
+        description: Opiskelijan (luokkatiedon) tekninen yksilöivä tunniste (uuid)
         data_tests:
           - not_null
       - name: oppilaitosoid
-        description: "Sen oppilaitoksen organisaatioOid, jossa luokkaa suoritetaan"
+        description: Sen oppilaitoksen organisaatioOid, jossa luokkaa suoritetaan
         data_type: text
       - name: luokkataso
         description: ""
@@ -579,7 +583,7 @@ models:
         description: ""
         data_type: text
       - name: henkilooid
-        description: "Opiskelijan oid"
+        description: Opiskelijan oid
         data_type: text
       - name: alkupaiva
         description: ""
@@ -588,7 +592,9 @@ models:
         description: ""
         data_type: timestamp with time zone
       - name: muokattu
-        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
+          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
+          kanssa.
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -628,7 +634,7 @@ models:
     columns:
       - name: resourceid
         data_type: text
-        description: "Opiskeluoikeuden yksilöivä tunniste (uuid)"
+        description: Opiskeluoikeuden yksilöivä tunniste (uuid)
         data_tests:
           - not_null
       - name: alkupaiva
@@ -638,7 +644,7 @@ models:
         description: ""
         data_type: timestamp with time zone
       - name: henkilooid
-        description: "Sen henkilön oid, jolle opiskeluoikeus kuuluu"
+        description: Sen henkilön oid, jolle opiskeluoikeus kuuluu
         data_type: text
       - name: komo
         description: ""
@@ -650,7 +656,9 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: "Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa."
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
+          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
+          kanssa.
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -687,16 +695,17 @@ models:
     columns:
       - name: hakuoid
         data_type: text
-        description: "Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty."
+        description: Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty.
         data_tests:
           - not_null
       - name: henkilooid
-        description: "Sen henkilön oid, jolle ensikertalaisuustieto kuuluu"
+        description: Sen henkilön oid, jolle ensikertalaisuustieto kuuluu
         data_type: text
         data_tests:
           - not_null
       - name: isensikertalainen
-        description: "Onko hakija ensikertalainen. Jos false, syy löytyy kentästä menettämisenPeruste."
+        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä
+          menettämisenPeruste.
         data_type: boolean
       - name: menettamisenperuste
         description: ""
@@ -846,5 +855,30 @@ models:
         data_type: text
       - name: dw_metadata_timestamp
         data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+  - name: dw_ohjausparametrit_parameter
+    description: Ohjausparametrien tietoja
+    columns:
+      - name: id
+        data_type: text
+        data_tests:
+        - not_null
+      - name: muokattu
+        data_type: timestamp with time zone
+        data_tests:
+        - not_null
+      - name: arvot
+        data_type: jsonb
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
