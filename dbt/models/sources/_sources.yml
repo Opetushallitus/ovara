@@ -26,4 +26,6 @@ sources:
     - name: hakukohderyhmapalvelu_ryhma
       description: Hakukohderyhmien tietoja
     - name: ohjausparametrit_parameter
-      description: Ohjausparametrien tietoja
+      description: Hakujen ohjausparametrien tietoja
+    - name: valintarekisteri_valintatapajono
+      description: valintarekisterin valintatapajonotietoja

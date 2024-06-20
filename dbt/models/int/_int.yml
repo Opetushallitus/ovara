@@ -76,38 +76,23 @@ models:
           useampi koulutuskoodi
         data_type: text
   - name: int_hakukohderyhma_hakukohde
+    description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
     columns:
-      - name: hakukohderyhma_id
-        data_type: text
-        description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
-        data_tests:
-          - dbt_constraints.primary_key
-      - name: hakukohderyhma_oid
-        data_type: text
-        data_tests:
-          - not_null
-      - name: hakukohde_oid
-        data_type: text
-        data_tests:
-          - not_null
-      - name: ladattu
-        data_type: timestamp with time zone
-  - name: int_hakukohderyhma_hakukohde
-    description: Hakukohderyhmäänm kuuluvat hakukohteet purettu auki riveille
-    columns:
-      - name: hakukohderyhma_id
-        data_type: text
-        data_tests:
-        - dbt_constraints.primary_key
-      - name: hakukohderyhma_oid
-        data_type: text
-        data_tests:
-        - not_null
-      - name: hakukohde_oid
-        data_type: text
-        data_tests:
-        - not_null
-      - name: muokattu
+    - name: hakukohderyhma_id
+      data_type: text
+      description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
+      data_tests:
+      - dbt_constraints.primary_key
+    - name: hakukohderyhma_oid
+      data_type: text
+      data_tests:
+      - not_null
+    - name: hakukohde_oid
+      data_type: text
+      data_tests:
+      - not_null
+    - name: muokattu
+      data_type: timestamptz
   - name: int_organisaatio_osoite
     description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla
       voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne
