@@ -49,7 +49,7 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
   ...props,
 });
 
-const lamdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
+const lambdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
   siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
   ...props,
