@@ -19,7 +19,8 @@ raw as (
         data ->> 'nimi' as nimi,
         (data ->> 'poissaOlevaTaytto')::boolean as poissaOlevaTaytto,
         (data ->> 'prioriteetti')::int as prioriteetti,
-        (data ->> 'sijoiteltuIlmanVarasijasaantojaNiidenOllessaVoimassa')::boolean as sijoiteltuIlmanVarasijasaantojaNiidenOllessaVoimassa,
+        (data ->> 'sijoiteltuIlmanVarasijasaantojaNiidenOllessaVoimassa')::boolean as
+        sijoiteltuIlmanVarasijasaantojaNiidenOllessaVoimassa,
         data ->> 'tasasijasaanto' as tasasijasaanto,
         (data ->> 'valintaesitysHyvaksytty')::boolean as valintaesitysHyvaksytty,
         (data ->> 'varasijanTayttoPaivat')::int as varasijanTayttoPaivat,
