@@ -16,10 +16,13 @@ final as
         data ->> 'luokkataso'::varchar as luokkataso,
         data ->> 'luokka'::varchar as luokka,
         data ->> 'henkiloOid'::varchar as henkilooid,
-        to_timestamp((data ->> ('alkuPaiva')::varchar)::bigint /1000 ) as alkupaiva,
-        to_timestamp((data ->> ('loppuPaiva')::varchar)::bigint /1000 ) as loppupaiva,
+        --to_timestamp((data ->> ('alkuPaiva')::varchar)::bigint /1000 ) as alkupaiva,
+        ((to_timestamp(((data ->> ('alkuPaiva')::varchar)::bigint /1000 )) at time zone 'utc' at time zone 'europe/helsinki')::timestamptz) as alkupaiva,
+        --to_timestamp((data ->> ('loppuPaiva')::varchar)::bigint /1000 ) as loppupaiva,
+        ((to_timestamp(((data ->> ('loppuPaiva')::varchar)::bigint /1000 )) at time zone 'utc' at time zone 'europe/helsinki')::timestamptz) as loppupaiva,
         --to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as inserted, #Changed column name to muokattu
-        to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as muokattu,
+        --to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as muokattu,
+        ((to_timestamp(((data ->> ('inserted')::varchar)::bigint /1000 )) at time zone 'utc' at time zone 'europe/helsinki')::timestamptz) as muokattu,
         (data ->> 'deleted')::boolean as deleted,
         data ->> 'source'::varchar as source,
         {{ metadata_columns() }}

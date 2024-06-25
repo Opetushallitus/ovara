@@ -120,7 +120,7 @@ models:
         data_type: text
       - name: valmistuminen
         description: ""
-        data_type: text
+        data_type: timestamp with time zone
       - name: henkiloOid
         description: Oppijan henkiloOid
         data_type: text
@@ -186,7 +186,7 @@ models:
         data_type: text
       - name: myonnetty
         description: ""
-        data_type: text
+        data_type: timestamp with time zone
       - name: source
         description: ""
         data_type: text
@@ -289,7 +289,7 @@ models:
         data_type: text
       - name: menettamisenpaivamaara
         description: ""
-        data_type: text
+        data_type: timestamp with time zone
   - name: stg_hakukohderyhmapalvelu_ryhma
     description: Hakukohderyhmien tietoja
     columns:
