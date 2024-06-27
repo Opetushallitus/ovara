@@ -29,3 +29,5 @@ sources:
       description: Hakujen ohjausparametrien tietoja
     - name: valintarekisteri_valintatapajono
       description: valintarekisterin valintatapajonotietoja
+    - name: valintarekisteri_valinnantulos
+      Description: Valintarekisterin tuloksia
