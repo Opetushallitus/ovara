@@ -33,3 +33,5 @@ sources:
       description: Valintarekisterin tuloksia
     - name: valintarekisteri_ilmoittautuminen
       description: Valintarekisterin ilmoittautumistietoja
+    - name: valintarekisteri_vastaanotto
+      description: Valintarekisterin vastaanottotietoja

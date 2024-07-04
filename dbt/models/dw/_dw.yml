@@ -1007,6 +1007,42 @@ models:
         description: Avainsarake, yhdistelmä hakukohde_oid ja henkilö_oid
         data_type: text
         data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: ilmoittaja
+        data_type: text
+      - name: selite
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: muokattu
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+  - name: dw_valintarekisteri_vastaanotto
+    description: Valintarekisterin vastaanottotietoja
+    columns:
+      - name: vastaanotto_id
+        description: Avainsarake, yhdistelmä hakukohde_oid ja henkilö_oid
+        data_type: text
+        data_tests:
         - not_null
       - name: hakukohde_oid
         data_type: text
@@ -1020,8 +1056,10 @@ models:
         data_type: text
       - name: selite
         data_type: text
-      - name: tila
+      - name: action
         data_type: text
+      - name: id
+        data_type: integer
       - name: muokattu
         data_type: text
       - name: dw_metadata_source_timestamp_at
