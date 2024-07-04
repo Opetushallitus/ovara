@@ -329,13 +329,192 @@ models:
       - name: id
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: muokattu
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: arvot
         data_type: jsonb
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+  - name: stg_valintarekisteri_valintatapajono
+    description: Valintarekisterin valintajonotietoja
+    columns:
+      - name: valintatapajono_id
+        description: yhdistelmä valintatapajonon oid ja hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: alinhyvaksyttypistemaara
+        data_type: double precision
+      - name: alkuperaisetaloituspaikat
+        data_type: integer
+      - name: aloituspaikat
+        data_type: integer
+      - name: eivarasijatayttoa
+        data_type: boolean
+      - name: hakeneet
+        data_type: integer
+      - name: kaikkiehdontayttavathyvaksytaan
+        data_type: boolean
+      - name: nimi
+        data_type: text
+      - name: poissaolevataytto
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: sijoiteltuilmanvarasijasaantojaniidenollessavoimassa
+        data_type: boolean
+      - name: tasasijasaanto
+        data_type: text
+      - name: valintaesityshyvaksytty
+        data_type: boolean
+      - name: varasijantayttopaivat
+        data_type: integer
+      - name: varasijat
+        data_type: integer
+      - name: varasijojakaytetaanasti
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+  - name: stg_valintarekisteri_valinnantulos
+    description: Valintarekisterin valinnan tuloksia
+    columns:
+      - name: valinnantulos_id
+        data_type: text
+        data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: valintatapajono_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: hakemus_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: henkilo_oid
+        data_type: text
+      - name: valinnantila
+        data_type: text
+      - name: ehdollisestihyvaksyttavissa
+        data_type: boolean
+      - name: ehdollisenhyvaksymisenehtofi
+        data_type: text
+      - name: ehdollisenhyvaksymisenehtosv
+        data_type: text
+      - name: ehdollisenhyvaksymisenehtoen
+        data_type: text
+      - name: valinnantilankuvauksentekstifi
+        data_type: text
+      - name: valinnantilankuvauksentekstisv
+        data_type: text
+      - name: valinnantilankuvauksentekstien
+        data_type: text
+      - name: julkaistavissa
+        data_type: boolean
+      - name: hyvaksyttyvarasijalta
+        data_type: text
+      - name: hyvaksyperuuntunut
+        data_type: boolean
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+  - name: stg_valintarekisteri_ilmoittautuminen
+    description: Valintarekisterin ilmoittautumistietoja
+    columns:
+      - name: ilmoittautuminen_id
+        data_type: text
+        data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: ilmoittaja
+        data_type: text
+      - name: selite
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: muokattu
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+  - name: stg_valintarekisteri_vastaanotto
+    description: Valintarekisterin vastaanottotietoja
+    columns:
+      - name: vastaanotto_id
+        data_type: text
+        data_tests:
+        - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+        - not_null
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+        - not_null
+      - name: ilmoittaja
+        data_type: text
+      - name: selite
+        data_type: text
+      - name: action
+        data_type: text
+      - name: id
+        data_type: integer
+      - name: muokattu
+        data_type: text
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at

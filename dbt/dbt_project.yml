@@ -27,6 +27,7 @@ models:
       +incremental_strategy: 'append'
       +indexes:
         - columns: ['dw_metadata_dbt_copied_at']
+        - columns: ['dw_metadata_stg_stored_at']
       +docs:
         node_color: "#00008b"
 
