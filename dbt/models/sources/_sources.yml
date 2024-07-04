@@ -30,4 +30,6 @@ sources:
     - name: valintarekisteri_valintatapajono
       description: valintarekisterin valintatapajonotietoja
     - name: valintarekisteri_valinnantulos
-      Description: Valintarekisterin tuloksia
+      description: Valintarekisterin tuloksia
+    - name: valintarekisteri_ilmoittautuminen
+      description: Valintarekisterin ilmoittautumistietoja
