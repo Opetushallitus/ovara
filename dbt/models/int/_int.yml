@@ -44,14 +44,14 @@ models:
       - name: hakemus_oid
         description: Hakemuksen tiedot johon pisteet liittyvät
         data_type: text
-        tests:
+        data_tests:
           - not_null
       - name: arvo
         description: ""
         data_type: text
       - name: tunniste
         description: Valintakokeen tunniste
-        tests:
+        data_tests:
           - not_null
         data_type: text
       - name: osallistuminen
@@ -75,39 +75,24 @@ models:
         description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla
           useampi koulutuskoodi
         data_type: text
-  - name: int_hakukohderyhma_hakukohteet
-    columns:
-      - name: hakukohderyhma_id
-        data_type: text
-        description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
-        tests:
-          - dbt_constraints.primary_key
-      - name: hakukohderyhma_oid
-        data_type: text
-        tests:
-          - not_null
-      - name: hakukohde_oid
-        data_type: text
-        tests:
-          - not_null
-      - name: ladattu
-        data_type: timestamp with time zone
   - name: int_hakukohderyhma_hakukohde
-    description: Hakukohderyhmäänm kuuluvat hakukohteet purettu auki riveille
+    description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
     columns:
-      - name: hakukohderyhma_id
-        data_type: text
-        tests:
-        - dbt_constraints.primary_key
-      - name: hakukohderyhma_oid
-        data_type: text
-        tests:
-        - not_null
-      - name: hakukohde_oid
-        data_type: text
-        tests:
-        - not_null
-      - name: muokattu
+    - name: hakukohderyhma_id
+      data_type: text
+      description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
+      data_tests:
+      - dbt_constraints.primary_key
+    - name: hakukohderyhma_oid
+      data_type: text
+      data_tests:
+      - not_null
+    - name: hakukohde_oid
+      data_type: text
+      data_tests:
+      - not_null
+    - name: muokattu
+      data_type: timestamptz
   - name: int_organisaatio_osoite
     description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla
       voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne
@@ -116,7 +101,7 @@ models:
       - name: organisaatio_oid
         description: Organisaation OID
         data_type: text
-        tests:
+        data_tests:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('int_organisaatio')
               pk_column_name: organisaatio_oid
@@ -139,7 +124,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         description: Organisaation OID
-        tests:
+        data_tests:
           - dbt_constraints.primary_key
       - name: tila
         data_type: text
@@ -154,11 +139,11 @@ models:
     columns:
       - name: kansalaisuus_id
         data_type: text
-        tests:
+        data_tests:
         - dbt_constraints.primary_key
       - name: henkilo_oid
         data_type: text
-        tests:
+        data_tests:
         - not_null
       - name: kansalaisuus
         data_type: text

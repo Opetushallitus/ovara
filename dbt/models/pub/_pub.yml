@@ -4,7 +4,7 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
-        tests:
+        data_tests:
         - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text

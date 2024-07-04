@@ -19,10 +19,8 @@
             'dw_metadata_dw_stored_at'
             ],
         indexes = [
-            {
-                'columns': key_columns_list,
-                'columns': ['dw_metadata_dw_stored_at']
-            }
+            {'columns': key_columns_list},
+            {'columns': ['dw_metadata_dw_stored_at']}
         ]
     )
 -}}
@@ -42,7 +40,7 @@ with _raw as (
     {{ src_model }}
     {% if is_incremental() -%}
     {# Only rows which are newer than the rows in dw model table already #}
-    where (dw_metadata_stg_stored_at >= coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}),date('1900-01-01'))
+    where (dw_metadata_stg_stored_at > coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}),date('1900-01-01'))
             or dw_metadata_stg_stored_at is null)
     {%- endif %}
 

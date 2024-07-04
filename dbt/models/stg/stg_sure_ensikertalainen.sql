@@ -15,7 +15,7 @@ final as
         data ->> 'henkiloOid'::varchar as henkilooid,
         (data ->> 'isEnsikertalainen')::boolean as isensikertalainen,
         data -> 'menettamisenPeruste' ->> 'peruste'::varchar as menettamisenperuste,
-        data -> 'menettamisenPeruste' ->> 'paivamaara'::varchar as menettamisenpaivamaara,
+        (data -> 'menettamisenPeruste' ->> 'paivamaara')::timestamptz as menettamisenpaivamaara,
         {{ metadata_columns() }}
 
         from source
