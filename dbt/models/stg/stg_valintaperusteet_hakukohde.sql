@@ -14,19 +14,18 @@ final as (
         data ->> 'hakukohdeOid'::varchar as hakukohde_oid,
         data ->> 'hakuOid'::varchar as haku_oid,
         data ->> 'tarjoajaOid'::varchar as tarjoaja_oid,
-        (data ->> 'viimeinenValinnanvaihe')::int as viimeinenValinnanvaihe,
-        (data -> 'hakukohteenValintaperuste')::jsonb as hakukohteenValintaperuste,
         data -> 'valinnanVaihe' ->> 'nimi'::varchar as valinnanvaihe_nimi,
         (data -> 'valinnanVaihe' ->> 'valinnanVaiheJarjestysluku')::int as valinnanvaihe_jarjestysluku,
-        data -> 'valinnanVaihe' ->> 'valinnanVaiheTyyppi'::varchar as valinnanVaiheTyyppi,
-        (data -> 'valinnanVaihe' ->> 'valintatapajono')::jsonb as valintatapajono,
-        (data -> 'valinnanVaihe' ->> 'valintakoe')::jsonb as valintakoe,
-        (data -> 'valinnanVaihe' ->> 'jonot')::jsonb as jonot,
+        (data ->> 'viimeinenValinnanvaihe')::int as viimeinenValinnanvaihe,
         (data -> 'valinnanVaihe' ->> 'aktiivinen')::boolean as aktiivinen,
+        data -> 'valinnanVaihe' ->> 'valinnanVaiheTyyppi'::varchar as valinnanvaihe_tyyppi,
+        (data -> 'hakukohteenValintaperuste')::jsonb as hakukohteenValintaperuste,
+        (data -> 'valinnanVaihe' -> 'valintatapajono')::jsonb as valintatapajono,
+        (data -> 'valinnanVaihe' -> 'valintakoe')::jsonb as valintakoe,
+        (data -> 'valinnanVaihe' ->> 'jonot')::jsonb as jonot,
         dw_metadata_source_timestamp_at as muokattu,
         {{ metadata_columns() }}
     from source
-
 )
 
 select * from final
