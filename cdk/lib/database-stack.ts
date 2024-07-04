@@ -15,7 +15,6 @@ export interface DatabaseStackProps extends GenericStackProps {
 
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
-  public readonly dbClusterResourceId: string;
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
@@ -57,13 +56,13 @@ export class DatabaseStack extends cdk.Stack {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_15_5,
         }),
-        serverlessV2MinCapacity: 0.5,
+        serverlessV2MinCapacity: 2,
         serverlessV2MaxCapacity: 16,
         deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
         removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
         writer: rds.ClusterInstance.serverlessV2('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
-          enablePerformanceInsights: false,
+          enablePerformanceInsights: true,
         }),
         // TODO: lisää readeri tuotantosetuppiin
         vpc,
@@ -83,7 +82,19 @@ export class DatabaseStack extends cdk.Stack {
         iamAuthentication: true,
       }
     );
-    this.dbClusterResourceId = auroraCluster.clusterResourceIdentifier;
+
+    new cdk.CfnOutput(this, 'AuroraClusterResourceId', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-cluster-resourceid`,
+      description: 'Aurora cluster resource id',
+      value: auroraCluster.clusterResourceIdentifier,
+    });
+
+    new cdk.CfnOutput(this, 'DatabaseEndpointName', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-database-endpoint`,
+      description: 'Database endpoint name',
+      value: auroraCluster.clusterEndpoint.hostname,
+    });
+
     new route53.CnameRecord(this, `${config.environment}-DbCnameRecord`, {
       recordName: `raportointi.db`,
       zone: publicHostedZone,

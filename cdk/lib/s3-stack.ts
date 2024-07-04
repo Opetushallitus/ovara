@@ -1,11 +1,14 @@
 import path = require('path');
 
 import * as cdk from 'aws-cdk-lib';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
+import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
+import { ARecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -13,25 +16,33 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface S3Props extends GenericStackProps {
-  dbClusterResourceId: string;
-  dbUser: string;
+  ovaraWildcardCertificate: acm.ICertificate;
+  zone: IHostedZone;
 }
 
 export class S3Stack extends cdk.Stack {
   public readonly deploymentS3Bucket: s3.IBucket;
+  public readonly siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
   constructor(scope: Construct, id: string, props: S3Props) {
     super(scope, id, props);
 
     const config: Config = props.config;
 
     const siirtotiedostotBucketName = `${config.environment}-siirtotiedostot`;
-    const siirtotiedostotS3Bucket = new s3.Bucket(this, siirtotiedostotBucketName, {
+    const siirtotiedostotKmsKey = new kms.Key(
+      this,
+      `${siirtotiedostotBucketName}-s3BucketKMSKey`,
+      {
+        alias: `${siirtotiedostotBucketName}-s3-bucket-kms-key`,
+        enableKeyRotation: true,
+      }
+    );
+
+    const siirtotiedostoS3Bucket = new s3.Bucket(this, siirtotiedostotBucketName, {
       bucketName: siirtotiedostotBucketName,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryptionKey: new kms.Key(this, `${siirtotiedostotBucketName}-s3BucketKMSKey`, {
-        enableKeyRotation: true,
-      }),
+      encryptionKey: siirtotiedostotKmsKey,
       serverAccessLogsBucket: new s3.Bucket(
         this,
         `${siirtotiedostotBucketName}-server-access-logs`
@@ -40,30 +51,64 @@ export class S3Stack extends cdk.Stack {
 
     const s3CrossAccountRole = new iam.Role(
       this,
-      `${config.environment}-OpintopolkuS3CrossAccountRole`,
+      `${config.environment}-S3CrossAccountRole`,
       {
-        assumedBy: new iam.ArnPrincipal(
-          `arn:aws:iam::${config.opintopolkuAccountId}:root`
+        assumedBy: new iam.CompositePrincipal(
+          new iam.ArnPrincipal(`arn:aws:iam::${config.accountId}:root`),
+          new iam.ArnPrincipal(`arn:aws:iam::${config.opintopolkuAccountId}:root`)
         ),
-        roleName: `${config.environment}-opintopolku-s3-cross-account-role`,
+        roleName: 'opintopolku-s3-cross-account-role',
       }
     );
 
-    const assumeStatement = new iam.PolicyStatement();
-    assumeStatement.addResources(siirtotiedostotS3Bucket.bucketArn);
-    s3CrossAccountRole.addToPrincipalPolicy(assumeStatement);
-
     const bucketResourceStatement = new iam.PolicyStatement();
-    bucketResourceStatement.addResources(siirtotiedostotS3Bucket.bucketArn);
-    bucketResourceStatement.addActions('s3:*Bucket*');
+    bucketResourceStatement.addResources(siirtotiedostoS3Bucket.bucketArn);
+    bucketResourceStatement.addActions('s3:ListBucket', 's3:ListBucketVersions');
     s3CrossAccountRole.addToPolicy(bucketResourceStatement);
 
     const objectResourceStatement = new iam.PolicyStatement();
-    objectResourceStatement.addResources(`${siirtotiedostotS3Bucket.bucketArn}/*`);
-    objectResourceStatement.addActions('s3:*Object*');
+    objectResourceStatement.addResources(`${siirtotiedostoS3Bucket.bucketArn}/*`);
+    objectResourceStatement.addActions(
+      's3:GetObject',
+      's3:PutObject',
+      's3:GetObjectAttributes',
+      's3:ListMultipartUploadParts',
+      's3:AbortMultipartUpload',
+      's3:PutObjectTagging'
+    );
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
+    new cdk.CfnOutput(this, 'SiirtotiedostoBucketArn', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-arn`,
+      description: 'Siirtotiedosto bucket arn',
+      value: `${siirtotiedostoS3Bucket.bucketArn}`,
+    });
 
-    siirtotiedostotS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
+    const kmsResourceStatement = new iam.PolicyStatement();
+    kmsResourceStatement.addResources(siirtotiedostotKmsKey.keyArn);
+    kmsResourceStatement.addActions(
+      'kms:Encrypt',
+      'kms:Decrypt',
+      'kms:GenerateDataKey',
+      'kms:DescribeKey'
+    );
+    s3CrossAccountRole.addToPolicy(kmsResourceStatement);
+    new cdk.CfnOutput(this, 'SiirtotiedostoKeyArn', {
+      exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-key-arn`,
+      description: 'Siirtotiedosto key arn',
+      value: siirtotiedostotKmsKey.keyArn,
+    });
+
+    siirtotiedostoS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
+
+    this.siirtotiedostoPutEventSource = new lambdaEventSources.S3EventSource(
+      siirtotiedostoS3Bucket,
+      {
+        events: [
+          s3.EventType.OBJECT_CREATED_PUT,
+          s3.EventType.OBJECT_CREATED_COMPLETE_MULTIPART_UPLOAD,
+        ],
+      }
+    );
 
     const deploymentS3BucketName = `${config.environment}-deployment`;
     this.deploymentS3Bucket = new s3.Bucket(this, deploymentS3BucketName, {
@@ -79,43 +124,53 @@ export class S3Stack extends cdk.Stack {
       ),
     });
 
+    const dokumentaatioBucket = new s3.Bucket(
+      this,
+      `${config.environment}-dokumentaatio`,
+      {
+        enforceSSL: true,
+        bucketName: `${config.environment}-ovara-dokumentaatio`,
+      }
+    );
+
+    const dokumentaatioCloudFrontToS3 = new cloudFront.Distribution(
+      this,
+      `${config.environment}-dokumentaatio-cloudfront-to-s3`,
+      {
+        defaultRootObject: 'index.html',
+        defaultBehavior: {
+          origin: new S3Origin(dokumentaatioBucket),
+        },
+        domainNames: [`dokumentaatio.${config.publicHostedZone}`],
+        minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
+        certificate: props.ovaraWildcardCertificate,
+      }
+    );
+
+    new ARecord(this, `${config.environment}-dokumentaatio-arecord`, {
+      zone: props.zone,
+      recordName: 'dokumentaatio',
+      target: RecordTarget.fromAlias(new CloudFrontTarget(dokumentaatioCloudFrontToS3)),
+    });
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
       {
-        id: 'AwsSolutions-IAM5',
+        id: 'AwsSolutions-IAM4',
         reason: 'Account assuming the role delegates only needed access rights',
       },
-    ]);
-
-    const sharedLayer = new lambda.LayerVersion(this, 'shared-layer', {
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/layers')),
-      compatibleRuntimes: [lambda.Runtime.PYTHON_3_9],
-      layerVersionName: 'shared-layer',
-    });
-
-    const fileLoaderLambda = new lambda.Function(this, 'Transferfile loader', {
-      functionName: `${config.environment}-transfer-file-loader`,
-      runtime: lambda.Runtime.PYTHON_3_9,
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda/siirtotiedosto')),
-      handler: 'lataa.lambda_handler',
-      layers: [sharedLayer],
-      initialPolicy: [
-        new iam.PolicyStatement({
-          effect: Effect.ALLOW,
-          resources: [
-            `arn:aws:rds-db:${props.config.region}:${props.config.accountId}:dbuser:${props.dbClusterResourceId}/${props.dbUser}`,
-          ],
-          actions: ['rds-db:connect'],
-        }),
-      ],
-    });
-
-    const s3PutEventSource = new lambdaEventSources.S3EventSource(
-      siirtotiedostotS3Bucket,
       {
-        events: [s3.EventType.OBJECT_CREATED_PUT],
-      }
-    );
-    fileLoaderLambda.addEventSource(s3PutEventSource);
+        id: 'AwsSolutions-IAM5',
+        reason: 'Wildcard used only for bucket contents',
+      },
+      {
+        id: 'AwsSolutions-S1',
+        reason: 'Not interested in access logs',
+      },
+      {
+        id: 'AwsSolutions-CFR3',
+        reason: 'Not interested in access logs',
+      },
+    ]);
   }
 }
