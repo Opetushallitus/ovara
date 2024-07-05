@@ -12,3 +12,5 @@ project_dir = ./
 [sqlfluff:rules:aliasing.length]
 max_alias_length=4
 
+[sqlfluff:rules:references.keywords]
+ignore_words = data
