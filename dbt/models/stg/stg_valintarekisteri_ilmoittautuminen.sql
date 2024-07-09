@@ -13,7 +13,7 @@ raw as (
         data ->> 'ilmoittaja' as ilmoittaja,
         data ->> 'selite' as selite,
         data ->> 'tila' as tila,
-        (data ->> 'timestamp') as muokattu,
+        (data ->> 'timestamp')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 ),
