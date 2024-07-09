@@ -14,7 +14,7 @@ raw as (
         data ->> 'selite' as selite,
         data ->> 'action' as operaatio,
         (data ->> 'id')::int as id,
-        (data ->> 'timestamp') as muokattu,
+        (data ->> 'timestamp')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 ),

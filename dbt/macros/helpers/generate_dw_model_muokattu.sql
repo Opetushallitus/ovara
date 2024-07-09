@@ -57,4 +57,6 @@ final as (
         dw_metadata_dw_stored_at
     from date
 )
+
+select * from final
 {% endmacro %}

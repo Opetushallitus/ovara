@@ -4,4 +4,4 @@
     )
 }}
 
-select * from {{ ref('stg_onr_yhteystieto') }}
+select * from {{ ref('stg_onr_henkilo') }}

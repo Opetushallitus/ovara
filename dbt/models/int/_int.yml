@@ -38,33 +38,6 @@ models:
       - name: oid
         description: hakukohteen oid
         data_type: text
-  - name: int_valintapiste_service_pistetieto
-    description: Tämä malli sisältää kaikki pistetiedot
-    columns:
-      - name: hakemus_oid
-        description: Hakemuksen tiedot johon pisteet liittyvät
-        data_type: text
-        data_tests:
-          - not_null
-      - name: arvo
-        description: ""
-        data_type: text
-      - name: tunniste
-        description: Valintakokeen tunniste
-        data_tests:
-          - not_null
-        data_type: text
-      - name: osallistuminen
-        description: ""
-        data_type: text
-      - name: tallettaja
-        description: ""
-        data_type: text
-      - name: muokattu
-        description: Viimeksi tallennettu versio. Lähdejärjestelmästä ei tule
-          muutosaikaleimaa, joten tämä aikaleima kertoo tallennusajankohdan
-          tähän tauluun
-        data_type: timestamp with time zone
   - name: int_koulutus_koulutuskoodi
     description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:

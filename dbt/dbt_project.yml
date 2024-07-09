@@ -25,6 +25,7 @@ models:
       +schema: stg
       +materialized: incremental
       +incremental_strategy: 'append'
+      +on_schema_change: append_new_columns
       +indexes:
         - columns: ['dw_metadata_dbt_copied_at']
         - columns: ['dw_metadata_stg_stored_at']

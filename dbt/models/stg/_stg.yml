@@ -102,13 +102,13 @@ models:
         description: ""
         data_type: integer
   - name: stg_sure_suoritus
-    description: Sisältää Suoritusrekisterin suoritus tietoja
+    description: Sisältää Suoritusrekisterin suoritustietoja
     columns:
       - name: resourceid
         data_type: text
         description: ""
         data_tests:
-          - not_null
+        - not_null
       - name: komo
         description: ""
         data_type: text
@@ -135,7 +135,9 @@ models:
           vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
           kanssa.
         data_type: timestamp with time zone
-      - name: deleted
+        data_tests:
+        - not_null
+      - name: poistettu
         description: ""
         data_type: boolean
       - name: source
@@ -154,7 +156,7 @@ models:
         data_type: text
         description: ""
         data_tests:
-          - not_null
+        - not_null
       - name: suoritus
         description: ""
         data_type: text
@@ -178,6 +180,8 @@ models:
           vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
           kanssa.
         data_type: timestamp with time zone
+        data_tests:
+        - not_null
       - name: deleted
         description: ""
         data_type: boolean
@@ -227,7 +231,9 @@ models:
           vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
           kanssa.
         data_type: timestamp with time zone
-      - name: deleted
+        data_tests:
+        - not_null
+      - name: poistettu
         description: ""
         data_type: boolean
       - name: source
@@ -264,7 +270,9 @@ models:
           vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
           kanssa.
         data_type: timestamp with time zone
-      - name: deleted
+        data_tests:
+        - not_null
+      - name: poistettu
         description: ""
         data_type: boolean
   - name: stg_sure_ensikertalainen
@@ -313,6 +321,8 @@ models:
         data_type: jsonb
       - name: muokattu
         data_type: timestamp with time zone
+        data_tests:
+        - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -447,6 +457,8 @@ models:
         data_type: boolean
       - name: muokattu
         data_type: timestamp with time zone
+        data_tests:
+        - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -479,7 +491,9 @@ models:
       - name: tila
         data_type: text
       - name: muokattu
-        data_type: text
+        data_type: timestamp with time zone
+        data_tests:
+        - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -514,7 +528,9 @@ models:
       - name: id
         data_type: integer
       - name: muokattu
-        data_type: text
+        data_type: timestamp with time zone
+        data_tests:
+        - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
