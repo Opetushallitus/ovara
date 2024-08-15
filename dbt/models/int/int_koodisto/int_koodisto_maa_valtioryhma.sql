@@ -21,7 +21,8 @@ final as (
         valtioryhma.versioitu_koodiuri as valtioryhma_versioitu_koodiuri,
         valtioryhma.koodiuri as valtioryhma_koodiuri,
         valtioryhma.koodiarvo as valtioryhma_koodiarvo,
-        valtioryhma.koodiversio as valtioryhma_koodiversio
+        valtioryhma.koodiversio as valtioryhma_koodiversio,
+        rel.relaatioversio
     from maa
     inner join rel on maa.koodiuri = rel.ylakoodiuri and maa.koodiversio = rel.ylakoodiversio
     inner join valtioryhma on rel.alakoodiuri = valtioryhma.koodiuri and rel.alakoodiversio = valtioryhma.koodiversio

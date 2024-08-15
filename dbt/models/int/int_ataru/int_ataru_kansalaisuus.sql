@@ -1,6 +1,9 @@
 {{
   config(
-    indexes=[{'columns':['henkilotieto_id','haluttu_kansalaisuus']}],
+    indexes=[
+        {'columns':['henkilotieto_id','haluttu_kansalaisuus']},
+        {'columns':['henkilotieto_kansalaisuus_id']}
+        ],
     materialized = 'incremental',
     incremental_strategy = 'merge',
     unique_key = 'henkilotieto_kansalaisuus_id',
@@ -47,7 +50,7 @@ kansalaisuus_riveille as (
         henkilo_oid,
         muokattu,
         dw_metadata_dbt_copied_at,
-        (jsonb_array_elements(kansalaisuus) ->> 0)::int as kansalaisuus --noqa: CV11
+        (jsonb_array_elements(kansalaisuus) ->> 0) as kansalaisuus --noqa: CV11
     from hakemukset
 ),
 
@@ -58,7 +61,7 @@ kansalaisuus_jarjestys as (
         henkilo_oid,
         kansalaisuus,
         case
-            when kansalaisuus = 246 then 1
+            when kansalaisuus = '246' then 1
             when kansalaisuus in (
                 select maa_koodiarvo from maa_valtioryhma
             ) then 2
