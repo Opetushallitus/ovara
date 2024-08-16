@@ -410,3 +410,93 @@ models:
         data_type: text
       - name: nimi_en
         data_type: text
+  - name: pub_dim_koodisto_pohjakoulutustoinenaste
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: integer
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_pohjakoulutusvaatimuskk
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_posti
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_sukupuoli
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: integer
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_valintatapajono
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
