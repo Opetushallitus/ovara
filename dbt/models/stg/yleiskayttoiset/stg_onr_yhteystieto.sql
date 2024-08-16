@@ -8,11 +8,10 @@
 }}
 
 with source as (
-      select * from {{ source('ovara', 'onr_yhteystieto') }}
+    select * from {{ source('ovara', 'onr_yhteystieto') }}
 ),
 
-final as
-(
+final as (
     select
         data ->> 'henkilo_oid'::varchar as henkilo_oid,
         data ->> 'yhteystieto_arvo_tyyppi'::varchar as yhteystieto_arvo_tyyppi,
@@ -24,4 +23,3 @@ final as
 )
 
 select * from final
-

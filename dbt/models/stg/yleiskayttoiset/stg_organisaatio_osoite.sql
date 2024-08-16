@@ -23,4 +23,4 @@ raw as (
     from source
 )
 
-select *  from raw
+select * from raw

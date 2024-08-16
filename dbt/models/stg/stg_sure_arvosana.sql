@@ -1,16 +1,13 @@
 with source as (
-      select * from {{ source('ovara', 'sure_arvosana') }}
- 
-      {% if is_incremental() %}
+    select * from {{ source('ovara', 'sure_arvosana') }}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
-
+    {% if is_incremental() %}
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
     {% endif %}
 ),
 
-final as 
-(   
-    select 
+final as (
+    select
         data ->> 'resourceId'::varchar as resourceid,
         data ->> 'suoritus'::varchar as suoritus,
         data ->> 'arvosana'::varchar as arvosana,
@@ -20,7 +17,10 @@ final as
         (data ->> 'valinnainen')::boolean as valinnainen,
         --to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as inserted, #Changed column name to muokattu
         --to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as muokattu,
-        ((to_timestamp(((data ->> ('inserted')::varchar)::bigint /1000 )) at time zone 'utc' at time zone 'europe/helsinki')::timestamptz) as muokattu,
+        ((
+            to_timestamp(((data ->> ('inserted')::varchar)::bigint / 1000)
+            ) at time zone 'utc' at time zone 'europe/helsinki'
+        )::timestamptz) as muokattu,
         (data ->> 'deleted')::boolean as deleted,
         data ->> 'pisteet'::varchar as pisteet,
         --data ->> 'myonnetty'::varchar as myonnetty,
@@ -30,7 +30,7 @@ final as
         data -> 'lahdeArvot' ->> 'arvot'::varchar as arvot,
         {{ metadata_columns() }}
 
-        from source
+    from source
 
 )
 
