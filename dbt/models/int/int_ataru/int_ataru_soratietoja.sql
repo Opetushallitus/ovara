@@ -18,7 +18,7 @@ with raw as (
         dw_metadata_dw_stored_at
     from {{ ref('int_ataru_hakemus') }}
     {% if is_incremental() %}
-      where dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
+        where dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
     {% endif %}
 ),
 
@@ -58,7 +58,7 @@ final as (
                 'hato.hakemus_oid',
                 'hato.hakukohde_oid'
          ]) }}
-            as hakutoive_id,
+        as hakutoive_id,
         hato.hakemus_oid,
         hato.hakukohde_oid,
         sote.sora_terveys,

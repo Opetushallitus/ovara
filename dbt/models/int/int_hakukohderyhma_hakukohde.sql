@@ -2,7 +2,7 @@ with source as (
     select
         oid as hakukohderyhma_oid,
         muokattu,
-        row_number () over (partition by oid order by muokattu desc) as rownr,
+        row_number() over (partition by oid order by muokattu desc) as rownr,
         hakukohde_oid
     from {{ ref('dw_hakukohderyhmapalvelu_ryhma') }}
 ),
@@ -13,7 +13,7 @@ raw as (
         jsonb_array_elements_text(hakukohde_oid) as hakukohde_oid,
         muokattu
     from source
-    where rownr=1
+    where rownr = 1
 ),
 
 final as (

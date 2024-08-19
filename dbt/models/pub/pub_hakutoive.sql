@@ -47,8 +47,8 @@ final as (
         mave.maksuvelvollinen,
         hato.muokattu
     from hakutoive as hato
-    left join sora on hato.hakutoive_id=sora.hakutoive_id
-    left join maksuvelvollisuus as mave on hato.hakutoive_id=mave.hakutoive_id
+    left join sora on hato.hakutoive_id = sora.hakutoive_id
+    left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
 )
 
 select * from final

@@ -3,6 +3,7 @@
     indexes =[
       {'columns':['versioitu_koodiuri']},
       {'columns':['koodiuri']},
+      {'columns':['koodiarvo']},
     ]
   )
 }}

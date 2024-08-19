@@ -1,3 +1,12 @@
+{{
+    config (
+        indexes = [
+            {'columns': ['kunta_koodiarvo']}
+        ]
+    )
+
+}}
+
 with
 kunta as (
     select * from {{ ref('int_koodisto_kunta') }}
@@ -21,7 +30,8 @@ kunta_maakunta_relaatio as (
         mkta.versioitu_koodiuri as maakunta_versioitu_koodiuri,
         mkta.koodiuri as maakunta_koodiuri,
         mkta.koodiarvo as maakunta_koodiarvo,
-        mkta.koodiversio as maakunta_koodiversio
+        mkta.koodiversio as maakunta_koodiversio,
+        rela.relaatioversio
     from kunta as knta
     inner join rel as rela on knta.koodiuri = rela.ylakoodiuri and knta.koodiversio = rela.ylakoodiversio
     inner join maakunta as mkta on rela.alakoodiuri = mkta.koodiuri and rela.alakoodiversio = mkta.koodiversio

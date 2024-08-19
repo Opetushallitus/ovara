@@ -70,7 +70,7 @@ final as (
         hakemus_oid,
         hakukohde_oid,
         hakutoivenumero,
-        false::boolean as poistettu,
+        cast(false as boolean) as poistettu,
         muokattu,
         dw_metadata_dbt_copied_at
     from hakutoivenro

@@ -1,7 +1,7 @@
 {{
   config(
     indexes = [
-        {'columns': ['muokattu']}
+        {'columns': ['muokattu']},
     ],
     materialized = 'incremental',
     incremental_strategy = 'merge',
