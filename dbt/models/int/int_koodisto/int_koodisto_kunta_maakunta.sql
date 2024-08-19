@@ -31,7 +31,7 @@ kunta_maakunta_relaatio as (
         mkta.koodiuri as maakunta_koodiuri,
         mkta.koodiarvo as maakunta_koodiarvo,
         mkta.koodiversio as maakunta_koodiversio,
-        rela.relaatioversio as relaatioversio
+        rela.relaatioversio
     from kunta as knta
     inner join rel as rela on knta.koodiuri = rela.ylakoodiuri and knta.koodiversio = rela.ylakoodiversio
     inner join maakunta as mkta on rela.alakoodiuri = mkta.koodiuri and rela.alakoodiversio = mkta.koodiversio

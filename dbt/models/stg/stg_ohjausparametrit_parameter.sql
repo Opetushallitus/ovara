@@ -10,7 +10,7 @@ with source as (
 
 final as (
     select
-        data ->> 'key'  as id,
+        data ->> 'key' as id,
         (data ->> 'lastModified')::timestamptz as muokattu,
         (data -> 'values')::jsonb as arvot,
         {{ metadata_columns() }}
