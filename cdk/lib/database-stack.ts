@@ -1,5 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
+import * as backup from 'aws-cdk-lib/aws-backup';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as events from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -102,6 +104,29 @@ export class DatabaseStack extends cdk.Stack {
       zone: publicHostedZone,
       domainName: auroraCluster.clusterEndpoint.hostname,
       ttl: cdk.Duration.seconds(300),
+    });
+
+    const backupPlan = new backup.BackupPlan(this, 'BackupPlan', {
+      backupPlanName: `${config.environment}-ovara-backup-plan`,
+      backupVault: new backup.BackupVault(this, `${config.environment}-BackupVault`, {
+        backupVaultName: `${config.environment}-ovara-backup-vault`,
+      }),
+      backupPlanRules: [
+        new backup.BackupPlanRule({
+          ruleName: `${config.environment}-jatkuva-backup-rule`,
+          enableContinuousBackup: true,
+          deleteAfter: cdk.Duration.days(35),
+          scheduleExpression: events.Schedule.cron({
+            hour: '3',
+            minute: '0',
+          }),
+        }),
+      ],
+    });
+
+    backupPlan.addSelection(`${config.environment}-ovara-aurora-backup-vault-selection`, {
+      backupSelectionName: `${config.environment}-ovara-aurora-backup-vault-selection`,
+      resources: [backup.BackupResource.fromRdsDatabaseCluster(auroraCluster)],
     });
 
     new cdk.CfnOutput(this, `${config.environment}-PostgresEndpoint`, {
