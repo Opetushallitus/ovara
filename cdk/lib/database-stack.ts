@@ -104,6 +104,22 @@ export class DatabaseStack extends cdk.Stack {
       ttl: cdk.Duration.seconds(300),
     });
 
+    const databaseBackupRole = new iam.Role(
+      this,
+      `${config.environment}-ovara-database-backup-role`,
+      {
+        assumedBy: new iam.ServicePrincipal('backup.amazonaws.com'),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AWSBackupServiceRolePolicyForBackup'
+          ),
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AWSBackupServiceRolePolicyForRestores'
+          ),
+        ],
+      }
+    );
+
     const backupPlan = new backup.BackupPlan(this, 'BackupPlan', {
       backupPlanName: `${config.environment}-ovara-backup-plan`,
       backupVault: new backup.BackupVault(this, `${config.environment}-BackupVault`, {
@@ -125,6 +141,7 @@ export class DatabaseStack extends cdk.Stack {
     backupPlan.addSelection(`${config.environment}-ovara-aurora-backup-vault-selection`, {
       backupSelectionName: `${config.environment}-ovara-aurora-backup-vault-selection`,
       resources: [backup.BackupResource.fromRdsDatabaseCluster(auroraCluster)],
+      role: databaseBackupRole,
     });
 
     new cdk.CfnOutput(this, `${config.environment}-PostgresEndpoint`, {
@@ -137,6 +154,7 @@ export class DatabaseStack extends cdk.Stack {
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
       { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
       { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
+      { id: 'AwsSolutions-IAM4', reason: 'Decided to managed policies for now' },
     ]);
   }
 }
