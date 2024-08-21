@@ -1,11 +1,15 @@
 import * as cdk from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as actions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -150,6 +154,46 @@ export class DatabaseStack extends cdk.Stack {
       description: 'Aurora endpoint',
       value: `raportointi.db.${config.publicHostedZone}`,
     });
+
+    const slackAlarmEmailAddress = ssm.StringParameter.valueForStringParameter(
+      this,
+      `/${config.environment}/aurora/slack-alarm-channel-email-address`
+    );
+
+    const slackAlarmSnsTopic = new sns.Topic(
+      this,
+      `${config.environment}-slack-alarm-sns-topic`
+    );
+
+    new sns.Subscription(this, `${config.environment}-slack-alarm-email-subscription`, {
+      topic: slackAlarmSnsTopic,
+      protocol: sns.SubscriptionProtocol.EMAIL,
+      endpoint: slackAlarmEmailAddress,
+    });
+
+    const databaseCPUUtilizationAlarm = new cloudwatch.Alarm(
+      this,
+      `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
+      {
+        alarmName: `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
+        alarmDescription:
+          'Ovaran Aurora-tietokannan CPUUtilization-arvo on ylittänyt hälytysrajan: 90%',
+        metric: new cloudwatch.Metric({
+          metricName: 'CPUUtilization',
+          namespace: 'AWS/RDS',
+          period: cdk.Duration.minutes(15),
+          unit: cloudwatch.Unit.PERCENT,
+          statistic: cloudwatch.Stats.AVERAGE,
+          dimensionsMap: {
+            DBInstanceIdentifier: 'rdsalarm-development',
+          },
+        }),
+        threshold: 90,
+        evaluationPeriods: 1,
+      }
+    );
+
+    databaseCPUUtilizationAlarm.addAlarmAction(new actions.SnsAction(slackAlarmSnsTopic));
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
