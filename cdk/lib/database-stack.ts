@@ -129,7 +129,7 @@ export class DatabaseStack extends cdk.Stack {
         new backup.BackupPlanRule({
           ruleName: `${config.environment}-jatkuva-backup-rule`,
           enableContinuousBackup: true,
-          deleteAfter: cdk.Duration.days(35),
+          deleteAfter: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
           scheduleExpression: events.Schedule.cron({
             hour: '3',
             minute: '0',
