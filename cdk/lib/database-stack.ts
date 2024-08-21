@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
-import * as actions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -193,7 +193,7 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
-    databaseCPUUtilizationAlarm.addAlarmAction(new actions.SnsAction(slackAlarmSnsTopic));
+    databaseCPUUtilizationAlarm.addAlarmAction(new cloudwatchActions.SnsAction(slackAlarmSnsTopic));
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
