@@ -1,9 +1,14 @@
 {
   "accountId": "471112673652",
+  "aurora": {
+    "backup": {
+      "deleteAfterDays": 35
+    }
+  },
   "environment": "tuotanto",
   "opintopolkuAccountId": "225588084137",
   "profile": "oph-opiskelijavalinnan-raportointi-prod",
-  "publicHostedZone": "opiskelijavalinnan-raportointi.opintopolku.fi",
+  "publicHostedZone": "ovara.opintopolku.fi",
   "region": "eu-west-1",
   "vpc": {
     "maxAzs": 3,

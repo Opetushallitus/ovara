@@ -8,6 +8,11 @@ export interface GenericStackProps extends cdk.StackProps {
 
 export interface Config {
   accountId: string;
+  aurora: {
+    backup: {
+      deleteAfterDays: number;
+    };
+  };
   environment: string;
   opintopolkuAccountId: string;
   profile: string;

@@ -1,5 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
+import * as backup from 'aws-cdk-lib/aws-backup';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
@@ -102,6 +105,46 @@ export class DatabaseStack extends cdk.Stack {
       ttl: cdk.Duration.seconds(300),
     });
 
+    const databaseBackupRole = new iam.Role(
+      this,
+      `${config.environment}-ovara-database-backup-role`,
+      {
+        assumedBy: new iam.ServicePrincipal('backup.amazonaws.com'),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AWSBackupServiceRolePolicyForBackup'
+          ),
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AWSBackupServiceRolePolicyForRestores'
+          ),
+        ],
+      }
+    );
+
+    const backupPlan = new backup.BackupPlan(this, 'BackupPlan', {
+      backupPlanName: `${config.environment}-ovara-backup-plan`,
+      backupVault: new backup.BackupVault(this, `${config.environment}-BackupVault`, {
+        backupVaultName: `${config.environment}-ovara-backup-vault`,
+      }),
+      backupPlanRules: [
+        new backup.BackupPlanRule({
+          ruleName: `${config.environment}-jatkuva-backup-rule`,
+          enableContinuousBackup: true,
+          deleteAfter: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
+          scheduleExpression: events.Schedule.cron({
+            hour: '3',
+            minute: '0',
+          }),
+        }),
+      ],
+    });
+
+    backupPlan.addSelection(`${config.environment}-ovara-aurora-backup-vault-selection`, {
+      backupSelectionName: `${config.environment}-ovara-aurora-backup-vault-selection`,
+      resources: [backup.BackupResource.fromRdsDatabaseCluster(auroraCluster)],
+      role: databaseBackupRole,
+    });
+
     new cdk.CfnOutput(this, `${config.environment}-PostgresEndpoint`, {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-db-dns`,
       description: 'Aurora endpoint',
@@ -112,6 +155,7 @@ export class DatabaseStack extends cdk.Stack {
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
       { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
       { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
+      { id: 'AwsSolutions-IAM4', reason: 'Decided to managed policies for now' },
     ]);
   }
 }
