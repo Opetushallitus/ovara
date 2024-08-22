@@ -157,12 +157,22 @@ export class DatabaseStack extends cdk.Stack {
 
     const slackAlarmEmailAddress = ssm.StringParameter.valueForStringParameter(
       this,
-      `/${config.environment}/aurora/slack-alarm-channel-email-address`
+      `/${config.environment}/monitor/slack-alarm-channel-email-address`
     );
+
+    const snsKmsKey = new kms.Key(this, 'sns-key', {
+      enableKeyRotation: true,
+    });
+    snsKmsKey.addAlias(`alias/${config.environment}/sns`);
+    snsKmsKey.grantDecrypt(new iam.AccountRootPrincipal());
 
     const slackAlarmSnsTopic = new sns.Topic(
       this,
-      `${config.environment}-slack-alarm-sns-topic`
+      `${config.environment}-slack-email-alarm-sns-topic`,
+      {
+        masterKey: snsKmsKey,
+        topicName: `${config.environment}-slack-email-alarm-sns-topic`,
+      }
     );
 
     new sns.Subscription(this, `${config.environment}-slack-alarm-email-subscription`, {
@@ -180,12 +190,12 @@ export class DatabaseStack extends cdk.Stack {
           'Ovaran Aurora-tietokannan CPUUtilization-arvo on ylittänyt hälytysrajan: 90%',
         metric: new cloudwatch.Metric({
           metricName: 'CPUUtilization',
-          namespace: 'AWS/RDS',
+          namespace: 'RDS',
           period: cdk.Duration.minutes(15),
           unit: cloudwatch.Unit.PERCENT,
           statistic: cloudwatch.Stats.AVERAGE,
           dimensionsMap: {
-            DBInstanceIdentifier: 'rdsalarm-development',
+            DBClusterIdentifier: auroraCluster.clusterIdentifier,
           },
         }),
         threshold: 90,
@@ -193,13 +203,50 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
-    databaseCPUUtilizationAlarm.addAlarmAction(new cloudwatchActions.SnsAction(slackAlarmSnsTopic));
+    databaseCPUUtilizationAlarm.addAlarmAction(
+      new cloudwatchActions.SnsAction(slackAlarmSnsTopic)
+    );
+    databaseCPUUtilizationAlarm.addOkAction(
+      new cloudwatchActions.SnsAction(slackAlarmSnsTopic)
+    );
+    databaseCPUUtilizationAlarm.addInsufficientDataAction(
+      new cloudwatchActions.SnsAction(slackAlarmSnsTopic)
+    );
+
+    new iam.Policy(
+      this,
+      `${config.environment}-ovara-aurora-cpu-utilization-alarm-policy`,
+      {
+        roles: [
+          new iam.Role(
+            this,
+            `${config.environment}-ovara-aurora-cpu-utilization-alarm-role`,
+            {
+              //assumedBy: new iam.ArnPrincipal(databaseCPUUtilizationAlarm.alarmArn),
+              assumedBy: new iam.ServicePrincipal('cloudwatch.amazonaws.com'),
+            }
+          ),
+        ],
+        statements: [
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            resources: [snsKmsKey.keyArn],
+            actions: [
+              //'kms:Decrypt',
+              //'kms:GenerateDataKey',
+              'kms:*',
+            ],
+          }),
+        ],
+      }
+    );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
       { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
       { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
-      { id: 'AwsSolutions-IAM4', reason: 'Decided to managed policies for now' },
+      { id: 'AwsSolutions-IAM4', reason: 'Decided to use managed policies for now' },
+      { id: 'AwsSolutions-IAM5', reason: 'dsklgnhskdjfhgskdl' },
     ]);
   }
 }
