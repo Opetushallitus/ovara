@@ -9,7 +9,6 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as sns from 'aws-cdk-lib/aws-sns';
-import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -18,14 +17,28 @@ import { Config, GenericStackProps } from './config';
 export interface DatabaseStackProps extends GenericStackProps {
   publicHostedZone: route53.IHostedZone;
   vpc: ec2.IVpc;
+  slackAlarmIntegrationSnsTopic: sns.ITopic;
 }
 
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
+
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
     const config: Config = props.config;
+
+    const addActionsToAlarm = (alarm: cloudwatch.Alarm) => {
+      alarm.addAlarmAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+      alarm.addOkAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+      alarm.addInsufficientDataAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+    };
 
     const vpc = props.vpc;
     const publicHostedZone = props.publicHostedZone;
@@ -155,32 +168,6 @@ export class DatabaseStack extends cdk.Stack {
       value: `raportointi.db.${config.publicHostedZone}`,
     });
 
-    const slackAlarmEmailAddress = ssm.StringParameter.valueForStringParameter(
-      this,
-      `/${config.environment}/monitor/slack-alarm-channel-email-address`
-    );
-
-    const snsKmsKey = new kms.Key(this, 'sns-key', {
-      enableKeyRotation: true,
-    });
-    snsKmsKey.addAlias(`alias/${config.environment}/sns`);
-    snsKmsKey.grantDecrypt(new iam.AccountRootPrincipal());
-
-    const slackAlarmSnsTopic = new sns.Topic(
-      this,
-      `${config.environment}-slack-email-alarm-sns-topic`,
-      {
-        masterKey: snsKmsKey,
-        topicName: `${config.environment}-slack-email-alarm-sns-topic`,
-      }
-    );
-
-    new sns.Subscription(this, `${config.environment}-slack-alarm-email-subscription`, {
-      topic: slackAlarmSnsTopic,
-      protocol: sns.SubscriptionProtocol.EMAIL,
-      endpoint: slackAlarmEmailAddress,
-    });
-
     const databaseCPUUtilizationAlarm = new cloudwatch.Alarm(
       this,
       `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
@@ -190,7 +177,7 @@ export class DatabaseStack extends cdk.Stack {
           'Ovaran Aurora-tietokannan CPUUtilization-arvo on ylittänyt hälytysrajan: 90%',
         metric: new cloudwatch.Metric({
           metricName: 'CPUUtilization',
-          namespace: 'RDS',
+          namespace: 'AWS/RDS',
           period: cdk.Duration.minutes(15),
           unit: cloudwatch.Unit.PERCENT,
           statistic: cloudwatch.Stats.AVERAGE,
@@ -202,51 +189,36 @@ export class DatabaseStack extends cdk.Stack {
         evaluationPeriods: 1,
       }
     );
+    addActionsToAlarm(databaseCPUUtilizationAlarm);
 
-    databaseCPUUtilizationAlarm.addAlarmAction(
-      new cloudwatchActions.SnsAction(slackAlarmSnsTopic)
-    );
-    databaseCPUUtilizationAlarm.addOkAction(
-      new cloudwatchActions.SnsAction(slackAlarmSnsTopic)
-    );
-    databaseCPUUtilizationAlarm.addInsufficientDataAction(
-      new cloudwatchActions.SnsAction(slackAlarmSnsTopic)
-    );
-
-    new iam.Policy(
+    const databaseACUUtilizationAlarm = new cloudwatch.Alarm(
       this,
-      `${config.environment}-ovara-aurora-cpu-utilization-alarm-policy`,
+      `${config.environment}-ovara-aurora-acu-utilization-alarm`,
       {
-        roles: [
-          new iam.Role(
-            this,
-            `${config.environment}-ovara-aurora-cpu-utilization-alarm-role`,
-            {
-              //assumedBy: new iam.ArnPrincipal(databaseCPUUtilizationAlarm.alarmArn),
-              assumedBy: new iam.ServicePrincipal('cloudwatch.amazonaws.com'),
-            }
-          ),
-        ],
-        statements: [
-          new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            resources: [snsKmsKey.keyArn],
-            actions: [
-              //'kms:Decrypt',
-              //'kms:GenerateDataKey',
-              'kms:*',
-            ],
-          }),
-        ],
+        alarmName: `${config.environment}-ovara-aurora-acu-utilization-alarm`,
+        alarmDescription:
+          'Ovaran Aurora-tietokannan ACUUtilization-arvo on ylittänyt hälytysrajan: 80%',
+        metric: new cloudwatch.Metric({
+          metricName: 'ACUUtilization',
+          namespace: 'AWS/RDS',
+          period: cdk.Duration.minutes(15),
+          unit: cloudwatch.Unit.PERCENT,
+          statistic: cloudwatch.Stats.AVERAGE,
+          dimensionsMap: {
+            DBClusterIdentifier: auroraCluster.clusterIdentifier,
+          },
+        }),
+        threshold: 80,
+        evaluationPeriods: 1,
       }
     );
+    addActionsToAlarm(databaseACUUtilizationAlarm);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
       { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
       { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
       { id: 'AwsSolutions-IAM4', reason: 'Decided to use managed policies for now' },
-      { id: 'AwsSolutions-IAM5', reason: 'dsklgnhskdjfhgskdl' },
     ]);
   }
 }

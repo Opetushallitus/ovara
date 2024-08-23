@@ -8,6 +8,7 @@ import { CertificateStack } from '../lib/certificate-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
 import { LambdaStack } from '../lib/lambda-stack';
+import { MonitorStack } from '../lib/monitor-stack';
 import { NetworkStack } from '../lib/network-stack';
 import { Route53Stack } from '../lib/route53-stack';
 import { S3Stack } from '../lib/s3-stack';
@@ -16,6 +17,10 @@ const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
 const props = getGenericStackProps(environmentName);
 const config = props.config;
+
+const monitorStack = new MonitorStack(app, `${config.environment}-MonitorStack`, {
+  ...props,
+});
 
 const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`, {
   ...props,
@@ -46,6 +51,7 @@ const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
 const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
   publicHostedZone: route53Stack.publicHostedZone,
   vpc: networkStack.vpc,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });
 

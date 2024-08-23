@@ -1,5 +1,3 @@
-import path = require('path');
-
 import * as cdk from 'aws-cdk-lib';
 import { Duration } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
