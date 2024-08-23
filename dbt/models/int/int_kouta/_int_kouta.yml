@@ -1,0 +1,198 @@
+models:
+  - name: int_kouta_haku
+    description: Hakujen viimeisin tieto. Nimi haetaan kaikille kielille, oma kieli
+      jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: externalid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: hakutapakoodiuri
+        data_type: text
+      - name: hakukohteenliittamisentakaraja
+        data_type: timestamp with time zone
+      - name: hakukohteenmuokkaamisentakaraja
+        data_type: timestamp with time zone
+      - name: hakukohteenliittajaorganisaatiot
+        data_type: jsonb
+      - name: ajastettujulkaisu
+        data_type: timestamp with time zone
+      - name: ajastettuhaunjahakukohteidenarkistointi
+        data_type: timestamp with time zone
+      - name: ajastettuhaunjahakukohteidenarkistointiajettu
+        data_type: timestamp with time zone
+      - name: kohdejoukkokoodiuri
+        data_type: text
+      - name: kohdejoukontarkennekoodiuri
+        data_type: text
+      - name: hakulomaketyyppi
+        data_type: text
+      - name: hakulomakeataruid
+        data_type: text
+      - name: hakulomakekuvaus
+        data_type: jsonb
+      - name: hakulomakelinkki
+        data_type: jsonb
+      - name: yhteyshenkilot
+        data_type: jsonb
+      - name: tulevaisuudenaikataulu
+        data_type: jsonb
+      - name: ismuokkaajaophvirkailija
+        data_type: text
+      - name: alkamiskausityyppi
+        data_type: text
+      - name: henkilokohtaisensuunnitelmanlisatiedot
+        data_type: jsonb
+      - name: koulutuksenalkamiskausikoodiuri
+        data_type: json
+      - name: koulutuksenalkamisvuosi
+        data_type: integer
+      - name: organisaatiooid
+        data_type: text
+      - name: hakuajat
+        data_type: jsonb
+      - name: muokkaaja
+        data_type: text
+      - name: kielivalinta
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: muokkaajannimi
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+  - name: int_kouta_hakukohde
+    description: Hakukohteiden viimeisin tieto. Nimi haetaan kaikille kielille, oma kieli jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: externalid
+        data_type: text
+      - name: toteutusoid
+        data_type: text
+      - name: hakuoid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: esikatselu
+        data_type: boolean
+      - name: hakukohdekoodiuri
+        data_type: text
+      - name: jarjestyspaikkaoid
+        data_type: text
+      - name: hakulomaketyyppi
+        data_type: text
+      - name: hakulomakeataruid
+        data_type: text
+      - name: hakulomakekuvaus
+        data_type: jsonb
+      - name: hakulomakelinkki
+        data_type: jsonb
+      - name: kaytetaanhaunhakulomaketta
+        data_type: boolean
+      - name: pohjakoulutusvaatimuskoodiurit
+        data_type: jsonb
+      - name: pohjakoulutusvaatimustarkenne
+        data_type: jsonb
+      - name: muupohjakoulutusvaatimus
+        data_type: jsonb
+      - name: toinenasteonkokaksoistutkinto
+        data_type: boolean
+      - name: kaytetaanhaunaikataulua
+        data_type: boolean
+      - name: valintaperusteid
+        data_type: text
+      - name: liitteetonkosamatoimitusaika
+        data_type: boolean
+      - name: liitteetonkosamatoimitusosoite
+        data_type: boolean
+      - name: liitteidentoimitusaika
+        data_type: timestamp with time zone
+      - name: liitteidentoimitustapa
+        data_type: text
+      - name: liitteidentoimitusosoite
+        data_type: jsonb
+      - name: liitteet
+        data_type: jsonb
+      - name: valintakokeet
+        data_type: jsonb
+      - name: hakuajat
+        data_type: jsonb
+      - name: valintakokeidenyleiskuvaus
+        data_type: jsonb
+      - name: valintaperusteenvalintakokeidenlisatilaisuudet
+        data_type: jsonb
+      - name: kynnysehto
+        data_type: jsonb
+      - name: kaytetaanhaunalkamiskautta
+        data_type: boolean
+      - name: aloituspaikat
+        data_type: integer
+      - name: aloituspaikat_kuvaus
+        data_type: jsonb
+      - name: hakukohteenlinja
+        data_type: jsonb
+      - name: painotetutarvosanat
+        data_type: jsonb
+      - name: uudenopiskelijanurl
+        data_type: jsonb
+      - name: ismuokkaajaophvirkailija
+        data_type: boolean
+      - name: jarjestaaurheilijanammkoulutusta
+        data_type: boolean
+      - name: muokkaaja
+        data_type: text
+      - name: organisaatiooid
+        data_type: text
+      - name: kielivalinta
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: muokkaajannimi
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_hash
+        data_type: text
+      - name: dw_metadata_key
+        data_type: text
+      - name: dw_metadata_timestamp
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text

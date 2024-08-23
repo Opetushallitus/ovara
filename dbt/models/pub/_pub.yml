@@ -1,5 +1,5 @@
 models:
-  - name: pub_hakutoive
+  - name: pub_dim_hakutoive
     description: Sisältää aktiiviset hakutoiveet
     columns:
       - name: hakutoive_id
