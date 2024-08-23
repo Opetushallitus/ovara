@@ -5,11 +5,11 @@ import { Construct } from 'constructs';
 
 import { GenericStackProps } from './config';
 
-export interface CertificateProps extends GenericStackProps {}
+export interface CertificateStackProps extends GenericStackProps {}
 
 export class CertificateStack extends cdk.Stack {
   public readonly ovaraWildcardCertificate;
-  constructor(scope: Construct, id: string, props: CertificateProps) {
+  constructor(scope: Construct, id: string, props: CertificateStackProps) {
     super(scope, id, props);
 
     const config = props.config;

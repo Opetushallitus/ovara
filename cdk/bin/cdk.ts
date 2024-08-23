@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+
 import * as cdk from 'aws-cdk-lib';
-import { AwsSolutionsChecks } from 'cdk-nag';
+import * as cdkNag from 'cdk-nag';
 
 import { BastionStack } from '../lib/bastion-stack';
 import { CertificateStack } from '../lib/certificate-stack';
@@ -55,14 +56,14 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
   ...props,
 });
 
-const lambdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
+new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
   siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
   slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });
 
-const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`, {
+new BastionStack(app, `${config.environment}-BastionStack`, {
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
   deploymentS3Bucket: s3Stack.deploymentS3Bucket,
   publicHostedZone: route53Stack.publicHostedZone,
@@ -70,4 +71,4 @@ const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`,
   ...props,
 });
 
-cdk.Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
+cdk.Aspects.of(app).add(new cdkNag.AwsSolutionsChecks({ verbose: true }));

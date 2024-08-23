@@ -2,7 +2,6 @@ import * as cdk from 'aws-cdk-lib';
 import * as asg from 'aws-cdk-lib/aws-autoscaling';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { Protocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as s3 from 'aws-cdk-lib/aws-s3';
@@ -155,7 +154,7 @@ export class BastionStack extends cdk.Stack {
       {
         targetGroupName: `${config.environment}-bastion-nlb-target-group`,
         port: 22,
-        protocol: Protocol.TCP_UDP,
+        protocol: elb.Protocol.TCP_UDP,
         connectionTermination: true,
         vpc: vpc,
       }
