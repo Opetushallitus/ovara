@@ -58,6 +58,7 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
 const lambdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
   siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });
 

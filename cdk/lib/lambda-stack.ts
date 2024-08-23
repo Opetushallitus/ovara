@@ -1,9 +1,13 @@
 import * as cdk from 'aws-cdk-lib';
 import { Duration } from 'aws-cdk-lib';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import * as sns from 'aws-cdk-lib/aws-sns';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -12,6 +16,7 @@ import { Config, GenericStackProps } from './config';
 export interface LambdaProps extends GenericStackProps {
   vpc: ec2.IVpc;
   siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
+  slackAlarmIntegrationSnsTopic: sns.ITopic;
 }
 
 export class LambdaStack extends cdk.Stack {
@@ -19,6 +24,12 @@ export class LambdaStack extends cdk.Stack {
     super(scope, id, props);
 
     const config: Config = props.config;
+
+    const addActionsToAlarm = (alarm: cloudwatch.Alarm) => {
+      alarm.addAlarmAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+    };
 
     const lambdaSecurityGroup = new ec2.SecurityGroup(
       this,
@@ -119,7 +130,18 @@ export class LambdaStack extends cdk.Stack {
       `${config.environment}-opiskelijavalinnanraportointi-database-endpoint`
     );
 
+    const siirtotiedostoLambdaName = `${config.environment}-siirtotiedostojenLataaja`;
+
+    const siirtotiedostoLambdaLogGroup = new logs.LogGroup(
+      this,
+      `${config.environment}-${siirtotiedostoLambdaName}LogGroup`,
+      {
+        logGroupName: `/aws/lambda/${siirtotiedostoLambdaName}`,
+      }
+    );
+
     const siirtotiedostoLambda = new NodejsFunction(this, 'Transferfile loader', {
+      functionName: siirtotiedostoLambdaName,
       entry: 'lambda/siirtotiedosto/TransferfileToDatabase.ts',
       handler: 'main',
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -147,6 +169,42 @@ export class LambdaStack extends cdk.Stack {
       },
     });
     siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
+
+    const siirtotiedostonLatausErrorMetricName = 'SiirtotiedostonLatausError';
+    const siirtotiedostonLatausErrorMetricNamespace = `${config.environment}-OvaraCustomMetrics`;
+
+    const siirtotiedostonLatausErrorMetric = new cloudwatch.Metric({
+      namespace: siirtotiedostonLatausErrorMetricNamespace,
+      metricName: siirtotiedostonLatausErrorMetricName,
+      period: cdk.Duration.minutes(1),
+      unit: cloudwatch.Unit.COUNT,
+      statistic: cloudwatch.Stats.SUM,
+    });
+
+    const siirtotiedostonLatausErrorMetricFilter = new logs.MetricFilter(
+      this,
+      `${config.environment}-siirtotiedostonLatausErrorMetricFilter`,
+      {
+        //filterPattern: logs.FilterPattern.allTerms('ERROR'),
+        filterPattern: logs.FilterPattern.allTerms('INFO'),
+        logGroup: siirtotiedostoLambdaLogGroup,
+        metricName: siirtotiedostonLatausErrorMetricName,
+        metricNamespace: siirtotiedostonLatausErrorMetricNamespace,
+      }
+    );
+
+    const siirtotiedostonLatausErrorAlarm = new cloudwatch.Alarm(this, 'AlarmId', {
+      metric: siirtotiedostonLatausErrorMetric,
+      evaluationPeriods: 1,
+      actionsEnabled: true,
+      alarmName: `${config.environment}-ovara-SiirtotiedostonLatausError`,
+      alarmDescription: 'Siirtotiedoston lataamisessa tietokantaan tapahtui virhe',
+      comparisonOperator:
+        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: cloudwatch.TreatMissingData.IGNORE,
+      threshold: 1,
+    });
+    addActionsToAlarm(siirtotiedostonLatausErrorAlarm);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {
