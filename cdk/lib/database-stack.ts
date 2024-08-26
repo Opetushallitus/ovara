@@ -187,6 +187,7 @@ export class DatabaseStack extends cdk.Stack {
         }),
         threshold: 90,
         evaluationPeriods: 1,
+        datapointsToAlarm: 1,
       }
     );
     addActionsToAlarm(databaseCPUUtilizationAlarm);
@@ -210,6 +211,7 @@ export class DatabaseStack extends cdk.Stack {
         }),
         threshold: 80,
         evaluationPeriods: 1,
+        datapointsToAlarm: 1,
       }
     );
     addActionsToAlarm(databaseACUUtilizationAlarm);

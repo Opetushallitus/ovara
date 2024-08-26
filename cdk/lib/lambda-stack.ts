@@ -199,6 +199,7 @@ export class LambdaStack extends cdk.Stack {
     const siirtotiedostonLatausErrorAlarm = new cloudwatch.Alarm(this, 'AlarmId', {
       metric: siirtotiedostonLatausErrorMetric,
       evaluationPeriods: 1,
+      datapointsToAlarm: 1,
       actionsEnabled: true,
       alarmName: `${config.environment}-ovara-SiirtotiedostonLatausError`,
       alarmDescription: 'Siirtotiedoston lataamisessa tietokantaan tapahtui virhe',
