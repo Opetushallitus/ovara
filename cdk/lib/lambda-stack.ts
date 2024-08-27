@@ -190,7 +190,6 @@ export class LambdaStack extends cdk.Stack {
       this,
       `${config.environment}-siirtotiedostonLatausOnnistuiMetricFilter`,
       {
-        //filterPattern: logs.FilterPattern.allTerms('INFO', 'Kirjoitettu kantaan', 'tiedostosta'),
         filterPattern: logs.FilterPattern.spaceDelimited(
           'Timestamp',
           'uid',
