@@ -168,13 +168,13 @@ export class DatabaseStack extends cdk.Stack {
       value: `raportointi.db.${config.publicHostedZone}`,
     });
 
+    const cpuThreshold = 95;
     const databaseCPUUtilizationAlarm = new cloudwatch.Alarm(
       this,
       `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
       {
         alarmName: `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
-        alarmDescription:
-          'Ovaran Aurora-tietokannan CPUUtilization-arvo on ylittänyt hälytysrajan: 90%',
+        alarmDescription: `Ovaran Aurora-tietokannan CPUUtilization-arvo on ylittänyt hälytysrajan: ${cpuThreshold}%`,
         metric: new cloudwatch.Metric({
           metricName: 'CPUUtilization',
           namespace: 'AWS/RDS',
@@ -185,20 +185,20 @@ export class DatabaseStack extends cdk.Stack {
             DBClusterIdentifier: auroraCluster.clusterIdentifier,
           },
         }),
-        threshold: 90,
+        threshold: cpuThreshold,
         evaluationPeriods: 1,
         datapointsToAlarm: 1,
       }
     );
     addActionsToAlarm(databaseCPUUtilizationAlarm);
 
+    const acuThreshold = 90;
     const databaseACUUtilizationAlarm = new cloudwatch.Alarm(
       this,
       `${config.environment}-ovara-aurora-acu-utilization-alarm`,
       {
         alarmName: `${config.environment}-ovara-aurora-acu-utilization-alarm`,
-        alarmDescription:
-          'Ovaran Aurora-tietokannan ACUUtilization-arvo on ylittänyt hälytysrajan: 80%',
+        alarmDescription: `Ovaran Aurora-tietokannan ACUUtilization-arvo on ylittänyt hälytysrajan: ${acuThreshold}%`,
         metric: new cloudwatch.Metric({
           metricName: 'ACUUtilization',
           namespace: 'AWS/RDS',
@@ -209,7 +209,7 @@ export class DatabaseStack extends cdk.Stack {
             DBClusterIdentifier: auroraCluster.clusterIdentifier,
           },
         }),
-        threshold: 80,
+        threshold: acuThreshold,
         evaluationPeriods: 1,
         datapointsToAlarm: 1,
       }
