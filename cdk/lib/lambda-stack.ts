@@ -173,14 +173,51 @@ export class LambdaStack extends cdk.Stack {
     );
     siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
 
+    const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
+
+    const siirtotiedostoLatausOnnistuiMetricName = 'SiirtotiedostonLatausOnnistui';
     const siirtotiedostonLatausErrorMetricName = 'SiirtotiedostonLatausError';
-    const siirtotiedostonLatausErrorMetricNamespace = `${config.environment}-OvaraCustomMetrics`;
+
+    new cloudwatch.Metric({
+      namespace: ovaraCustomMetricsNamespace,
+      metricName: siirtotiedostoLatausOnnistuiMetricName,
+      period: cdk.Duration.minutes(5),
+      unit: cloudwatch.Unit.NONE,
+      statistic: cloudwatch.Stats.SUM,
+    });
+
+    new logs.MetricFilter(
+      this,
+      `${config.environment}-siirtotiedostonLatausOnnistuiMetricFilter`,
+      {
+        //filterPattern: logs.FilterPattern.allTerms('INFO', 'Kirjoitettu kantaan', 'tiedostosta'),
+        filterPattern: logs.FilterPattern.spaceDelimited(
+          'Timestamp',
+          'uid',
+          'Level',
+          'text1',
+          'text2',
+          'rows',
+          't3',
+          't4',
+          'system',
+          't5'
+        ).whereString('text1', '=', 'Kirjoitettu'),
+        logGroup: siirtotiedostoLambdaLogGroup,
+        metricName: siirtotiedostoLatausOnnistuiMetricName,
+        metricNamespace: ovaraCustomMetricsNamespace,
+        metricValue: '$rows',
+        dimensions: {
+          lahdejarjestelma: '$system',
+        },
+      }
+    );
 
     const siirtotiedostonLatausErrorMetric = new cloudwatch.Metric({
-      namespace: siirtotiedostonLatausErrorMetricNamespace,
+      namespace: ovaraCustomMetricsNamespace,
       metricName: siirtotiedostonLatausErrorMetricName,
-      period: cdk.Duration.minutes(1),
-      unit: cloudwatch.Unit.COUNT,
+      period: cdk.Duration.minutes(5),
+      unit: cloudwatch.Unit.NONE,
       statistic: cloudwatch.Stats.SUM,
     });
 
@@ -188,25 +225,21 @@ export class LambdaStack extends cdk.Stack {
       this,
       `${config.environment}-siirtotiedostonLatausErrorMetricFilter`,
       {
-        //filterPattern: logs.FilterPattern.allTerms('ERROR'),
-        filterPattern: logs.FilterPattern.allTerms('INFO'),
+        filterPattern: logs.FilterPattern.allTerms('ERROR'),
         logGroup: siirtotiedostoLambdaLogGroup,
         metricName: siirtotiedostonLatausErrorMetricName,
-        metricNamespace: siirtotiedostonLatausErrorMetricNamespace,
+        metricNamespace: ovaraCustomMetricsNamespace,
       }
     );
 
     const siirtotiedostonLatausErrorAlarm = new cloudwatch.Alarm(this, 'AlarmId', {
       metric: siirtotiedostonLatausErrorMetric,
-      evaluationPeriods: 1,
+      evaluationPeriods: 3,
       datapointsToAlarm: 1,
-      actionsEnabled: true,
       alarmName: `${config.environment}-ovara-SiirtotiedostonLatausError`,
       alarmDescription: 'Siirtotiedoston lataamisessa tietokantaan tapahtui virhe',
-      comparisonOperator:
-        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: cloudwatch.TreatMissingData.IGNORE,
-      threshold: 1,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+      threshold: 0,
     });
     addActionsToAlarm(siirtotiedostonLatausErrorAlarm);
 
