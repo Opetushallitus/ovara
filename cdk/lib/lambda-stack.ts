@@ -224,7 +224,7 @@ export class LambdaStack extends cdk.Stack {
       this,
       `${config.environment}-siirtotiedostonLatausErrorMetricFilter`,
       {
-        filterPattern: logs.FilterPattern.allTerms('ERROR'),
+        filterPattern: logs.FilterPattern.anyTerm('ERROR', 'Error'),
         logGroup: siirtotiedostoLambdaLogGroup,
         metricName: siirtotiedostonLatausErrorMetricName,
         metricNamespace: ovaraCustomMetricsNamespace,
