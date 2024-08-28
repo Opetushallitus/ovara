@@ -1,11 +1,14 @@
 import * as cdk from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as sns from 'aws-cdk-lib/aws-sns';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -14,14 +17,28 @@ import { Config, GenericStackProps } from './config';
 export interface DatabaseStackProps extends GenericStackProps {
   publicHostedZone: route53.IHostedZone;
   vpc: ec2.IVpc;
+  slackAlarmIntegrationSnsTopic: sns.ITopic;
 }
 
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
+
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
     const config: Config = props.config;
+
+    const addActionsToAlarm = (alarm: cloudwatch.Alarm) => {
+      alarm.addAlarmAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+      alarm.addOkAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+      alarm.addInsufficientDataAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+    };
 
     const vpc = props.vpc;
     const publicHostedZone = props.publicHostedZone;
@@ -151,11 +168,59 @@ export class DatabaseStack extends cdk.Stack {
       value: `raportointi.db.${config.publicHostedZone}`,
     });
 
+    const cpuThreshold = 95;
+    const databaseCPUUtilizationAlarm = new cloudwatch.Alarm(
+      this,
+      `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
+      {
+        alarmName: `${config.environment}-ovara-aurora-cpu-utilization-alarm`,
+        alarmDescription: `Ovaran Aurora-tietokannan CPUUtilization-arvo on ylittänyt hälytysrajan: ${cpuThreshold}%`,
+        metric: new cloudwatch.Metric({
+          metricName: 'CPUUtilization',
+          namespace: 'AWS/RDS',
+          period: cdk.Duration.minutes(15),
+          unit: cloudwatch.Unit.PERCENT,
+          statistic: cloudwatch.Stats.AVERAGE,
+          dimensionsMap: {
+            DBClusterIdentifier: auroraCluster.clusterIdentifier,
+          },
+        }),
+        threshold: cpuThreshold,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+      }
+    );
+    addActionsToAlarm(databaseCPUUtilizationAlarm);
+
+    const acuThreshold = 90;
+    const databaseACUUtilizationAlarm = new cloudwatch.Alarm(
+      this,
+      `${config.environment}-ovara-aurora-acu-utilization-alarm`,
+      {
+        alarmName: `${config.environment}-ovara-aurora-acu-utilization-alarm`,
+        alarmDescription: `Ovaran Aurora-tietokannan ACUUtilization-arvo on ylittänyt hälytysrajan: ${acuThreshold}%`,
+        metric: new cloudwatch.Metric({
+          metricName: 'ACUUtilization',
+          namespace: 'AWS/RDS',
+          period: cdk.Duration.minutes(15),
+          unit: cloudwatch.Unit.PERCENT,
+          statistic: cloudwatch.Stats.AVERAGE,
+          dimensionsMap: {
+            DBClusterIdentifier: auroraCluster.clusterIdentifier,
+          },
+        }),
+        threshold: acuThreshold,
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+      }
+    );
+    addActionsToAlarm(databaseACUUtilizationAlarm);
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
       { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
       { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
-      { id: 'AwsSolutions-IAM4', reason: 'Decided to managed policies for now' },
+      { id: 'AwsSolutions-IAM4', reason: 'Decided to use managed policies for now' },
     ]);
   }
 }

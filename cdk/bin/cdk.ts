@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+
 import * as cdk from 'aws-cdk-lib';
-import { AwsSolutionsChecks } from 'cdk-nag';
+import * as cdkNag from 'cdk-nag';
 
 import { BastionStack } from '../lib/bastion-stack';
 import { CertificateStack } from '../lib/certificate-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
 import { LambdaStack } from '../lib/lambda-stack';
+import { MonitorStack } from '../lib/monitor-stack';
 import { NetworkStack } from '../lib/network-stack';
 import { Route53Stack } from '../lib/route53-stack';
 import { S3Stack } from '../lib/s3-stack';
@@ -16,6 +18,10 @@ const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
 const props = getGenericStackProps(environmentName);
 const config = props.config;
+
+const monitorStack = new MonitorStack(app, `${config.environment}-MonitorStack`, {
+  ...props,
+});
 
 const route53Stack = new Route53Stack(app, `${config.environment}-Route53Stack`, {
   ...props,
@@ -46,16 +52,18 @@ const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
 const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStack`, {
   publicHostedZone: route53Stack.publicHostedZone,
   vpc: networkStack.vpc,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });
 
-const lambdaStack = new LambdaStack(app, `${config.environment}-LambdaStack`, {
+new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
   siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });
 
-const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`, {
+new BastionStack(app, `${config.environment}-BastionStack`, {
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
   deploymentS3Bucket: s3Stack.deploymentS3Bucket,
   publicHostedZone: route53Stack.publicHostedZone,
@@ -63,4 +71,4 @@ const bastionStack = new BastionStack(app, `${config.environment}-BastionStack`,
   ...props,
 });
 
-cdk.Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
+cdk.Aspects.of(app).add(new cdkNag.AwsSolutionsChecks({ verbose: true }));

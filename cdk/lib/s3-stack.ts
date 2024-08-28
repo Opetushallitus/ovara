@@ -1,29 +1,27 @@
-import path = require('path');
-
 import * as cdk from 'aws-cdk-lib';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
-import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
-import { ARecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as route53Targets from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
 
-export interface S3Props extends GenericStackProps {
+export interface S3StackProps extends GenericStackProps {
   ovaraWildcardCertificate: acm.ICertificate;
-  zone: IHostedZone;
+  zone: route53.IHostedZone;
 }
 
 export class S3Stack extends cdk.Stack {
   public readonly deploymentS3Bucket: s3.IBucket;
   public readonly siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
-  constructor(scope: Construct, id: string, props: S3Props) {
+  constructor(scope: Construct, id: string, props: S3StackProps) {
     super(scope, id, props);
 
     const config: Config = props.config;
@@ -139,7 +137,7 @@ export class S3Stack extends cdk.Stack {
       {
         defaultRootObject: 'index.html',
         defaultBehavior: {
-          origin: new S3Origin(dokumentaatioBucket),
+          origin: new cloudfrontOrigins.S3Origin(dokumentaatioBucket),
         },
         domainNames: [`dokumentaatio.${config.publicHostedZone}`],
         minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
@@ -147,10 +145,12 @@ export class S3Stack extends cdk.Stack {
       }
     );
 
-    new ARecord(this, `${config.environment}-dokumentaatio-arecord`, {
+    new route53.ARecord(this, `${config.environment}-dokumentaatio-arecord`, {
       zone: props.zone,
       recordName: 'dokumentaatio',
-      target: RecordTarget.fromAlias(new CloudFrontTarget(dokumentaatioCloudFrontToS3)),
+      target: route53.RecordTarget.fromAlias(
+        new route53Targets.CloudFrontTarget(dokumentaatioCloudFrontToS3)
+      ),
     });
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [

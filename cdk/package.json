@@ -41,6 +41,7 @@
     "@types/aws-lambda": "^8.10.137",
     "@types/pg": "^8.11.6",
     "aws-cdk-lib": "^2.139.0",
+    "cdk-slack-chatbot": "1.0.198",
     "constructs": "^10.0.0",
     "date-fns": "^3.6.0",
     "fs": "^0.0.1-security",

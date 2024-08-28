@@ -141,7 +141,7 @@ export const main: Handler = async (event: S3Event) => {
 
   const duration = Math.round((new Date().getTime() - startTime) / 1000);
   console.log(
-    `Kirjoitettu kantaan ${nbrOfRows} riviä tiedostosta ${key}, ajon kesto ${duration} sekuntia`
+    `Kirjoitettu kantaan ${nbrOfRows} riviä järjestelmän ${source} tiedostosta ${key}, ajon kesto ${duration} sekuntia`
   );
   return {
     statusCode: 200,
