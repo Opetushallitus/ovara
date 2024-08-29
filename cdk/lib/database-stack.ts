@@ -100,6 +100,9 @@ export class DatabaseStack extends cdk.Stack {
         storageEncryptionKey: kmsKey,
         parameterGroup,
         iamAuthentication: true,
+        backup: {
+          retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
+        },
       }
     );
 
