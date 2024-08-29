@@ -8,6 +8,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -54,6 +55,16 @@ export class DatabaseStack extends cdk.Stack {
       allowAllOutbound: true,
     });
 
+    const rdsProxySecurityGroup = new ec2.SecurityGroup(
+      this,
+      `${config.environment}-ovaraAuroraRdsProxySecurityGroup`,
+      {
+        securityGroupName: `${config.environment}-ovara-aurora-rds-proxy`,
+        vpc: vpc,
+      }
+    );
+    rdsProxySecurityGroup.addIngressRule(rdsProxySecurityGroup, ec2.Port.tcp(5432));
+
     new cdk.CfnOutput(this, 'PostgresSecurityGroupId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-securitygroupid`,
       description: 'Postgres security group id',
@@ -84,12 +95,12 @@ export class DatabaseStack extends cdk.Stack {
           caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
           enablePerformanceInsights: true,
         }),
-        // TODO: lisää readeri tuotantosetuppiin
+        // TODO: lisää reader instanssi
         vpc,
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
-        securityGroups: [this.auroraSecurityGroup],
+        securityGroups: [this.auroraSecurityGroup, rdsProxySecurityGroup],
         credentials: {
           username: 'oph',
           password: cdk.SecretValue.ssmSecure(
@@ -105,6 +116,32 @@ export class DatabaseStack extends cdk.Stack {
         },
       }
     );
+
+    const opintopolkuProxyUserSecret = new secretsmanager.Secret(
+      this,
+      `${config.environment}-ovara-aurora-cluster-opintopolku-proxy-secret`,
+      {
+        generateSecretString: {
+          secretStringTemplate: JSON.stringify({
+            username: 'opintopolku',
+          }),
+          generateStringKey: 'password',
+          excludePunctuation: true,
+          includeSpace: false,
+        },
+      }
+    );
+
+    auroraCluster.addProxy(`${config.environment}-OvaraAuroraRDSProxy`, {
+      secrets: [opintopolkuProxyUserSecret],
+      vpc: vpc,
+      vpcSubnets: {
+        subnets: vpc.privateSubnets,
+      },
+      debugLogging: true,
+      borrowTimeout: cdk.Duration.seconds(30),
+      securityGroups: [rdsProxySecurityGroup],
+    });
 
     new cdk.CfnOutput(this, 'AuroraClusterResourceId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-cluster-resourceid`,
