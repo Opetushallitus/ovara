@@ -12,12 +12,9 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
-import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sns from 'aws-cdk-lib/aws-sns';
-import * as cr from 'aws-cdk-lib/custom-resources';
-//import * as sns_subscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
-//import * as targets from 'aws-cdk-lib/aws-events-targets';
+//import * as cr from 'aws-cdk-lib/custom-resources';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -30,6 +27,7 @@ export interface DatabaseStackProps extends GenericStackProps {
 }
 
 export class DatabaseStack extends cdk.Stack {
+  //public readonly tags: cdk.TagManager = new cdk.TagManager(cdk.TagType.KEY_VALUE, 'Custom');
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
@@ -188,29 +186,6 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
-    const privateLinkNlbAccessLogsBucketName = `${config.environment}-privatelink-nlb-access-logs`;
-    const privateLinkNlbAccessLogsBucket = new s3.Bucket(
-      this,
-      privateLinkNlbAccessLogsBucketName,
-      {
-        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-        encryptionKey: new kms.Key(
-          this,
-          `${privateLinkNlbAccessLogsBucketName}-s3BucketKMSKey`,
-          {
-            enableKeyRotation: true,
-          }
-        ),
-        serverAccessLogsBucket: new s3.Bucket(
-          this,
-          `${privateLinkNlbAccessLogsBucketName}-server-access-logs`
-        ),
-      }
-    );
-
-    privateLinkNlb.logAccessLogs(privateLinkNlbAccessLogsBucket);
-
     const privateLinkTargetGroup = new elbv2.NetworkTargetGroup(
       this,
       `${config.environment}-rdsPrivateLinkTargetGroup`,
@@ -320,10 +295,13 @@ export class DatabaseStack extends cdk.Stack {
       {
         vpcEndpointServiceLoadBalancers: [privateLinkNlb],
         acceptanceRequired: false,
-        allowedPrincipals: [],
+        allowedPrincipals: [
+          new iam.ArnPrincipal(`arn:aws:iam::${config.opintopolkuAccountId}:root`),
+        ],
       }
     );
 
+    /*
     new cr.AwsCustomResource(this, `${config.environment}-PrivateLinkTagging`, {
       functionName: `${config.environment}-PrivateLinkTagging`,
       onUpdate: {
@@ -341,6 +319,7 @@ export class DatabaseStack extends cdk.Stack {
         ],
       }),
     });
+    */
 
     // Varmuuskopiot
 
@@ -450,6 +429,7 @@ export class DatabaseStack extends cdk.Stack {
       { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
       { id: 'AwsSolutions-IAM5', reason: 'Wildcard used only for bucket contents' },
       { id: 'AwsSolutions-L1', reason: 'Newest runtime is in use' },
+      { id: 'AwsSolutions-ELB2', reason: 'Access logs not needed for TCP/IP traffic' },
     ]);
   }
 }
