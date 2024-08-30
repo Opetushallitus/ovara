@@ -27,7 +27,6 @@ export interface DatabaseStackProps extends GenericStackProps {
 }
 
 export class DatabaseStack extends cdk.Stack {
-  //public readonly tags: cdk.TagManager = new cdk.TagManager(cdk.TagType.KEY_VALUE, 'Custom');
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
@@ -101,8 +100,14 @@ export class DatabaseStack extends cdk.Stack {
           caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
           enablePerformanceInsights: true,
         }),
-        // TODO: lisää reader instanssi
-        vpc,
+        readers: [
+          rds.ClusterInstance.serverlessV2('Reader', {
+            caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
+            enablePerformanceInsights: true,
+            scaleWithWriter: false, // TODO: Pitäisikö olla true ainakin tuotannossa
+          }),
+        ],
+        vpc: vpc,
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
@@ -115,11 +120,12 @@ export class DatabaseStack extends cdk.Stack {
         },
         storageEncrypted: true,
         storageEncryptionKey: kmsKey,
-        parameterGroup,
+        parameterGroup: parameterGroup,
         iamAuthentication: true,
         backup: {
           retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
         },
+        enableDataApi: true,
       }
     );
 
@@ -183,6 +189,8 @@ export class DatabaseStack extends cdk.Stack {
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
+        securityGroups: [this.auroraSecurityGroup, rdsProxySecurityGroup],
+        enforceSecurityGroupInboundRulesOnPrivateLinkTraffic: false,
       }
     );
 
@@ -241,7 +249,7 @@ export class DatabaseStack extends cdk.Stack {
     );
 
     privateLinkNlb.addListener(`${config.environment}-rdsPrivateLinkNlbListener`, {
-      port: 5432,
+      port: auroraCluster.clusterEndpoint.port,
       protocol: elbv2.Protocol.TCP,
       defaultAction: elbv2.NetworkListenerAction.forward([privateLinkTargetGroup]),
     });
@@ -262,7 +270,11 @@ export class DatabaseStack extends cdk.Stack {
       'TARGET_GROUP_ARN',
       privateLinkTargetGroup.targetGroupArn
     );
-    privateLinkNlbManagementLambda.addEnvironment('RDS_ENDPOINT', rdsProxy.endpoint);
+    privateLinkNlbManagementLambda.addEnvironment(
+      'RDS_ENDPOINT',
+      auroraCluster.clusterEndpoint.hostname
+    );
+    //privateLinkNlbManagementLambda.addEnvironment('RDS_ENDPOINT', rdsProxy.endpoint);
     privateLinkNlbManagementLambda.addEnvironment(
       'RDS_PORT',
       auroraCluster.clusterEndpoint.port.toString()
@@ -310,26 +322,6 @@ export class DatabaseStack extends cdk.Stack {
         domainName: `rds-privatelink.${publicHostedZone.zoneName}`,
       }
     );
-
-    /*
-    new cr.AwsCustomResource(this, `${config.environment}-PrivateLinkTagging`, {
-      functionName: `${config.environment}-PrivateLinkTagging`,
-      onUpdate: {
-        action: 'createTags',
-        parameters: {
-          Resources: [privateLinkVpcEndpointService.vpcEndpointServiceId],
-          Tags: this.tags.renderedTags,
-        },
-        service: 'EC2',
-        physicalResourceId: cr.PhysicalResourceId.of('rdsPrivateLinkTagging'),
-      },
-      policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
-        resources: [
-          `arn:aws:ec2:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:vpc-endpoint-service/${privateLinkVpcEndpointService.vpcEndpointServiceId}`,
-        ],
-      }),
-    });
-    */
 
     // Varmuuskopiot
 
