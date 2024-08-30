@@ -5,7 +5,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
@@ -22,3 +22,99 @@ models:
         data_type: text
       - name: muokattu
         data_type: timestamp with time zone
+  - name: pub_dim_hakukohde
+    description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
+    columns:
+      - name: oid
+        description: Hakukohteen tunnus.
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: externalid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: haku_oid
+        description: Linkki hakuun
+        data_type: text
+        data_tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pub_dim_haku')
+              pk_column_name: oid
+      - name: toteutus_oid
+        description: Linkki toteutukseen
+        data_type: text
+        data_tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pub_dim_toteutus')
+              pk_column_name: oid
+      - name: jarjestyspaikka_oid
+        data_type: text
+      - name: aloituspaikat
+        data_type: integer
+      - name: aloituspaikat_ensikertalaisille
+        data_type: integer
+      - name: hakukohdekoodiuri
+        data_type: text
+      - name: pohjakoulutuskoodit
+        data_type: jsonb
+        description: >
+          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat tälle hakukohteelle määritettyjä.
+          Muoto on jsonb-array koska koodeja voi olla useampia
+      - name: hakuajat
+        description: >
+          Kentässä on kaikki hakukohteen hakuajat jsonb-muotoisena. Jos
+          hakukohteella on määritelty "käytetään haun aikataulua" on haun
+          hakuaikoja käytetty, muuten hakukohteelle määritetyt hakuajat
+        data_type: jsonb
+      - name: kaytetaan_haun_aikataulua
+        description: Jos tässä kentässä on arvo true, niin hakukohteen hakuaikoina
+          käytetään haun hakuaikoja.
+        data_type: boolean
+  - name: pub_dim_haku
+    description: Hakujen tietoja
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: externalid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: hakutapakoodiuri
+        data_type: text
+      - name: hakutapa_nimi_fi
+        data_type: text
+      - name: hakutapa_nimi_sv
+        data_type: text
+      - name: hakutapa_nimi_en
+        data_type: text
+      - name: kohdejoukkokoodiuri
+        data_type: text
+      - name: kohdejoukko_nimi_fi
+        data_type: text
+      - name: kohdejoukko_nimi_sv
+        data_type: text
+      - name: kohdejoukko_nimi_en
+        data_type: text
+      - name: kohdejoukontarkennekoodiuri
+        data_type: text
+      - name: kohdejoukontarkenne_nimi_fi
+        data_type: text
+      - name: kohdejoukontarkenne_nimi_sv
+        data_type: text
+      - name: kohdejoukontarkenne_nimi_en
+        data_type: text
