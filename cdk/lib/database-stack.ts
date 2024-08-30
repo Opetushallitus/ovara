@@ -301,6 +301,16 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
+    new route53.VpcEndpointServiceDomainName(
+      this,
+      `${config.environment}-privateLinkVpcEndpointServiceDomain`,
+      {
+        endpointService: privateLinkVpcEndpointService,
+        publicHostedZone: publicHostedZone,
+        domainName: `rds-privatelink.${publicHostedZone.zoneName}`,
+      }
+    );
+
     /*
     new cr.AwsCustomResource(this, `${config.environment}-PrivateLinkTagging`, {
       functionName: `${config.environment}-PrivateLinkTagging`,
