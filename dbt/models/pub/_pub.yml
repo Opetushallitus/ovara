@@ -65,8 +65,9 @@ models:
       - name: pohjakoulutuskoodit
         data_type: jsonb
         description: >
-          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat tälle hakukohteelle määritettyjä.
-          Muoto on jsonb-array koska koodeja voi olla useampia
+          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat
+          tälle hakukohteelle määritettyjä. Muoto on jsonb-array koska koodeja
+          voi olla useampia
       - name: hakuajat
         description: >
           Kentässä on kaikki hakukohteen hakuajat jsonb-muotoisena. Jos
@@ -117,4 +118,42 @@ models:
       - name: kohdejoukontarkenne_nimi_sv
         data_type: text
       - name: kohdejoukontarkenne_nimi_en
+        data_type: text
+  - name: pub_dim_koulutus
+    description: >
+      Tämä taulu sisältää kaikki koulutuksen tiedot.
+      koulutuskoodien tiedot löytyvät erillisestä taulusta int_koulutus_koulutuskoodi
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: organisaatio_oid
+        data_type: text
+        description: Omistavan organisaation oid
+      - name: externalid
+        data_type: text
+      - name: koulutustyyppi
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: tarjoajat
+        description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle koulutukselle,jsonb array-muotoisena
+        data_type: jsonb
+      - name: kielivalinta
+        data_type: jsonb
+      - name: opintojenlaajuus
+        description: Opintojen laajuus. Jos on laajuus määritelty näytetään se arvo, muuten näytetään min - max arvot
+        data_type: text
+      - name: laajuusyksikko_nimi_fi
+        data_type: text
+      - name: laajuusyksikko_nimi_sv
+        data_type: text
+      - name: laajuusyksikko_nimi_en
         data_type: text
