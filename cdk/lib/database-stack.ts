@@ -1,14 +1,21 @@
+import * as path from 'path';
+
 import * as cdk from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+//import * as cr from 'aws-cdk-lib/custom-resources';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -54,6 +61,16 @@ export class DatabaseStack extends cdk.Stack {
       allowAllOutbound: true,
     });
 
+    const rdsProxySecurityGroup = new ec2.SecurityGroup(
+      this,
+      `${config.environment}-ovaraAuroraRdsProxySecurityGroup`,
+      {
+        securityGroupName: `${config.environment}-ovara-aurora-rds-proxy`,
+        vpc: vpc,
+      }
+    );
+    rdsProxySecurityGroup.addIngressRule(rdsProxySecurityGroup, ec2.Port.tcp(5432));
+
     new cdk.CfnOutput(this, 'PostgresSecurityGroupId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-securitygroupid`,
       description: 'Postgres security group id',
@@ -84,12 +101,18 @@ export class DatabaseStack extends cdk.Stack {
           caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
           enablePerformanceInsights: true,
         }),
-        // TODO: lisää readeri tuotantosetuppiin
-        vpc,
+        readers: [
+          rds.ClusterInstance.serverlessV2('Reader', {
+            caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
+            enablePerformanceInsights: true,
+            scaleWithWriter: false, // TODO: Pitäisikö olla true ainakin tuotannossa
+          }),
+        ],
+        vpc: vpc,
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
-        securityGroups: [this.auroraSecurityGroup],
+        securityGroups: [this.auroraSecurityGroup, rdsProxySecurityGroup],
         credentials: {
           username: 'oph',
           password: cdk.SecretValue.ssmSecure(
@@ -98,8 +121,12 @@ export class DatabaseStack extends cdk.Stack {
         },
         storageEncrypted: true,
         storageEncryptionKey: kmsKey,
-        parameterGroup,
+        parameterGroup: parameterGroup,
         iamAuthentication: true,
+        backup: {
+          retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
+        },
+        enableDataApi: true,
       }
     );
 
@@ -121,6 +148,188 @@ export class DatabaseStack extends cdk.Stack {
       domainName: auroraCluster.clusterEndpoint.hostname,
       ttl: cdk.Duration.seconds(300),
     });
+
+    // RDS Proxy
+
+    const opintopolkuProxyUserSecret = new secretsmanager.Secret(
+      this,
+      `${config.environment}-ovara-aurora-cluster-opintopolku-proxy-secret`,
+      {
+        generateSecretString: {
+          secretStringTemplate: JSON.stringify({
+            username: 'opintopolku',
+          }),
+          generateStringKey: 'password',
+          excludePunctuation: true,
+          includeSpace: false,
+        },
+      }
+    );
+
+    const rdsProxy = auroraCluster.addProxy(`${config.environment}-OvaraAuroraRDSProxy`, {
+      secrets: [opintopolkuProxyUserSecret],
+      vpc: vpc,
+      vpcSubnets: {
+        subnets: vpc.privateSubnets,
+      },
+      debugLogging: true,
+      borrowTimeout: cdk.Duration.seconds(30),
+      securityGroups: [rdsProxySecurityGroup],
+    });
+
+    // PrivateLink
+
+    const privateLinkNlb = new elbv2.NetworkLoadBalancer(
+      this,
+      `${config.environment}-rdsPrivateLinkNlb`,
+      {
+        loadBalancerName: `${config.environment}-rdsPrivateLinkNlb`,
+        vpc: vpc,
+        internetFacing: false,
+        crossZoneEnabled: true,
+        vpcSubnets: {
+          subnets: vpc.privateSubnets,
+        },
+        securityGroups: [this.auroraSecurityGroup, rdsProxySecurityGroup],
+        enforceSecurityGroupInboundRulesOnPrivateLinkTraffic: false,
+      }
+    );
+
+    const privateLinkTargetGroup = new elbv2.NetworkTargetGroup(
+      this,
+      `${config.environment}-rdsPrivateLinkTargetGroup`,
+      {
+        targetGroupName: `${config.environment}-rdsPrivateLinkTargetGroup`,
+        vpc: vpc,
+        port: auroraCluster.clusterEndpoint.port,
+        protocol: elbv2.Protocol.TCP,
+        targetType: elbv2.TargetType.IP,
+        healthCheck: {
+          interval: cdk.Duration.seconds(10),
+          port: auroraCluster.clusterEndpoint.port.toString(),
+          protocol: elbv2.Protocol.TCP,
+          healthyThresholdCount: 3,
+          timeout: cdk.Duration.seconds(10),
+        },
+        deregistrationDelay: cdk.Duration.seconds(0),
+      }
+    );
+
+    const privateLinkNlbManagementLambdaRole = new iam.Role(
+      this,
+      `${config.environment}-nlbManagementLambdaRole`,
+      {
+        roleName: `${config.environment}-nlbManagementLambdaRole`,
+        assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AWSLambdaBasicExecutionRole'
+          ),
+          new iam.ManagedPolicy(this, 'rdsPrivateLinkNlbManagementPolicy', {
+            description: 'Allows management of NLB for RDS private link setup',
+            statements: [
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                sid: 'DescribeTargetHealth',
+                actions: ['elasticloadbalancing:DescribeTargetHealth'],
+                resources: ['*'],
+              }),
+              new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                sid: 'TargetRegistration',
+                actions: [
+                  'elasticloadbalancing:RegisterTargets',
+                  'elasticloadbalancing:DeregisterTargets',
+                ],
+                resources: [privateLinkTargetGroup.targetGroupArn],
+              }),
+            ],
+          }),
+        ],
+      }
+    );
+
+    privateLinkNlb.addListener(`${config.environment}-rdsPrivateLinkNlbListener`, {
+      port: auroraCluster.clusterEndpoint.port,
+      protocol: elbv2.Protocol.TCP,
+      defaultAction: elbv2.NetworkListenerAction.forward([privateLinkTargetGroup]),
+    });
+
+    const privateLinkNlbManagementLambda = new lambda.Function(
+      this,
+      `${config.environment}-privateLinkNlbManagementLambda`,
+      {
+        functionName: `${config.environment}-privateLinkNlbManagementLambda`,
+        code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/nlbUpdateLambda')),
+        handler: 'index.handler',
+        runtime: lambda.Runtime.PYTHON_3_12,
+        role: privateLinkNlbManagementLambdaRole,
+      }
+    );
+
+    privateLinkNlbManagementLambda.addEnvironment(
+      'TARGET_GROUP_ARN',
+      privateLinkTargetGroup.targetGroupArn
+    );
+    privateLinkNlbManagementLambda.addEnvironment(
+      'RDS_ENDPOINT',
+      auroraCluster.clusterEndpoint.hostname
+    );
+    //privateLinkNlbManagementLambda.addEnvironment('RDS_ENDPOINT', rdsProxy.endpoint);
+    privateLinkNlbManagementLambda.addEnvironment(
+      'RDS_PORT',
+      auroraCluster.clusterEndpoint.port.toString()
+    );
+
+    const auroraClusterFailoverSnsTopic = new sns.Topic(
+      this,
+      `${config.environment}-ovara-aurora-cluster-failover`,
+      {
+        displayName: `${config.environment}-ovara-aurora-cluster-failover`,
+        topicName: `${config.environment}-ovara-aurora-cluster-failover`,
+      }
+    );
+
+    new rds.CfnEventSubscription(
+      this,
+      `${config.environment}-ovara-aurora-cluster-failover-subscription`,
+      {
+        subscriptionName: `${config.environment}-ovara-aurora-cluster-failover-subscription`,
+        snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
+        eventCategories: ['failover', 'failure'],
+        sourceIds: [auroraCluster.clusterIdentifier],
+        sourceType: 'db-cluster',
+      }
+    );
+
+    const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
+      this,
+      '/testi/opintopolku-account-id'
+    );
+
+    const privateLinkVpcEndpointService = new ec2.VpcEndpointService(
+      this,
+      `${config.environment}-rdsPrivateLinkVpcEndpointService`,
+      {
+        vpcEndpointServiceLoadBalancers: [privateLinkNlb],
+        acceptanceRequired: false,
+        allowedPrincipals: [
+          new iam.ArnPrincipal(`arn:aws:iam::${opintopolkuAccountId}:root`),
+        ],
+      }
+    );
+
+    new route53.VpcEndpointServiceDomainName(
+      this,
+      `${config.environment}-privateLinkVpcEndpointServiceDomain`,
+      {
+        endpointService: privateLinkVpcEndpointService,
+        publicHostedZone: publicHostedZone,
+        domainName: `rds-privatelink.${publicHostedZone.zoneName}`,
+      }
+    );
+
+    // Varmuuskopiot
 
     const databaseBackupRole = new iam.Role(
       this,
@@ -167,6 +376,8 @@ export class DatabaseStack extends cdk.Stack {
       description: 'Aurora endpoint',
       value: `raportointi.db.${config.publicHostedZone}`,
     });
+
+    // Valvonnat
 
     const cpuThreshold = 95;
     const databaseCPUUtilizationAlarm = new cloudwatch.Alarm(
@@ -221,6 +432,12 @@ export class DatabaseStack extends cdk.Stack {
       { id: 'AwsSolutions-RDS10', reason: 'Deletion protection will be enabled later.' },
       { id: 'AwsSolutions-SMG4', reason: 'Secret rotation will be added later.' },
       { id: 'AwsSolutions-IAM4', reason: 'Decided to use managed policies for now' },
+      { id: 'AwsSolutions-SNS2', reason: 'Not needed with database events' },
+      { id: 'AwsSolutions-SNS3', reason: 'Not needed with database events' },
+      { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
+      { id: 'AwsSolutions-IAM5', reason: 'Wildcard used only for bucket contents' },
+      { id: 'AwsSolutions-L1', reason: 'Newest runtime is in use' },
+      { id: 'AwsSolutions-ELB2', reason: 'Access logs not needed for TCP/IP traffic' },
     ]);
   }
 }

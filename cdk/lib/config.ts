@@ -7,17 +7,14 @@ export interface GenericStackProps extends cdk.StackProps {
 }
 
 export interface Config {
-  accountId: string;
   aurora: {
     backup: {
       deleteAfterDays: number;
     };
   };
   environment: string;
-  opintopolkuAccountId: string;
   profile: string;
   publicHostedZone: string;
-  region: string;
   vpc: {
     maxAzs: number;
     netGateways: number;
@@ -31,8 +28,8 @@ export const getGenericStackProps = (environment: string): GenericStackProps => 
   return {
     config: config,
     env: {
-      account: config.accountId,
-      region: config.region,
+      account: process.env.CDK_DEFAULT_ACCOUNT,
+      region: process.env.CDK_DEFAULT_REGION,
     },
   };
 };
