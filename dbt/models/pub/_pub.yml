@@ -25,17 +25,12 @@ models:
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     columns:
-      - name: oid
-        description: Hakukohteen tunnus.
+      - name: hakukohde_oid
         data_type: text
         data_tests:
-          - dbt_constraints.primary_key
-      - name: nimi_fi
-        data_type: text
-      - name: nimi_sv
-        data_type: text
-      - name: nimi_en
-        data_type: text
+        - dbt_constraints.primary_key
+      - name: hakukohde_nimi
+        data_type: jsonb
       - name: externalid
         data_type: text
       - name: tila
@@ -46,7 +41,7 @@ models:
         data_tests:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('pub_dim_haku')
-              pk_column_name: oid
+              pk_column_name: haku_oid
       - name: toteutus_oid
         description: Linkki toteutukseen
         data_type: text
@@ -81,48 +76,42 @@ models:
   - name: pub_dim_haku
     description: Hakujen tietoja
     columns:
-      - name: oid
+      - name: haku_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
-      - name: nimi_fi
-        data_type: text
-      - name: nimi_sv
-        data_type: text
-      - name: nimi_en
-        data_type: text
+      - name: haku_nimi
+        description: Kaikki haun nimet jsonb-objektina
+        data_type: jsonb
       - name: externalid
         data_type: text
       - name: tila
         data_type: text
       - name: hakutapakoodiuri
         data_type: text
-      - name: hakutapa_nimi_fi
+      - name: hakutapa_koodi
         data_type: text
-      - name: hakutapa_nimi_sv
-        data_type: text
-      - name: hakutapa_nimi_en
-        data_type: text
+      - name: hakutapa_nimi
+        description: hakutapojen nimet jsonb-muotoisena
+        data_type: jsonb
       - name: kohdejoukkokoodiuri
         data_type: text
-      - name: kohdejoukko_nimi_fi
+      - name: kohdejoukko_koodi
         data_type: text
-      - name: kohdejoukko_nimi_sv
-        data_type: text
-      - name: kohdejoukko_nimi_en
-        data_type: text
+      - name: kohdejoukko_nimi
+        description: kohdejoukkojen nimen jsonb-muotoisena
+        data_type: jsonb
       - name: kohdejoukontarkennekoodiuri
         data_type: text
-      - name: kohdejoukontarkenne_nimi_fi
+      - name: kohdejoukontarkenne_koodi
         data_type: text
-      - name: kohdejoukontarkenne_nimi_sv
-        data_type: text
-      - name: kohdejoukontarkenne_nimi_en
-        data_type: text
+      - name: kohdejoukontarkenne_nimi
+        data_type: jsonb
+        description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
   - name: pub_dim_koulutus
     description: >
-      Tämä taulu sisältää kaikki koulutuksen tiedot.
-      koulutuskoodien tiedot löytyvät erillisestä taulusta int_koulutus_koulutuskoodi
+      Tämä taulu sisältää kaikki koulutuksen tiedot. koulutuskoodien tiedot
+      löytyvät erillisestä taulusta int_koulutus_koulutuskoodi
     columns:
       - name: oid
         data_type: text
@@ -144,12 +133,14 @@ models:
       - name: tila
         data_type: text
       - name: tarjoajat
-        description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle koulutukselle,jsonb array-muotoisena
+        description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle
+          koulutukselle,jsonb array-muotoisena
         data_type: jsonb
       - name: kielivalinta
         data_type: jsonb
       - name: opintojenlaajuus
-        description: Opintojen laajuus. Jos on laajuus määritelty näytetään se arvo, muuten näytetään min - max arvot
+        description: Opintojen laajuus. Jos on laajuus määritelty näytetään se arvo,
+          muuten näytetään min - max arvot
         data_type: text
       - name: laajuusyksikko_nimi_fi
         data_type: text

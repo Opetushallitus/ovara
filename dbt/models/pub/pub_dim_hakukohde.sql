@@ -20,17 +20,15 @@ toteutus as (
 
 hakuajat as (
     select
-        oid,
+        haku_oid,
         hakuajat
     from {{ ref('int_kouta_haku') }}
 ),
 
 int as (
     select
-        raw1.oid,
-        raw1.nimi_fi,
-        raw1.nimi_sv,
-        raw1.nimi_en,
+        raw1.hakukohde_oid,
+        raw1.hakukohde_nimi,
         raw1.externalid,
         raw1.tila,
         raw1.haku_oid,
@@ -48,7 +46,7 @@ int as (
         raw1.kaytetaanhaunaikataulua as kaytetaan_haun_aikataulua
     from raw as raw1
     left join toteutus as tote on raw1.toteutus_oid = tote.oid
-    left join hakuajat as hajt on raw1.haku_oid = hajt.oid
+    left join hakuajat as hajt on raw1.haku_oid = hajt.haku_oid
 
 )
 

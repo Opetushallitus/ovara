@@ -82,23 +82,29 @@ models:
     description: Hakukohteiden viimeisin tieto. Nimi haetaan kaikille kielille, oma
       kieli jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
     columns:
-      - name: oid
+      - name: hakukohde_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
+      - name: haku_oid
+        data_type: text
+      - name: toteutus_oid
+        data_type: text
+      - name: hakukohde_nimi
+        data_type: jsonb
+      - name: jarjestyspaikka_oid
+        data_type: text
+      - name: on_valintakoe
+        data_type: boolean
+      - name: pohjakoulutuskoodit
+        data_type: jsonb
       - name: externalid
-        data_type: text
-      - name: toteutusoid
-        data_type: text
-      - name: hakuoid
         data_type: text
       - name: tila
         data_type: text
       - name: esikatselu
         data_type: boolean
       - name: hakukohdekoodiuri
-        data_type: text
-      - name: jarjestyspaikkaoid
         data_type: text
       - name: hakulomaketyyppi
         data_type: text
@@ -148,6 +154,8 @@ models:
         data_type: boolean
       - name: aloituspaikat
         data_type: integer
+      - name: aloituspaikat_ensikertalaisille
+        data_type: integer
       - name: aloituspaikat_kuvaus
         data_type: jsonb
       - name: hakukohteenlinja
@@ -180,17 +188,5 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
-      - name: dw_metadata_hash
-        data_type: text
-      - name: dw_metadata_key
-        data_type: text
-      - name: dw_metadata_timestamp
-        data_type: timestamp with time zone
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
-      - name: nimi_fi
-        data_type: text
-      - name: nimi_sv
-        data_type: text
-      - name: nimi_en
-        data_type: text

@@ -36,16 +36,19 @@ pohjakoulutus as (
 
 final as (
     select
+        data.oid as hakukohde_oid,
         data.hakuoid as haku_oid,
         data.toteutusoid as toteutus_oid,
-        data.nimi_fi_new as nimi_fi,
-        data.nimi_sv_new as nimi_sv,
-        data.nimi_en_new as nimi_en,
+                jsonb_build_object(
+            'en',data.nimi_en_new,
+            'sv',data.nimi_sv_new,
+            'fi',data.nimi_fi_new
+        ) as hakukohde_nimi,
         data.jarjestyspaikkaoid as jarjestyspaikka_oid,
         jsonb_array_length(data.valintakokeet) > 0 as on_valintakoe,
         poko.pohjakoulutuskoodit,
         {{ dbt_utils.star(from=ref('dw_kouta_hakukohde'),
-            except=['nimi_fi','nimi_sv','nimi_en','toteutusoid','hakuoid','jarjestyspaikkaoid']) }}
+            except=['nimi_fi','nimi_sv','nimi_en','toteutusoid','hakuoid','jarjestyspaikkaoid','oid']) }}
     from data
     left join pohjakoulutus as poko on data.oid = poko.poko_oid
 )
