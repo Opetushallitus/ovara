@@ -16,10 +16,8 @@ opintojenlaajuusyksikko as (
 
 data as (
     select
-        koul.oid,
-        koul.nimi_fi,
-        koul.nimi_sv,
-        koul.nimi_en,
+        koul.koulutus_oid,
+        koul.koulutus_nimi,
         koul.organisaatio_oid,
         koul.externalid,
         koul.koulutustyyppi,
@@ -30,9 +28,7 @@ data as (
             koul.opintojenlaajuusnumero::text,
             koul.opintojenlaajuusnumeromin::text || '-' || koul.opintojenlaajuusnumeromax::text
         ) as opintojenlaajuus,
-        lyks.nimi_fi as laajuusyksikko_nimi_fi,
-        lyks.nimi_sv as laajuusyksikko_nimi_sv,
-        lyks.nimi_en as laajuusyksikko_nimi_en
+        lyks.koodinimi as laajuusyksikko_nimi
     from koulutus as koul
     left join opintojenlaajuusyksikko as lyks on koul.opintojenlaajuusyksikkokoodiuri = lyks.versioitu_koodiuri
 )

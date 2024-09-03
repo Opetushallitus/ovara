@@ -190,3 +190,91 @@ models:
         data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
+  - name: int_kouta_koulutus
+    columns:
+      - name: koulutus_oid
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: koulutus_nimi
+        data_type: jsonb
+      - name: organisaatio_oid
+        data_type: text
+      - name: externalid
+        data_type: text
+      - name: johtaatutkintoon
+        data_type: boolean
+      - name: koulutustyyppi
+        data_type: text
+      - name: koulutuksetkoodiuri
+        data_type: jsonb
+      - name: tila
+        data_type: text
+      - name: esikatselu
+        data_type: boolean
+      - name: tarjoajat
+        data_type: jsonb
+      - name: julkinen
+        data_type: boolean
+      - name: kielivalinta
+        data_type: jsonb
+      - name: sorakuvausid
+        data_type: text
+      - name: tyyppi
+        data_type: text
+      - name: kuvaus
+        data_type: jsonb
+      - name: lisatiedot
+        data_type: jsonb
+      - name: tutkinnonosat
+        data_type: jsonb
+      - name: koulutusalakoodiurit
+        data_type: jsonb
+      - name: tutkintonimikekoodiurit
+        data_type: jsonb
+      - name: opintojenlaajuusyksikkokoodiuri
+        data_type: text
+      - name: opintojenlaajuusnumero
+        data_type: double precision
+      - name: opintojenlaajuusnumeromin
+        data_type: double precision
+      - name: opintojenlaajuusnumeromax
+        data_type: double precision
+      - name: isavoinkorkeakoulutus
+        data_type: boolean
+      - name: tunniste
+        data_type: text
+      - name: opinnontyyppikoodiuri
+        data_type: text
+      - name: korkeakoulutustyypit
+        data_type: jsonb
+      - name: ismuokkaajaophvirkailija
+        data_type: boolean
+      - name: osaamisalakoodiuri
+        data_type: text
+      - name: erikoistumiskoulutuskoodiuri
+        data_type: text
+      - name: linkkieperusteisiin
+        data_type: jsonb
+      - name: muokkaaja
+        data_type: text
+      - name: teemakuva
+        data_type: text
+      - name: eperusteid
+        data_type: integer
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: muokkaajannimi
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone

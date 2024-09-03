@@ -8,7 +8,7 @@ with raw as (
 data as (
     select
         *,
-        coalesce(nimi_fi, coalesce(nimi_en, nimi_sv)) as nimi_fi_new,
+        coalesce(nimi_fi, coalesce(nimi_sv, nimi_en)) as nimi_fi_new,
         coalesce(nimi_sv, coalesce(nimi_fi, nimi_en)) as nimi_sv_new,
         coalesce(nimi_en, coalesce(nimi_fi, nimi_sv)) as nimi_en_new
     from raw

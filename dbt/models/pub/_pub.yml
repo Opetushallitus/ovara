@@ -28,7 +28,7 @@ models:
       - name: hakukohde_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakukohde_nimi
         data_type: jsonb
       - name: externalid
@@ -113,38 +113,37 @@ models:
       Tämä taulu sisältää kaikki koulutuksen tiedot. koulutuskoodien tiedot
       löytyvät erillisestä taulusta int_koulutus_koulutuskoodi
     columns:
-      - name: oid
+      - name: koulutus_oid
+        description: Koulutuksen oid
         data_type: text
         data_tests:
-          - dbt_constraints.primary_key
-      - name: nimi_fi
-        data_type: text
-      - name: nimi_sv
-        data_type: text
-      - name: nimi_en
-        data_type: text
+        - dbt_constraints.primary_key
+      - name: koulutus_nimi
+        description: Koulutuksen nimet
+        data_type: jsonb
       - name: organisaatio_oid
         data_type: text
         description: Omistavan organisaation oid
       - name: externalid
+        description: Ulkoinen tunniste
         data_type: text
       - name: koulutustyyppi
         data_type: text
+        description: Koulutuksen tyyppi
       - name: tila
         data_type: text
+        description: koulutuksen tila
       - name: tarjoajat
         description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle
           koulutukselle,jsonb array-muotoisena
         data_type: jsonb
       - name: kielivalinta
+        description: kaikki kielet joilla koulutus järjestetään
         data_type: jsonb
       - name: opintojenlaajuus
         description: Opintojen laajuus. Jos on laajuus määritelty näytetään se arvo,
           muuten näytetään min - max arvot
         data_type: text
-      - name: laajuusyksikko_nimi_fi
-        data_type: text
-      - name: laajuusyksikko_nimi_sv
-        data_type: text
-      - name: laajuusyksikko_nimi_en
-        data_type: text
+      - name: laajuusyksikko_nimi
+        data_type: jsonb
+        description: Opintojen laajuuden yksikkö
