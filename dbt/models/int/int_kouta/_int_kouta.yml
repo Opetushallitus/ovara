@@ -3,19 +3,16 @@ models:
     description: Hakujen viimeisin tieto. Nimi haetaan kaikille kielille, oma kieli
       jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
     columns:
-      - name: oid
+      - name: haku_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
+      - name: haku_nimi
+        description: hakujen nimet jsonb-muotoisena
+        data_type: jsonb
       - name: externalid
         data_type: text
       - name: tila
-        data_type: text
-      - name: nimi_fi
-        data_type: text
-      - name: nimi_sv
-        data_type: text
-      - name: nimi_en
         data_type: text
       - name: hakutapakoodiuri
         data_type: text
@@ -82,12 +79,13 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: int_kouta_hakukohde
-    description: Hakukohteiden viimeisin tieto. Nimi haetaan kaikille kielille, oma kieli jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
+    description: Hakukohteiden viimeisin tieto. Nimi haetaan kaikille kielille, oma
+      kieli jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
     columns:
       - name: oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: externalid
         data_type: text
       - name: toteutusoid

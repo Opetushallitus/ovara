@@ -16,10 +16,14 @@ int as (
 ),
 
 final as (
-    select {{ dbt_utils.star(from=ref('dw_kouta_haku'), except=['nimi_fi','nimi_sv','nimi_en']) }},
-    nimi_fi_new as nimi_fi,
-    nimi_sv_new as nimi_sv,
-    nimi_en_new as nimi_en
+    select
+        oid as haku_oid,
+        jsonb_build_object(
+            'en',nimi_en_new,
+            'sv',nimi_sv_new,
+            'fi',nimi_fi_new
+        ) as haku_nimi,
+        {{ dbt_utils.star(from=ref('dw_kouta_haku'), except=['oid','nimi_fi','nimi_sv','nimi_en']) }}
     from int
 )
 
