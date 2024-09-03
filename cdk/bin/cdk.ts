@@ -19,6 +19,8 @@ const environmentName = app.node.tryGetContext('environment') || process.env.ENV
 const props = getGenericStackProps(environmentName);
 const config = props.config;
 
+const accountId = process.env.CDK_DEFAULT_ACCOUNT;
+
 const monitorStack = new MonitorStack(app, `${config.environment}-MonitorStack`, {
   ...props,
 });
@@ -34,7 +36,7 @@ const certificateStack = new CertificateStack(
     ...props,
     env: {
       region: 'us-east-1',
-      account: `${config.accountId}`,
+      account: accountId,
     },
     crossRegionReferences: true,
   }

@@ -8,6 +8,7 @@ import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as route53Targets from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -47,13 +48,18 @@ export class S3Stack extends cdk.Stack {
       ),
     });
 
+    const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
+      this,
+      '/testi/opintopolku-account-id'
+    );
+
     const s3CrossAccountRole = new iam.Role(
       this,
       `${config.environment}-S3CrossAccountRole`,
       {
         assumedBy: new iam.CompositePrincipal(
-          new iam.ArnPrincipal(`arn:aws:iam::${config.accountId}:root`),
-          new iam.ArnPrincipal(`arn:aws:iam::${config.opintopolkuAccountId}:root`)
+          new iam.AccountRootPrincipal(),
+          new iam.ArnPrincipal(`arn:aws:iam::${opintopolkuAccountId}:root`)
         ),
         roleName: 'opintopolku-s3-cross-account-role',
       }

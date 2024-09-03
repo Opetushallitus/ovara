@@ -1,15 +1,12 @@
 {
-  "accountId": "654654623010",
   "aurora": {
     "backup": {
       "deleteAfterDays": 14
     }
   },
   "environment": "testi",
-  "opintopolkuAccountId": "153563371259",
   "profile": "oph-opiskelijavalinnan-raportointi-qa",
   "publicHostedZone": "ovara.testiopintopolku.fi",
-  "region": "eu-west-1",
   "vpc": {
     "maxAzs": 2,
     "netGateways": 1

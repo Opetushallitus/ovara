@@ -14,6 +14,7 @@ import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 //import * as cr from 'aws-cdk-lib/custom-resources';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -301,6 +302,11 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
+    const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
+      this,
+      '/testi/opintopolku-account-id'
+    );
+
     const privateLinkVpcEndpointService = new ec2.VpcEndpointService(
       this,
       `${config.environment}-rdsPrivateLinkVpcEndpointService`,
@@ -308,7 +314,7 @@ export class DatabaseStack extends cdk.Stack {
         vpcEndpointServiceLoadBalancers: [privateLinkNlb],
         acceptanceRequired: false,
         allowedPrincipals: [
-          new iam.ArnPrincipal(`arn:aws:iam::${config.opintopolkuAccountId}:root`),
+          new iam.ArnPrincipal(`arn:aws:iam::${opintopolkuAccountId}:root`),
         ],
       }
     );

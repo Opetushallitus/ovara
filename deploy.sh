@@ -91,7 +91,7 @@ if [[ "${build}" == "true" ]]; then
     export ENVIRONMENT=$environment
     cd "${git_root}/cdk/"
     npm run build
-    npx cdk synth
+    npx cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
 if [[ "${deploy}" == "true" ]]; then

@@ -100,7 +100,7 @@ export class LambdaStack extends cdk.Stack {
 
     const dbConnectStatement = new iam.PolicyStatement();
     dbConnectStatement.addResources(
-      `arn:aws:rds-db:${props.config.region}:${props.config.accountId}:dbuser:${auroraClusterResourceId}/insert_raw_user`
+      `arn:aws:rds-db:${props.env?.region}:${props.env?.account}:dbuser:${auroraClusterResourceId}/insert_raw_user`
     );
     dbConnectStatement.addActions('rds-db:connect');
     const dbConnectPolicyDocument = new iam.PolicyDocument();
