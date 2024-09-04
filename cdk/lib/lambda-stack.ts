@@ -275,19 +275,6 @@ export class LambdaStack extends cdk.Stack {
     const lampiAssumeRolePolicyDocument = new iam.PolicyDocument();
     lampiAssumeRolePolicyDocument.addStatements(lampiS3AssumeRolePolicyStatement);
 
-    const lampiS3AccessPolicyStatement = new iam.PolicyStatement({
-      actions: ['s3:GetObject', 's3:ListObjectsV2'],
-      resources: [
-        'arn:aws:s3:::oph-lampi-qa',
-        'arn:aws:s3:::oph-lampi-qa/fulldump/kayttooikeus/*',
-        'arn:aws:s3:::oph-lampi-qa/fulldump/koodisto/*',
-        'arn:aws:s3:::oph-lampi-qa/fulldump/oppijanumerorekisteri/*',
-        'arn:aws:s3:::oph-lampi-qa/fulldump/organisaatio/*',
-      ],
-    });
-    const lampiS3AccessPolicyDocument = new iam.PolicyDocument();
-    lampiS3AccessPolicyDocument.addStatements(lampiS3AccessPolicyStatement);
-
     const lampiLambdaExecutionRole = new iam.Role(
       this,
       `${config.environment}-LampiLambdaRole`,
@@ -298,7 +285,6 @@ export class LambdaStack extends cdk.Stack {
           siirtotiedostoBucketContentDocument,
           siirtotiedostoKeyDocument,
           lampiAssumeRolePolicyDocument,
-          lampiS3AccessPolicyDocument,
         },
       }
     );
