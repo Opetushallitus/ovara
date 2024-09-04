@@ -11,17 +11,33 @@ models:
       - name: hakemus_oid
         description: hakemuksen oid
         data_type: text
+        data_tests:
+        - not_null
+        - dbt_constraints.foreign_key:
+            pk_table_name: ref('pub_fct_hakemus')
+            pk_column_name: hakemus_oid
       - name: hakukohde_oid
+        description: Hakukohteen oid
         data_type: text
+        data_tests:
+        - not_null
+        - dbt_constraints.foreign_key:
+            pk_table_name: ref('pub_dim_hakukohde')
+            pk_column_name: hakukohde_oid
       - name: hakutoivenumero
+        description: Hakutoiveen järjestysnumero
         data_type: bigint
       - name: poistettu
+        description: Onko hakutoive poistettu
         data_type: boolean
       - name: sora_terveys
+        description: Onko SORA-terveystietoja
         data_type: text
       - name: sora_aiempi
+        description: Onko aiempia SORA-terveystietoja
         data_type: text
       - name: maksuvelvollinen
+        description: onko maksuvelvollisuutta
         data_type: text
       - name: muokattu
         data_type: timestamp with time zone
@@ -45,6 +61,7 @@ models:
         description: Linkki hakuun
         data_type: text
         data_tests:
+          - not_null
           - dbt_constraints.foreign_key:
               pk_table_name: ref('pub_dim_haku')
               pk_column_name: haku_oid
@@ -52,6 +69,7 @@ models:
         description: Linkki toteutukseen
         data_type: text
         data_tests:
+          - not_null
           - dbt_constraints.foreign_key:
               pk_table_name: ref('pub_dim_toteutus')
               pk_column_name: toteutus_oid
@@ -173,7 +191,7 @@ models:
         data_type: text
         description: Toteutuksen oid
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: toteutus_nimi
         description: Toteutuksen nimi kaikilla kielillä
         data_type: jsonb
@@ -184,9 +202,9 @@ models:
         description: Koulutuksen tunniste
         data_type: text
         data_tests:
-        - dbt_constraints.foreign_key:
-            pk_table_name: ref('pub_dim_koulutus')
-            pk_column_name: koulutus_oid
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pub_dim_koulutus')
+              pk_column_name: koulutus_oid
       - name: koulutustyyppi
         description: Koulutuksen tyyppi
         data_type: text
@@ -214,3 +232,31 @@ models:
       - name: suunniteltukestokuukaudet
         description: Koulutuksen suunniteltu kesto kuukausissa
         data_type: integer
+  - name: pub_fct_hakemus
+    description: Hakemusten tietoja
+    columns:
+      - name: hakemus_oid
+        description: Hakemuksen tunniste
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: haku_oid
+        description: Haun tunniste
+        data_type: text
+# ei toimi vielä, haukemuksissa on vielä vanhan tarjonnan hakuja
+#        data_tests:
+#        - dbt_constraints.foreign_key:
+#            pk_table_name: ref('pub_dim_haku')
+#            pk_column_name: haku_oid
+      - name: tila
+        description: Hakemuksen tila
+        data_type: text
+      - name: julkaisulupa
+        description: Saako hakemuksen hyväksyntä julkaista
+        data_type: boolean
+      - name: koulutusmarkkinointilupa
+        description: Salliiko hakij amarkkinoinnin
+        data_type: boolean
+      - name: henkilo_oid
+        description: Henkilön tunniste
+        data_type: text

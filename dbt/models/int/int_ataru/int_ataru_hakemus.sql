@@ -13,7 +13,8 @@ with raw as (
 
 final as (
     select
-        {{ dbt_utils.star(from=ref('dw_ataru_hakemus')) }}
+        oid as hakemus_oid,
+        {{ dbt_utils.star(from=ref('dw_ataru_hakemus'),except = ['oid']) }}
     from raw
     where
         row_nr = 1
