@@ -32,10 +32,13 @@ models:
         data_tests:
           - dbt_constraints.primary_key
       - name: hakukohde_nimi
+        description: Hakukohteen nimet
         data_type: jsonb
       - name: externalid
+        description: Ulkoinen tunniste
         data_type: text
       - name: tila
+        description: Hakukohteen tila
         data_type: text
       - name: haku_oid
         description: Linkki hakuun
@@ -52,12 +55,16 @@ models:
               pk_table_name: ref('pub_dim_toteutus')
               pk_column_name: toteutus_oid
       - name: jarjestyspaikka_oid
+        description: Järjestävän organisaation tunniste
         data_type: text
       - name: aloituspaikat
+        description: aloituspaikkojen määrä
         data_type: integer
       - name: aloituspaikat_ensikertalaisille
+        description: Ensikertalaisten aloituspaikkoja
         data_type: integer
       - name: hakukohdekoodiuri
+        description: hakukohteen koodi
         data_type: text
       - name: pohjakoulutuskoodit
         data_type: jsonb
@@ -79,6 +86,7 @@ models:
     description: Hakujen tietoja
     columns:
       - name: haku_oid
+        description: Haun tunniste
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
@@ -86,26 +94,34 @@ models:
         description: Kaikki haun nimet jsonb-objektina
         data_type: jsonb
       - name: externalid
+        description: Ulkoinen tunniste
         data_type: text
       - name: tila
+        description: Haun tila
         data_type: text
       - name: hakutapakoodiuri
+        description: Tieto hakutavasta koodiurina
         data_type: text
       - name: hakutapa_koodi
+        description: Hakutavan koodi
         data_type: text
       - name: hakutapa_nimi
         description: hakutapojen nimet jsonb-muotoisena
         data_type: jsonb
       - name: kohdejoukkokoodiuri
+        description: Kohdejoukon tieto koodiurina
         data_type: text
       - name: kohdejoukko_koodi
+        description: Kohdejoukon tiedo koodina
         data_type: text
       - name: kohdejoukko_nimi
-        description: kohdejoukkojen nimen jsonb-muotoisena
+        description: kohdejoukkojen nimet jsonb-muotoisena
         data_type: jsonb
       - name: kohdejoukontarkennekoodiuri
+        description: Kohdejoukon tarkenne koodiurina
         data_type: text
       - name: kohdejoukontarkenne_koodi
+        description: Kohdejoukon tarkenne koodina
         data_type: text
       - name: kohdejoukontarkenne_nimi
         data_type: jsonb
