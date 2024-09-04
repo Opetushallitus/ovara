@@ -19,4 +19,6 @@ sources:
       description: ONR:n henkilötietoja
     - name: onr_yhteystieto
       description: ONR:n yhteystietoja
+    - name: organisaatio_ryhma
+      description: Hakukohderyhmien perustiedot
 

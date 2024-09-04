@@ -85,13 +85,22 @@ models:
       - name: ladattu
         data_type: timestamp with time zone
   - name: int_valintaperusteet_valintatapajono
-    description : |
+    description: >
       ### Valintaperusteiden valintatapajonoja
 
-      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset valintatapajonot jokaiselta vaiheelta.
-      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä sisältää tiedon koska se on viimeksi tallennettu.
-      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet, ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
-      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi muuttunut vai ei
+
+      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset
+      valintatapajonot jokaiselta vaiheelta.
+
+      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä
+      sisältää tiedon koska se on viimeksi tallennettu.
+
+      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet,
+      ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
+
+      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki
+      rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi
+      muuttunut vai ei
     columns:
       - name: jono_id
         data_type: text
@@ -141,3 +150,14 @@ models:
         data_type: boolean
       - name: muokattu
         data_type: timestamp with time zone
+  - name: int_organisaatio_ryhma
+    description: Hakukohderyhmien perustiedot
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+        - not_null
+        - dbt_constraints.primary_key
+      - name: ryhma_nimi
+        description: hakukohderyhmän nimi
+        data_type: jsonb
