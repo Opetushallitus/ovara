@@ -7,6 +7,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -241,6 +242,97 @@ export class LambdaStack extends cdk.Stack {
       threshold: 0,
     });
     addActionsToAlarm(siirtotiedostonLatausErrorAlarm);
+
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName = `${config.environment}-lampiYleiskayttoistenSiirtotiedostojenKopiointi`;
+
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaLogGroup = new logs.LogGroup(
+      this,
+      `${config.environment}-${lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName}LogGroup`,
+      {
+        logGroupName: `/aws/lambda/${lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName}`,
+      }
+    );
+
+    const lampiS3Role = new iam.Role(this, `${config.environment}-lampiS3Role`, {
+      roleName: `${config.environment}-lampiS3Role`,
+      assumedBy: new iam.ArnPrincipal(
+        ssm.StringParameter.valueForStringParameter(
+          this,
+          `/${config.environment}/lampi-role`
+        )
+      ),
+      externalIds: [
+        ssm.StringParameter.valueForStringParameter(
+          this,
+          `/${config.environment}/lampi-external-id`
+        ),
+      ],
+    });
+    const lampiS3AssumeRolePolicyStatement = new iam.PolicyStatement({
+      resources: [lampiS3Role.roleArn],
+      actions: ['sts:AssumeRole'],
+    });
+    const lampiAssumeRolePolicyDocument = new iam.PolicyDocument();
+    lampiAssumeRolePolicyDocument.addStatements(lampiS3AssumeRolePolicyStatement);
+
+    const lampiS3AccessPolicyStatement = new iam.PolicyStatement({
+      actions: ['s3:GetObject', 's3:ListObjectsV2'],
+      resources: [
+        'arn:aws:s3:::oph-lampi-qa',
+        'arn:aws:s3:::oph-lampi-qa/fulldump/kayttooikeus/*',
+        'arn:aws:s3:::oph-lampi-qa/fulldump/koodisto/*',
+        'arn:aws:s3:::oph-lampi-qa/fulldump/oppijanumerorekisteri/*',
+        'arn:aws:s3:::oph-lampi-qa/fulldump/organisaatio/*',
+      ],
+    });
+    const lampiS3AccessPolicyDocument = new iam.PolicyDocument();
+    lampiS3AccessPolicyDocument.addStatements(lampiS3AccessPolicyStatement);
+
+    const lampiLambdaExecutionRole = new iam.Role(
+      this,
+      `${config.environment}-LampiLambdaRole`,
+      {
+        roleName: `${config.environment}-LampiLambdaRole`,
+        assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+        inlinePolicies: {
+          siirtotiedostoBucketContentDocument,
+          siirtotiedostoKeyDocument,
+          lampiAssumeRolePolicyDocument,
+          lampiS3AccessPolicyDocument,
+        },
+      }
+    );
+    executionRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        'service-role/AWSLambdaBasicExecutionRole'
+      )
+    );
+
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiLambda =
+      new lambdaNodejs.NodejsFunction(
+        this,
+        lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName,
+        {
+          functionName: lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName,
+          entry: 'lambda/lampi/YleiskayttoisetSiirtotiedostotKopiointi.ts',
+          handler: 'main',
+          runtime: lambda.Runtime.NODEJS_20_X,
+          architecture: lambda.Architecture.ARM_64,
+          timeout: cdk.Duration.seconds(300),
+          memorySize: 256,
+          vpc: props.vpc,
+          securityGroups: [lambdaSecurityGroup],
+          role: lampiLambdaExecutionRole,
+          environment: {},
+          bundling: {
+            commandHooks: {
+              beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
+              beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
+              afterBundling: (inputDir: string, outputDir: string): Array<string> => [],
+            },
+          },
+        }
+      );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {
