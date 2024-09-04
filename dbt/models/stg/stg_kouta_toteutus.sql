@@ -38,7 +38,7 @@ final as (
             data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
             -> 'henkilokohtaisenSuunnitelmanLisatiedot'
         )::jsonb as henkilokohtaisenSuunnitelmanLisatiedot,
-        data -> 'metadata' -> ' opetus' -> 'koulutuksenAlkamiskausi'
+        data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
         ->> 'koulutuksenAlkamiskausiKoodiUri'::varchar as koulutuksenAlkamiskausiKoodiUri,
         (
             data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamisvuosi'

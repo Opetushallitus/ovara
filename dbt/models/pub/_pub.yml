@@ -3,11 +3,17 @@ models:
     description: Sisältää aktiiviset hakutoiveet
     columns:
       - name: hakutoive_id
+        description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
       - name: hakemus_oid
+        description: hakemuksen oid
         data_type: text
+        data_tests:
+        - dbt_constraints.foreign_key:
+
+
       - name: hakukohde_oid
         data_type: text
       - name: hakutoivenumero
@@ -48,7 +54,7 @@ models:
         data_tests:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('pub_dim_toteutus')
-              pk_column_name: oid
+              pk_column_name: toteutus_oid
       - name: jarjestyspaikka_oid
         data_type: text
       - name: aloituspaikat
@@ -117,7 +123,7 @@ models:
         description: Koulutuksen oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: koulutus_nimi
         description: Koulutuksen nimet
         data_type: jsonb
@@ -147,3 +153,44 @@ models:
       - name: laajuusyksikko_nimi
         data_type: jsonb
         description: Opintojen laajuuden yksikkö
+  - name: pub_dim_toteutus
+    description: Toteuktuksen tietoja
+    columns:
+      - name: toteutus_oid
+        data_type: text
+        description: Toteutuksen oid
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: toteutus_nimi
+        description: Toteutuksen nimi kaikilla kielillä
+        data_type: jsonb
+      - name: organisaatio_oid
+        data_type: text
+        description: Omistavan organisaation oid
+      - name: koulutustyyppi
+        description: Koulutuksen tyyppi
+        data_type: text
+      - name: tila
+        description: Toteutuksen tila
+        data_type: text
+      - name: tunniste
+        description: Ulkoinen tunniste
+        data_type: text
+      - name: koulutuksenalkamiskausikoodiuri
+        description: Koulutuksen alkamiskauden koodiuri
+        data_type: text
+      - name: kausi_koodi
+        description: Koulutuksen alkamiskauden koodi
+        data_type: text
+      - name: kausi_nimi
+        description: Koulutuksen alkamiskauden nimi
+        data_type: jsonb
+      - name: koulutuksen_alkamisvuosi
+        data_type: int
+        description: Koulutuksen alkamisvuosi
+      - name: suunniteltukestovuodet
+        description: Koulutuksen suunniteltu kesto vuosissa
+        data_type: integer
+      - name: suunniteltukestokuukaudet
+        description: Koulutuksen suunniteltu kesto kuukausissa
+        data_type: integer
