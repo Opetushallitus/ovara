@@ -4,7 +4,8 @@
     config(
         materialized = 'table',
         indexes = [
-            {'columns':['haku_oid']}
+            {'columns':['haku_oid']},
+            {'columns':['toteutus_oid']}
         ]
     )
 }}

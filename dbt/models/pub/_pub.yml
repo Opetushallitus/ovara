@@ -3,7 +3,8 @@ models:
     description: Sisältää aktiiviset hakutoiveet
     columns:
       - name: hakutoive_id
-        description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
+        description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja
+          hakukohde_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
@@ -166,7 +167,7 @@ models:
         data_type: jsonb
         description: Opintojen laajuuden yksikkö
   - name: pub_dim_toteutus
-    description: Toteuktuksen tietoja
+    description: Toteutuksen tietoja
     columns:
       - name: toteutus_oid
         data_type: text
@@ -179,6 +180,13 @@ models:
       - name: organisaatio_oid
         data_type: text
         description: Omistavan organisaation oid
+      - name: koulutus_oid
+        description: Koulutuksen tunniste
+        data_type: text
+        data_tests:
+        - dbt_constraints.foreign_key:
+            pk_table_name: ref('pub_dim_koulutus')
+            pk_column_name: koulutus_oid
       - name: koulutustyyppi
         description: Koulutuksen tyyppi
         data_type: text

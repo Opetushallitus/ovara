@@ -1,6 +1,10 @@
 {{
     config(
-        materialized = 'table'
+        materialized = 'table',
+        indexes = [
+            {'columns':['koulutus_oid']},
+            {'columns':['organisaatio_oid']},
+        ]
     )
 }}
 
@@ -17,6 +21,7 @@ int as (
         tote.toteutus_oid,
         tote.toteutus_nimi,
         tote.organisaatio_oid,
+        tote.koulutus_oid,
         tote.koulutustyyppi,
         tote.tila,
         tote.tunniste,
