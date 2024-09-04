@@ -10,10 +10,6 @@ models:
       - name: hakemus_oid
         description: hakemuksen oid
         data_type: text
-        data_tests:
-        - dbt_constraints.foreign_key:
-
-
       - name: hakukohde_oid
         data_type: text
       - name: hakutoivenumero

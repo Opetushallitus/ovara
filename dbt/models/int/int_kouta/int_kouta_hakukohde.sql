@@ -39,10 +39,10 @@ final as (
         data.oid as hakukohde_oid,
         data.hakuoid as haku_oid,
         data.toteutusoid as toteutus_oid,
-                jsonb_build_object(
-            'en',data.nimi_en_new,
-            'sv',data.nimi_sv_new,
-            'fi',data.nimi_fi_new
+        jsonb_build_object(
+            'en', data.nimi_en_new,
+            'sv', data.nimi_sv_new,
+            'fi', data.nimi_fi_new
         ) as hakukohde_nimi,
         data.jarjestyspaikkaoid as jarjestyspaikka_oid,
         jsonb_array_length(data.valintakokeet) > 0 as on_valintakoe,

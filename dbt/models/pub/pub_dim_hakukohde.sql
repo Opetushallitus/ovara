@@ -45,7 +45,7 @@ int as (
         end as hakuajat,
         raw1.kaytetaanhaunaikataulua as kaytetaan_haun_aikataulua
     from raw as raw1
-    left join toteutus as tote on raw1.toteutus_oid = tote.oid
+    left join toteutus as tote on raw1.toteutus_oid = tote.toteutus_oid
     left join hakuajat as hajt on raw1.haku_oid = hajt.haku_oid
 
 )
