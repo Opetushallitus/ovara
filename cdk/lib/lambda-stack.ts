@@ -253,28 +253,6 @@ export class LambdaStack extends cdk.Stack {
       }
     );
 
-    const lampiS3Role = new iam.Role(this, `${config.environment}-lampiS3Role`, {
-      roleName: `${config.environment}-lampiS3Role`,
-      assumedBy: new iam.ArnPrincipal(
-        ssm.StringParameter.valueForStringParameter(
-          this,
-          `/${config.environment}/lampi-role`
-        )
-      ),
-      externalIds: [
-        ssm.StringParameter.valueForStringParameter(
-          this,
-          `/${config.environment}/lampi-external-id`
-        ),
-      ],
-    });
-    const lampiS3AssumeRolePolicyStatement = new iam.PolicyStatement({
-      resources: [lampiS3Role.roleArn],
-      actions: ['sts:AssumeRole'],
-    });
-    const lampiAssumeRolePolicyDocument = new iam.PolicyDocument();
-    lampiAssumeRolePolicyDocument.addStatements(lampiS3AssumeRolePolicyStatement);
-
     const lampiLambdaExecutionRole = new iam.Role(
       this,
       `${config.environment}-LampiLambdaRole`,
@@ -284,7 +262,6 @@ export class LambdaStack extends cdk.Stack {
         inlinePolicies: {
           siirtotiedostoBucketContentDocument,
           siirtotiedostoKeyDocument,
-          lampiAssumeRolePolicyDocument,
         },
       }
     );
@@ -305,11 +282,21 @@ export class LambdaStack extends cdk.Stack {
           runtime: lambda.Runtime.NODEJS_20_X,
           architecture: lambda.Architecture.ARM_64,
           timeout: cdk.Duration.seconds(300),
-          memorySize: 256,
+          memorySize: 512,
           vpc: props.vpc,
           securityGroups: [lambdaSecurityGroup],
           role: lampiLambdaExecutionRole,
-          environment: {},
+          environment: {
+            environment: config.environment,
+            lampiS3Role: ssm.StringParameter.valueForStringParameter(
+              this,
+              `/${config.environment}/lampi-role`
+            ),
+            lampiS3ExternalId: ssm.StringParameter.valueForStringParameter(
+              this,
+              `/${config.environment}/lampi-external-id`
+            ),
+          },
           bundling: {
             commandHooks: {
               beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
@@ -319,6 +306,19 @@ export class LambdaStack extends cdk.Stack {
           },
         }
       );
+
+    lampiYleiskayttoistenSiirtotiedostotKopiointiLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['sts:AssumeRole'],
+        resources: [
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            `/${config.environment}/lampi-role`
+          ),
+        ],
+      })
+    );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {
