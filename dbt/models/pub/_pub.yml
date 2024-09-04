@@ -12,18 +12,18 @@ models:
         description: hakemuksen oid
         data_type: text
         data_tests:
-        - not_null
-        - dbt_constraints.foreign_key:
-            pk_table_name: ref('pub_fct_hakemus')
-            pk_column_name: hakemus_oid
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pub_fct_hakemus')
+              pk_column_name: hakemus_oid
       - name: hakukohde_oid
         description: Hakukohteen oid
         data_type: text
         data_tests:
-        - not_null
-        - dbt_constraints.foreign_key:
-            pk_table_name: ref('pub_dim_hakukohde')
-            pk_column_name: hakukohde_oid
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pub_dim_hakukohde')
+              pk_column_name: hakukohde_oid
       - name: hakutoivenumero
         description: Hakutoiveen järjestysnumero
         data_type: bigint
@@ -239,15 +239,10 @@ models:
         description: Hakemuksen tunniste
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: haku_oid
         description: Haun tunniste
         data_type: text
-# ei toimi vielä, haukemuksissa on vielä vanhan tarjonnan hakuja
-#        data_tests:
-#        - dbt_constraints.foreign_key:
-#            pk_table_name: ref('pub_dim_haku')
-#            pk_column_name: haku_oid
       - name: tila
         description: Hakemuksen tila
         data_type: text
@@ -260,3 +255,21 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+  - name: pub_dim_hakukohderyhma
+    description: Hakukohderyhmien tiedot
+    columns:
+      - name: hakukohderyhma_oid
+        description: Hakukohderyhmän tunniste
+        data_type: text
+      - name: hakukohderyhma_nimi
+        description: Hakukohderyhmän nimet
+        data_type: jsonb
+      - name: hakukohde_oid
+        description: Hakukohteen tunniste
+        data_type: text
+        data_tests:
+        - not_null
+        - dbt_constraints.foreign_key:
+            pk_table_name: ref('pub_dim_hakukohde')
+            pk_column_name: hakukohde_oid
+

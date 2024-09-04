@@ -153,11 +153,12 @@ models:
   - name: int_organisaatio_ryhma
     description: Hakukohderyhmien perustiedot
     columns:
-      - name: oid
+      - name: hakukohderyhma_oid
+        description: Hakukohderyhmän tunniste
         data_type: text
         data_tests:
-        - not_null
-        - dbt_constraints.primary_key
-      - name: ryhma_nimi
-        description: hakukohderyhmän nimi
+          - dbt_constraints.primary_key
+          - not_null
+      - name: hakukohderyhma_nimi
+        description: Hakukohderyhmän nimet
         data_type: jsonb
