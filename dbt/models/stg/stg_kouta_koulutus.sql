@@ -38,7 +38,7 @@ final as (
         (data -> 'metadata' ->> 'isMuokkaajaOphVirkailija')::boolean as isMuokkaajaOphVirkailija,
         data -> 'metadata' ->> 'osaamisalaKoodiUri'::varchar as osaamisalaKoodiUri,
         data -> 'metadata' ->> 'erikoistumiskoulutusKoodiUri'::varchar as erikoistumiskoulutusKoodiUri,
-        (data -> 'metadata' -> 'linkkiEPerusteisiin')::jsonb,
+        (data -> 'metadata' -> 'linkkiEPerusteisiin')::jsonb as linkkiEPerusteisiin,
         data ->> 'muokkaaja'::varchar as muokkaaja,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data ->> 'teemakuva'::varchar as teemakuva,

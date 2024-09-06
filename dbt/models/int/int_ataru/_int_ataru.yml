@@ -137,7 +137,7 @@ models:
   - name: int_ataru_hakemus
     description: Tämä malli sisältää viimeisimmän version hakemuksesta.
     columns:
-      - name: oid
+      - name: hakemus_oid
         data_type: text
         data_tests:
         - dbt_constraints.primary_key

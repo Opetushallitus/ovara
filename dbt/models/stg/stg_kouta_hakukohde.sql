@@ -43,6 +43,7 @@ final as (
         (data -> 'metadata' -> 'kynnysehto')::jsonb as kynnysehto,
         (data -> 'metadata' ->> 'kaytetaanHaunAlkamiskautta')::boolean as kaytetaanHaunAlkamiskautta,
         (data -> 'metadata' -> 'aloituspaikat' ->> 'lukumaara')::int as aloituspaikat,
+        (data -> 'metadata' -> 'aloituspaikat' ->> 'ensikertalaisille')::int as aloituspaikat_ensikertalaisille,
         (data -> 'metadata' -> 'aloituspaikat' -> 'kuvaus')::jsonb as aloituspaikat_kuvaus,
         (data -> 'metadata' -> 'hakukohteenLinja')::jsonb as hakukohteenLinja,
         (data -> 'metadata' -> 'painotetutArvosanat')::jsonb as painotetutArvosanat,

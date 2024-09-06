@@ -12,7 +12,7 @@
 
 with raw as (
     select
-        oid as hakemus_oid,
+        hakemus_oid,
         versio_id,
         henkilo_oid,
         kansalaisuus,

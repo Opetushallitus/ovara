@@ -1,43 +1,4 @@
 models:
-  - name: int_hakuaika
-    description: Tässä mallissa on kaikki hakuajat listattu. Samaa hakuaikaa voidaan
-      käyttää sekä hauissa että hakukohteissa, ja hakukohteella saattaa olla
-      useampi hakuaika.
-    columns:
-      - name: hakuaika_id
-        description: hash-arvo josta muodostuu uniikki avain, hashissa on mukana alkaa
-          jaa paattyy-kentät
-        data_type: text
-      - name: alkaa
-        description: aika jolloin haku alkaa
-        data_type: timestamp with time zone
-      - name: paattyy
-        description: aika jolloin haku päättyy
-        data_type: timestamp with time zone
-      - name: luotu
-        description: ""
-        data_type: timestamp with time zone
-      - name: muokattu
-        description: ""
-        data_type: timestamp with time zone
-  - name: int_haku_hakuaika
-    description: Kaikkien hakujen hakuaika-tiedot
-    columns:
-      - name: hakuaika_id
-        description: hash-arvo joka toimii avaimena hakuajoille
-        data_type: text
-      - name: oid
-        description: haun oid
-        data_type: text
-  - name: int_hakukohde_hakuaika
-    description: hakukohteiden linkitys hakuaikoihin
-    columns:
-      - name: hakuaika_id
-        description: hash-arvo joka yksilöi hakuajan
-        data_type: text
-      - name: oid
-        description: hakukohteen oid
-        data_type: text
   - name: int_koulutus_koulutuskoodi
     description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:
@@ -124,13 +85,22 @@ models:
       - name: ladattu
         data_type: timestamp with time zone
   - name: int_valintaperusteet_valintatapajono
-    description : |
+    description: >
       ### Valintaperusteiden valintatapajonoja
 
-      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset valintatapajonot jokaiselta vaiheelta.
-      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä sisältää tiedon koska se on viimeksi tallennettu.
-      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet, ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
-      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi muuttunut vai ei
+
+      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset
+      valintatapajonot jokaiselta vaiheelta.
+
+      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä
+      sisältää tiedon koska se on viimeksi tallennettu.
+
+      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet,
+      ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
+
+      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki
+      rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi
+      muuttunut vai ei
     columns:
       - name: jono_id
         data_type: text
@@ -180,3 +150,15 @@ models:
         data_type: boolean
       - name: muokattu
         data_type: timestamp with time zone
+  - name: int_organisaatio_ryhma
+    description: Hakukohderyhmien perustiedot
+    columns:
+      - name: hakukohderyhma_oid
+        description: Hakukohderyhmän tunniste
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+          - not_null
+      - name: hakukohderyhma_nimi
+        description: Hakukohderyhmän nimet
+        data_type: jsonb

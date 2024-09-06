@@ -1,13 +1,13 @@
 with raw as (
     select
-        oid,
+        hakemus_oid,
         kasittelymerkinnat
     from {{ ref('int_ataru_hakemus') }}
 ),
 
 maksuvelvollisuus as (
     select
-        raw.oid as hakemus_oid,
+        raw.hakemus_oid,
         km ->> 'hakukohde' as hakukohde_oid,                        --noqa: RF02
         km ->> 'state' as tila                                      --noqa: RF02
     from raw, jsonb_array_elements(raw.kasittelymerkinnat) as km    --noqa: AL05

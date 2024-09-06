@@ -1,3 +1,5 @@
+--{{ ref('pub_dim_hakukohde') }}
+--{{ ref('pub_fct_hakemus') }}
 {{
   config(
     materialized = 'table',
@@ -44,8 +46,7 @@ final as (
         hato.poistettu,
         sora.sora_terveys,
         sora.sora_aiempi,
-        mave.maksuvelvollinen,
-        hato.muokattu
+        mave.maksuvelvollinen
     from hakutoive as hato
     left join sora on hato.hakutoive_id = sora.hakutoive_id
     left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
