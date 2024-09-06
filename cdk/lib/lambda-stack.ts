@@ -292,9 +292,14 @@ export class LambdaStack extends cdk.Stack {
         },
       }
     );
-    executionRole.addManagedPolicy(
+    lampiLambdaExecutionRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName(
         'service-role/AWSLambdaBasicExecutionRole'
+      )
+    );
+    lampiLambdaExecutionRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        'service-role/AWSLambdaVPCAccessExecutionRole'
       )
     );
 
@@ -309,7 +314,7 @@ export class LambdaStack extends cdk.Stack {
           runtime: lambda.Runtime.NODEJS_20_X,
           architecture: lambda.Architecture.ARM_64,
           timeout: cdk.Duration.seconds(900),
-          memorySize: 10240,
+          memorySize: 4096,
           ephemeralStorageSize: cdk.Size.gibibytes(4),
           vpc: props.vpc,
           securityGroups: [lambdaSecurityGroup],

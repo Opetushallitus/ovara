@@ -96,12 +96,14 @@ fi
 
 if [[ "${deploy}" == "true" ]]; then
    echo "Building code, synhesizing CDK code and deploying to environment: $environment"
+   export ENVIRONMENT=$environment
    cd "${git_root}/cdk/"
    npx cdk deploy $stack -c "environment=$environment" --profile $aws_profile
 fi
 
 if [[ "${delete}" == "true" ]]; then
    echo "Deleting stack from environment: $environment"
+   export ENVIRONMENT=$environment
    cd "${git_root}/cdk/"
    npx cdk destroy $stack -c "environment=$environment" --profile $aws_profile
 fi

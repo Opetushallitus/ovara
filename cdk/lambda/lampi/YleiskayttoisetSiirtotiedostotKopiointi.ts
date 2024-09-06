@@ -1,37 +1,36 @@
+/* eslint @typescript-eslint/no-var-requires: "off" */
 import * as fs from 'fs';
 
 import * as s3 from '@aws-sdk/client-s3';
 import * as sts from '@aws-sdk/client-sts';
 import { Handler } from 'aws-cdk-lib/aws-lambda';
+import { Context } from 'aws-lambda/handler';
 import * as dateFns from 'date-fns-tz';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { writeFile } = require('node:fs/promises');
 
 const { chain } = require('stream-chain');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-
 const { parser } = require('stream-json');
-const StreamArray = require('stream-json/streamers/StreamArray');
 const { streamArray } = require('stream-json/streamers/StreamArray');
+const { batch } = require('stream-json/utils/Batch');
 const format = require('string-format');
-const { v7: uuidv7 } = require('uuid');
 
-// @ts-expect-error 123
-export const main: Handler = async (event, context) => {
-  //const eraTunniste = uuidv7();
+type Tiedosto = {
+  lampiKey: string;
+  ovaraKeyTemplate: string;
+  batchSize: number;
+};
+
+type Tiedostot = {
+  [tiedosto: string]: Tiedosto;
+};
+
+export const main: Handler = async (event: string, context: Context) => {
   const eraTunniste = context.awsRequestId;
 
   const tiedostotyyppi = event;
 
-  const logInfo = (message: string) => {
-    console.log(`${eraTunniste} | ${message}`);
-  };
-  const logError = (message: string) => {
-    console.error(`${eraTunniste} | ${message}`);
-  };
-
-  logInfo(
+  console.log(
     `Aloitetaan yleiskäyttöisten palveluiden siirtotiedostojen haku: ${tiedostotyyppi}`
   );
 
@@ -40,9 +39,9 @@ export const main: Handler = async (event, context) => {
   const formattedCurrentDate = dateFns.format(currentDate, dateFormatString, {
     timeZone: 'Europe/Helsinki',
   });
-  logInfo(formattedCurrentDate);
+  console.log(formattedCurrentDate);
 
-  const tiedostot = {
+  const tiedostot: Tiedostot = {
     organisaatio_ryhmat: {
       lampiKey: 'fulldump/organisaatio/v3/json/ryhma.json',
       ovaraKeyTemplate: 'organisaatio/organisaatio_ryhma__{}__{}_{}.json',
@@ -51,11 +50,11 @@ export const main: Handler = async (event, context) => {
     onr_henkilo: {
       lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/henkilo.json',
       ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
-      batchSize: 1000,
+      batchSize: 100000,
     },
   };
 
-  const environment = process.env.environment;
+  //const environment = process.env.environment;
   const lampiS3Role = process.env.lampiS3Role;
   const lampiS3ExternalId = process.env.lampiS3ExternalId;
 
@@ -66,7 +65,7 @@ export const main: Handler = async (event, context) => {
     ExternalId: lampiS3ExternalId,
   });
   const lampiS3Credentials = await stsClient.send(assumeRoleCommand);
-  logInfo('lampiS3Credentials: ' + JSON.stringify(lampiS3Credentials, null, 4));
+  console.log('lampiS3Credentials: ' + JSON.stringify(lampiS3Credentials, null, 4));
 
   const lampiAccessKeyId = lampiS3Credentials?.Credentials?.AccessKeyId || '';
   const lampiSecretAccessKey = lampiS3Credentials?.Credentials?.SecretAccessKey || '';
@@ -81,8 +80,7 @@ export const main: Handler = async (event, context) => {
     },
   });
 
-  // @ts-expect-error 123
-  const siirtotiedostoConfig = tiedostot[tiedostotyyppi];
+  const siirtotiedostoConfig: any = tiedostot[tiedostotyyppi];
 
   const getObjectCommand = new s3.GetObjectCommand({
     Bucket: 'oph-lampi-qa',
@@ -91,14 +89,14 @@ export const main: Handler = async (event, context) => {
 
   const getObjectResponse: s3.GetObjectCommandOutput =
     await lampiS3Client.send(getObjectCommand);
-  //const body: Readable = getObjectResponse.Body as Readable;
-  //const tiedostoJson = await consumers.json(body) as [];
-  //const body = getObjectResponse.Body;
+
+  if (!getObjectResponse.Body)
+    throw new Error(`Tiedoston hakeminen (${siirtotiedostoConfig.lampiKey}) epäonnistui`);
 
   console.log('S3-tiedosto luettu, käsitellään...');
   const filename = '/tmp/output.json';
   await writeFile(filename, getObjectResponse.Body);
-  logInfo(`Tiedoston koko: ${fs.statSync(filename).size}`);
+  console.log(`Tiedoston koko: ${fs.statSync(filename).size}`);
 
   const processDataPromise: Promise<Array<Promise<any>>> = new Promise(function (
     myResolve,
@@ -107,79 +105,46 @@ export const main: Handler = async (event, context) => {
     try {
       const fileReadStream = fs.createReadStream(filename, {});
 
-      logInfo('Valmistellaan pipeline');
-
-      // @ts-ignore
-      const objectArray = [];
+      console.log('Valmistellaan pipeline');
       const pipeline = chain([
         fileReadStream,
         parser(),
         streamArray(),
-        // @ts-ignore
-        (data) => {
-          const currentLength = objectArray.length;
-          if (currentLength % 10000 === 0) {
-            console.log('Length', currentLength);
-          }
-          const value = data.value;
-          //logInfo(value);
-          objectArray.push(value);
-          return data;
-        },
+        batch({ batchSize: siirtotiedostoConfig.batchSize }),
       ]);
-
-      logInfo('Pipeline valmisteltu');
+      console.log('Pipeline valmisteltu');
 
       pipeline.on('error', (error: any) => {
-        logError(error);
+        console.error(error);
       });
 
-      let counter = 0;
-      pipeline.on('data', () => {
-        ++counter;
-      });
-
+      let summa = 0;
+      let batchCount = 1;
       const promises: Array<Promise<any>> = [];
+      pipeline.on('data', (data: any) => {
+        console.log(`Käsitellään erä numero ${batchCount}: ${data.length} objektia`);
+
+        const ovaraKey = format(
+          siirtotiedostoConfig.ovaraKeyTemplate,
+          formattedCurrentDate,
+          eraTunniste,
+          batchCount.toString()
+        );
+
+        console.log(`Tallennetaan tiedosto ${ovaraKey}`);
+        const putObjectCommand = new s3.PutObjectCommand({
+          Bucket: 'testi-temp-siirtotiedostot',
+          Key: ovaraKey,
+          Body: JSON.stringify(data),
+        });
+        promises.push(ovaraS3Client.send(putObjectCommand));
+        summa = summa + data.length;
+        batchCount++;
+      });
+
       pipeline.on('end', () => {
-        logInfo(`Tiedostossa on yhteensä ${objectArray.length} objektia.`);
-
-        let i = 1;
-        let summa = 0;
-        for (
-          let processed = 0;
-          processed < objectArray.length;
-          processed += siirtotiedostoConfig.batchSize
-        ) {
-          const start = processed + 1;
-          const end = Math.min(
-            processed + siirtotiedostoConfig.batchSize,
-            objectArray.length
-          );
-          logInfo(`Käsitellään erä numero ${i}: ${start}-${end}`);
-
-          const ovaraKey = format(
-            siirtotiedostoConfig.ovaraKeyTemplate,
-            formattedCurrentDate,
-            eraTunniste,
-            i.toString()
-          );
-          logInfo(ovaraKey);
-
-          // @ts-ignore
-          const batch = objectArray.slice(processed, end);
-          summa = summa + batch.length;
-
-          logInfo(`Tallennetaan tiedosto ${ovaraKey}`);
-          const putObjectCommand = new s3.PutObjectCommand({
-            Bucket: 'testi-temp-siirtotiedostot',
-            Key: ovaraKey,
-            Body: JSON.stringify(batch),
-          });
-          promises.push(ovaraS3Client.send(putObjectCommand));
-          i++;
-        }
-        logInfo(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
-        logInfo('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
+        console.log(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
+        console.log('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
         myResolve(promises);
       });
     } catch (err) {
@@ -201,6 +166,7 @@ export const main: Handler = async (event, context) => {
   );
   const s3SavePromises: Array<Promise<any>> = await processDataPromise;
   console.log('Odotellaan kaikkien s3-tallennuslupausten valmistumista');
+  console.log(`LogGroup: ${context.logGroupName} | LogStream: ${context.logStreamName}`);
   await Promise.all(s3SavePromises);
   console.log('Kaikki valmista.');
 };
