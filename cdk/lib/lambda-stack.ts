@@ -310,6 +310,7 @@ export class LambdaStack extends cdk.Stack {
           architecture: lambda.Architecture.ARM_64,
           timeout: cdk.Duration.seconds(900),
           memorySize: 10240,
+          ephemeralStorageSize: cdk.Size.gibibytes(4),
           vpc: props.vpc,
           securityGroups: [lambdaSecurityGroup],
           role: lampiLambdaExecutionRole,

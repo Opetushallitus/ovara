@@ -51,6 +51,7 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3",
     "source-map-support": "^0.5.21",
+    "stream-json": "^1.8.0",
     "string-format": "^2.0.0",
     "uuid": "^10.0.0"
   },

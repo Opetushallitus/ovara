@@ -1,26 +1,46 @@
+import * as fs from 'fs';
+
 import * as s3 from '@aws-sdk/client-s3';
 import * as sts from '@aws-sdk/client-sts';
 import { Handler } from 'aws-cdk-lib/aws-lambda';
 import * as dateFns from 'date-fns-tz';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const format = require('string-format');
+const { writeFile } = require('node:fs/promises');
+
+const { chain } = require('stream-chain');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+
+const { parser } = require('stream-json');
+const StreamArray = require('stream-json/streamers/StreamArray');
+const { streamArray } = require('stream-json/streamers/StreamArray');
+const format = require('string-format');
 const { v7: uuidv7 } = require('uuid');
 
 // @ts-expect-error 123
 export const main: Handler = async (event, context) => {
-  const eraTunniste = uuidv7();
+  //const eraTunniste = uuidv7();
+  const eraTunniste = context.awsRequestId;
 
   const tiedostotyyppi = event;
 
   const logInfo = (message: string) => {
     console.log(`${eraTunniste} | ${message}`);
   };
+  const logError = (message: string) => {
+    console.error(`${eraTunniste} | ${message}`);
+  };
 
   logInfo(
     `Aloitetaan yleiskäyttöisten palveluiden siirtotiedostojen haku: ${tiedostotyyppi}`
   );
+
+  const currentDate = new Date();
+  const dateFormatString = 'yyyy-MM-dd_HH:mm:ssxxx';
+  const formattedCurrentDate = dateFns.format(currentDate, dateFormatString, {
+    timeZone: 'Europe/Helsinki',
+  });
+  logInfo(formattedCurrentDate);
 
   const tiedostot = {
     organisaatio_ryhmat: {
@@ -73,51 +93,87 @@ export const main: Handler = async (event, context) => {
     await lampiS3Client.send(getObjectCommand);
   //const body: Readable = getObjectResponse.Body as Readable;
   //const tiedostoJson = await consumers.json(body) as [];
-  const body = getObjectResponse.Body;
-  const bodyString = await body?.transformToString();
-  const tiedostoJson = JSON.parse(bodyString || '[]');
+  //const body = getObjectResponse.Body;
 
-  const currentDate = new Date();
-  const dateFormatString = 'yyyy-MM-dd_HH:mm:ssxxx';
-  const formattedCurrentDate = dateFns.format(currentDate, dateFormatString, {
-    timeZone: 'Europe/Helsinki',
+  const filename = '/tmp/output.json';
+  await writeFile(filename, getObjectResponse.Body);
+  logInfo(`Tiedoston koko: ${fs.statSync(filename).size}`);
+  const fileReadStream = fs.createReadStream(filename, {});
+
+  logInfo('Valmistellaan pipeline');
+
+  const pipeline2 = fs.createReadStream(filename).pipe(StreamArray.withParser());
+
+  let objectCounter = 0;
+  pipeline2.on('data', () => ++objectCounter);
+  pipeline2.on('end', () => console.log(`Found ${objectCounter} objects.`));
+
+  // @ts-ignore
+  const objectArray = [];
+  const pipeline = chain([
+    fileReadStream,
+    parser(),
+    streamArray(),
+    // @ts-ignore
+    (data) => {
+      const value = data.value;
+      logInfo(value);
+      objectArray.push(value);
+      return data;
+    },
+  ]);
+
+  logInfo('Pipeline valmisteltu');
+
+  pipeline.on('error', (error: any) => {
+    logError(error);
   });
-  logInfo(formattedCurrentDate);
 
-  logInfo(`Tiedostossa on yhteensä ${tiedostoJson.length} objektia.`);
+  let counter = 0;
+  pipeline.on('data', () => {
+    ++counter;
+  });
 
-  let i = 1;
-  let summa = 0;
-  for (
-    let processed = 0;
-    processed < tiedostoJson.length;
-    processed += siirtotiedostoConfig.batchSize
-  ) {
-    const start = processed + 1;
-    const end = Math.min(processed + siirtotiedostoConfig.batchSize, tiedostoJson.length);
-    logInfo(`Käsitellään erä numero ${i}: ${start}-${end}`);
+  pipeline.on('end', () => {
+    logInfo(`Tiedostossa on yhteensä ${objectArray.length} objektia.`);
 
-    const ovaraKey = format(
-      siirtotiedostoConfig.ovaraKeyTemplate,
-      formattedCurrentDate,
-      eraTunniste,
-      i.toString()
-    );
-    logInfo(ovaraKey);
+    let i = 1;
+    let summa = 0;
+    for (
+      let processed = 0;
+      processed < objectArray.length;
+      processed += siirtotiedostoConfig.batchSize
+    ) {
+      const start = processed + 1;
+      const end = Math.min(
+        processed + siirtotiedostoConfig.batchSize,
+        objectArray.length
+      );
+      logInfo(`Käsitellään erä numero ${i}: ${start}-${end}`);
 
-    const batch = tiedostoJson.slice(processed, end);
-    summa = summa + batch.length;
+      const ovaraKey = format(
+        siirtotiedostoConfig.ovaraKeyTemplate,
+        formattedCurrentDate,
+        eraTunniste,
+        i.toString()
+      );
+      logInfo(ovaraKey);
 
-    logInfo(`Tallennetaan tiedosto ${ovaraKey}`);
-    const putObjectCommand = new s3.PutObjectCommand({
-      Bucket: 'testi-temp-siirtotiedostot',
-      Key: ovaraKey,
-      Body: JSON.stringify(batch),
-    });
-    await ovaraS3Client.send(putObjectCommand);
+      // @ts-ignore
+      const batch = objectArray.slice(processed, end);
+      summa = summa + batch.length;
 
-    i++;
-  }
-  logInfo(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
-  logInfo('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
+      logInfo(`Tallennetaan tiedosto ${ovaraKey}`);
+      const putObjectCommand = new s3.PutObjectCommand({
+        Bucket: 'testi-temp-siirtotiedostot',
+        Key: ovaraKey,
+        Body: JSON.stringify(batch),
+      });
+      //wait ovaraS3Client.send(putObjectCommand);
+
+      i++;
+    }
+    logInfo(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
+    logInfo('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
+  });
 };
