@@ -95,85 +95,112 @@ export const main: Handler = async (event, context) => {
   //const tiedostoJson = await consumers.json(body) as [];
   //const body = getObjectResponse.Body;
 
+  console.log('S3-tiedosto luettu, käsitellään...');
   const filename = '/tmp/output.json';
   await writeFile(filename, getObjectResponse.Body);
   logInfo(`Tiedoston koko: ${fs.statSync(filename).size}`);
-  const fileReadStream = fs.createReadStream(filename, {});
 
-  logInfo('Valmistellaan pipeline');
+  const processDataPromise: Promise<Array<Promise<any>>> = new Promise(function (
+    myResolve,
+    myReject
+  ) {
+    try {
+      const fileReadStream = fs.createReadStream(filename, {});
 
-  const pipeline2 = fs.createReadStream(filename).pipe(StreamArray.withParser());
-
-  let objectCounter = 0;
-  pipeline2.on('data', () => ++objectCounter);
-  pipeline2.on('end', () => console.log(`Found ${objectCounter} objects.`));
-
-  // @ts-ignore
-  const objectArray = [];
-  const pipeline = chain([
-    fileReadStream,
-    parser(),
-    streamArray(),
-    // @ts-ignore
-    (data) => {
-      const value = data.value;
-      logInfo(value);
-      objectArray.push(value);
-      return data;
-    },
-  ]);
-
-  logInfo('Pipeline valmisteltu');
-
-  pipeline.on('error', (error: any) => {
-    logError(error);
-  });
-
-  let counter = 0;
-  pipeline.on('data', () => {
-    ++counter;
-  });
-
-  pipeline.on('end', () => {
-    logInfo(`Tiedostossa on yhteensä ${objectArray.length} objektia.`);
-
-    let i = 1;
-    let summa = 0;
-    for (
-      let processed = 0;
-      processed < objectArray.length;
-      processed += siirtotiedostoConfig.batchSize
-    ) {
-      const start = processed + 1;
-      const end = Math.min(
-        processed + siirtotiedostoConfig.batchSize,
-        objectArray.length
-      );
-      logInfo(`Käsitellään erä numero ${i}: ${start}-${end}`);
-
-      const ovaraKey = format(
-        siirtotiedostoConfig.ovaraKeyTemplate,
-        formattedCurrentDate,
-        eraTunniste,
-        i.toString()
-      );
-      logInfo(ovaraKey);
+      logInfo('Valmistellaan pipeline');
 
       // @ts-ignore
-      const batch = objectArray.slice(processed, end);
-      summa = summa + batch.length;
+      const objectArray = [];
+      const pipeline = chain([
+        fileReadStream,
+        parser(),
+        streamArray(),
+        // @ts-ignore
+        (data) => {
+          const currentLength = objectArray.length;
+          if (currentLength % 10000 === 0) {
+            console.log('Length', currentLength);
+          }
+          const value = data.value;
+          //logInfo(value);
+          objectArray.push(value);
+          return data;
+        },
+      ]);
 
-      logInfo(`Tallennetaan tiedosto ${ovaraKey}`);
-      const putObjectCommand = new s3.PutObjectCommand({
-        Bucket: 'testi-temp-siirtotiedostot',
-        Key: ovaraKey,
-        Body: JSON.stringify(batch),
+      logInfo('Pipeline valmisteltu');
+
+      pipeline.on('error', (error: any) => {
+        logError(error);
       });
-      //wait ovaraS3Client.send(putObjectCommand);
 
-      i++;
+      let counter = 0;
+      pipeline.on('data', () => {
+        ++counter;
+      });
+
+      const promises: Array<Promise<any>> = [];
+      pipeline.on('end', () => {
+        logInfo(`Tiedostossa on yhteensä ${objectArray.length} objektia.`);
+
+        let i = 1;
+        let summa = 0;
+        for (
+          let processed = 0;
+          processed < objectArray.length;
+          processed += siirtotiedostoConfig.batchSize
+        ) {
+          const start = processed + 1;
+          const end = Math.min(
+            processed + siirtotiedostoConfig.batchSize,
+            objectArray.length
+          );
+          logInfo(`Käsitellään erä numero ${i}: ${start}-${end}`);
+
+          const ovaraKey = format(
+            siirtotiedostoConfig.ovaraKeyTemplate,
+            formattedCurrentDate,
+            eraTunniste,
+            i.toString()
+          );
+          logInfo(ovaraKey);
+
+          // @ts-ignore
+          const batch = objectArray.slice(processed, end);
+          summa = summa + batch.length;
+
+          logInfo(`Tallennetaan tiedosto ${ovaraKey}`);
+          const putObjectCommand = new s3.PutObjectCommand({
+            Bucket: 'testi-temp-siirtotiedostot',
+            Key: ovaraKey,
+            Body: JSON.stringify(batch),
+          });
+          promises.push(ovaraS3Client.send(putObjectCommand));
+          i++;
+        }
+        logInfo(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
+        logInfo('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
+        myResolve(promises);
+      });
+    } catch (err) {
+      console.log('Tapahtui yllättävä virhe:', err);
+      myReject(err);
     }
-    logInfo(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
-    logInfo('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
   });
+
+  processDataPromise.then(
+    function (value) {
+      console.log(
+        'Processing promise finished successfully, promises created: ',
+        value.length
+      );
+    },
+    function (error) {
+      console.log('Promise errored:', error);
+    }
+  );
+  const s3SavePromises: Array<Promise<any>> = await processDataPromise;
+  console.log('Odotellaan kaikkien s3-tallennuslupausten valmistumista');
+  await Promise.all(s3SavePromises);
+  console.log('Kaikki valmista.');
 };
