@@ -12,7 +12,7 @@
 
 with raw as (
     select
-        oid as hakemus_oid,
+        hakemus_oid,
         hakukohde,
         tiedot,
         dw_metadata_dw_stored_at

@@ -12,7 +12,7 @@
                 update {{this}}
                 set poistettu=true::boolean
                 where hakemus_oid in (
-                    select distinct oid from {{ ref('int_ataru_hakemus') }}
+                    select distinct hakemus_oid from {{ ref('int_ataru_hakemus') }}
                     where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
                 )
                 {%- endif -%}
@@ -22,9 +22,10 @@
 
 with raw as (
     select
-        oid,
+        hakemus_oid,
         hakukohde,
         muokattu,
+        tila,
         dw_metadata_dbt_copied_at
     from {{ ref('int_ataru_hakemus') }}
     {% if is_incremental() %}
@@ -34,17 +35,19 @@ with raw as (
 
 latest_hakemus as (
     select
-        oid,
+        hakemus_oid,
         hakukohde,
         muokattu,
+        tila,
         dw_metadata_dbt_copied_at
     from raw
 ),
 
 hakutoive_raw as (
     select
-        oid as hakemus_oid,
+        hakemus_oid,
         muokattu,
+        tila,
         dw_metadata_dbt_copied_at,
         jsonb_array_elements_text(hakukohde) as hakukohde_oid
     from latest_hakemus
@@ -59,6 +62,7 @@ hakutoivenro as (
         hakemus_oid,
         hakukohde_oid,
         muokattu,
+        tila,
         dw_metadata_dbt_copied_at,
         row_number() over (partition by hakemus_oid) as hakutoivenumero
     from hakutoive_raw
@@ -70,7 +74,11 @@ final as (
         hakemus_oid,
         hakukohde_oid,
         hakutoivenumero,
-        cast(false as boolean) as poistettu,
+        case
+            when tila = 'inactivated'
+                then cast(true as boolean)
+            else cast(false as boolean)
+        end as poistettu,
         muokattu,
         dw_metadata_dbt_copied_at
     from hakutoivenro

@@ -1,3 +1,5 @@
+--{{ ref('pub_dim_hakukohde') }}
+--{{ ref('pub_fct_hakemus') }}
 {{
   config(
     materialized = 'table',

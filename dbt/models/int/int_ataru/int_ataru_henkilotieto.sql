@@ -25,10 +25,9 @@ kansalaisuus as (
 henkilo_tieto as (
     select
         {{ dbt_utils.generate_surrogate_key(
-            ['oid',
-            'henkilo_oid']
+            ['hakemus_oid', 'henkilo_oid']
             ) }} as henkilotieto_id,
-        oid as hakemus_oid,
+        hakemus_oid,
         henkilo_oid,
         asiointikieli,
         etunimet,

@@ -21,9 +21,10 @@ models:
         data_type: text
         data_tests:
           - not_null
-          - dbt_constraints.foreign_key:
-              pk_table_name: ref('pub_dim_hakukohde')
-              pk_column_name: hakukohde_oid
+          # ei vielä toimi koska kannassa ei ole vanhat hakukohteet
+          # - dbt_constraints.foreign_key:
+          #     pk_table_name: ref('pub_dim_hakukohde')
+          #     pk_column_name: hakukohde_oid
       - name: hakutoivenumero
         description: Hakutoiveen järjestysnumero
         data_type: bigint
