@@ -16,10 +16,6 @@ import { S3Stack } from '../lib/s3-stack';
 
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
-console.log(`environmentName: ${environmentName}`);
-console.log(process.env);
-console.log(`CDK_DEFAULT_ACCOUNT: ${process.env.CDK_DEFAULT_ACCOUNT}`);
-console.log(`CDK_DEFAULT_REGION: ${process.env.CDK_DEFAULT_REGION}`);
 const props = getGenericStackProps(environmentName);
 const config = props.config;
 
