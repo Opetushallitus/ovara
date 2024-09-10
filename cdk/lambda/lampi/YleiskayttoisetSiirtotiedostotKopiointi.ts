@@ -86,7 +86,7 @@ export const main: Handler = async (event: string, context: Context) => {
   const siirtotiedostoConfig: any = tiedostot[tiedostotyyppi];
   if (!siirtotiedostoConfig) {
     const message = `Tuntematon tiedostotyyppi: ${tiedostotyyppi}`;
-    console.log(message);
+    console.error(message);
     throw new Error(message);
   }
 
@@ -181,7 +181,7 @@ export const main: Handler = async (event: string, context: Context) => {
         myResolve(promises);
       });
     } catch (err) {
-      console.log('Tapahtui yllättävä virhe:', err);
+      console.error('Tapahtui yllättävä virhe:', err);
       myReject(err);
     }
   });
@@ -194,7 +194,7 @@ export const main: Handler = async (event: string, context: Context) => {
       );
     },
     function (error) {
-      console.log('Promise errored:', error);
+      console.error('Promise errored:', error);
     }
   );
   const s3SavePromises: Array<Promise<any>> = await processDataPromise;
