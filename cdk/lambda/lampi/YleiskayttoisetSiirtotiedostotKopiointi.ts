@@ -39,20 +39,56 @@ export const main: Handler = async (event: string, context: Context) => {
   const formattedCurrentDate = dateFns.format(currentDate, dateFormatString, {
     timeZone: 'Europe/Helsinki',
   });
-  console.log(formattedCurrentDate);
 
   const tiedostot: Tiedostot = {
-    organisaatio_ryhmat: {
-      lampiKey: 'fulldump/organisaatio/v3/json/ryhma.json',
-      ovaraKeyTemplate: 'organisaatio/organisaatio_ryhma__{}__{}_{}.json',
-      batchSize: 5000,
+    koodisto_koodi: {
+      lampiKey: 'fulldump/koodisto/v2/json/koodi.json',
+      ovaraKeyTemplate: 'koodisto/koodisto_koodi__{}__{}_{}.json',
+      batchSize: 50000,
+    },
+    koodisto_relaatio: {
+      lampiKey: 'fulldump/koodisto/v2/json/relaatio.json',
+      ovaraKeyTemplate: 'koodisto/koodisto_relaatio__{}__{}_{}.json',
+      batchSize: 50000,
     },
     onr_henkilo: {
       lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/henkilo.json',
       ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
       batchSize: 100000,
     },
+    onr_yhteystieto: {
+      lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/yhteystieto.json',
+      ovaraKeyTemplate: 'onr/onr_yhteystieto__{}__{}_{}.json',
+      batchSize: 100000,
+    },
+    organisaatio_organisaatio: {
+      lampiKey: 'fulldump/organisaatio/v2/json/organisaatio.json',
+      ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatio__{}__{}_{}.json',
+      batchSize: 5000,
+    },
+    organisaatio_organisaatiosuhde: {
+      lampiKey: 'fulldump/organisaatio/v2/json/organisaatiosuhde.json',
+      ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatiosuhde__{}__{}_{}.json',
+      batchSize: 5000,
+    },
+    organisaatio_osoite: {
+      lampiKey: 'fulldump/organisaatio/v2/json/osoite.json',
+      ovaraKeyTemplate: 'organisaatio/organisaatio_osoite__{}__{}_{}.json',
+      batchSize: 5000,
+    },
+    organisaatio_ryhma: {
+      lampiKey: 'fulldump/organisaatio/v3/json/ryhma.json',
+      ovaraKeyTemplate: 'organisaatio/organisaatio_ryhma__{}__{}_{}.json',
+      batchSize: 5000,
+    },
   };
+
+  const siirtotiedostoConfig: any = tiedostot[tiedostotyyppi];
+  if (!siirtotiedostoConfig) {
+    const message = `Tuntematon tiedostotyyppi: ${tiedostotyyppi}`;
+    console.log(message);
+    throw new Error(message);
+  }
 
   //const environment = process.env.environment;
   const lampiS3Role = process.env.lampiS3Role;
@@ -65,7 +101,6 @@ export const main: Handler = async (event: string, context: Context) => {
     ExternalId: lampiS3ExternalId,
   });
   const lampiS3Credentials = await stsClient.send(assumeRoleCommand);
-  console.log('lampiS3Credentials: ' + JSON.stringify(lampiS3Credentials, null, 4));
 
   const lampiAccessKeyId = lampiS3Credentials?.Credentials?.AccessKeyId || '';
   const lampiSecretAccessKey = lampiS3Credentials?.Credentials?.SecretAccessKey || '';
@@ -79,8 +114,6 @@ export const main: Handler = async (event: string, context: Context) => {
       sessionToken: lampiSessionToken,
     },
   });
-
-  const siirtotiedostoConfig: any = tiedostot[tiedostotyyppi];
 
   const getObjectCommand = new s3.GetObjectCommand({
     Bucket: 'oph-lampi-qa',
