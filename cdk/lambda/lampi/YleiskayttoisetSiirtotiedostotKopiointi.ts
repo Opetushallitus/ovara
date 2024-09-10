@@ -167,14 +167,16 @@ export const main: Handler = async (event: string, context: Context) => {
           batchCount.toString()
         );
 
+        const entiteetit = data.map((o: any) => o.value);
+
         console.log(`Tallennetaan tiedosto ${ovaraKey}`);
         const putObjectCommand = new s3.PutObjectCommand({
           Bucket: ovaraBucketName,
           Key: ovaraKey,
-          Body: JSON.stringify(data),
+          Body: JSON.stringify(entiteetit),
         });
         promises.push(ovaraS3Client.send(putObjectCommand));
-        summa = summa + data.length;
+        summa = summa + entiteetit.length;
         batchCount++;
       });
 
