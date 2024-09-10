@@ -321,6 +321,7 @@ export class LambdaStack extends cdk.Stack {
           role: lampiLambdaExecutionRole,
           environment: {
             environment: config.environment,
+            lampiBucketName: config.siirtotiedostot.lampiBucketName,
             lampiS3Role: ssm.StringParameter.valueForStringParameter(
               this,
               `/${config.environment}/lampi-role`
@@ -329,6 +330,7 @@ export class LambdaStack extends cdk.Stack {
               this,
               `/${config.environment}/lampi-external-id`
             ),
+            ovaraBucketName: config.siirtotiedostot.ovaraBucketName,
           },
           bundling: {
             commandHooks: {

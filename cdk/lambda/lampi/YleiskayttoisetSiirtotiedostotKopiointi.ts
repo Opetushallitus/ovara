@@ -90,6 +90,9 @@ export const main: Handler = async (event: string, context: Context) => {
     throw new Error(message);
   }
 
+  const lampiBucketName = process.env.lampiBucketName;
+  const ovaraBucketName = process.env.ovaraBucketName;
+
   //const environment = process.env.environment;
   const lampiS3Role = process.env.lampiS3Role;
   const lampiS3ExternalId = process.env.lampiS3ExternalId;
@@ -116,7 +119,7 @@ export const main: Handler = async (event: string, context: Context) => {
   });
 
   const getObjectCommand = new s3.GetObjectCommand({
-    Bucket: 'oph-lampi-qa',
+    Bucket: lampiBucketName,
     Key: siirtotiedostoConfig.lampiKey,
   });
 
@@ -166,7 +169,7 @@ export const main: Handler = async (event: string, context: Context) => {
 
         console.log(`Tallennetaan tiedosto ${ovaraKey}`);
         const putObjectCommand = new s3.PutObjectCommand({
-          Bucket: 'testi-temp-siirtotiedostot',
+          Bucket: ovaraBucketName,
           Key: ovaraKey,
           Body: JSON.stringify(data),
         });
@@ -199,7 +202,6 @@ export const main: Handler = async (event: string, context: Context) => {
   );
   const s3SavePromises: Array<Promise<any>> = await processDataPromise;
   console.log('Odotellaan kaikkien s3-tallennuslupausten valmistumista');
-  console.log(`LogGroup: ${context.logGroupName} | LogStream: ${context.logStreamName}`);
   await Promise.all(s3SavePromises);
   console.log('Kaikki valmista.');
 };

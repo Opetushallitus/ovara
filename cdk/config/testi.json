@@ -7,6 +7,10 @@
   "environment": "testi",
   "profile": "oph-opiskelijavalinnan-raportointi-qa",
   "publicHostedZone": "ovara.testiopintopolku.fi",
+  "siirtotiedostot": {
+    "lampiBucketName": "oph-lampi-qa",
+    "ovaraBucketName": "testi-temp-siirtotiedostot"
+  },
   "vpc": {
     "maxAzs": 2,
     "netGateways": 1
