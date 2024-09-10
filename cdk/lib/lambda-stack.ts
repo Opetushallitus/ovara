@@ -33,6 +33,31 @@ export class LambdaStack extends cdk.Stack {
       );
     };
 
+    const tempSiirtotiedostotBucketName = `${config.environment}-temp-siirtotiedostot`;
+    const siirtotiedostotKmsKey = new kms.Key(
+      this,
+      `${tempSiirtotiedostotBucketName}-s3BucketKMSKey`,
+      {
+        alias: `${tempSiirtotiedostotBucketName}-s3-bucket-kms-key`,
+        enableKeyRotation: true,
+      }
+    );
+
+    const tempSiirtotiedostoS3Bucket = new s3.Bucket(
+      this,
+      tempSiirtotiedostotBucketName,
+      {
+        bucketName: tempSiirtotiedostotBucketName,
+        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+        encryptionKey: siirtotiedostotKmsKey,
+        serverAccessLogsBucket: new s3.Bucket(
+          this,
+          `${tempSiirtotiedostotBucketName}-server-access-logs`
+        ),
+      }
+    );
+
     const lambdaSecurityGroup = new ec2.SecurityGroup(
       this,
       `${config.environment}-LambdaSecurityGroup`,
@@ -176,6 +201,8 @@ export class LambdaStack extends cdk.Stack {
     );
     siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
 
+    tempSiirtotiedostoS3Bucket.grantReadWrite(siirtotiedostoLambda);
+
     const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
 
     const siirtotiedostoLatausOnnistuiMetricName = 'SiirtotiedostonLatausOnnistui';
@@ -252,31 +279,6 @@ export class LambdaStack extends cdk.Stack {
       `${config.environment}-${lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName}LogGroup`,
       {
         logGroupName: `/aws/lambda/${lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName}`,
-      }
-    );
-
-    const tempSiirtotiedostotBucketName = `${config.environment}-temp-siirtotiedostot`;
-    const siirtotiedostotKmsKey = new kms.Key(
-      this,
-      `${tempSiirtotiedostotBucketName}-s3BucketKMSKey`,
-      {
-        alias: `${tempSiirtotiedostotBucketName}-s3-bucket-kms-key`,
-        enableKeyRotation: true,
-      }
-    );
-
-    const tempSiirtotiedostoS3Bucket = new s3.Bucket(
-      this,
-      tempSiirtotiedostotBucketName,
-      {
-        bucketName: tempSiirtotiedostotBucketName,
-        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-        encryptionKey: siirtotiedostotKmsKey,
-        serverAccessLogsBucket: new s3.Bucket(
-          this,
-          `${tempSiirtotiedostotBucketName}-server-access-logs`
-        ),
       }
     );
 

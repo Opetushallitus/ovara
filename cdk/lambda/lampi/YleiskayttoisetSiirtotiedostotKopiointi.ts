@@ -35,7 +35,7 @@ export const main: Handler = async (event: string, context: Context) => {
   );
 
   const currentDate = new Date();
-  const dateFormatString = 'yyyy-MM-dd_HH:mm:ssxxx';
+  const dateFormatString = 'yyyy-MM-dd_HH.mm.ssxxxx';
   const formattedCurrentDate = dateFns.format(currentDate, dateFormatString, {
     timeZone: 'Europe/Helsinki',
   });
@@ -54,7 +54,7 @@ export const main: Handler = async (event: string, context: Context) => {
     onr_henkilo: {
       lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/henkilo.json',
       ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
-      batchSize: 100000,
+      batchSize: 250000,
     },
     onr_yhteystieto: {
       lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/yhteystieto.json',
