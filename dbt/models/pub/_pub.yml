@@ -21,10 +21,6 @@ models:
         data_type: text
         data_tests:
           - not_null
-          # ei vielä toimi koska kannassa ei ole vanhat hakukohteet
-          # - dbt_constraints.foreign_key:
-          #     pk_table_name: ref('pub_dim_hakukohde')
-          #     pk_column_name: hakukohde_oid
       - name: hakutoivenumero
         description: Hakutoiveen järjestysnumero
         data_type: bigint
@@ -148,8 +144,8 @@ models:
         description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
   - name: pub_dim_koulutus
     description: >
-      Tämä taulu sisältää kaikki koulutuksen tiedot. koulutuskoodien tiedot
-      löytyvät erillisestä taulusta int_koulutus_koulutuskoodi
+      Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi,
+      on koodiarvot otettu ensimmäisestä koulutuksesta.
     columns:
       - name: koulutus_oid
         description: Koulutuksen oid
@@ -185,6 +181,33 @@ models:
       - name: laajuusyksikko_nimi
         data_type: jsonb
         description: Opintojen laajuuden yksikkö
+      - name: koulutus_koodit
+        description: Kaikki koulutuksen koulutuskoodit järjestyksessä
+        data_type: jsonb
+      - name: alempi_kk_aste
+        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 6
+        data_type: integer
+      - name: ylempi_kk_aste
+        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 7
+        data_type: integer
+      - name: koulutus_koodi
+        description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
+        data_type: text
+      - name: okmohjauksenala
+        data_type: integer
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso1
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso3
+        data_type: text
+      - name: jatkotutkinto
+        desription: Jatkotutkinto on 1 jos ensimmäinen koulutuskoodi alkaa merkillä 8
+        data_type: integer
   - name: pub_dim_toteutus
     description: Toteutuksen tietoja
     columns:
@@ -269,8 +292,7 @@ models:
         description: Hakukohteen tunniste
         data_type: text
         data_tests:
-        - not_null
-        - dbt_constraints.foreign_key:
-            pk_table_name: ref('pub_dim_hakukohde')
-            pk_column_name: hakukohde_oid
-
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pub_dim_hakukohde')
+              pk_column_name: hakukohde_oid
