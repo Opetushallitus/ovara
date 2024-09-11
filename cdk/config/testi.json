@@ -9,7 +9,7 @@
   "publicHostedZone": "ovara.testiopintopolku.fi",
   "siirtotiedostot": {
     "lampiBucketName": "oph-lampi-qa",
-    "ovaraBucketName": "testi-temp-siirtotiedostot"
+    "ovaraBucketName": "testi-siirtotiedostot"
   },
   "vpc": {
     "maxAzs": 2,

@@ -3,11 +3,9 @@ import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as logs from 'aws-cdk-lib/aws-logs';
-import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
@@ -32,31 +30,6 @@ export class LambdaStack extends cdk.Stack {
         new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
       );
     };
-
-    const tempSiirtotiedostotBucketName = `${config.environment}-temp-siirtotiedostot`;
-    const siirtotiedostotKmsKey = new kms.Key(
-      this,
-      `${tempSiirtotiedostotBucketName}-s3BucketKMSKey`,
-      {
-        alias: `${tempSiirtotiedostotBucketName}-s3-bucket-kms-key`,
-        enableKeyRotation: true,
-      }
-    );
-
-    const tempSiirtotiedostoS3Bucket = new s3.Bucket(
-      this,
-      tempSiirtotiedostotBucketName,
-      {
-        bucketName: tempSiirtotiedostotBucketName,
-        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-        encryptionKey: siirtotiedostotKmsKey,
-        serverAccessLogsBucket: new s3.Bucket(
-          this,
-          `${tempSiirtotiedostotBucketName}-server-access-logs`
-        ),
-      }
-    );
 
     const lambdaSecurityGroup = new ec2.SecurityGroup(
       this,
@@ -200,8 +173,6 @@ export class LambdaStack extends cdk.Stack {
       }
     );
     siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
-
-    tempSiirtotiedostoS3Bucket.grantReadWrite(siirtotiedostoLambda);
 
     const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
 
@@ -355,10 +326,6 @@ export class LambdaStack extends cdk.Stack {
           ),
         ],
       })
-    );
-
-    tempSiirtotiedostoS3Bucket.grantReadWrite(
-      lampiYleiskayttoistenSiirtotiedostotKopiointiLambda
     );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
