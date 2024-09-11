@@ -44,17 +44,17 @@ export const main: Handler = async (event: string, context: Context) => {
     koodisto_koodi: {
       lampiKey: 'fulldump/koodisto/v2/json/koodi.json',
       ovaraKeyTemplate: 'koodisto/koodisto_koodi__{}__{}_{}.json',
-      batchSize: 50000,
+      batchSize: 250000,
     },
     koodisto_relaatio: {
       lampiKey: 'fulldump/koodisto/v2/json/relaatio.json',
       ovaraKeyTemplate: 'koodisto/koodisto_relaatio__{}__{}_{}.json',
-      batchSize: 50000,
+      batchSize: 250000,
     },
     onr_henkilo: {
       lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/henkilo.json',
       ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
-      batchSize: 250000,
+      batchSize: 500000,
     },
     onr_yhteystieto: {
       lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/yhteystieto.json',
@@ -64,7 +64,7 @@ export const main: Handler = async (event: string, context: Context) => {
     organisaatio_organisaatio: {
       lampiKey: 'fulldump/organisaatio/v2/json/organisaatio.json',
       ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatio__{}__{}_{}.json',
-      batchSize: 5000,
+      batchSize: 50000,
     },
     organisaatio_organisaatiosuhde: {
       lampiKey: 'fulldump/organisaatio/v2/json/organisaatiosuhde.json',
@@ -74,12 +74,12 @@ export const main: Handler = async (event: string, context: Context) => {
     organisaatio_osoite: {
       lampiKey: 'fulldump/organisaatio/v2/json/osoite.json',
       ovaraKeyTemplate: 'organisaatio/organisaatio_osoite__{}__{}_{}.json',
-      batchSize: 5000,
+      batchSize: 50000,
     },
     organisaatio_ryhma: {
       lampiKey: 'fulldump/organisaatio/v3/json/ryhma.json',
       ovaraKeyTemplate: 'organisaatio/organisaatio_ryhma__{}__{}_{}.json',
-      batchSize: 5000,
+      batchSize: 20000,
     },
   };
 
