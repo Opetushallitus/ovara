@@ -141,14 +141,12 @@ export const main: Handler = async (event: string, context: Context) => {
     try {
       const fileReadStream = fs.createReadStream(filename, {});
 
-      console.log('Valmistellaan pipeline');
       const pipeline = chain([
         fileReadStream,
         parser(),
         streamArray(),
         batch({ batchSize: siirtotiedostoConfig.batchSize }),
       ]);
-      console.log('Pipeline valmisteltu');
 
       pipeline.on('error', (error: any) => {
         console.error(error);
@@ -158,8 +156,6 @@ export const main: Handler = async (event: string, context: Context) => {
       let batchCount = 1;
       const promises: Array<Promise<any>> = [];
       pipeline.on('data', (data: any) => {
-        console.log(`Käsitellään erä numero ${batchCount}: ${data.length} objektia`);
-
         const ovaraKey = format(
           siirtotiedostoConfig.ovaraKeyTemplate,
           formattedCurrentDate,
