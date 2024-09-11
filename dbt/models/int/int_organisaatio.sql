@@ -18,7 +18,7 @@ kunta as (
 ),
 
 raw as (
-     select
+    select
         organisaatio_oid,
         coalesce(nimi_fi, nimi_sv) as nimi_fi_new,
         coalesce(nimi_sv, nimi_fi) as nimi_sv_new,
@@ -41,9 +41,9 @@ final as (
         ) as organisaatio_nimi,
         raw1.sijaintikunta,
         kunt.koodinimi as sijaintikunta_nimi,
-        ylempi_organisaatio,
-        opetuskielet,
-        organisaatiotyypit
+        raw1.ylempi_organisaatio,
+        raw1.opetuskielet,
+        raw1.organisaatiotyypit
     from raw as raw1
     left join kunta as kunt on raw1.sijaintikunta = kunt.koodiuri
 )
