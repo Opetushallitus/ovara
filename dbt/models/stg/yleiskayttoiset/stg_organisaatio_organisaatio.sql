@@ -17,6 +17,10 @@ final as (
         array_to_json(string_to_array((data ->> 'organisaatiotyypit')::varchar, ','))::jsonb as organisaatiotyypit,
         (data ->> 'paivityspvm')::timestamptz as muokattu,
         data ->> 'tila' as tila,
+        data ->> 'grandparent_oid' as ylin_organisaatio,
+        data ->> 'kotipaikka' as sijaintikunta,
+        array_to_json(string_to_array((data ->> 'opetuskielet')::varchar, ','))::jsonb as opetuskielet,
+        data ->> 'parent_oid' as ylempi_organisaatio,
         {{ metadata_columns() }}
     from source
 )
