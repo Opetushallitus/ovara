@@ -30,7 +30,7 @@ int as (
 
 final as (
     select
-        {{ dbt_utils.generate_surrogate_key(['koodistouri','koodiarvo','koodiversio']) }} as id,
+        {{ dbt_utils.generate_surrogate_key(['koodistouri','koodiarvo','koodiversio']) }} as koodi_id,
         *
     from int
 )
