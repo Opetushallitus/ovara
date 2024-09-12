@@ -328,6 +328,33 @@ export class LambdaStack extends cdk.Stack {
       })
     );
 
+    /*
+    const lampiSiirtotiedostoDLQ = new sqs.Queue(this, `${config.environment}-lampiSiirtotiedostoDLQ`, {
+      queueName: `${config.environment}-lampiSiirtotiedostoDLQ`,
+      retentionPeriod: cdk.Duration.days(14),
+    });
+
+    const lampiSiirtotiedostoQueue = new sqs.Queue(this, `${config.environment}-lampiSiirtotiedostoQueue`, {
+      queueName: `${config.environment}-lampiSiirtotiedostoQueue`,
+      retentionPeriod: cdk.Duration.days(14),
+      visibilityTimeout: cdk.Duration.minutes(15),
+      deadLetterQueue: {
+        maxReceiveCount: 3,
+        queue: lampiSiirtotiedostoDLQ,
+      },
+    });
+
+    const lampiSiirtotiedostoSnsTopic = sns.Topic.fromTopicArn(this, `${config.environment}-lampiSiirtotiedostoSnsTopic`, '');
+    lampiSiirtotiedostoSnsTopic.addSubscription(new snsSubscription.SqsSubscription(lampiSiirtotiedostoQueue));
+
+    const lampiSiirtotiedostoEventSource = new lambdaEventSources.SqsEventSource(lampiSiirtotiedostoQueue, {
+      batchSize: 1,
+      maxBatchingWindow: cdk.Duration.millis(0),
+      maxConcurrency: 1,
+    });
+    lampiYleiskayttoistenSiirtotiedostotKopiointiLambda.addEventSource(lampiSiirtotiedostoEventSource);
+     */
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {
         id: 'AwsSolutions-IAM4',
