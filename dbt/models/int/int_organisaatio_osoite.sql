@@ -8,7 +8,7 @@
 }}
 
 with organisaatio as (
-    select distinct organisaatio_oid from {{ ref('dw_organisaatio_organisaatio') }} where lower(tila) = 'aktiivinen'
+    select distinct organisaatio_oid from {{ ref('int_organisaatio') }}
 ),
 
 osoite as (

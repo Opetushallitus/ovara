@@ -9,7 +9,7 @@
 with organisaatio as (
     select
         *,
-        row_number() over (partition by organisaatio_oid, muokattu order by muokattu desc) as rownr
+        row_number() over (partition by organisaatio_oid order by muokattu desc) as rownr
     from {{ ref('dw_organisaatio_organisaatio') }}
 ),
 

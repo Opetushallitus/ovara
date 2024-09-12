@@ -6,6 +6,7 @@ with source as (
         where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
+
 ),
 
 final as (
@@ -26,3 +27,4 @@ final as (
 )
 
 select * from final
+where organisaatiotyypit not in ('["organisaatiotyyppi_07"]'::jsonb, '["organisaatiotyyppi_08"]'::jsonb)

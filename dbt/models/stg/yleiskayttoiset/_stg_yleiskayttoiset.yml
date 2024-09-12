@@ -1,5 +1,6 @@
 models:
   - name: stg_organisaatio_organisaatio
+    description: Datasta on suodatettu pois organisaatiotyypit 07 ja 08, "Varhaiskasvatuksen järjestäjä" ja "Varhaiskasvatuksen toimipaikka"
     columns:
       - name: organisaatio_oid
         data_type: text

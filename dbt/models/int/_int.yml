@@ -53,7 +53,8 @@ models:
       - name: ladattu
         data_type: timestamptz
   - name: int_organisaatio
-    description: Sisältää organisaatiopalvelun organisaatiot
+    description: >
+      Sisältää organisaatiopalvelun organisaatiot. Ei sisällä organisaatiotyypit 07 ja 08, "Varhaiskasvatuksen järjestäjä" ja "Varhaiskasvatuksen toimipaikka"
     columns:
       - name: organisaatio_oid
         data_type: text
