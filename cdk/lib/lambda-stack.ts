@@ -3,10 +3,14 @@ import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -15,7 +19,9 @@ import { Config, GenericStackProps } from './config';
 
 export interface LambdaStackProps extends GenericStackProps {
   vpc: ec2.IVpc;
-  siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
+  siirtotiedostoBucket: s3.IBucket;
+  siirtotiedostotKmsKey: kms.IKey;
+  siirtotiedostoQueue: sqs.IQueue;
   slackAlarmIntegrationSnsTopic: sns.ITopic;
 }
 
@@ -58,9 +64,7 @@ export class LambdaStack extends cdk.Stack {
       'DB sallittu lambdoille'
     );
 
-    const siirtotiedostoBucketArn = cdk.Fn.importValue(
-      `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-arn`
-    );
+    const siirtotiedostoBucketArn = props.siirtotiedostoBucket.bucketArn;
     const siirtotiedostoBucketStatement = new iam.PolicyStatement();
     siirtotiedostoBucketStatement.addResources(siirtotiedostoBucketArn);
     siirtotiedostoBucketStatement.addActions('s3:ListBucket', 's3:ListBucketVersions');
@@ -81,9 +85,7 @@ export class LambdaStack extends cdk.Stack {
       siirtotiedostoBucketContentStatement
     );
 
-    const siirtotiedostoKeyArn = cdk.Fn.importValue(
-      `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-key-arn`
-    );
+    const siirtotiedostoKeyArn = props.siirtotiedostotKmsKey.keyArn;
     const siirtotiedostoKeyStatement = new iam.PolicyStatement();
     siirtotiedostoKeyStatement.addResources(siirtotiedostoKeyArn);
     siirtotiedostoKeyStatement.addActions(
@@ -172,7 +174,16 @@ export class LambdaStack extends cdk.Stack {
         },
       }
     );
-    siirtotiedostoLambda.addEventSource(props.siirtotiedostoPutEventSource);
+
+    const siirtotiedostoEventSource = new lambdaEventSources.SqsEventSource(
+      props.siirtotiedostoQueue,
+      {
+        batchSize: 1,
+        maxBatchingWindow: cdk.Duration.millis(0),
+        maxConcurrency: 2,
+      }
+    );
+    siirtotiedostoLambda.addEventSource(siirtotiedostoEventSource);
 
     const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
 

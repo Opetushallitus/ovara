@@ -4,10 +4,11 @@ import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
 import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
-import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as route53Targets from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3Notifications from 'aws-cdk-lib/aws-s3-notifications';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -21,7 +22,9 @@ export interface S3StackProps extends GenericStackProps {
 
 export class S3Stack extends cdk.Stack {
   public readonly deploymentS3Bucket: s3.IBucket;
-  public readonly siirtotiedostoPutEventSource: cdk.aws_lambda_event_sources.S3EventSource;
+  public readonly siirtotiedostoBucket: s3.IBucket;
+  public readonly siirtotiedostotKmsKey: kms.IKey;
+  public readonly siirtotiedostoQueue: sqs.IQueue;
   constructor(scope: Construct, id: string, props: S3StackProps) {
     super(scope, id, props);
 
@@ -36,6 +39,7 @@ export class S3Stack extends cdk.Stack {
         enableKeyRotation: true,
       }
     );
+    this.siirtotiedostotKmsKey = siirtotiedostotKmsKey;
 
     const siirtotiedostoS3Bucket = new s3.Bucket(this, siirtotiedostotBucketName, {
       bucketName: siirtotiedostotBucketName,
@@ -47,6 +51,8 @@ export class S3Stack extends cdk.Stack {
         `${siirtotiedostotBucketName}-server-access-logs`
       ),
     });
+
+    this.siirtotiedostoBucket = siirtotiedostoS3Bucket;
 
     const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
       this,
@@ -104,16 +110,6 @@ export class S3Stack extends cdk.Stack {
 
     siirtotiedostoS3Bucket.grantReadWrite(new iam.AccountRootPrincipal());
 
-    this.siirtotiedostoPutEventSource = new lambdaEventSources.S3EventSource(
-      siirtotiedostoS3Bucket,
-      {
-        events: [
-          s3.EventType.OBJECT_CREATED_PUT,
-          s3.EventType.OBJECT_CREATED_COMPLETE_MULTIPART_UPLOAD,
-        ],
-      }
-    );
-
     const deploymentS3BucketName = `${config.environment}-deployment`;
     this.deploymentS3Bucket = new s3.Bucket(this, deploymentS3BucketName, {
       bucketName: deploymentS3BucketName,
@@ -159,6 +155,34 @@ export class S3Stack extends cdk.Stack {
       ),
     });
 
+    const siirtotiedostoDLQ = new sqs.Queue(
+      this,
+      `${config.environment}-siirtotiedostoDLQ`,
+      {
+        queueName: `${config.environment}-siirtotiedostoDLQ`,
+        retentionPeriod: cdk.Duration.days(14),
+      }
+    );
+
+    const siirtotiedostoQueue = new sqs.Queue(
+      this,
+      `${config.environment}-siirtotiedostoQueue`,
+      {
+        queueName: `${config.environment}-siirtotiedostoQueue`,
+        retentionPeriod: cdk.Duration.days(14),
+        visibilityTimeout: cdk.Duration.minutes(15),
+        deadLetterQueue: {
+          maxReceiveCount: 3,
+          queue: siirtotiedostoDLQ,
+        },
+      }
+    );
+
+    const testiQueueDestination = new s3Notifications.SqsDestination(siirtotiedostoQueue);
+    siirtotiedostoS3Bucket.addObjectCreatedNotification(testiQueueDestination);
+
+    this.siirtotiedostoQueue = siirtotiedostoQueue;
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },
       {
@@ -172,6 +196,14 @@ export class S3Stack extends cdk.Stack {
       {
         id: 'AwsSolutions-S1',
         reason: 'Not interested in access logs',
+      },
+      {
+        id: 'AwsSolutions-CFR3',
+        reason: 'Not interested in access logs',
+      },
+      {
+        id: 'AwsSolutions-SQS4',
+        reason: "Messaged don't include any confidential information",
       },
       {
         id: 'AwsSolutions-CFR3',

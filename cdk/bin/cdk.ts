@@ -60,7 +60,9 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
 
 new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
-  siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
+  siirtotiedostoBucket: s3Stack.siirtotiedostoBucket,
+  siirtotiedostotKmsKey: s3Stack.siirtotiedostotKmsKey,
+  siirtotiedostoQueue: s3Stack.siirtotiedostoQueue,
   slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });
