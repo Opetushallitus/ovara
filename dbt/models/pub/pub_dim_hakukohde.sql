@@ -1,6 +1,4 @@
---{{ ref('pub_dim_haku') }}
---{{ ref('pub_dim_toteutus') }}
-    {{
+{{
     config(
         materialized = 'table',
         indexes = [
@@ -10,45 +8,60 @@
     )
 }}
 
-with raw as (
+with hakukohde as (
     select * from {{ ref('int_kouta_hakukohde') }}
 ),
 
 toteutus as (
-    select * from {{ ref('int_kouta_toteutus') }}
+    select * from {{ ref('pub_dim_toteutus') }}
 ),
 
-
-hakuajat as (
+haku as (
     select
-        haku_oid,
-        hakuajat
-    from {{ ref('int_kouta_haku') }}
+        *,
+        hakutapa_koodi = '05' as siirtohaku
+    from {{ ref('pub_dim_haku') }}
+),
+
+koulutus as (
+    select * from {{ ref('pub_dim_koulutus') }}
 ),
 
 int as (
     select
-        raw1.hakukohde_oid,
-        raw1.hakukohde_nimi,
-        raw1.externalid,
-        raw1.tila,
-        raw1.haku_oid,
-        raw1.toteutus_oid,
-        raw1.jarjestyspaikka_oid,
-        raw1.aloituspaikat,
-        raw1.aloituspaikat_ensikertalaisille,
-        raw1.hakukohdekoodiuri,
-        raw1.pohjakoulutuskoodit,
+        hako.hakukohde_oid,
+        hako.hakukohde_nimi,
+        hako.externalid,
+        hako.tila,
+        hako.haku_oid,
+        hako.toteutus_oid,
+        hako.jarjestyspaikka_oid,
+        hako.aloituspaikat,
+        hako.aloituspaikat_ensikertalaisille,
+        hako.hakukohdekoodiuri,
+        hako.pohjakoulutusvaatimuskoodiurit,
         case
-            when raw1.kaytetaanhaunaikataulua
-                then hajt.hakuajat
-            else raw1.hakuajat
+            when hako.kaytetaanhaunaikataulua
+                then haku.hakuajat
+            else hako.hakuajat
         end as hakuajat,
-        raw1.kaytetaanhaunaikataulua as kaytetaan_haun_aikataulua
-    from raw as raw1
-    left join toteutus as tote on raw1.toteutus_oid = tote.toteutus_oid
-    left join hakuajat as hajt on raw1.haku_oid = hajt.haku_oid
-
+        hako.kaytetaanhaunaikataulua as kaytetaan_haun_aikataulua,
+        hako.on_valintakoe,
+        case
+            when koul.jatkotutkinto then 5
+            when haku.siirtohaku and koul.alempi_kk_aste then 2
+            when haku.siirtohaku and not koul.alempi_kk_aste and koul.laakis then 2
+            when haku.siirtohaku and not koul.alempi_kk_aste and koul.ylempi_kk_aste then 4
+            when haku.siirtohaku then -1
+            when koul.alempi_kk_aste then 1
+            when koul.alempi_kk_aste and not koul.ylempi_kk_aste and koul.laakis then 1
+            when not koul.alempi_kk_aste and koul.ylempi_kk_aste then 3
+            else 6
+        end as tutkinnon_taso_sykli
+    from hakukohde as hako
+    left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
+    left join haku as haku on hako.haku_oid = haku.haku_oid
+    left join koulutus as koul on tote.koulutus_oid = koul.koulutus_oid
 )
 
 select * from int

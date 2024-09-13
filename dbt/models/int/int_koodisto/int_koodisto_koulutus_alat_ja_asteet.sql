@@ -58,11 +58,11 @@ final as (
         kal3.kansallinenkoulutusluokitus2016koulutusalataso3,
         case when left(kood.koodiarvo, 1) = '6' then 1::int else 0::int end as alempi_kk_aste,
         case when left(kood.koodiarvo, 1) = '7' then 1::int else 0::int end as ylempi_kk_aste,
-        case when left(kood.koodiarvo, 1) = '8' then 1::int else 0::int end as jatkotutkinto,
+        case when left(kood.koodiarvo, 1) = '8' then 1::bool else 0::bool end as jatkotutkinto,
         case
             when kood.koodiarvo in ('772100', '772101', '772200', '772201', '772300', '772301')
-                then 1::int
-            else 0::int
+                then 1::bool
+            else 0::bool
         end as laakis,
         okma.okmohjauksenala
     from koulutuskoodi as kood
