@@ -2,12 +2,15 @@ import * as cdk from 'aws-cdk-lib';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
 import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as route53Targets from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3Notifications from 'aws-cdk-lib/aws-s3-notifications';
+import * as sns from 'aws-cdk-lib/aws-sns';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
@@ -17,6 +20,7 @@ import { Config, GenericStackProps } from './config';
 
 export interface S3StackProps extends GenericStackProps {
   ovaraWildcardCertificate: acm.ICertificate;
+  slackAlarmIntegrationSnsTopic: sns.ITopic;
   zone: route53.IHostedZone;
 }
 
@@ -27,6 +31,15 @@ export class S3Stack extends cdk.Stack {
   public readonly siirtotiedostoQueue: sqs.IQueue;
   constructor(scope: Construct, id: string, props: S3StackProps) {
     super(scope, id, props);
+
+    const addActionsToAlarm = (alarm: cloudwatch.Alarm) => {
+      alarm.addAlarmAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+      alarm.addOkAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+    };
 
     const config: Config = props.config;
 
@@ -182,6 +195,38 @@ export class S3Stack extends cdk.Stack {
     siirtotiedostoS3Bucket.addObjectCreatedNotification(testiQueueDestination);
 
     this.siirtotiedostoQueue = siirtotiedostoQueue;
+
+    const siirtotiedostoQueueAlarm = new cloudwatch.Alarm(
+      this,
+      `${config.environment}-siirtotiedostoQueueAlarm`,
+      {
+        alarmName: `${config.environment}-siirtotiedostoQueueAlarm`,
+        alarmDescription: `Alarm for ${siirtotiedostoQueue.queueName}`,
+        metric: siirtotiedostoQueue.metricApproximateNumberOfMessagesVisible(),
+        threshold: 1,
+        evaluationPeriods: 1,
+        comparisonOperator:
+          cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.IGNORE,
+      }
+    );
+    addActionsToAlarm(siirtotiedostoQueueAlarm);
+
+    const siirtotiedostoDLQAlarm = new cloudwatch.Alarm(
+      this,
+      `${config.environment}-siirtotiedostoDLQAlarm`,
+      {
+        alarmName: `${config.environment}-siirtotiedostoDLQAlarm`,
+        alarmDescription: `Alarm for dead letter ${siirtotiedostoDLQ.queueName}`,
+        metric: siirtotiedostoDLQ.metricApproximateNumberOfMessagesVisible(),
+        threshold: 1,
+        evaluationPeriods: 1,
+        comparisonOperator:
+          cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: cloudwatch.TreatMissingData.IGNORE,
+      }
+    );
+    addActionsToAlarm(siirtotiedostoDLQAlarm);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-S10', reason: 'No public access to bucket' },

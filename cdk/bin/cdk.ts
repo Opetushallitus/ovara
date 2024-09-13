@@ -48,6 +48,7 @@ const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
   ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
   crossRegionReferences: true,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   zone: route53Stack.publicHostedZone,
 });
 
