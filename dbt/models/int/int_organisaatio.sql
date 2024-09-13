@@ -2,6 +2,8 @@
   config(
     materialized = 'table',
     indexes = [
+        {'columns': ['organisaatio_oid']},
+        {'columns': ['tila']}
     ]
     )
 }}
@@ -17,6 +19,10 @@ kunta as (
     select * from {{ ref('int_koodisto_kunta') }} where viimeisin_versio
 ),
 
+organisaatiotyyppi as (
+    select * from {{ ref('int_organisaatio_organisaatiotyyppi') }}
+),
+
 raw as (
     select
         organisaatio_oid,
@@ -24,11 +30,11 @@ raw as (
         coalesce(nimi_sv, nimi_fi) as nimi_sv_new,
         coalesce(nimi_fi, nimi_sv) as nimi_en_new,
         sijaintikunta,
-        ylempi_organisaatio,
+        tila,
         opetuskielet,
         organisaatiotyypit
     from organisaatio
-    where rownr = 1 and lower(tila) = 'aktiivinen'
+    where rownr = 1
 ),
 
 final as (
@@ -41,11 +47,12 @@ final as (
         ) as organisaatio_nimi,
         raw1.sijaintikunta,
         kunt.koodinimi as sijaintikunta_nimi,
-        raw1.ylempi_organisaatio,
         raw1.opetuskielet,
-        raw1.organisaatiotyypit
+        orgt.organisaatiotyypit,
+        tila
     from raw as raw1
     left join kunta as kunt on raw1.sijaintikunta = kunt.koodiuri
+    left join organisaatiotyyppi as orgt on raw1.organisaatio_oid=orgt.organisaatio_oid
 )
 
 select * from final

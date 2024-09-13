@@ -1,15 +1,9 @@
-{%- macro generate_koodisto_table(koodistouri,is_int=false) -%}
-
-{# is_int is a boolean field.
-It defines wether the code value in the table is an integer or not.
-The default is false meaning the column is created as textS
-#}
-
 {{
   config(
     indexes=[
         {'columns':['koodiarvo','viimeisin_versio']},
         {'columns':['koodiarvo','koodiversio']},
+        {'columns': ['koodistouri']}
     ]
     )
 }}
@@ -18,11 +12,11 @@ with raw as
 (
     select *
     from {{ ref('dw_koodisto_koodi') }}
-    where koodistouri='{{koodistouri}}'
 ),
 
 int as (
     select
+        koodistouri,
         koodiuri || '#' || koodiversio::varchar as versioitu_koodiuri,
         koodiuri,
         {% if is_int -%}
@@ -51,5 +45,3 @@ final as (
 
 select * from final
 order by koodiarvo,koodiversio
-
-{% endmacro -%}

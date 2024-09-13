@@ -54,7 +54,10 @@ models:
         data_type: timestamptz
   - name: int_organisaatio
     description: >
-      Sisältää organisaatiopalvelun organisaatiot. Ei sisällä organisaatiotyypit 07 ja 08, "Varhaiskasvatuksen järjestäjä" ja "Varhaiskasvatuksen toimipaikka"
+      Sisältää organisaatiopalvelun organisaatiot.
+
+      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista:
+      koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
     columns:
       - name: organisaatio_oid
         data_type: text

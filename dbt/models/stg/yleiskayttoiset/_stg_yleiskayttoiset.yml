@@ -1,6 +1,8 @@
 models:
   - name: stg_organisaatio_organisaatio
-    description: Datasta on suodatettu pois organisaatiotyypit 07 ja 08, "Varhaiskasvatuksen järjestäjä" ja "Varhaiskasvatuksen toimipaikka"
+    description: |
+      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista:
+      koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
     columns:
       - name: organisaatio_oid
         data_type: text
