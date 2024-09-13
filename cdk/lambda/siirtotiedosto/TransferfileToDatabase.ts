@@ -65,24 +65,31 @@ const row = (
 
 export const main: Handler = async (event: SQSEvent) => {
   const sqsRecords = event.Records;
-  if (sqsRecords.length > 1) {
+  if (!sqsRecords || sqsRecords.length === 0) {
+    console.log(
+      'SQSEventissä ei ole yhtään recordia. Ehkä testi-event? Lopetetaan suorittaminen.'
+    );
+    return;
+  } else if (sqsRecords.length > 1) {
     const message = `SQS-eventissä on enemmän kuin yksi record: ${sqsRecords.length}`;
     console.error(message);
     throw new Error(message);
   }
   const sqsRecord: SQSRecord = sqsRecords[0];
-  console.log('sqsRecord.receiptHandle: ' + sqsRecord.receiptHandle);
-  console.log('body: ' + sqsRecord.body);
 
   const s3Event: S3Event = JSON.parse(sqsRecord.body);
   const s3EventRecords: Array<S3EventRecord> = s3Event.Records;
-  if (s3EventRecords.length > 1) {
+  if (!s3EventRecords || s3EventRecords.length === 0) {
+    console.log(
+      'S3Eventissä ei ole yhtään recordia. Ehkä testi-event? Lopetetaan suorittaminen.'
+    );
+    return;
+  } else if (s3EventRecords.length > 1) {
     const message = `SQS-eventin S3-recordeissa on enemmän kuin yksi record: ${s3EventRecords.length}`;
     console.error(message);
     throw new Error(message);
   }
   const s3EventRecord: S3EventRecord = s3EventRecords[0];
-  console.log(JSON.stringify(s3EventRecord, null, 4));
 
   const startTime = new Date().getTime();
   const bucket = s3EventRecord.s3.bucket.name;
