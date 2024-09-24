@@ -29,6 +29,7 @@ raw as (
         coalesce(nimi_fi, nimi_sv) as nimi_fi_new,
         coalesce(nimi_sv, nimi_fi) as nimi_sv_new,
         coalesce(nimi_fi, nimi_sv) as nimi_en_new,
+        ylempi_organisaatio,
         sijaintikunta,
         tila,
         opetuskielet,
@@ -45,6 +46,7 @@ final as (
             'sv', raw1.nimi_sv_new,
             'fi', raw1.nimi_fi_new
         ) as organisaatio_nimi,
+        ylempi_organisaatio,
         raw1.sijaintikunta,
         kunt.koodinimi as sijaintikunta_nimi,
         raw1.opetuskielet,
