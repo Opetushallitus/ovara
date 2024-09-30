@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import { CfnOutput } from 'aws-cdk-lib';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -339,6 +340,52 @@ export class LambdaStack extends cdk.Stack {
       })
     );
 
+    const lampiTiedostoMuuttunutLambdaName = `${config.environment}-lampiTiedostoMuuttunut`;
+
+    const lampiTiedostoMuuttunutLambdaLogGroup = new logs.LogGroup(
+      this,
+      `${config.environment}-${lampiTiedostoMuuttunutLambdaName}LogGroup`,
+      {
+        logGroupName: `/aws/lambda/${lampiTiedostoMuuttunutLambdaName}`,
+      }
+    );
+
+    const lampiTiedostoMuuttunutLambda = new lambdaNodejs.NodejsFunction(
+      this,
+      lampiTiedostoMuuttunutLambdaName,
+      {
+        functionName: lampiTiedostoMuuttunutLambdaName,
+        entry: 'lambda/lampi/LampiFileChangedReceiver.ts',
+        handler: 'handler',
+        runtime: lambda.Runtime.NODEJS_20_X,
+        architecture: lambda.Architecture.ARM_64,
+        timeout: cdk.Duration.seconds(900),
+        memorySize: 256,
+        vpc: props.vpc,
+        securityGroups: [lambdaSecurityGroup],
+        role: lampiLambdaExecutionRole,
+        environment: {
+          environment: config.environment,
+        },
+        bundling: {
+          commandHooks: {
+            beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
+            beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
+            afterBundling: (inputDir: string, outputDir: string): Array<string> => [],
+          },
+        },
+      }
+    );
+
+    const lampiTiedostoMuuttunutLambdaUrl = lampiTiedostoMuuttunutLambda.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+    });
+
+    new CfnOutput(this, 'apiUrl', {
+      exportName: 'apiUrl',
+      value: lampiTiedostoMuuttunutLambdaUrl.url,
+    });
+
     /*
     const lampiSiirtotiedostoDLQ = new sqs.Queue(this, `${config.environment}-lampiSiirtotiedostoDLQ`, {
       queueName: `${config.environment}-lampiSiirtotiedostoDLQ`,
@@ -354,16 +401,6 @@ export class LambdaStack extends cdk.Stack {
         queue: lampiSiirtotiedostoDLQ,
       },
     });
-
-    const lampiSiirtotiedostoSnsTopic = sns.Topic.fromTopicArn(this, `${config.environment}-lampiSiirtotiedostoSnsTopic`, '');
-    lampiSiirtotiedostoSnsTopic.addSubscription(new snsSubscription.SqsSubscription(lampiSiirtotiedostoQueue));
-
-    const lampiSiirtotiedostoEventSource = new lambdaEventSources.SqsEventSource(lampiSiirtotiedostoQueue, {
-      batchSize: 1,
-      maxBatchingWindow: cdk.Duration.millis(0),
-      maxConcurrency: 1,
-    });
-    lampiYleiskayttoistenSiirtotiedostotKopiointiLambda.addEventSource(lampiSiirtotiedostoEventSource);
      */
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
