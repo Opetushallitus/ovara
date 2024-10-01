@@ -1,3 +1,27 @@
+export type LampiS3Event = {
+  s3SchemaVersion: string;
+  configurationId: string;
+  bucket: {
+    name: string;
+    ownerIdentity: {
+      principalId: string;
+    };
+    arn: string;
+  };
+  object: {
+    key: string;
+    size: number;
+    eTag: string;
+    versionId?: string | undefined;
+    sequencer: string;
+  };
+};
+
+export type LampiEvent = {
+  token: string;
+  s3: LampiS3Event;
+};
+
 export type Tiedosto = {
   lampiKey: string;
   ovaraKeyTemplate: string;
@@ -62,4 +86,10 @@ export const tiedostotyyppiByLampiKey = (lampiKey: string): string => {
     throw Error(message);
   }
   return tiedostotyyppi;
+};
+
+export const lampiKeyExists = (lampiKey: string) => {
+  return Object.values(tiedostot).some(
+    (tiedosto: Tiedosto) => tiedosto.lampiKey === lampiKey
+  );
 };

@@ -9,6 +9,7 @@ import { Context } from 'aws-lambda/handler';
 import * as dateFns from 'date-fns-tz';
 
 import * as common from './common';
+import { LampiS3Event } from './common';
 
 const { writeFile } = require('node:fs/promises');
 
@@ -34,8 +35,11 @@ export const main: lambda.Handler = async (
       console.error(message);
       throw new Error(message);
     }
+    console.log(event);
+    console.log(JSON.stringify(event, null, 4));
     sqsRecord = event.Records[0];
-    tiedostotyyppi = common.tiedostotyyppiByLampiKey(sqsRecord.body);
+    const lampiS3Event: LampiS3Event = JSON.parse(sqsRecord.body);
+    tiedostotyyppi = common.tiedostotyyppiByLampiKey(lampiS3Event.object.key);
   }
 
   console.log(

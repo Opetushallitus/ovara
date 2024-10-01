@@ -4,6 +4,7 @@ import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { AccountRootPrincipal } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
@@ -288,6 +289,32 @@ export class LambdaStack extends cdk.Stack {
       )
     );
 
+    const lampiSiirtotiedostoDLQ = new sqs.Queue(
+      this,
+      `${config.environment}-lampiSiirtotiedostoDLQ`,
+      {
+        queueName: `${config.environment}-lampiSiirtotiedostoDLQ`,
+        retentionPeriod: cdk.Duration.days(14),
+      }
+    );
+
+    const lampiSiirtotiedostoQueue = new sqs.Queue(
+      this,
+      `${config.environment}-lampiSiirtotiedostoQueue`,
+      {
+        queueName: `${config.environment}-lampiSiirtotiedostoQueue`,
+        retentionPeriod: cdk.Duration.days(14),
+        visibilityTimeout: cdk.Duration.minutes(15),
+        deadLetterQueue: {
+          maxReceiveCount: 10,
+          queue: lampiSiirtotiedostoDLQ,
+        },
+      }
+    );
+
+    lampiSiirtotiedostoQueue.grantSendMessages(new AccountRootPrincipal());
+    lampiSiirtotiedostoQueue.grantConsumeMessages(new AccountRootPrincipal());
+
     const lampiYleiskayttoistenSiirtotiedostotKopiointiLambda =
       new lambdaNodejs.NodejsFunction(
         this,
@@ -340,6 +367,24 @@ export class LambdaStack extends cdk.Stack {
       })
     );
 
+    lampiYleiskayttoistenSiirtotiedostotKopiointiLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        resources: [lampiSiirtotiedostoQueue.queueArn],
+        actions: ['*'],
+      })
+    );
+
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiEventSource =
+      new lambdaEventSources.SqsEventSource(lampiSiirtotiedostoQueue, {
+        batchSize: 1,
+        maxBatchingWindow: cdk.Duration.millis(0),
+        maxConcurrency: 2,
+      });
+    lampiYleiskayttoistenSiirtotiedostotKopiointiLambda.addEventSource(
+      lampiYleiskayttoistenSiirtotiedostotKopiointiEventSource
+    );
+
     const lampiTiedostoMuuttunutLambdaName = `${config.environment}-lampiTiedostoMuuttunut`;
 
     const lampiTiedostoMuuttunutLambdaLogGroup = new logs.LogGroup(
@@ -359,13 +404,14 @@ export class LambdaStack extends cdk.Stack {
         handler: 'handler',
         runtime: lambda.Runtime.NODEJS_20_X,
         architecture: lambda.Architecture.ARM_64,
-        timeout: cdk.Duration.seconds(900),
+        timeout: cdk.Duration.seconds(60),
         memorySize: 256,
         vpc: props.vpc,
         securityGroups: [lambdaSecurityGroup],
         role: lampiLambdaExecutionRole,
         environment: {
           environment: config.environment,
+          lampiSiirtotiedostoQueueUrl: lampiSiirtotiedostoQueue.queueUrl,
         },
         bundling: {
           commandHooks: {
@@ -377,31 +423,22 @@ export class LambdaStack extends cdk.Stack {
       }
     );
 
+    lampiTiedostoMuuttunutLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        resources: [lampiSiirtotiedostoQueue.queueArn],
+        actions: ['*'],
+      })
+    );
+
     const lampiTiedostoMuuttunutLambdaUrl = lampiTiedostoMuuttunutLambda.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     });
 
-    new CfnOutput(this, 'apiUrl', {
-      exportName: 'apiUrl',
+    new CfnOutput(this, 'lampiTiedostoMuuttunutLambdaUrl', {
+      exportName: 'lampiTiedostoMuuttunutLambdaUrl',
       value: lampiTiedostoMuuttunutLambdaUrl.url,
     });
-
-    /*
-    const lampiSiirtotiedostoDLQ = new sqs.Queue(this, `${config.environment}-lampiSiirtotiedostoDLQ`, {
-      queueName: `${config.environment}-lampiSiirtotiedostoDLQ`,
-      retentionPeriod: cdk.Duration.days(14),
-    });
-
-    const lampiSiirtotiedostoQueue = new sqs.Queue(this, `${config.environment}-lampiSiirtotiedostoQueue`, {
-      queueName: `${config.environment}-lampiSiirtotiedostoQueue`,
-      retentionPeriod: cdk.Duration.days(14),
-      visibilityTimeout: cdk.Duration.minutes(15),
-      deadLetterQueue: {
-        maxReceiveCount: 3,
-        queue: lampiSiirtotiedostoDLQ,
-      },
-    });
-     */
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {
@@ -411,6 +448,10 @@ export class LambdaStack extends cdk.Stack {
       {
         id: 'AwsSolutions-IAM5',
         reason: 'Wildcard used only for bucket contents',
+      },
+      {
+        id: 'AwsSolutions-SQS4',
+        reason: "Messaged don't include any confidential information",
       },
       { id: 'AwsSolutions-S10', reason: '1234567890' },
     ]);
