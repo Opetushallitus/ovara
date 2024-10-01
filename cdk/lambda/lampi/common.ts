@@ -88,7 +88,10 @@ export const tiedostotyyppiByLampiKey = (lampiKey: string): string => {
   return tiedostotyyppi;
 };
 
+const disabledLampiKeys = ['fulldump/oppijanumerorekisteri/v2/json/henkilo.json'];
+
 export const lampiKeyExists = (lampiKey: string) => {
+  if (disabledLampiKeys.includes(lampiKey)) return false;
   return Object.values(tiedostot).some(
     (tiedosto: Tiedosto) => tiedosto.lampiKey === lampiKey
   );
