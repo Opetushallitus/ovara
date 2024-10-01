@@ -385,6 +385,45 @@ export class LambdaStack extends cdk.Stack {
       lampiYleiskayttoistenSiirtotiedostotKopiointiEventSource
     );
 
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiErrorMetricName =
+      'LampiYleiskayttoistenSiirtotiedostotKopiointiError';
+
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiErrorMetric =
+      new cloudwatch.Metric({
+        namespace: ovaraCustomMetricsNamespace,
+        metricName: lampiYleiskayttoistenSiirtotiedostotKopiointiErrorMetricName,
+        period: cdk.Duration.minutes(5),
+        unit: cloudwatch.Unit.NONE,
+        statistic: cloudwatch.Stats.SUM,
+      });
+
+    new logs.MetricFilter(
+      this,
+      `${config.environment}-lampiYleiskayttoistenSiirtotiedostotKopiointiErrorMetricFilter`,
+      {
+        filterPattern: logs.FilterPattern.anyTerm('ERROR', 'Error'),
+        logGroup: lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaLogGroup,
+        metricName: lampiYleiskayttoistenSiirtotiedostotKopiointiErrorMetricName,
+        metricNamespace: ovaraCustomMetricsNamespace,
+      }
+    );
+
+    const lampiYleiskayttoistenSiirtotiedostotKopiointiErrorAlarm = new cloudwatch.Alarm(
+      this,
+      `${siirtotiedostonLatausErrorMetric}-alarm`,
+      {
+        metric: lampiYleiskayttoistenSiirtotiedostotKopiointiErrorMetric,
+        evaluationPeriods: 3,
+        datapointsToAlarm: 1,
+        alarmName: `${config.environment}-ovara-LampiYleiskayttoistenSiirtotiedostotKopiointiError`,
+        alarmDescription:
+          'Lampi-palvelun siirtotiedoston kopioinnissa Ovaran S3-bucketiin tapahtui virhe',
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+        threshold: 0,
+      }
+    );
+    addActionsToAlarm(lampiYleiskayttoistenSiirtotiedostotKopiointiErrorAlarm);
+
     const lampiTiedostoMuuttunutLambdaName = `${config.environment}-lampiTiedostoMuuttunut`;
 
     const lampiTiedostoMuuttunutLambdaLogGroup = new logs.LogGroup(
@@ -439,6 +478,43 @@ export class LambdaStack extends cdk.Stack {
       exportName: 'lampiTiedostoMuuttunutLambdaUrl',
       value: lampiTiedostoMuuttunutLambdaUrl.url,
     });
+
+    const lampiTiedostoMuuttunutErrorMetricName = 'LampiTiedostoMuuttunutError';
+
+    const lampiTiedostoMuuttunutErrorMetric = new cloudwatch.Metric({
+      namespace: ovaraCustomMetricsNamespace,
+      metricName: lampiTiedostoMuuttunutErrorMetricName,
+      period: cdk.Duration.minutes(5),
+      unit: cloudwatch.Unit.NONE,
+      statistic: cloudwatch.Stats.SUM,
+    });
+
+    new logs.MetricFilter(
+      this,
+      `${config.environment}-lampiTiedostoMuuttunutErrorMetricFilter`,
+      {
+        filterPattern: logs.FilterPattern.anyTerm('ERROR', 'Error'),
+        logGroup: lampiTiedostoMuuttunutLambdaLogGroup,
+        metricName: lampiTiedostoMuuttunutErrorMetricName,
+        metricNamespace: ovaraCustomMetricsNamespace,
+      }
+    );
+
+    const lampiTiedostoMuuttunutErrorAlarm = new cloudwatch.Alarm(
+      this,
+      `${lampiTiedostoMuuttunutErrorMetricName}-alarm`,
+      {
+        metric: lampiTiedostoMuuttunutErrorMetric,
+        evaluationPeriods: 3,
+        datapointsToAlarm: 1,
+        alarmName: `${config.environment}-ovara-lampiTiedostoMuuttunutError`,
+        alarmDescription:
+          'Lampi-palvelun tiedosto muuttunut -viestin käsittely epäonnistui',
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+        threshold: 0,
+      }
+    );
+    addActionsToAlarm(lampiTiedostoMuuttunutErrorAlarm);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       {
