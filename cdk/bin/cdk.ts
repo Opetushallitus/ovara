@@ -48,6 +48,7 @@ const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
   ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
   crossRegionReferences: true,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   zone: route53Stack.publicHostedZone,
 });
 
@@ -60,7 +61,9 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
 
 new LambdaStack(app, `${config.environment}-LambdaStack`, {
   vpc: networkStack.vpc,
-  siirtotiedostoPutEventSource: s3Stack.siirtotiedostoPutEventSource,
+  siirtotiedostoBucket: s3Stack.siirtotiedostoBucket,
+  siirtotiedostotKmsKey: s3Stack.siirtotiedostotKmsKey,
+  siirtotiedostoQueue: s3Stack.siirtotiedostoQueue,
   slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   ...props,
 });

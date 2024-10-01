@@ -15,6 +15,10 @@ export interface Config {
   environment: string;
   profile: string;
   publicHostedZone: string;
+  siirtotiedostot: {
+    lampiBucketName: string;
+    ovaraBucketName: string;
+  };
   vpc: {
     maxAzs: number;
     netGateways: number;

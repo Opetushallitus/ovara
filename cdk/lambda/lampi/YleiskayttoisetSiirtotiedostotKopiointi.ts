@@ -1,0 +1,176 @@
+/* eslint @typescript-eslint/no-var-requires: "off" */
+import * as fs from 'fs';
+
+import * as s3 from '@aws-sdk/client-s3';
+import * as sts from '@aws-sdk/client-sts';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { SQSEvent } from 'aws-lambda';
+import { Context } from 'aws-lambda/handler';
+import * as dateFns from 'date-fns-tz';
+
+import * as common from './common';
+import { LampiS3Event } from './common';
+
+const { writeFile } = require('node:fs/promises');
+
+const { chain } = require('stream-chain');
+const { parser } = require('stream-json');
+const { streamArray } = require('stream-json/streamers/StreamArray');
+const { batch } = require('stream-json/utils/Batch');
+const format = require('string-format');
+
+export const main: lambda.Handler = async (
+  event: string | SQSEvent,
+  context: Context
+) => {
+  const eraTunniste = context.awsRequestId;
+
+  let tiedostotyyppi;
+  let sqsRecord;
+  if (typeof event === 'string') {
+    tiedostotyyppi = event;
+  } else {
+    if (event.Records.length > 1) {
+      const message = `SQS-eventissä on enemmän kuin yksi record: ${event.Records.length}`;
+      console.error(message);
+      throw new Error(message);
+    }
+    console.log(event);
+    console.log(JSON.stringify(event, null, 4));
+    sqsRecord = event.Records[0];
+    const lampiS3Event: LampiS3Event = JSON.parse(sqsRecord.body);
+    tiedostotyyppi = common.tiedostotyyppiByLampiKey(lampiS3Event.object.key);
+  }
+
+  console.log(
+    `Aloitetaan yleiskäyttöisten palveluiden siirtotiedostojen haku: ${tiedostotyyppi}`
+  );
+
+  const currentDate = new Date();
+  const dateFormatString = 'yyyy-MM-dd_HH.mm.ssxxxx';
+  const formattedCurrentDate = dateFns.format(currentDate, dateFormatString, {
+    timeZone: 'Europe/Helsinki',
+  });
+
+  const tiedostot: common.Tiedostot = common.tiedostot;
+
+  const siirtotiedostoConfig: any = tiedostot[tiedostotyyppi];
+  if (!siirtotiedostoConfig) {
+    const message = `Tuntematon tiedostotyyppi: ${tiedostotyyppi}`;
+    console.error(message);
+    throw new Error(message);
+  }
+
+  const lampiBucketName = process.env.lampiBucketName;
+  const ovaraBucketName = process.env.ovaraBucketName;
+
+  //const environment = process.env.environment;
+  const lampiS3Role = process.env.lampiS3Role;
+  const lampiS3ExternalId = process.env.lampiS3ExternalId;
+
+  const stsClient = new sts.STSClient();
+  const assumeRoleCommand = new sts.AssumeRoleCommand({
+    RoleArn: lampiS3Role,
+    RoleSessionName: 'testi-lampi-s3',
+    ExternalId: lampiS3ExternalId,
+  });
+  const lampiS3Credentials = await stsClient.send(assumeRoleCommand);
+
+  const lampiAccessKeyId = lampiS3Credentials?.Credentials?.AccessKeyId || '';
+  const lampiSecretAccessKey = lampiS3Credentials?.Credentials?.SecretAccessKey || '';
+  const lampiSessionToken = lampiS3Credentials?.Credentials?.SessionToken || '';
+
+  const ovaraS3Client = new s3.S3Client();
+  const lampiS3Client = new s3.S3Client({
+    credentials: {
+      accessKeyId: lampiAccessKeyId,
+      secretAccessKey: lampiSecretAccessKey,
+      sessionToken: lampiSessionToken,
+    },
+  });
+
+  const getObjectCommand = new s3.GetObjectCommand({
+    Bucket: lampiBucketName,
+    Key: siirtotiedostoConfig.lampiKey,
+  });
+
+  const getObjectResponse: s3.GetObjectCommandOutput =
+    await lampiS3Client.send(getObjectCommand);
+
+  if (!getObjectResponse.Body)
+    throw new Error(`Tiedoston hakeminen (${siirtotiedostoConfig.lampiKey}) epäonnistui`);
+
+  console.log('S3-tiedosto luettu, käsitellään...');
+  const filename = '/tmp/output.json';
+  await writeFile(filename, getObjectResponse.Body);
+  console.log(`Tiedoston koko: ${fs.statSync(filename).size}`);
+
+  const processDataPromise: Promise<Array<Promise<any>>> = new Promise(function (
+    myResolve,
+    myReject
+  ) {
+    try {
+      const fileReadStream = fs.createReadStream(filename, {});
+
+      const pipeline = chain([
+        fileReadStream,
+        parser(),
+        streamArray(),
+        batch({ batchSize: siirtotiedostoConfig.batchSize }),
+      ]);
+
+      pipeline.on('error', (error: any) => {
+        console.error(error);
+      });
+
+      let summa = 0;
+      let batchCount = 1;
+      const promises: Array<Promise<any>> = [];
+      pipeline.on('data', (data: any) => {
+        const ovaraKey = format(
+          siirtotiedostoConfig.ovaraKeyTemplate,
+          formattedCurrentDate,
+          eraTunniste,
+          batchCount.toString()
+        );
+
+        const entiteetit = data.map((o: any) => o.value);
+
+        console.log(`Tallennetaan tiedosto ${ovaraKey}`);
+        const putObjectCommand = new s3.PutObjectCommand({
+          Bucket: ovaraBucketName,
+          Key: ovaraKey,
+          Body: JSON.stringify(entiteetit),
+        });
+        promises.push(ovaraS3Client.send(putObjectCommand));
+        summa = summa + entiteetit.length;
+        batchCount++;
+      });
+
+      pipeline.on('end', () => {
+        console.log(`Käsitellyissä erissä oli yhteensä ${summa} objektia.`);
+        console.log('Lopetetaan yleiskäyttöisten palveluiden siirtotiedostojen haku');
+        myResolve(promises);
+      });
+    } catch (err) {
+      console.error('Tapahtui yllättävä virhe:', err);
+      myReject(err);
+    }
+  });
+
+  processDataPromise.then(
+    function (value) {
+      console.log(
+        'Processing promise finished successfully, promises created: ',
+        value.length
+      );
+    },
+    function (error) {
+      console.error('Promise errored:', error);
+    }
+  );
+  const s3SavePromises: Array<Promise<any>> = await processDataPromise;
+  console.log('Odotellaan kaikkien s3-tallennuslupausten valmistumista');
+  await Promise.all(s3SavePromises);
+  console.log('Kaikki valmista.');
+};

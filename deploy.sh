@@ -83,7 +83,7 @@ fi
 
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
-    cd "${git_root}/cdk/" && npm ci
+    cd "${git_root}/cdk/" && npm i -g aws-cdk && npm ci
 fi
 
 if [[ "${build}" == "true" ]]; then
@@ -91,17 +91,19 @@ if [[ "${build}" == "true" ]]; then
     export ENVIRONMENT=$environment
     cd "${git_root}/cdk/"
     npm run build
-    npx cdk synth --region eu-west-1 --profile $aws_profile
+    cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
 if [[ "${deploy}" == "true" ]]; then
    echo "Building code, synhesizing CDK code and deploying to environment: $environment"
+   export ENVIRONMENT=$environment
    cd "${git_root}/cdk/"
-   npx cdk deploy $stack -c "environment=$environment" --profile $aws_profile
+   cdk deploy $stack -c "environment=$environment" --profile $aws_profile
 fi
 
 if [[ "${delete}" == "true" ]]; then
    echo "Deleting stack from environment: $environment"
+   export ENVIRONMENT=$environment
    cd "${git_root}/cdk/"
-   npx cdk destroy $stack -c "environment=$environment" --profile $aws_profile
+   cdk destroy $stack -c "environment=$environment" --profile $aws_profile
 fi

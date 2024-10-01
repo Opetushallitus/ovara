@@ -3,7 +3,8 @@ import * as fs from 'fs';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Signer } from '@aws-sdk/rds-signer';
 import { Handler } from 'aws-cdk-lib/aws-lambda';
-import { S3Event } from 'aws-lambda';
+import { S3Event, SQSEvent, SQSRecord } from 'aws-lambda';
+import { S3EventRecord } from 'aws-lambda/trigger/s3';
 import { parse } from 'date-fns';
 import * as pg from 'pg';
 import { Sequelize, DataTypes, Model } from 'sequelize';
@@ -62,10 +63,37 @@ const row = (
   dw_metadata_file_row_number: counter,
 });
 
-export const main: Handler = async (event: S3Event) => {
+export const main: Handler = async (event: SQSEvent) => {
+  const sqsRecords = event.Records;
+  if (!sqsRecords || sqsRecords.length === 0) {
+    console.log(
+      'SQSEventissä ei ole yhtään recordia. Ehkä testi-event? Lopetetaan suorittaminen.'
+    );
+    return;
+  } else if (sqsRecords.length > 1) {
+    const message = `SQS-eventissä on enemmän kuin yksi record: ${sqsRecords.length}`;
+    console.error(message);
+    throw new Error(message);
+  }
+  const sqsRecord: SQSRecord = sqsRecords[0];
+
+  const s3Event: S3Event = JSON.parse(sqsRecord.body);
+  const s3EventRecords: Array<S3EventRecord> = s3Event.Records;
+  if (!s3EventRecords || s3EventRecords.length === 0) {
+    console.log(
+      'S3Eventissä ei ole yhtään recordia. Ehkä testi-event? Lopetetaan suorittaminen.'
+    );
+    return;
+  } else if (s3EventRecords.length > 1) {
+    const message = `SQS-eventin S3-recordeissa on enemmän kuin yksi record: ${s3EventRecords.length}`;
+    console.error(message);
+    throw new Error(message);
+  }
+  const s3EventRecord: S3EventRecord = s3EventRecords[0];
+
   const startTime = new Date().getTime();
-  const bucket = event.Records[0].s3.bucket.name;
-  const key: string = event.Records[0].s3.object.key.replace('%2B', '+');
+  const bucket = s3EventRecord.s3.bucket.name;
+  const key: string = s3EventRecord.s3.object.key.replace('%2B', '+');
 
   console.log(`processing key ${key}`);
   const host = process.env.host || '';
