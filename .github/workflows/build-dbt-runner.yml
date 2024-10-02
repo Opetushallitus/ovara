@@ -1,0 +1,20 @@
+name: Build DBT Runner Container
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'dbt/**'
+      - 'dbt-container/**'
+
+jobs:
+  build-and-deploy-container:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build container
+        run: dbt-container/build.sh
+
+
