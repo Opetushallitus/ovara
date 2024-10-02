@@ -50,6 +50,6 @@ final as (
 )
 
 select * from final
-order by koodiversio,koodiarvo
+order by koodiarvo,koodiversio
 
 {% endmacro -%}

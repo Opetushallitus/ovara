@@ -25,10 +25,14 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
   - name: dw_onr_henkilo
     columns:
       - name: henkilo_oid
         data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
       - name: master_oid
         data_type: text
       - name: etunimet
@@ -59,30 +63,22 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
   - name: dw_onr_yhteystieto
     columns:
+      - name: yhteystieto_id
+        data_type: text
       - name: henkilo_oid
         data_type: text
-      - name: master_oid
+      - name: yhteystieto_arvo_tyyppi
         data_type: text
-      - name: etunimet
+      - name: alkupera
         data_type: text
-      - name: sukunimi
+      - name: yhteystieto_arvo
         data_type: text
-      - name: hetu
+      - name: yhteystietotyyppi
         data_type: text
-      - name: syntymaaika
-        data_type: date
-      - name: aidinkieli
-        data_type: text
-      - name: kansalaisuus
-        data_type: jsonb
-      - name: sukupuoli
-        data_type: integer
-      - name: turvakielto
-        data_type: boolean
-      - name: yksiloityvtj
-        data_type: boolean
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -93,8 +89,12 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
   - name: dw_organisaatio_organisaatiosuhde
     columns:
+      - name: suhde_id
+        data_type: text
       - name: suhdetyyppi
         data_type: text
       - name: parent_oid
@@ -113,8 +113,12 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
   - name: dw_organisaatio_osoite
     columns:
+      - name: organisaatioosoite_id
+        data_type: text
       - name: organisaatio_oid
         data_type: text
       - name: kieli
@@ -137,9 +141,11 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
   - name: dw_koodisto_relaatio
     columns:
-      - name: id
+      - name: koodirelaatio_id
         data_type: text
       - name: alakoodiuri
         data_type: text
@@ -165,13 +171,11 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
-      - name: dw_metadata_timestamp
-        data_type: timestamp with time zone
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: dw_koodisto_koodi
     columns:
-      - name: id
+      - name: koodi_id
         data_type: text
       - name: koodiarvo
         data_type: text
@@ -211,8 +215,6 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
-      - name: dw_metadata_timestamp
-        data_type: timestamp with time zone
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: dw_organisaatio_ryhma
@@ -235,3 +237,5 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone

@@ -53,21 +53,30 @@ models:
       - name: ladattu
         data_type: timestamptz
   - name: int_organisaatio
-    description: Sisältää organisaatiopalvelun organisaatiot
+    description: >
+      Sisältää organisaatiopalvelun organisaatiot.
+
+      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista:
+      koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
     columns:
       - name: organisaatio_oid
         data_type: text
         description: Organisaation OID
         data_tests:
           - dbt_constraints.primary_key
-      - name: tila
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: sijaintikunta
         data_type: text
-      - name: nimi_fi
+      - name: sijaintikunta_nimi
+        data_type: jsonb
+      - name: ylempi_organisaatio
+        description: Organisaation parent-tieto
         data_type: text
-      - name: nimi_sv
-        data_type: text
-      - name: muokattu
-        data_type: timestamp with time zone
+      - name: opetuskielet
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
   - name: int_onr_henkilo_kansalaisuus
     description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä
       henkilöllä voi olla useampi kansalaisuus

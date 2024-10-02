@@ -8,7 +8,7 @@
     )
 }}
 
-with raw as (
+with haku as (
     select * from {{ ref('int_kouta_haku') }}
 ),
 
@@ -26,23 +26,24 @@ haunkohdejoukontarkenne as (
 
 step1 as (
     select
-        raw1.haku_oid,
-        raw1.haku_nimi,
-        raw1.externalid,
-        raw1.tila,
-        raw1.hakutapakoodiuri,
+        haku.haku_oid,
+        haku.haku_nimi,
+        haku.externalid as ulkoinen_tunniste,
+        haku.tila,
+        haku.hakutapakoodiuri,
+        haku.hakuajat,
         hata.koodiarvo as hakutapa_koodi,
         hata.koodinimi as hakutapa_nimi,
-        raw1.kohdejoukkokoodiuri,
+        haku.kohdejoukkokoodiuri,
         hajo.koodiarvo as kohdejoukko_koodi,
         hajo.koodinimi as kohdejoukko_nimi,
-        raw1.kohdejoukontarkennekoodiuri,
+        haku.kohdejoukontarkennekoodiuri,
         hatr.koodiarvo as kohdejoukontarkenne_koodi,
         hatr.koodinimi as kohdejoukontarkenne_nimi
-    from raw as raw1
-    inner join hakutapakoodi as hata on raw1.hakutapakoodiuri = hata.versioitu_koodiuri
-    inner join haunkohdejoukko as hajo on raw1.kohdejoukkokoodiuri = hajo.versioitu_koodiuri
-    left join haunkohdejoukontarkenne as hatr on raw1.kohdejoukontarkennekoodiuri = hatr.versioitu_koodiuri
+    from haku as haku
+    inner join hakutapakoodi as hata on haku.hakutapakoodiuri = hata.versioitu_koodiuri
+    inner join haunkohdejoukko as hajo on haku.kohdejoukkokoodiuri = hajo.versioitu_koodiuri
+    left join haunkohdejoukontarkenne as hatr on haku.kohdejoukontarkennekoodiuri = hatr.versioitu_koodiuri
 ),
 
 final as (

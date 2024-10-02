@@ -1,17 +1,14 @@
-{{
-  config(
-    materialized = 'table',
-    indexes = [
-        {'columns':['suhdetyyppi','child_oid','parent_oid']}
-    ]
-    )
-}}
-
 with source as (
     select * from {{ source('ovara', 'organisaatio_organisaatiosuhde') }}
+
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+
+    {% endif %}
 ),
 
-final as (
+int as (
     select
         data ->> 'suhdetyyppi' as suhdetyyppi,
         data ->> 'parent_oid' as parent_oid,
@@ -19,6 +16,17 @@ final as (
         (data ->> 'alkupvm')::timestamptz as alkupvm,
         {{ metadata_columns() }}
     from source
+),
+
+final as (
+    select
+        {{ dbt_utils.generate_surrogate_key([
+				'suhdetyyppi',
+				'parent_oid',
+                'child_oid'
+			]) }} as suhde_id,
+        *
+    from int
 )
 
 select * from final

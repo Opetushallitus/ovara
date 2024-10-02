@@ -1,13 +1,16 @@
 {% macro generate_dw_model_muokattu(src_model,key_columns_list) %}
 {#
     src_model needs to be provided as ref(), key_columns_list as an array
+
+    add the bolw line to config to prevent accidental removal of history rows from dw tables
+
+          full_refresh = false,
 #}
 
 {{-
     config(
         materialized = 'incremental',
         incremental_strategy = 'merge',
-        full_refresh = false,
         on_schema_change = 'append_new_columns',
         unique_key = key_columns_list,
         merge_exclude_columns = [

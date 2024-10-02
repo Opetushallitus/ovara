@@ -20,11 +20,10 @@ int as (
     select
         tote.toteutus_oid,
         tote.toteutus_nimi,
+        tote.tunniste as ulkoinen_tunniste,
+        tote.tila,
         tote.organisaatio_oid,
         tote.koulutus_oid,
-        tote.koulutustyyppi,
-        tote.tila,
-        tote.tunniste,
         tote.koulutuksenalkamiskausikoodiuri,
         kaus.koodiarvo as kausi_koodi,
         kaus.koodinimi as kausi_nimi,
