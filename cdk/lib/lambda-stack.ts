@@ -434,6 +434,8 @@ export class LambdaStack extends cdk.Stack {
       }
     );
 
+    const lampiAuthTokenSecretName = `/${config.environment}/lambda/lampi-auth-token`;
+
     const lampiTiedostoMuuttunutLambda = new lambdaNodejs.NodejsFunction(
       this,
       lampiTiedostoMuuttunutLambdaName,
@@ -451,6 +453,7 @@ export class LambdaStack extends cdk.Stack {
         environment: {
           environment: config.environment,
           lampiSiirtotiedostoQueueUrl: lampiSiirtotiedostoQueue.queueUrl,
+          lampiAuthTokenSecretName: lampiAuthTokenSecretName,
         },
         bundling: {
           commandHooks: {
@@ -469,6 +472,23 @@ export class LambdaStack extends cdk.Stack {
         actions: ['*'],
       })
     );
+
+    /*
+    const lampiAuthTokenParam = ssm.StringParameter.fromStringParameterName(
+      this,
+      'LampiAuthTokenParam',
+      lampiAuthTokenSecretName,
+    );
+    */
+
+    const lampiAuthTokenParam = ssm.StringParameter.fromSecureStringParameterAttributes(
+      this,
+      'LampiAuthTokenParam',
+      {
+        parameterName: lampiAuthTokenSecretName,
+      }
+    );
+    lampiAuthTokenParam.grantRead(lampiTiedostoMuuttunutLambda);
 
     const lampiTiedostoMuuttunutLambdaUrl = lampiTiedostoMuuttunutLambda.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
