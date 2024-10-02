@@ -317,7 +317,11 @@ models:
         description: hakemuksen tunniste
         data_type: text
         data_tests:
-        - not_null
+          - not_null
+# tämä foreign key ei vielä toimi koska vanhat hakemukset puuttuvat järjestelmästä
+#          - dbt_constraints.foreign_key:
+#              pk_table_name: ref('pub_fct_hakemus')
+#              pk_column_name: hakemus_oid
       - name: etuminet
         data_type: text
       - name: sukunimi
@@ -353,7 +357,7 @@ models:
       - name: sahkoinenviestintalupa
         data_type: boolean
       - name: kansalaisuus
-        description: Priorisoitu kansalaisuus jos henkilöllö on useampi kansalaisuus.
+        description: Priorisoitu kansalaisuus jos henkilöllä on useampi kansalaisuus.
           järjestys on Suomi, EU/ETA, muut
         data_type: text
       - name: kansalaisuusluokka

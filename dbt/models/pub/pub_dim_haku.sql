@@ -28,7 +28,7 @@ step1 as (
     select
         haku.haku_oid,
         haku.haku_nimi,
-        haku.externalid,
+        haku.externalid as ulkoinen_tunniste,
         haku.tila,
         haku.hakutapakoodiuri,
         haku.hakuajat,

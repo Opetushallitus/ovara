@@ -46,15 +46,15 @@ final as (
             'sv', raw1.nimi_sv_new,
             'fi', raw1.nimi_fi_new
         ) as organisaatio_nimi,
-        ylempi_organisaatio,
+        raw1.ylempi_organisaatio,
         raw1.sijaintikunta,
         kunt.koodinimi as sijaintikunta_nimi,
         raw1.opetuskielet,
         orgt.organisaatiotyypit,
-        tila
+        raw1.tila
     from raw as raw1
     left join kunta as kunt on raw1.sijaintikunta = kunt.koodiuri
-    left join organisaatiotyyppi as orgt on raw1.organisaatio_oid=orgt.organisaatio_oid
+    left join organisaatiotyyppi as orgt on raw1.organisaatio_oid = orgt.organisaatio_oid
 )
 
 select * from final

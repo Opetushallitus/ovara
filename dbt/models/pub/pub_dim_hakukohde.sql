@@ -31,7 +31,7 @@ int as (
     select
         hako.hakukohde_oid,
         hako.hakukohde_nimi,
-        hako.externalid,
+        hako.externalid as ulkoinen_tunniste,
         hako.tila,
         hako.haku_oid,
         hako.toteutus_oid,
@@ -39,7 +39,6 @@ int as (
         hako.aloituspaikat,
         hako.aloituspaikat_ensikertalaisille,
         hako.hakukohdekoodiuri,
-        hako.pohjakoulutusvaatimuskoodiurit,
         case
             when hako.kaytetaanhaunaikataulua
                 then haku.hakuajat

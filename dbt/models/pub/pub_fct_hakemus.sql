@@ -11,13 +11,15 @@ with hakemus as (
 
 int as (
     select
-        hakemus_oid,
-        haku_oid,
-        tila,
-        coalesce(valintatuloksen_julkaisulupa, false) as julkaisulupa,
-        coalesce(koulutusmarkkinointilupa, false) as koulutusmarkkinointilupa,
-        henkilo_oid
-    from hakemus
+        hake.hakemus_oid,
+        hake.haku_oid,
+        hake.tila,
+        coalesce(hake.valintatuloksen_julkaisulupa, false) as julkaisulupa,
+        coalesce(hake.koulutusmarkkinointilupa, false) as koulutusmarkkinointilupa,
+        coalesce(hake.sahkoinenviestintalupa, false) as sahkoinenviestintalupa,
+        hake.henkilo_oid
+    from hakemus as hake
+
 )
 
 select * from int

@@ -21,18 +21,18 @@ organisaatiotyyppi as (
 organisaatiotyyppirivit as (
     select
         organisaatio_oid,
-        jsonb_array_elements_text(organisaatiotyypit)  as organisaatiotyyppi
+        jsonb_array_elements_text(organisaatiotyypit) as organisaatiotyyppi
     from organisaatio
     where rownr = 1
 ),
 
-final as  (
+final as (
     select
-    	organisaatio_oid,
-	    jsonb_agg(orgt.koodiarvo) as organisaatiotyypit
+        orgr.organisaatio_oid,
+        jsonb_agg(orgt.koodiarvo) as organisaatiotyypit
     from organisaatiotyyppirivit as orgr
-    inner join organisaatiotyyppi orgt on orgr.organisaatiotyyppi=orgt.koodiuri
-    group by organisaatio_oid
+    inner join organisaatiotyyppi as orgt on orgr.organisaatiotyyppi = orgt.koodiuri
+    group by orgr.organisaatio_oid
 )
 
 select * from final

@@ -1,4 +1,3 @@
---{{ ref('pub_dim_hakukohde') }}
 --{{ ref('pub_fct_hakemus') }}
 {{
   config(
@@ -28,12 +27,12 @@ int as (
         atar.hakemus_oid,
         case
             when onr1.hetu is not null
-            then onr1.etunimet
+                then onr1.etunimet
             else atar.etunimet
         end as etuminet,
         case
             when onr1.hetu is not null
-            then onr1.sukunimi
+                then onr1.sukunimi
             else atar.sukunimi
         end as sukunimi,
         atar.lahiosoite,

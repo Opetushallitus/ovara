@@ -36,10 +36,10 @@ final as (
     select
         koul.koulutus_oid,
         koul.koulutus_nimi,
-        koul.organisaatio_oid,
-        koul.externalid,
-        koul.koulutustyyppi,
+        koul.externalid as ulkoinen_tunniste,
         koul.tila,
+        koul.organisaatio_oid,
+        koul.koulutustyyppi,
         koul.tarjoajat,
         koul.kielivalinta,
         coalesce(
@@ -60,7 +60,7 @@ final as (
         kala.jatkotutkinto,
         kala.laakis,
         case
-            when koti.alempi_kk_aste and not koti.ylempi_kk_aste  then 1
+            when koti.alempi_kk_aste and not koti.ylempi_kk_aste then 1
             when not koti.alempi_kk_aste and koti.ylempi_kk_aste then 2
             when koti.alempi_kk_aste and koti.ylempi_kk_aste then 3
             when kala.jatkotutkinto then 4
