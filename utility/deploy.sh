@@ -60,37 +60,39 @@ esac
 done
 
 git_root=$(git rev-parse --show-toplevel)
-environment="oph-opiskelijavalinnan-raportointi-utility"
+aws_profile="oph-opiskelijavalinnan-raportointi-utility"
 stack_parameter=${POSITIONAL[~-1]}
 if [[ "${stack_parameter}" =~ "all" ]]; then
   stack="--all"
 else
-  stack="$environment-$stack_parameter"
+  stack="$stack_parameter"
 fi
+
+echo "Stack: $stack"
+echo "Profile: $aws_profile"
 
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
-    cd "${git_root}/cdk/" && npm i -g aws-cdk && npm ci
+    cd "${git_root}/utility/cdk/" && npm i -g aws-cdk && npm ci
 fi
 
 if [[ "${build}" == "true" ]]; then
     echo "Building code and synthesizing CDK template"
-    export ENVIRONMENT=$environment
-    cd "${git_root}/cdk/"
+    cd "${git_root}/utility/cdk/"
     npm run build
     cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
 if [[ "${deploy}" == "true" ]]; then
-   echo "Building code, synhesizing CDK code and deploying to environment: $environment"
+   echo "Building code, synhesizing CDK code and deploying to environment: utility"
    export ENVIRONMENT=$environment
-   cd "${git_root}/cdk/"
-   cdk deploy $stack -c "environment=$environment" --profile $aws_profile
+   cd "${git_root}/utility/cdk/"
+   cdk deploy $stack --profile $aws_profile
 fi
 
 if [[ "${delete}" == "true" ]]; then
-   echo "Deleting stack from environment: $environment"
+   echo "Deleting stack from environment: utility"
    export ENVIRONMENT=$environment
-   cd "${git_root}/cdk/"
-   cdk destroy $stack -c "environment=$environment" --profile $aws_profile
+   cd "${git_root}/utility/cdk/"
+   cdk destroy $stack --profile $aws_profile
 fi

@@ -5,6 +5,6 @@ import * as cdkNag from 'cdk-nag';
 import { EcrStack } from '../lib/ecr-stack';
 
 const app = new cdk.App();
-new EcrStack(app, 'CdkStack', {});
+new EcrStack(app, 'EcrStack', {});
 
 cdk.Aspects.of(app).add(new cdkNag.AwsSolutionsChecks({ verbose: true }));
