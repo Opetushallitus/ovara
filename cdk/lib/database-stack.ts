@@ -94,7 +94,7 @@ export class DatabaseStack extends cdk.Stack {
           version: rds.AuroraPostgresEngineVersion.VER_15_5,
         }),
         serverlessV2MinCapacity: 2,
-        serverlessV2MaxCapacity: 16,
+        serverlessV2MaxCapacity: 32,
         deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
         removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
         writer: rds.ClusterInstance.serverlessV2('Writer', {
