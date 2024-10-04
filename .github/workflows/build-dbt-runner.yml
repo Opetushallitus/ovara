@@ -37,5 +37,5 @@ jobs:
           IMAGE_TAG: ga-${{ github.run_number }}
         run: |
             cd dbt-container
-            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ../ --file Dockerfile
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
