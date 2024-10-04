@@ -61,6 +61,7 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
 });
 
 const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
+  auroraSecurityGroup: databaseStack.auroraSecurityGroup,
   vpc: networkStack.vpc,
   ...props,
 });

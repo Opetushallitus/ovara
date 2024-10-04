@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -25,7 +26,7 @@ export class EcrStack extends cdk.Stack {
         githubOidcProvider.openIdConnectProviderArn,
         {
           StringLike: {
-            'token.actions.githubusercontent.com:sub': 'repo:Opetushallitus/ovara',
+            'token.actions.githubusercontent.com:sub': 'repo:Opetushallitus/ovara:*',
             'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
           },
         },
@@ -34,6 +35,18 @@ export class EcrStack extends cdk.Stack {
     });
 
     dbtRunnerRepository.grantPush(githubActionsDeploymentRole);
+
+    const ovaraTestiAccountId = ssm.StringParameter.valueForStringParameter(
+      this,
+      '/utility/ovara-testi-account-id'
+    );
+
+    const ecrCrossAccountPullRole = new iam.Role(this, 'OvaraTestiEcrCrossAccountPullRole', {
+      roleName: 'OvaraTestiEcrCrossAccountPullRole',
+      assumedBy: new iam.ArnPrincipal(`arn:aws:iam::${ovaraTestiAccountId}:root`),
+    });
+
+    dbtRunnerRepository.grantPull(ecrCrossAccountPullRole);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: 'In this case it is ok.' },

@@ -1,15 +1,20 @@
 import * as cdk from 'aws-cdk-lib';
 import * as appscaling from 'aws-cdk-lib/aws-applicationautoscaling';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
 
 export interface EcsStackProps extends GenericStackProps {
+  auroraSecurityGroup: ec2.ISecurityGroup;
   vpc: ec2.IVpc;
 }
 
@@ -26,13 +31,19 @@ export class EcsStack extends cdk.Stack {
       allowAllOutbound: true,
     });
 
+    props.auroraSecurityGroup.addIngressRule(
+      ecsSecurityGroup,
+      ec2.Port.POSTGRES,
+      'ECS-konteille pääsy tietokantaan'
+    );
+
     const dbtFargateTaskName = `${config.environment}-dbt-task`;
 
     const dbtTaskLogGroup = new logs.LogGroup(
       this,
       `${config.environment}-${dbtFargateTaskName}LogGroup`,
       {
-        logGroupName: `/aws/ecs/${dbtFargateTaskName}`,
+        logGroupName: `/aws/ecs/task/${dbtFargateTaskName}`,
       }
     );
 
@@ -48,21 +59,73 @@ export class EcsStack extends cdk.Stack {
       vpc: props.vpc,
     });
 
+    const dbtRunnerRepositoryName = 'ovara-dbt-runner';
+    const dbtRunnerRepository = ecr.Repository.fromRepositoryAttributes(
+      this,
+      dbtRunnerRepositoryName,
+      {
+        repositoryArn: ssm.StringParameter.valueForStringParameter(
+          this,
+          `/${config.environment}/ovara-utility-ovara-dbt-runner-repository-arn`
+        ),
+        repositoryName: dbtRunnerRepositoryName,
+      }
+    );
+
+    const dbtRunnerImage = ecs.ContainerImage.fromEcrRepository(
+      dbtRunnerRepository,
+      'ga-5'
+    );
+
+    const schedule = appscaling.Schedule.cron({
+      minute: '30',
+      hour: '*',
+      day: '*',
+      month: '*',
+      year: '*',
+    });
     const scheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
       this,
       dbtFargateTaskName,
       {
-        ruleName: `${config.environment}`,
+        ruleName: `${config.environment}-scheduledFargateTaskRule`,
         cluster: ecsCluster,
         scheduledFargateTaskImageOptions: {
-          image: ecs.ContainerImage.fromRegistry('amazon/amazon-ecs-sample'),
+          image: dbtRunnerImage,
           logDriver: logDriver,
           memoryLimitMiB: 512,
         },
         schedule: appscaling.Schedule.expression('rate(5 minutes)'),
+        //schedule: schedule,
         securityGroups: [ecsSecurityGroup],
         tags: [],
       }
+    );
+
+    scheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['sts:AssumeRole'],
+        resources: [
+          ssm.StringParameter.valueForStringParameter(
+            this,
+            `/${config.environment}/ovara-utility-ecr-pull-role-arn`
+          ),
+        ],
+      })
+    );
+
+    scheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'ecr:GetAuthorizationToken',
+          'ecr:BatchCheckLayerAvailability',
+          'ecr:GetDownloadUrlForLayer',
+          'ecr:BatchGetImage',
+        ],
+        effect: Effect.ALLOW,
+        resources: ['*'],
+      })
     );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
