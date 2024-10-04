@@ -17,7 +17,7 @@ import { S3Stack } from '../lib/s3-stack';
 
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
-const ecsImageTag = app.node.tryGetContext('nginxImageTag');
+const ecsImageTag = app.node.tryGetContext('ecsImageTag');
 const props = getGenericStackProps(environmentName);
 const config = props.config;
 

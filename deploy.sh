@@ -2,9 +2,9 @@
 
 set -eo pipefail
 
-if [ $# == 0  ] || [ $# -gt 3 ]
+if [ $# == 0  ] || [ $# -lt 2 ]
 then
-    echo 'please provide 1-3 arguments. Use -h or --help for usage information.'
+    echo 'Please provide at least 1 argument . Use -h or --help for usage information.'
     exit 0
 fi
 
@@ -77,7 +77,7 @@ else
   stack="$environment-$stack_parameter"
 fi
 
-if [[ -n "${image}" ]] && { [[ "${stack}" != "EcsStack" ]] || [[ "${stack}" != "--all" ]]; }; then
+if [[ -n "${image}" ]] && [[ "${stack}" != "${environment}-EcsStack" ]] && [[ "${stack}" != "--all" ]]; then
   echo "The --version parameter is only supported for the EcsStack stack or all stacks!"
   exit 1
 fi

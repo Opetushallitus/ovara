@@ -76,7 +76,7 @@ export class EcsStack extends cdk.Stack {
     const dbtRunnerImage = ecs.ContainerImage.fromEcrRepository(
       dbtRunnerRepository,
       props.ecsImageTag
-      //'ga-5'
+      //'ga-6'
     );
 
     const schedule = appscaling.Schedule.cron({
