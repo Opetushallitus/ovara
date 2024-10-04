@@ -1083,7 +1083,9 @@ models:
         description: ""
         data_type: boolean
   - name: int_koodisto_koulutus_alat_ja_asteet
-    description: Koulutkselle haetuu kaikki koulutusalat ja koulutusasteet
+    description: >
+      Koulutukselle haetuu kaikki koulutusalat ja koulutusasteet. Jokaiselle koodistolle on vaan yksi rivi,
+      jos jostain syystä on useampi rivi samalle koulutukselle otetaan ensimmäinen vastaan tuleva rivi.
     columns:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'

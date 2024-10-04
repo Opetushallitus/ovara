@@ -1,14 +1,11 @@
-{{
-  config(
-    materialized = 'table',
-    indexes = [
-        {'columns':['organisaatio_oid','kieli','osoitetyyppi']}
-    ]
-    )
-}}
-
 with source as (
     select * from {{ source('ovara', 'organisaatio_osoite') }}
+
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+
+    {% endif %}
 ),
 
 raw as (
@@ -21,6 +18,17 @@ raw as (
         data ->> 'postitoimipaikka' as postitoimipaikka,
         {{ metadata_columns() }}
     from source
+),
+
+final as (
+    select
+        {{ dbt_utils.generate_surrogate_key([
+				'organisaatio_oid',
+				'kieli',
+                'osoitetyyppi'
+			]) }} as organisaatioosoite_id,
+        *
+    from raw
 )
 
-select * from raw
+select * from final

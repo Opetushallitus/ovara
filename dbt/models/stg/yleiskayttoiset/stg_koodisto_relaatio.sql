@@ -30,7 +30,7 @@ final as (
         'relaatioversio',
         'ylakoodiuri',
         'ylakoodiuri'
-        ]) }} as id,
+        ]) }} as koodirelaatio_id,
         *
     from int
 )

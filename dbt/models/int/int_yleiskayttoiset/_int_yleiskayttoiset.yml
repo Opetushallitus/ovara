@@ -1,0 +1,61 @@
+models:
+  - name: int_onr_henkilo
+    Description: Sisältää ONR:n henkilötietoja valmiiksi käsiteltävässä muodossa
+    columns:
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: master_oid
+        data_type: text
+      - name: master
+        data_type: boolean
+      - name: etunimet
+        data_type: text
+      - name: sukunimi
+        data_type: text
+      - name: hetu
+        data_type: text
+      - name: syntymaaika
+        data_type: date
+      - name: aidinkieli
+        data_type: text
+      - name: kansalaisuus
+        data_type: jsonb
+      - name: sukupuoli
+        data_type: integer
+      - name: turvakielto
+        data_type: boolean
+      - name: yksiloityvtj
+        data_type: boolean
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+  - name: int_onr_kansalaisuus
+    description: |
+      Taulu on luotu käsittelemään useampi kansalaisuus. Jos hakijalla on useampia kansalaisuuksia, haetaan tauluun
+      priorisoitu kansalaisuus järjestyksessä Suomi, EU/ETA-maa, muut maat.
+      Sarakkeella priorisoitu_kansalaisuus merkitään se kansalaisuus jota käytetään raporteilla ja joka myös menee Vipuseen
+    columns:
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+        - not_null
+      - name: kansalaisuus
+        description: kansalaisuuden tunnus, koodisto maat_ja_valtiot2
+        data_type: text
+      - name: kansalaisuusluokka
+        description: 1 = Suomi, 2 = EU/ETA-maa, 3 = muut maat
+        data_type: integer
+      - name: priorisoitu_kansalaisuus
+        data_type: boolean
+        description: True tässä sarakkeessa tarkoittaa että se on hakijan korkeimmalle priorisoitu kansalaisuus
