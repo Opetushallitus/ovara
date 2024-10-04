@@ -313,54 +313,87 @@ models:
         data_type: text
         data_tests:
         - not_null
-      - name: hakemus_oid
-        description: hakemuksen tunniste
+  - name: pub_dim_ensikertalainen
+    description: Sisältää Suoritusrekisterin ensikertalainen viimeisimmät tiedot.
+    columns:
+      - name: hakuoid
+        data_type: text
+        description: Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty.
+        data_tests:
+          - not_null
+      - name: henkilooid
+        description: Sen henkilön oid, jolle ensikertalaisuustieto kuuluu
         data_type: text
         data_tests:
           - not_null
-# tämä foreign key ei vielä toimi koska vanhat hakemukset puuttuvat järjestelmästä
-#          - dbt_constraints.foreign_key:
-#              pk_table_name: ref('pub_fct_hakemus')
-#              pk_column_name: hakemus_oid
-      - name: etuminet
-        data_type: text
-      - name: sukunimi
-        data_type: text
-      - name: lahiosoite
-        data_type: text
-      - name: postinumero
-        data_type: text
-      - name: postitoimipaikka
-        data_type: text
-      - name: kotikunta
-        description: kotikunnan koodi
-        data_type: integer
-      - name: ulkomainen_kunta
-        description: Ulkomaisen kunnan nimi suoraan hakemuksesta
-        data_type: text
-      - name: asuinmaa
-        data_type: integer
-      - name: sahkoposti
-        data_type: text
-      - name: puhelin
-        data_type: text
-      - name: pohjakoulutuksen_maa_toinen_aste
-        data_type: text
-      - name: aidinkieli
-        data_type: text
-      - name: sukupuoli
-        data_type: integer
-      - name: koulutusmarkkinointilupa
+      - name: isensikertalainen
+        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä
+          menettämisenPeruste.
         data_type: boolean
-      - name: valintatuloksen_julkaisulupa
-        data_type: boolean
-      - name: sahkoinenviestintalupa
-        data_type: boolean
-      - name: kansalaisuus
-        description: Priorisoitu kansalaisuus jos henkilöllä on useampi kansalaisuus.
-          järjestys on Suomi, EU/ETA, muut
+      - name: menettamisenperuste
+        description: ""
         data_type: text
-      - name: kansalaisuusluokka
-        description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 =
-          EU/ETA, 3 = muut"
-        data_type: integer
+      - name: menettamisenpaivamaara
+        description: ""
+        data_type: timestamp with time zone
+  - name: pub_dim_yo_arvosana
+    description: Sisältää Suoritusrekisterin arvosanat viimeisimmät tiedot + suorituksen tila ja pvm.
+    columns:
+      - name: resourceid
+        data_type: text
+        description: ""
+        data_tests:
+          - not_null
+          - dbt_constraints.primary_key
+      - name: suoritus
+        description: "Tunniste (resourceId) sille suoritukselle, johon tämä arvosana liittyy"
+        data_type: text
+      - name: arvosana
+        description: ""
+        data_type: text
+      - name: asteikko
+        description: ""
+        data_type: text
+      - name: aine
+        description: ""
+        data_type: text
+      - name: lisatieto
+        description: ""
+        data_type: text
+      - name: valinnainen
+        description: ""
+        data_type: boolean
+      - name: muokattu
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
+          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
+          kanssa.
+        data_type: timestamp with time zone
+        data_tests:
+          - not_null
+      - name: deleted
+        description: ""
+        data_type: boolean
+      - name: pisteet
+        description: ""
+        data_type: text
+      - name: myonnetty
+        description: ""
+        data_type: timestamp with time zone
+      - name: source
+        description: ""
+        data_type: text
+      - name: jarjestys
+        description: ""
+        data_type: text
+      - name: arvot
+        description: ""
+        data_type: text
+      - name: henkilooid
+        description: "Oppijan henkiloOid suoritukseen liittyen"
+        data_type: text        
+      - name: tila
+        description: "Arvosanaan liittyvän suorituksen tila"
+        data_type: text
+      - name: valmistuminen
+        description: "Arvosanaan liittyvän suorituksen valmistumispäivä, kesken-tilaisilla suorituksilla arvio"
+        data_type: timestamp with time zone
