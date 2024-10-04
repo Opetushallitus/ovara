@@ -96,6 +96,22 @@ export class EcsStack extends cdk.Stack {
           image: dbtRunnerImage,
           logDriver: logDriver,
           memoryLimitMiB: 512,
+          environment: {
+            POSTGRES_HOST_PROD: `raportointi.db.${config.publicHostedZone}`,
+            DBT_PORT_PROD: '5432',
+            DBT_USERNAME_PROD: 'app',
+          },
+          secrets: {
+            DBT_PASSWORD_PROD: ecs.Secret.fromSsmParameter(
+              ssm.StringParameter.fromSecureStringParameterAttributes(
+                this,
+                `${config.environment}-auroraAppPassword`,
+                {
+                  parameterName: `/${config.environment}/aurora/raportointi/app-user-password`,
+                }
+              )
+            ),
+          },
         },
         schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         //schedule: schedule,
@@ -119,6 +135,7 @@ export class EcsStack extends cdk.Stack {
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },
+      { id: 'AwsSolutions-ECS2', reason: 'Static environment variables' },
     ]);
   }
 }
