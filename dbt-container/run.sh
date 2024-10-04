@@ -10,4 +10,7 @@ ls -Al /root
 echo "Listing contents of /root/dbt folder"
 ls -Al /root/dbt
 
+cd dbt
+. venv/bin/activate
+
 exit 0
