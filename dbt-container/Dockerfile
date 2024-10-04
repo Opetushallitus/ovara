@@ -5,6 +5,7 @@ RUN apk --no-cache add bash
 WORKDIR /root/
 COPY ./run.sh ./
 COPY ./install.sh ./
+ADD ../dbt ./dbt
 RUN \
   bash install.sh && \
   rm install.sh

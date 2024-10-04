@@ -15,6 +15,7 @@ import { Config, GenericStackProps } from './config';
 
 export interface EcsStackProps extends GenericStackProps {
   auroraSecurityGroup: ec2.ISecurityGroup;
+  ecsImageTag: string;
   vpc: ec2.IVpc;
 }
 
@@ -74,7 +75,8 @@ export class EcsStack extends cdk.Stack {
 
     const dbtRunnerImage = ecs.ContainerImage.fromEcrRepository(
       dbtRunnerRepository,
-      'ga-5'
+      props.ecsImageTag
+      //'ga-5'
     );
 
     const schedule = appscaling.Schedule.cron({

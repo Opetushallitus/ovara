@@ -68,9 +68,6 @@ else
   stack="$stack_parameter"
 fi
 
-echo "Stack: $stack"
-echo "Profile: $aws_profile"
-
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
     cd "${git_root}/utility/cdk/" && npm i -g aws-cdk && npm ci

@@ -15,5 +15,8 @@ apk --no-cache add \
 
 ln -sf /usr/bin/python3 /usr/bin/python
 
+echo "Listing contents of /root folder"
 ls -Al /root
-cat /root/run.sh
+
+echo "Listing contents of /root/dbt folder"
+ls -Al /root/dbt
