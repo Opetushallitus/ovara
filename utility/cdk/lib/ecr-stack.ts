@@ -25,7 +25,7 @@ export class EcrStack extends cdk.Stack {
         githubOidcProvider.openIdConnectProviderArn,
         {
           StringLike: {
-            'token.actions.githubusercontent.com:sub': 'repo:opetushallitus/ovara',
+            'token.actions.githubusercontent.com:sub': 'repo:Opetushallitus/ovara',
             'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
           },
         },
