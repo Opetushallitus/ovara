@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '.github/**'
+      - '.github/workflows/build-dbt-runner.yml'
       - 'dbt/**'
       - 'dbt-container/**'
 
