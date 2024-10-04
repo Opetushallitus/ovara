@@ -42,6 +42,11 @@ export class EcrStack extends cdk.Stack {
       '/utility/ovara-testi-account-id'
     );
 
+    const ovaraTuotantoAccountId = ssm.StringParameter.valueForStringParameter(
+      this,
+      '/utility/ovara-tuotanto-account-id'
+    );
+
     dbtRunnerRepository.addToResourcePolicy(new PolicyStatement({
       actions: [
         'ecr:GetAuthorizationToken',
@@ -52,6 +57,7 @@ export class EcrStack extends cdk.Stack {
       effect: iam.Effect.ALLOW,
       principals: [
         new iam.ArnPrincipal(`arn:aws:iam::${ovaraTestiAccountId}:root`),
+        new iam.ArnPrincipal(`arn:aws:iam::${ovaraTuotantoAccountId}:root`),
       ]
     }));
 
