@@ -273,4 +273,87 @@ models:
         - dbt_constraints.foreign_key:
             pk_table_name: ref('pub_dim_hakukohde')
             pk_column_name: hakukohde_oid
-
+  - name: pub_dim_ensikertalainen
+    description: Sisältää Suoritusrekisterin ensikertalainen viimeisimmät tiedot.
+    columns:
+      - name: hakuoid
+        data_type: text
+        description: Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty.
+        data_tests:
+          - not_null
+      - name: henkilooid
+        description: Sen henkilön oid, jolle ensikertalaisuustieto kuuluu
+        data_type: text
+        data_tests:
+          - not_null
+      - name: isensikertalainen
+        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä
+          menettämisenPeruste.
+        data_type: boolean
+      - name: menettamisenperuste
+        description: ""
+        data_type: text
+      - name: menettamisenpaivamaara
+        description: ""
+        data_type: timestamp with time zone
+  - name: pub_dim_yo_arvosana
+    description: Sisältää Suoritusrekisterin arvosanat viimeisimmät tiedot + suorituksen tila ja pvm.
+    columns:
+      - name: resourceid
+        data_type: text
+        description: ""
+        data_tests:
+          - not_null
+          - dbt_constraints.primary_key
+      - name: suoritus
+        description: "Tunniste (resourceId) sille suoritukselle, johon tämä arvosana liittyy"
+        data_type: text
+      - name: arvosana
+        description: ""
+        data_type: text
+      - name: asteikko
+        description: ""
+        data_type: text
+      - name: aine
+        description: ""
+        data_type: text
+      - name: lisatieto
+        description: ""
+        data_type: text
+      - name: valinnainen
+        description: ""
+        data_type: boolean
+      - name: muokattu
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
+          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
+          kanssa.
+        data_type: timestamp with time zone
+        data_tests:
+          - not_null
+      - name: deleted
+        description: ""
+        data_type: boolean
+      - name: pisteet
+        description: ""
+        data_type: text
+      - name: myonnetty
+        description: ""
+        data_type: timestamp with time zone
+      - name: source
+        description: ""
+        data_type: text
+      - name: jarjestys
+        description: ""
+        data_type: text
+      - name: arvot
+        description: ""
+        data_type: text
+      - name: henkilooid
+        description: "Oppijan henkiloOid suoritukseen liittyen"
+        data_type: text        
+      - name: tila
+        description: "Arvosanaan liittyvän suorituksen tila"
+        data_type: text
+      - name: valmistuminen
+        description: "Arvosanaan liittyvän suorituksen valmistumispäivä, kesken-tilaisilla suorituksilla arvio"
+        data_type: timestamp with time zone
