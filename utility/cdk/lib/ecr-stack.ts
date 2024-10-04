@@ -4,6 +4,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export class EcrStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -41,12 +42,18 @@ export class EcrStack extends cdk.Stack {
       '/utility/ovara-testi-account-id'
     );
 
-    const ecrCrossAccountPullRole = new iam.Role(this, 'OvaraTestiEcrCrossAccountPullRole', {
-      roleName: 'OvaraTestiEcrCrossAccountPullRole',
-      assumedBy: new iam.ArnPrincipal(`arn:aws:iam::${ovaraTestiAccountId}:root`),
-    });
-
-    dbtRunnerRepository.grantPull(ecrCrossAccountPullRole);
+    dbtRunnerRepository.addToResourcePolicy(new PolicyStatement({
+      actions: [
+        'ecr:GetAuthorizationToken',
+        'ecr:BatchCheckLayerAvailability',
+        'ecr:GetDownloadUrlForLayer',
+        'ecr:BatchGetImage',
+      ],
+      effect: iam.Effect.ALLOW,
+      principals: [
+        new iam.ArnPrincipal(`arn:aws:iam::${ovaraTestiAccountId}:root`),
+      ]
+    }));
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: 'In this case it is ok.' },

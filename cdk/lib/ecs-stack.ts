@@ -104,19 +104,6 @@ export class EcsStack extends cdk.Stack {
 
     scheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
       new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ['sts:AssumeRole'],
-        resources: [
-          ssm.StringParameter.valueForStringParameter(
-            this,
-            `/${config.environment}/ovara-utility-ecr-pull-role-arn`
-          ),
-        ],
-      })
-    );
-
-    scheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
-      new iam.PolicyStatement({
         actions: [
           'ecr:GetAuthorizationToken',
           'ecr:BatchCheckLayerAvailability',
