@@ -8,6 +8,10 @@ on:
       - 'dbt/**'
       - 'dbt-container/**'
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-deploy-container:
     runs-on: ubuntu-latest
