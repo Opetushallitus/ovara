@@ -1,3 +1,15 @@
+{{
+  config(
+    indexes = [
+        {'columns': ['dw_metadata_dbt_copied_at']},
+        {'columns': ['dw_metadata_stg_stored_at']},
+        {'columns': ['valintakoe_hakemus_id']},
+        {'columns': ['hakemus_oid']},
+        {'columns': ['valintakoe_tunniste']}
+    ]
+    )
+}}
+
 with source as ( --noqa: PRS
     select * from {{ source('ovara', 'valintapiste_service_pistetieto') }}
 
