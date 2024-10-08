@@ -2,9 +2,9 @@
 
 set -eo pipefail
 
-if [ $# == 0  ] || [ $# -gt 3 ]
+if [ $# == 0  ] || [ $# -lt 2 ]
 then
-    echo 'please provide 1-3 arguments. Use -h or --help for usage information.'
+    echo 'Please provide at least 1 argument . Use -h or --help for usage information.'
     exit 0
 fi
 
@@ -15,7 +15,7 @@ key="$1"
 case $key in
     -h | --help | help )
     echo '''
-Usage: deploy.sh [-h] [-d] deploy/build/delete environment stack
+Usage: deploy.sh [-h] [-d] [-v VERSION] deploy/build/delete environment stack
 
 Light weight version of cdk.sh in cloud-base
 
@@ -29,6 +29,8 @@ positional arguments:
 optional arguments:
   -h, --help            Show this help message and exit
   -d, --dependencies    Clean and install dependencies before deployment (i.e. run npm ci)
+  -v VERSION, --version VERSION
+                          Frontend version to deploy (e.g. -v ci-256)
   '''
     exit 0
     ;;
@@ -36,6 +38,12 @@ optional arguments:
     -d | --dependencies)
     dependencies="true"
     shift
+    ;;
+
+    -v | --version)
+    image="$2"
+    shift # past argument
+    shift # past value
     ;;
 
     build)
@@ -69,6 +77,11 @@ else
   stack="$environment-$stack_parameter"
 fi
 
+if [[ -n "${image}" ]] && [[ "${stack}" != "${environment}-EcsStack" ]] && [[ "${stack}" != "--all" ]]; then
+  echo "The --version parameter is only supported for the EcsStack stack or all stacks!"
+  exit 1
+fi
+
 ## Profiles are defined in user's .aws/config
 if [[ "${environment}" =~ ^(tuotanto)$ ]]; then
     aws_profile="oph-opiskelijavalinnan-raportointi-prod"
@@ -98,7 +111,7 @@ if [[ "${deploy}" == "true" ]]; then
    echo "Building code, synhesizing CDK code and deploying to environment: $environment"
    export ENVIRONMENT=$environment
    cd "${git_root}/cdk/"
-   cdk deploy $stack -c "environment=$environment" --profile $aws_profile
+   cdk deploy $stack -c "environment=$environment" -c "ecsImageTag=${image}" --profile $aws_profile
 fi
 
 if [[ "${delete}" == "true" ]]; then

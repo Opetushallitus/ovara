@@ -8,6 +8,7 @@ import { BastionStack } from '../lib/bastion-stack';
 import { CertificateStack } from '../lib/certificate-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
+import { EcsStack } from '../lib/ecs-stack';
 import { LambdaStack } from '../lib/lambda-stack';
 import { MonitorStack } from '../lib/monitor-stack';
 import { NetworkStack } from '../lib/network-stack';
@@ -16,6 +17,7 @@ import { S3Stack } from '../lib/s3-stack';
 
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
+const ecsImageTag = app.node.tryGetContext('ecsImageTag');
 const props = getGenericStackProps(environmentName);
 const config = props.config;
 
@@ -56,6 +58,13 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
   publicHostedZone: route53Stack.publicHostedZone,
   vpc: networkStack.vpc,
   slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
+  ...props,
+});
+
+const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
+  auroraSecurityGroup: databaseStack.auroraSecurityGroup,
+  ecsImageTag: ecsImageTag,
+  vpc: networkStack.vpc,
   ...props,
 });
 
