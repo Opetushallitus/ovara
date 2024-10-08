@@ -1,40 +1,173 @@
 models:
-  - name: int_hakuaika
-    description: Tässä mallissa on kaikki hakuajat listattu. Samaa hakuaikaa voidaan
-      käyttää sekä hauissa että hakukohteissa, ja hakukohteella saattaa olla
-      useampi hakuaika.
+  - name: int_koulutus_koulutuskoodi
+    description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:
-      - name: hakuaika_id
-        description: hash-arvo josta muodostuu uniikki avain, hashissa on mukana alkaa
-          jaa paattyy-kentät
+      - name: oid
+        description: Koulutuksen oid
         data_type: text
-      - name: alkaa
-        description: aika jolloin haku alkaa
-        data_type: timestamp with time zone
-      - name: paattyy
-        description: aika jolloin haku päättyy
-        data_type: timestamp with time zone
-      - name: luotu
-        description: ""
-        data_type: timestamp with time zone
+      - name: koulutuskoodiuri
+        description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla
+          useampi koulutuskoodi
+        data_type: text
+  - name: int_hakukohderyhma_hakukohde
+    description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
+    columns:
+      - name: hakukohderyhma_id
+        data_type: text
+        description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakukohderyhma_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
       - name: muokattu
-        description: ""
+        data_type: timestamptz
+  - name: int_organisaatio_osoite
+    description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla
+      voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne
+      löytyvät eri taulusta.
+    columns:
+      - name: organisaatio_oid
+        description: Organisaation OID
+        data_type: text
+        data_tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('int_organisaatio')
+              pk_column_name: organisaatio_oid
+      - name: osoitetyyppi
+        data_type: text
+      - name: kieli
+        data_type: text
+        description: Osoitteen kieli
+      - name: osoite
+        data_type: text
+      - name: postinumero
+        data_type: text
+      - name: postitoimipaikka
+        data_type: text
+      - name: ladattu
+        data_type: timestamptz
+  - name: int_organisaatio
+    description: >
+      Sisältää organisaatiopalvelun organisaatiot.
+
+      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista:
+      koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        description: Organisaation OID
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: sijaintikunta
+        data_type: text
+      - name: sijaintikunta_nimi
+        data_type: jsonb
+      - name: ylempi_organisaatio
+        description: Organisaation parent-tieto
+        data_type: text
+      - name: opetuskielet
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+  - name: int_onr_henkilo_kansalaisuus
+    description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä
+      henkilöllä voi olla useampi kansalaisuus
+    columns:
+      - name: kansalaisuus_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: kansalaisuus
+        data_type: text
+      - name: ladattu
         data_type: timestamp with time zone
-  - name: int_haku_hakuaika
-    description: Kaikkien hakujen hakuaika-tiedot
+  - name: int_valintaperusteet_valintatapajono
+    description: >
+      ### Valintaperusteiden valintatapajonoja
+
+
+      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset
+      valintatapajonot jokaiselta vaiheelta.
+
+      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä
+      sisältää tiedon koska se on viimeksi tallennettu.
+
+      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet,
+      ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
+
+      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki
+      rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi
+      muuttunut vai ei
     columns:
-      - name: hakuaika_id
-        description: hash-arvo joka toimii avaimena hakuajoille
+      - name: jono_id
         data_type: text
-      - name: oid
-        description: haun oid
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: valinnanvaihe_id
         data_type: text
-  - name: int_hakukohde_hakuaika
-    description: hakukohteiden linkitys hakuaikoihin
+        data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: kuvaus
+        data_type: text
+      - name: aloituspaikat
+        data_type: integer
+      - name: tyyppi_uri
+        data_type: text
+      - name: prioriteetti
+        data_type: integer
+      - name: siirretaan_sijoitteluun
+        data_type: boolean
+      - name: tasasijasaanto
+        data_type: text
+      - name: ei_lasketa_paivamaaran_jalkeen
+        data_type: timestamp with time zone
+      - name: ei_varasijatayttoa
+        data_type: boolean
+      - name: merkitse_myoh_auto
+        data_type: boolean
+      - name: poissa_oleva_taytto
+        data_type: boolean
+      - name: kaikki_ehdon_tayttavat_hyvaksytaan
+        data_type: boolean
+      - name: kaytetaan_valintalaskentaa
+        data_type: boolean
+      - name: valmis_sijoiteltavaksi
+        data_type: boolean
+      - name: valisijoittelu
+        data_type: boolean
+      - name: poistetaanko_hylatyt
+        data_type: boolean
+      - name: jarjestyskriteerit
+        data_type: jsonb
+      - name: poistettu
+        data_type: boolean
+      - name: muokattu
+        data_type: timestamp with time zone
+  - name: int_organisaatio_ryhma
+    description: Hakukohderyhmien perustiedot
     columns:
-      - name: hakuaika_id
-        description: hash-arvo joka yksilöi hakuajan
+      - name: hakukohderyhma_oid
+        description: Hakukohderyhmän tunniste
         data_type: text
-      - name: oid
-        description: hakukohteen oid
-        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+          - not_null
+      - name: hakukohderyhma_nimi
+        description: Hakukohderyhmän nimet
+        data_type: jsonb

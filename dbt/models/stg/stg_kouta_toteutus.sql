@@ -1,16 +1,15 @@
 with source as (
-      select * from {{ source('ovara', 'kouta_toteutus') }}
- 
-      {% if is_incremental() %}
+    select * from {{ source('ovara', 'kouta_toteutus') }}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-final as 
-(
-    select 
+final as (
+    select
         data ->> 'oid'::varchar as oid,
         data ->> 'externalId'::varchar as externalId,
         data ->> 'koulutusOid'::varchar as koulutusOid,
@@ -18,9 +17,9 @@ final as
         (data ->> 'esikatselu')::boolean as esikatselu,
         (data -> 'tarjoajat')::jsonb as tarjoajat,
         data -> 'metadata' ->> 'tyyppi'::varchar as tyyppi,
-        data -> 'metadata' -> 'kuvaus' ->>'fi'::varchar as kuvaus_fi,
-        data -> 'metadata' -> 'kuvaus' ->>'sv'::varchar as kuvaus_sv,
-        data -> 'metadata' -> 'kuvaus' ->>'en'::varchar as kuvaus_en,
+        data -> 'metadata' -> 'kuvaus' ->> 'fi'::varchar as kuvaus_fi,
+        data -> 'metadata' -> 'kuvaus' ->> 'sv'::varchar as kuvaus_sv,
+        data -> 'metadata' -> 'kuvaus' ->> 'en'::varchar as kuvaus_en,
         (data -> 'metadata' -> 'osaamisalat')::jsonb as osaamisalat,
         (data -> 'metadata' -> 'opetus' -> 'opetuskieliKoodiUrit')::jsonb as opetuskieliKoodiUrit,
         data -> 'metadata' -> 'opetus' -> 'opetuskieletKuvaus' ->> 'fi'::varchar as opetuskieletKuvaus_fi,
@@ -31,13 +30,22 @@ final as
         (data -> 'metadata' -> 'opetus' -> 'opetustapaKoodiUrit')::jsonb as opetustapaKoodiUrit,
         (data -> 'metadata' -> 'opetus' -> 'opetustapaKuvaus')::jsonb as opetustapaKuvaus,
         data -> 'metadata' -> 'opetus' ->> 'maksullisuustyyppi'::varchar as maksullisuustyyppi,
-        (data -> 'metadata' ->'opetus' -> 'maksullisuusKuvaus')::jsonb as maksullisuusKuvaus,
+        (data -> 'metadata' -> 'opetus' -> 'maksullisuusKuvaus')::jsonb as maksullisuusKuvaus,
         (data -> 'metadata' -> 'opetus' ->> 'maksunMaara')::float as maksunMaara,
-        data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->>'alkamiskausityyppi'::varchar as alkamiskausityyppi,
-        (data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' -> 'henkilokohtaisenSuunnitelmanLisatiedot')::jsonb as henkilokohtaisenSuunnitelmanLisatiedot,
-        data -> 'metadata' ->' opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamiskausiKoodiUri'::varchar as koulutuksenAlkamiskausiKoodiUri,
-        (data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamisvuosi')::int as koulutuksenAlkamisvuosi,
-        (data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamispaivamaara')::timestamptz as koulutuksenAlkamispaivamaara,
+        data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
+        ->> 'alkamiskausityyppi'::varchar as alkamiskausityyppi,
+        (
+            data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
+            -> 'henkilokohtaisenSuunnitelmanLisatiedot'
+        )::jsonb as henkilokohtaisenSuunnitelmanLisatiedot,
+        data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
+        ->> 'koulutuksenAlkamiskausiKoodiUri'::varchar as koulutuksenAlkamiskausiKoodiUri,
+        (
+            data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamisvuosi'
+        )::int as koulutuksenAlkamisvuosi,
+        (
+            data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamispaivamaara'
+        )::timestamptz as koulutuksenAlkamispaivamaara,
         (data -> 'metadata' -> 'opetus' -> 'lisatiedot')::jsonb as lisatiedot,
         (data -> 'metadata' -> 'opetus' ->> 'onkoApuraha')::boolean as onkoApuraha,
         (data -> 'metadata' -> 'opetus' ->> 'suunniteltuKestoVuodet')::int as suunniteltuKestoVuodet,
@@ -47,19 +55,21 @@ final as
         (data -> 'metadata' -> 'ammattinimikkeet')::jsonb as ammattinimikkeet,
         (data -> 'metadata' -> 'yhteyshenkilot')::jsonb as yhteyshenkilot,
         (data -> 'metadata' ->> 'isHakukohteetKaytossa')::boolean as isHakukohteetKaytossa,
-        data -> 'metadata'  ->> 'hakutermi'::varchar as hakutermi,
-        data -> 'metadata'  ->> 'hakulomaketyyppi'::varchar as hakulomaketyyppi,
-        (data -> 'metadata'  ->> 'hakulomakeLinkki')::jsonb as hakulomakeLinkki,
-        (data -> 'metadata'  ->> 'lisatietoaHakeutumisesta')::jsonb as lisatietoaHakeutumisesta,
-        (data -> 'metadata'  ->> 'lisatietoaValintaperusteista')::jsonb as lisatietoaValintaperusteista,
-        (data -> 'metadata'  ->> 'hakuaika')::jsonb as hakuaika,
-        (data -> 'metadata'  ->> 'aloituspaikat')::int as aloituspaikat,
-        (data -> 'metadata'  ->> 'aloituspaikkakuvaus')::jsonb as aloituspaikkakuvaus,
+        data -> 'metadata' ->> 'hakutermi'::varchar as hakutermi,
+        data -> 'metadata' ->> 'hakulomaketyyppi'::varchar as hakulomaketyyppi,
+        (data -> 'metadata' ->> 'hakulomakeLinkki')::jsonb as hakulomakeLinkki,
+        (data -> 'metadata' ->> 'lisatietoaHakeutumisesta')::jsonb as lisatietoaHakeutumisesta,
+        (data -> 'metadata' ->> 'lisatietoaValintaperusteista')::jsonb as lisatietoaValintaperusteista,
+        (data -> 'metadata' ->> 'hakuaika')::jsonb as hakuaika,
+        (data -> 'metadata' ->> 'aloituspaikat')::int as aloituspaikat,
+        (data -> 'metadata' ->> 'aloituspaikkakuvaus')::jsonb as aloituspaikkakuvaus,
         (data -> 'metadata' ->> 'isAvoinKorkeakoulutus')::boolean as isAvoinKorkeakoulutus,
         data -> 'metadata' ->> 'tunniste'::varchar as tunniste,
         data -> 'metadata' ->> 'opinnonTyyppiKoodiUri'::varchar as opinnonTyyppiKoodiUri,
         (data -> 'metadata' -> 'liitetytOpintojaksot')::jsonb as liitetytOpintojaksot,
-        (data -> 'metadata' ->> 'ammatillinenPerustutkintoErityisopetuksena')::boolean as ammatillinenPerustutkintoErityisopetuksena,
+        (
+            data -> 'metadata' ->> 'ammatillinenPerustutkintoErityisopetuksena'
+        )::boolean as ammatillinenPerustutkintoErityisopetuksena,
         data -> 'metadata' ->> 'opintojenLaajuusyksikkoKoodiUri'::varchar as opintojenLaajuusyksikkoKoodiUri,
         (data -> 'metadata' ->> 'opintojenLaajuusNumero')::float as opintojenLaajuusNumero,
         (data -> 'metadata' ->> 'hasJotpaRahoitus')::boolean as hasJotpaRahoitus,
@@ -78,7 +88,7 @@ final as
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         (data -> 'kielivalinta')::jsonb as kielivalinta,
         (data -> 'teemakuva')::jsonb as teemakuva,
-        {{muokattu_column()}},
+        {{ muokattu_column() }},
         data -> 'enrichedData' -> 'esitysnimi' ->> 'fi'::varchar as nimi_fi,
         data -> 'enrichedData' -> 'esitysnimi' ->> 'sv'::varchar as nimi_sv,
         data -> 'enrichedData' -> 'esitysnimi' ->> 'en'::varchar as nimi_en,

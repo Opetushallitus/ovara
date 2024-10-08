@@ -1,6 +1,6 @@
 packages:
-- package: dbt-labs/dbt_utils
-  version: 1.1.1
-- package: Snowflake-Labs/dbt_constraints
-  version: 0.6.2
-sha1_hash: 672a7dba20bb08d9eea3aa60ae42ca117f010ccf
+  - package: dbt-labs/dbt_utils
+    version: 1.2.0
+  - package: Snowflake-Labs/dbt_constraints
+    version: 1.0.2
+sha1_hash: a081df232f3f60d1c6ec468a5433f8aec3253812

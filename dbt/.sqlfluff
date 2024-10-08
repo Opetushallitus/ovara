@@ -1,0 +1,16 @@
+[sqlfluff]
+templater = dbt
+dialect = postgres
+max_line_length = 120
+exclude_rules = ST06
+
+[sqlfluff:templater:dbt]
+project_dir = ./
+
+[sqlfluff:rules]
+
+[sqlfluff:rules:aliasing.length]
+max_alias_length=4
+
+[sqlfluff:rules:references.keywords]
+ignore_words = data

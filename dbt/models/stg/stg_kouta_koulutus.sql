@@ -1,16 +1,15 @@
 with source as (
-      select * from {{ source('ovara', 'kouta_koulutus') }}
- 
-      {% if is_incremental() %}
+    select * from {{ source('ovara', 'kouta_koulutus') }}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-final as 
-(
-    select 
+final as (
+    select
         data ->> 'oid'::varchar as oid,
         data ->> 'externalId'::varchar as externalId,
         (data ->> 'johtaaTutkintoon')::boolean as johtaaTutkintoon,
@@ -39,12 +38,12 @@ final as
         (data -> 'metadata' ->> 'isMuokkaajaOphVirkailija')::boolean as isMuokkaajaOphVirkailija,
         data -> 'metadata' ->> 'osaamisalaKoodiUri'::varchar as osaamisalaKoodiUri,
         data -> 'metadata' ->> 'erikoistumiskoulutusKoodiUri'::varchar as erikoistumiskoulutusKoodiUri,
-        (data -> 'metadata' -> 'linkkiEPerusteisiin')::jsonb,
+        (data -> 'metadata' -> 'linkkiEPerusteisiin')::jsonb as linkkiEPerusteisiin,
         data ->> 'muokkaaja'::varchar as muokkaaja,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data ->> 'teemakuva'::varchar as teemakuva,
         (data ->> 'ePerusteId')::int as ePerusteId,
-        {{muokattu_column()}},
+        {{ muokattu_column() }},
         data -> 'enrichedData' -> 'esitysnimi' ->> 'fi'::varchar as nimi_fi,
         data -> 'enrichedData' -> 'esitysnimi' ->> 'sv'::varchar as nimi_sv,
         data -> 'enrichedData' -> 'esitysnimi' ->> 'en'::varchar as nimi_en,

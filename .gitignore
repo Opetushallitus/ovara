@@ -16,3 +16,4 @@ cdk.out
 
 #Mac metadata
 .DS_Store
+dbt/package-lock.yml

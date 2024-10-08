@@ -1,0 +1,502 @@
+models:
+  - name: pub_dim_koodisto_arvosana
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_hakukelpoisuusvaatimus
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_hakukohde
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_hakutapa
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_hakutyyppi
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_haunkohdejoukko
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_haunkohdejoukontarkenne
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_kausi
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_kieli
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_koulutus
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_koulutus_alat_ja_asteet
+    description: Tämä taulu sisältää koulutusten alojen ja asteiden tietoja
+      Kansallisen koulutusluokituksen 2016 mukaisesti. Taulussa on jokaiselle
+      koulutukselle purettu auki kaikkien eri tasojen arvot. Unniikki testaus ei
+      ole mahdollista koska samalla koulutuksella voi olla useampi eri ala- tai
+      tasoarvo
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso1
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso3
+        data_type: text
+  - name: pub_dim_koodisto_kunta
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_kunta_maakunta
+    description: Tämä taulu sisältää tiedot ja yhteyden kunnista ja maakunnista.
+      Taulussa on mukana ainoastaan viimeisin relaatio.
+    columns:
+      - name: id
+        data_type: text
+        description: Tämä kenttä on hashattu yhdistelmä kunnan ja maakunnan
+          versioiduista URIsta.
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: kunta_versioitu_koodiuri
+        data_type: text
+      - name: kunta_koodiuri
+        data_type: text
+      - name: kunta_koodiarvo
+        data_type: text
+      - name: kunta_koodiversio
+        data_type: integer
+      - name: maakunta_versioitu_koodiuri
+        data_type: text
+      - name: maakunta_koodiuri
+        data_type: text
+      - name: maakunta_koodiarvo
+        data_type: text
+      - name: maakunta_koodiversio
+        data_type: integer
+  - name: pub_dim_koodisto_maa_2
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_maa_valtioryhma
+    columns:
+      - name: id
+        data_type: text
+      - name: maa_versioitu_koodiuri
+        data_type: text
+      - name: maa_koodiuri
+        data_type: text
+      - name: maa_koodiarvo
+        data_type: text
+      - name: maa_koodiversio
+        data_type: integer
+      - name: valtioryhma_versioitu_koodiuri
+        data_type: text
+      - name: valtioryhma_koodiuri
+        data_type: text
+      - name: valtioryhma_koodiarvo
+        data_type: text
+      - name: valtioryhma_koodiversio
+        data_type: integer
+  - name: pub_dim_koodisto_maakunta
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_opintojenlaajuus
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_opintojenlaajuusyksikko
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: integer
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_oppilaitostyyppi
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_pohjakoulutuskk
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_organisaatiotyyppi
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_pohjakoulutuskklomake
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_pohjakoulutustoinenaste
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: integer
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_pohjakoulutusvaatimuskk
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_posti
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_sukupuoli
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: integer
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+  - name: pub_dim_koodisto_valintatapajono
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text

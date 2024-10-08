@@ -1,0 +1,188 @@
+models:
+  - name: stg_ataru_hakemus
+    description: ""
+    columns:
+      - name: oid
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: lomake_id
+        description: ""
+        data_type: uuid
+      - name: lomakeversio_id
+        description: ""
+        data_type: integer
+      - name: tiedot
+        description: ""
+        data_type: jsonb
+      - name: liitteet
+        description: ""
+        data_type: jsonb
+      - name: muokattu
+        description: ""
+        data_type: timestamp with time zone
+        data_tests:
+          - not_null
+      - name: tila
+        description: ""
+        data_type: text
+      - name: jatetty
+        description: ""
+        data_type: timestamp with time zone
+      - name: kieli
+        description: ""
+        data_type: text
+      - name: kasittelymerkinnat
+        description: ""
+        data_type: jsonb
+      - name: hakemusversio_id
+        description: ""
+        data_type: integer
+      - name: haku_oid
+        description: ""
+        data_type: text
+      - name: hakukohde
+        description: ""
+        data_type: jsonb
+      - name: henkilo_oid
+        description: ""
+        data_type: text
+      - name: hakukelpoisuus_asetettu_automaattisesti
+        description: ""
+        data_type: jsonb
+      - name: etunimet
+        description: ""
+        data_type: text
+      - name: kutsumanimi
+        description: ""
+        data_type: text
+      - name: sukunimi
+        description: ""
+        data_type: text
+      - name: hetu
+        description: ""
+        data_type: text
+      - name: lahiosoite
+        description: ""
+        data_type: text
+      - name: postinumero
+        description: ""
+        data_type: text
+      - name: postitoimipaikka
+        description: ""
+        data_type: text
+      - name: ulk_kunta
+        description: ""
+        data_type: text
+      - name: kotikunta
+        description: ""
+        data_type: integer
+      - name: asuinmaa
+        description: ""
+        data_type: integer
+      - name: sukupuoli
+        description: ""
+        data_type: integer
+      - name: kansalaisuus
+        description: ""
+        data_type: jsonb
+      - name: sahkoinenviestintalupa
+        description: ""
+        data_type: boolean
+      - name: koulutusmarkkinointilupa
+        description: ""
+        data_type: boolean
+      - name: valintatuloksen_julkaisulupa
+        description: ""
+        data_type: boolean
+      - name: asiointikieli
+        description: ""
+        data_type: integer
+      - name: sahkoposti
+        description: ""
+        data_type: text
+      - name: puhelin
+        description: ""
+        data_type: text
+      - name: pohjakoulutuksen_maa_toinen_aste
+        description: ""
+        data_type: text
+      - name: keyvalues
+        description: ""
+        data_type: jsonb
+      - name: dw_metadata_source_timestamp_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        description: ""
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        description: ""
+        data_type: integer
+  - name: stg_ataru_lomake
+    description: ""
+    columns:
+      - name: id
+        description: ""
+        data_type: uuid
+        data_tests:
+          - not_null
+      - name: versio_id
+        description: ""
+        data_tests:
+          - not_null
+        data_type: integer
+      - name: poistettu
+        description: ""
+        data_type: text
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: kielivalinta
+        description: ""
+        data_type: jsonb
+      - name: organisaatio_oid
+        description: ""
+        data_type: text
+      - name: muokattu
+        description: ""
+        data_type: timestamp with time zone
+        data_tests:
+          - not_null
+      - name: luoja
+        description: ""
+        data_type: text
+      - name: content
+        description: ""
+        data_type: jsonb
+      - name: flat_content
+        description: ""
+        data_type: jsonb
+      - name: dw_metadata_source_timestamp_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        description: ""
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        description: ""
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        description: ""
+        data_type: integer

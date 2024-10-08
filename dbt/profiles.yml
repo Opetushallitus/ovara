@@ -1,7 +1,3 @@
-config:
-  send_anonymous_usage_stats: false
-  partial_parse: true
-
 ovara:
   target: test
   outputs:
@@ -22,4 +18,4 @@ ovara:
       port: "{{ env_var('DBT_PORT_PROD') | int }}"
       database: ovara
       schema: pub
-      threads: 16
+      threads: 8

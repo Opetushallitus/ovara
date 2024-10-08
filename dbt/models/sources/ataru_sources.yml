@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: ovara
+    database: ovara
+    schema: raw
+    tables:
+    - name: ataru_hakemus
+      description: Hakemusten tietoja
+    - name: ataru_lomake
+      description: Lomakkeiden tietoja

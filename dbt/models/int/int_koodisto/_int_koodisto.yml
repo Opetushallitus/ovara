@@ -1,0 +1,1174 @@
+models:
+  - name: int_koodisto_koulutus
+    description: Koulutuksen tiedot
+    columns:
+      - name: versioitu_koodiuri
+        description: Koodiuri jossa on mukana koodisto, koodiarvo ja koodistoversio
+          muodossa <koodisto>_<koodiarvo>#<koodistoversio>. Toimii taulun
+          primary key:na
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_maa_2
+    description: Koodistosta kaikkien maiden koodi ja koodistoversiot. Tämä käyttää
+      koodisto maatjavaltiot2 jossa maakoodina on numeerinen arvo
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: koodiurissa on mukana sekä koodiston uri että koodiarvo
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: koodisssa oleva maakoodi
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: koodiston versio
+        data_tests:
+          - not_null
+        data_type: integer
+      - name: nimi_fi
+        description: Maan suomenkielinen nimi
+        data_type: text
+      - name: nimi_sv
+        description: Maan ruotsinkielinen nimi
+        data_type: text
+      - name: nimi_en
+        description: Maan englanninkielinen nimi
+        data_type: text
+      - name: viimeisin_versio
+        description: Tämä kenttä on true jos koodistoversio on viimeisin versio
+        data_type: boolean
+  - name: int_koodisto_kieli
+    description: Kielikoodien koodisto
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_tests:
+          - not_null
+        data_type: text
+      - name: koodiversio
+        description: ""
+        data_tests:
+          - not_null
+        data_type: integer
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_arvosana
+    description: Arvosanat
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_hakukelpoisuusvaatimus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_hakukohde
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_hakutapa
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_hakutyyppi
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_haunkohdejoukko
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_ilmoittautumisentila
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_kausi
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_kunta
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_maakunta
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+          - not_null
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_kunta_maakunta
+    description: Taulu sisältää relaatiot kuntien ja maakuntien välillä
+    columns:
+      - name: id
+        description: yksilöivä hash, primary key
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: kunta_versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: kunta_koodiuri
+        description: ""
+        data_type: text
+      - name: kunta_koodiarvo
+        description: ""
+        data_type: integer
+      - name: kunta_koodiversio
+        description: ""
+        data_type: integer
+      - name: maakunta_versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: maakunta_koodiuri
+        description: ""
+        data_type: text
+      - name: maakunta_koodiarvo
+        description: ""
+        data_type: text
+      - name: maakunta_koodiversio
+        description: ""
+        data_type: integer
+  - name: int_koodisto_opintojenlaajuus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_opintojenlaajuusyksikko
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_oppilaitostyyppi
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_posti
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_sukupuoli
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_valintatapajono
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_valtioryhma
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_maa_valtioryhma
+    description: ""
+    columns:
+      - name: id
+        description: Taulu sisältää relaatiot maiden ja valtioryhmien välillä
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: maa_versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: maa_koodiuri
+        description: ""
+        data_type: text
+      - name: maa_koodiarvo
+        description: ""
+        data_type: integer
+      - name: maa_koodiversio
+        description: ""
+        data_type: integer
+      - name: valtioryhma_versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: valtioryhma_koodiuri
+        description: ""
+        data_type: text
+      - name: valtioryhma_koodiarvo
+        description: ""
+        data_type: text
+      - name: valtioryhma_koodiversio
+        description: ""
+        data_type: integer
+  - name: int_koodisto_kkl2016koulutusalataso1
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_kkl2016koulutusalataso2
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_kkl2016koulutusalataso3
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_kkl2016koulutusastetaso1
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_pohjakoulutuskk
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_pohjakoulutuskklomake
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_opintoalaoph2002
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_pohjakoulutustoinenaste
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_pohjakoulutusvaatimuskk
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiarvo
+        description: ""
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiversio
+        description: ""
+        data_type: integer
+        data_tests:
+          - not_null
+      - name: nimi_fi
+        description: ""
+        data_type: text
+      - name: nimi_sv
+        description: ""
+        data_type: text
+      - name: nimi_en
+        description: ""
+        data_type: text
+      - name: viimeisin_versio
+        description: ""
+        data_type: boolean
+  - name: int_koodisto_koulutus_alat_ja_asteet
+    description: >
+      Koulutukselle haetuu kaikki koulutusalat ja koulutusasteet. Jokaiselle koodistolle on vaan yksi rivi,
+      jos jostain syystä on useampi rivi samalle koulutukselle otetaan ensimmäinen vastaan tuleva rivi.
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+        data_tests:
+          - not_null
+      - name: koodiuri
+        description: ""
+        data_type: text
+      - name: koodiarvo
+        description: ""
+        data_type: integer
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso1
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso3
+        description: ""
+        data_type: text
+  - name: int_koodisto_kkl2016koulutusalataso1_relaatio_koulutus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso1
+        description: ""
+        data_type: text
+  - name: int_koodisto_kkl2016koulutusalataso2_relaatio_koulutus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: ""
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusalataso2
+        description: ""
+        data_type: text
+  - name: int_koodisto_kkl2016koulutusalataso3_relaatio_koulutus
+    description: ""
+    columns: []
+  - name: int_koodisto_kkl2016koulutusastetaso1_relaatio_koulutus
+    description: ""
+    columns: []
+  - name: int_koodisto_kkl2016koulutusastetaso2_relaatio_koulutus
+    description: ""
+    columns:
+      - name: versioitu_koodiuri
+        description: '{{ doc("versioitu_koodiuri") }}'
+        data_type: text
+      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
+        description: ""
+        data_type: text
+  - name: int_koodisto_organisaatiotyyppi
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koodiuri
+        data_type: text
+        data_tests:
+        - not_null
+      - name: koodiarvo
+        data_type: text
+        data_tests:
+        - not_null
+      - name: koodiversio
+        data_type: integer
+        data_tests:
+        - not_null
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: viimeisin_versio
+        data_type: boolean

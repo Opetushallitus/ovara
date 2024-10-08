@@ -1,16 +1,15 @@
 with source as (
-      select * from {{ source('ovara', 'kouta_sorakuvaus') }}
- 
-      {% if is_incremental() %}
+    select * from {{ source('ovara', 'kouta_sorakuvaus') }}
 
-       where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }}) 
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
 
     {% endif %}
 ),
 
-final as 
-(
-    select 
+final as (
+    select
         (data ->> 'id')::uuid as id,
         data ->> 'externalId'::varchar as externalId,
         data ->> 'tila'::varchar as tila,
@@ -27,11 +26,10 @@ final as
         (data -> 'metadata' ->> 'isMuokkaajaOphVirkailija')::boolean as isMuokkaajaOphVirkailija,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data ->> 'muokkaaja'::varchar as muokkaaja,
-        {{ muokattu_column()}},
+        {{ muokattu_column() }},
         data -> 'enrichedData' ->> 'muokkaajanNimi'::varchar as muokkaajanNimi,
         {{ metadata_columns() }}
     from source
-
 )
 
 select * from final

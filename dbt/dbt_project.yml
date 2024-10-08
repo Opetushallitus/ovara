@@ -11,6 +11,10 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
+flags:
+  send_anonymous_usage_stats: false
+  partial_parse: true
+
 clean-targets:
   - "target"
   - "dbt_packages"
@@ -20,13 +24,19 @@ models:
     stg:
       +schema: stg
       +materialized: incremental
+      +incremental_strategy: 'append'
+      +on_schema_change: append_new_columns
+      +indexes:
+        - columns: ['dw_metadata_dbt_copied_at']
+        - columns: ['dw_metadata_stg_stored_at']
       +docs:
         node_color: "#00008b"
+
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
-      +indexes: 
-        - columns: [oid,muokattu]
+      +indexes:
+        - columns: ['dw_metadata_dw_copied_at']
       +docs:
         node_color: "#00008b"
     int:
@@ -37,3 +47,7 @@ models:
     pub:
       +schema: pub
       +materialized: table
+      +persist_docs:
+        relation: true
+        columns: true
+
