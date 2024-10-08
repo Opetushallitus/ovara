@@ -13,4 +13,6 @@ ls -Al /root/dbt
 cd dbt
 . venv/bin/activate
 
+dbt build --target=prod "$1"
+
 exit 0
