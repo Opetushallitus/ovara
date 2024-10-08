@@ -34,8 +34,8 @@ export class EcsStack extends cdk.Stack {
 
     props.auroraSecurityGroup.addIngressRule(
       ecsSecurityGroup,
-      ec2.Port.POSTGRES,
-      'ECS-konteille pääsy tietokantaan'
+      ec2.Port.tcp(5432),
+      'ECS-konteille paasy tietokantaan'
     );
 
     const dbtFargateTaskName = `${config.environment}-dbt-task`;
@@ -113,8 +113,8 @@ export class EcsStack extends cdk.Stack {
             ),
           },
         },
-        schedule: appscaling.Schedule.expression('rate(5 minutes)'),
-        //schedule: schedule,
+        //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
+        schedule: schedule,
         securityGroups: [ecsSecurityGroup],
         tags: [],
       }
