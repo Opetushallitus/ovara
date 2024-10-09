@@ -73,10 +73,17 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
+    const imageVersion =
+      props.ecsImageTag !== undefined && props.ecsImageTag !== ''
+        ? props.ecsImageTag
+        : ssm.StringParameter.valueForStringParameter(
+            this,
+            `/${config.environment}/ecs/dbt-runner/version`
+          );
+
     const dbtRunnerImage = ecs.ContainerImage.fromEcrRepository(
       dbtRunnerRepository,
-      props.ecsImageTag
-      //'ga-6'
+      imageVersion
     );
 
     const schedule = appscaling.Schedule.cron({

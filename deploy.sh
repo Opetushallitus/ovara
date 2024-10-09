@@ -77,10 +77,10 @@ else
   stack="$environment-$stack_parameter"
 fi
 
-if [[ -n "${image}" ]] && [[ "${stack}" != "${environment}-EcsStack" ]] && [[ "${stack}" != "--all" ]]; then
-  echo "The --version parameter is only supported for the EcsStack stack or all stacks!"
-  exit 1
-fi
+#if [[ -n "${image}" ]] && [[ "${stack}" != "${environment}-EcsStack" ]] && [[ "${stack}" != "--all" ]]; then
+#  echo "The --version parameter is only supported for the EcsStack stack or all stacks!"
+#  exit 1
+#fi
 
 ## Profiles are defined in user's .aws/config
 if [[ "${environment}" =~ ^(tuotanto)$ ]]; then
