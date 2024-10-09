@@ -51,6 +51,7 @@ export class ExternalRolesStack extends cdk.Stack {
         'events:ListTargetsByRule',
         'events:PutTargets',
         'iam:PassRole',
+        'ssm:PutParameter',
       ],
     });
 
