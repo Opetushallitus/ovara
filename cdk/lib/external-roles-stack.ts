@@ -43,7 +43,15 @@ export class ExternalRolesStack extends cdk.Stack {
     const gaEcsPolicyStatement = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       resources: ['*'],
-      actions: ['ecs:ListTaskDefinitionFamilies', 'ecs:DescribeTaskDefinition'],
+      actions: [
+        'ecs:ListTaskDefinitionFamilies',
+        'ecs:DescribeTaskDefinition',
+        'ecs:RegisterTaskDefinition',
+        'events:ListRules',
+        'events:ListTargetsByRule',
+        'events:PutTargets',
+        'iam:PassRole',
+      ],
     });
 
     const gaEcsPolicy = new iam.Policy(this, `${config.environment}-gaEcsPolicy`);

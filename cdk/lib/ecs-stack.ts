@@ -142,6 +142,10 @@ export class EcsStack extends cdk.Stack {
       .obtainExecutionRole()
       .grantAssumeRole(props.githubActionsDeploymentRole);
 
+    scheduledFargateTask.taskDefinition
+      .obtainExecutionRole()
+      .grantPassRole(props.githubActionsDeploymentRole);
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },
       { id: 'AwsSolutions-ECS2', reason: 'Static environment variables' },
