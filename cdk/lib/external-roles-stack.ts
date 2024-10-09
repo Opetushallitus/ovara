@@ -40,6 +40,19 @@ export class ExternalRolesStack extends cdk.Stack {
       }
     );
 
-    cdkNag.NagSuppressions.addStackSuppressions(this, []);
+    const gaEcsPolicyStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      resources: ['*'],
+      actions: ['ecs:ListTaskDefinitionFamilies', 'ecs:DescribeTaskDefinition'],
+    });
+
+    const gaEcsPolicy = new iam.Policy(this, `${config.environment}-gaEcsPolicy`);
+    gaEcsPolicy.addStatements(gaEcsPolicyStatement);
+
+    this.githubActionsDeploymentRole.attachInlinePolicy(gaEcsPolicy);
+
+    cdkNag.NagSuppressions.addStackSuppressions(this, [
+      { id: 'AwsSolutions-IAM5', reason: 'This is acceptable in this case.' },
+    ]);
   }
 }
