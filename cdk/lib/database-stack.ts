@@ -95,13 +95,13 @@ export class DatabaseStack extends cdk.Stack {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_15_5,
         }),
-        serverlessV2MinCapacity: 2,
-        serverlessV2MaxCapacity: 32,
-        deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
+        serverlessV2MinCapacity: config.aurora.minCapacity,
+        serverlessV2MaxCapacity: config.aurora.maxCapacity,
+        deletionProtection: config.aurora.deletionProtection,
         removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
         writer: rds.ClusterInstance.serverlessV2('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
-          enablePerformanceInsights: true,
+          enablePerformanceInsights: config.aurora.enablePerformanceInsights,
         }),
         readers: [
           rds.ClusterInstance.serverlessV2('Reader', {
@@ -129,6 +129,9 @@ export class DatabaseStack extends cdk.Stack {
           retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
         },
         enableDataApi: true,
+        storageType: config.aurora.iopsStorage
+          ? rds.DBClusterStorageType.AURORA_IOPT1
+          : rds.DBClusterStorageType.AURORA,
       }
     );
 

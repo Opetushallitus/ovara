@@ -2,7 +2,12 @@
   "aurora": {
     "backup": {
       "deleteAfterDays": 14
-    }
+    },
+    "deletionProtection": false,
+    "enablePerformanceInsights": true,
+    "iopsStorage": false,
+    "maxCapacity": 32,
+    "minCapacity": 2
   },
   "environment": "testi",
   "profile": "oph-opiskelijavalinnan-raportointi-qa",
