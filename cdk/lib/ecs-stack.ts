@@ -99,7 +99,8 @@ export class EcsStack extends cdk.Stack {
         scheduledFargateTaskImageOptions: {
           image: dbtRunnerImage,
           logDriver: logDriver,
-          memoryLimitMiB: 512,
+          cpu: 1024,
+          memoryLimitMiB: 2048,
           environment: {
             POSTGRES_HOST_PROD: `raportointi.db.${config.publicHostedZone}`,
             DBT_PORT_PROD: '5432',
