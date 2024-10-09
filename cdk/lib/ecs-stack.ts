@@ -16,6 +16,7 @@ import { Config, GenericStackProps } from './config';
 export interface EcsStackProps extends GenericStackProps {
   auroraSecurityGroup: ec2.ISecurityGroup;
   ecsImageTag: string;
+  githubActionsDeploymentRole: iam.IRole;
   vpc: ec2.IVpc;
 }
 
@@ -121,7 +122,6 @@ export class EcsStack extends cdk.Stack {
         //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         schedule: schedule,
         securityGroups: [ecsSecurityGroup],
-        tags: [],
       }
     );
 
@@ -137,6 +137,10 @@ export class EcsStack extends cdk.Stack {
         resources: ['*'],
       })
     );
+
+    scheduledFargateTask.taskDefinition
+      .obtainExecutionRole()
+      .grantAssumeRole(props.githubActionsDeploymentRole);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },

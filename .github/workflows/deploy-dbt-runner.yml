@@ -1,0 +1,91 @@
+name: Deploy DBT Runner
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        description: 'Image tag deployed (example: ga-21).'
+        required: true
+        type: string
+      environment:
+        description: 'Environment which to deploy to (testi/tuotanto)'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: 'Image tag deployed (example: ga-21).'
+        required: true
+        type: string
+      environment:
+        description: 'Environment which to deploy to (testi/tuotanto)'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy DBT Runner from ECR to ECS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        if: ${{ inputs.environment == 'testi' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_TESTI_ROLE_ARN }}
+          role-session-name: testi-dbt-runner-deploy
+          aws-region: eu-west-1
+
+      - name: Configure AWS credentials
+        if: ${{ inputs.environment == 'tuotanto' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_TUOTANTO_ROLE_ARN }}
+          role-session-name: tuotanto-dbt-runner-deploy
+          aws-region: eu-west-1
+
+      - name: Configure ENV parameters
+        if: ${{ inputs.environment == 'testi' }}
+        run: |
+          echo "FAMILY_PREFIX=testiEcsStacktestidbttaskScheduledTaskDef" >> $GITHUB_ENV
+          echo "ECS_CLUSTER_NAME=testi-ecs-cluster" >> $GITHUB_ENV
+
+      - name: Configure ENV parameters
+        if: ${{ inputs.environment == 'tuotanto' }}
+        run: |
+          echo "FAMILY_PREFIX=DUMMY" >> $GITHUB_ENV
+          echo "ECS_CLUSTER_NAME=DUMMY" >> $GITHUB_ENV
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition `aws ecs list-task-definition-families --profile oph-opiskelijavalinnan-raportointi-qa --family-prefix ${{ env.FAMILY_PREFIX }} | jq -r '.families[0]'` --query taskDefinition
+          echo $(cat task-definition.json | jq 'del(
+                  .taskDefinitionArn,
+                  .requiresAttributes,
+                  .compatibilities,
+                  .revision,
+                  .status,
+                  .registeredAt,
+                  .registeredBy
+              )' > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ScheduledContainer
+          image: ${{ secrets.AWS_OVARA_UTILITY_ECR_DBT_RUNNER_REPO }}:${{ inputs.image-tag }}
+
+      - name: Deploy Amazon ECS task definition
+        if: ${{ inputs.environment == 'testi' }}
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          #service: ${{ steps.infra.outputs.servicename }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
