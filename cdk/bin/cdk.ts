@@ -9,6 +9,7 @@ import { CertificateStack } from '../lib/certificate-stack';
 import { getGenericStackProps } from '../lib/config';
 import { DatabaseStack } from '../lib/database-stack';
 import { EcsStack } from '../lib/ecs-stack';
+import { ExternalRolesStack } from '../lib/external-roles-stack';
 import { LambdaStack } from '../lib/lambda-stack';
 import { MonitorStack } from '../lib/monitor-stack';
 import { NetworkStack } from '../lib/network-stack';
@@ -22,6 +23,14 @@ const props = getGenericStackProps(environmentName);
 const config = props.config;
 
 const accountId = process.env.CDK_DEFAULT_ACCOUNT;
+
+const externalRolesStack = new ExternalRolesStack(
+  app,
+  `${config.environment}-ExternalRolesStack`,
+  {
+    ...props,
+  }
+);
 
 const monitorStack = new MonitorStack(app, `${config.environment}-MonitorStack`, {
   ...props,
@@ -63,6 +72,7 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
 
 const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
+  githubActionsDeploymentRole: externalRolesStack.githubActionsDeploymentRole,
   ecsImageTag: ecsImageTag,
   vpc: networkStack.vpc,
   ...props,
