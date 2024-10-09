@@ -81,10 +81,7 @@ export class EcsStack extends cdk.Stack {
 
     const schedule = appscaling.Schedule.cron({
       minute: '30',
-      hour: '*',
-      day: '*',
-      month: '*',
-      year: '*',
+      hour: '0-23/1',
     });
     const scheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
       this,
