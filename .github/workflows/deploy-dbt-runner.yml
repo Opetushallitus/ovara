@@ -82,18 +82,13 @@ jobs:
           container-name: ScheduledContainer
           image: ${{ secrets.AWS_OVARA_UTILITY_ECR_DBT_RUNNER_REPO }}:${{ inputs.image-tag }}
 
-      #- name: Deploy Amazon ECS task definition
-      #  if: ${{ inputs.environment == 'testi' }}
-      #  uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #  with:
-      #    task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #    #service: ${{ steps.infra.outputs.servicename }}
-      #    cluster: ${{ env.ECS_CLUSTER_NAME }}
-      #    wait-for-service-stability: true
-
       - name: Deploy to Amazon ECS Scheduled Tasks
         uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.0.0
         with:
           cluster: ${{ env.ECS_CLUSTER_NAME }}
           rule-prefix: ${{ env.SCHEDULED_TASK_RULE_PREFIX }}
           task-definition: ${{ steps.task-def.outputs.task-definition }}
+
+      - name: Update container image version to AWS Parameter store
+        run: |
+          aws ssm put-parameter --name "/${{ inputs.environment }}/ecs/dbt-runner/version" --type "String" --value "${{ inputs.image-tag }}" --overwrite
