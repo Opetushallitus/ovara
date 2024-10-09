@@ -18,7 +18,6 @@
             'dw_metadata_file_row_number',
             'dw_metadata_filename',
             'dw_metadata_source_timestamp_at',
-            'dw_metadata_stg_stored_at',
             'dw_metadata_dw_stored_at'
             ],
         indexes = [
