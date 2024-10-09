@@ -62,7 +62,7 @@ jobs:
 
       - name: Download task definition
         run: |
-          aws ecs describe-task-definition --task-definition `aws ecs list-task-definition-families --profile oph-opiskelijavalinnan-raportointi-qa --family-prefix ${{ env.FAMILY_PREFIX }} | jq -r '.families[0]'` --query taskDefinition
+          aws ecs describe-task-definition --task-definition `aws ecs list-task-definition-families --family-prefix ${{ env.FAMILY_PREFIX }} | jq -r '.families[0]'` --query taskDefinition
           echo $(cat task-definition.json | jq 'del(
                   .taskDefinitionArn,
                   .requiresAttributes,
