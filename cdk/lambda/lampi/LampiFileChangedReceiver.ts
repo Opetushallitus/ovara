@@ -104,7 +104,7 @@ exports.handler = async (event: APIGatewayProxyEventV2, context: Context) => {
             }
           )} | Viimeisin käsittelyaika: ${aikaleimaString}`
         );
-        if (compareDate.getTime() >= aikaleima.getTime()) {
+        if (compareDate.getTime() <= aikaleima.getTime()) {
           console.log(
             `Tiedostotyypin (${tiedostotyyppi}) tiedot löytyivät DynamoDB:stä mutta edellisen tiedoston käsittelystä on liian vähän aikaa. Ei tehdä mitään.`
           );
