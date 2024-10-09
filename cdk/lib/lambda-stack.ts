@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { CfnOutput } from 'aws-cdk-lib';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AccountRootPrincipal } from 'aws-cdk-lib/aws-iam';
@@ -20,6 +21,7 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface LambdaStackProps extends GenericStackProps {
+  lampiTiedostoKasiteltyTable: dynamodb.ITableV2;
   vpc: ec2.IVpc;
   siirtotiedostoBucket: s3.IBucket;
   siirtotiedostotKmsKey: kms.IKey;
@@ -473,13 +475,7 @@ export class LambdaStack extends cdk.Stack {
       })
     );
 
-    /*
-    const lampiAuthTokenParam = ssm.StringParameter.fromStringParameterName(
-      this,
-      'LampiAuthTokenParam',
-      lampiAuthTokenSecretName,
-    );
-    */
+    props.lampiTiedostoKasiteltyTable.grantReadWriteData(lampiTiedostoMuuttunutLambda);
 
     const lampiAuthTokenParam = ssm.StringParameter.fromSecureStringParameterAttributes(
       this,

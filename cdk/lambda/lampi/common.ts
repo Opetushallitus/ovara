@@ -26,10 +26,16 @@ export type Tiedosto = {
   lampiKey: string;
   ovaraKeyTemplate: string;
   batchSize: number;
+  intervalHours?: number;
 };
 
 export type Tiedostot = {
   [tiedosto: string]: Tiedosto;
+};
+
+export type LampiSiirtotiedostoKasiteltyItem = {
+  tiedostotyyppi: string;
+  aikaleima: string;
 };
 
 export const tiedostot: Tiedostot = {
@@ -37,11 +43,13 @@ export const tiedostot: Tiedostot = {
     lampiKey: 'fulldump/koodisto/v2/json/koodi.json',
     ovaraKeyTemplate: 'koodisto/koodisto_koodi__{}__{}_{}.json',
     batchSize: 250000,
+    intervalHours: 6,
   },
   koodisto_relaatio: {
     lampiKey: 'fulldump/koodisto/v2/json/relaatio.json',
     ovaraKeyTemplate: 'koodisto/koodisto_relaatio__{}__{}_{}.json',
     batchSize: 250000,
+    intervalHours: 6,
   },
   onr_henkilo: {
     lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/henkilo.json',
@@ -57,21 +65,25 @@ export const tiedostot: Tiedostot = {
     lampiKey: 'fulldump/organisaatio/v2/json/organisaatio.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatio__{}__{}_{}.json',
     batchSize: 50000,
+    intervalHours: 6,
   },
   organisaatio_organisaatiosuhde: {
     lampiKey: 'fulldump/organisaatio/v2/json/organisaatiosuhde.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatiosuhde__{}__{}_{}.json',
     batchSize: 5000,
+    intervalHours: 6,
   },
   organisaatio_osoite: {
     lampiKey: 'fulldump/organisaatio/v2/json/osoite.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_osoite__{}__{}_{}.json',
     batchSize: 50000,
+    intervalHours: 6,
   },
   organisaatio_ryhma: {
     lampiKey: 'fulldump/organisaatio/v3/json/ryhma.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_ryhma__{}__{}_{}.json',
     batchSize: 20000,
+    intervalHours: 6,
   },
 };
 

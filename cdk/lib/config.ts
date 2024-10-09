@@ -11,6 +11,11 @@ export interface Config {
     backup: {
       deleteAfterDays: number;
     };
+    deletionProtection: boolean;
+    enablePerformanceInsights: boolean;
+    iopsStorage: boolean;
+    maxCapacity: number;
+    minCapacity: number;
   };
   environment: string;
   profile: string;

@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as events from 'aws-cdk-lib/aws-events';
@@ -23,12 +24,13 @@ import { Config, GenericStackProps } from './config';
 
 export interface DatabaseStackProps extends GenericStackProps {
   publicHostedZone: route53.IHostedZone;
-  vpc: ec2.IVpc;
   slackAlarmIntegrationSnsTopic: sns.ITopic;
+  vpc: ec2.IVpc;
 }
 
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
+  public readonly lampiTiedostoKasiteltyTable: dynamodb.ITableV2;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
@@ -93,13 +95,13 @@ export class DatabaseStack extends cdk.Stack {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
           version: rds.AuroraPostgresEngineVersion.VER_15_5,
         }),
-        serverlessV2MinCapacity: 2,
-        serverlessV2MaxCapacity: 32,
-        deletionProtection: false, // TODO: päivitä kun siirrytään tuotantoon
+        serverlessV2MinCapacity: config.aurora.minCapacity,
+        serverlessV2MaxCapacity: config.aurora.maxCapacity,
+        deletionProtection: config.aurora.deletionProtection,
         removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
         writer: rds.ClusterInstance.serverlessV2('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RDS4096_G1,
-          enablePerformanceInsights: true,
+          enablePerformanceInsights: config.aurora.enablePerformanceInsights,
         }),
         readers: [
           rds.ClusterInstance.serverlessV2('Reader', {
@@ -127,6 +129,9 @@ export class DatabaseStack extends cdk.Stack {
           retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
         },
         enableDataApi: true,
+        storageType: config.aurora.iopsStorage
+          ? rds.DBClusterStorageType.AURORA_IOPT1
+          : rds.DBClusterStorageType.AURORA,
       }
     );
 
@@ -426,6 +431,18 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
     addActionsToAlarm(databaseACUUtilizationAlarm);
+
+    this.lampiTiedostoKasiteltyTable = new dynamodb.TableV2(
+      this,
+      'lampiSiirtotiedostoKasitelty',
+      {
+        tableName: 'lampiSiirtotiedostoKasitelty',
+        partitionKey: {
+          name: 'tiedostotyyppi',
+          type: dynamodb.AttributeType.STRING,
+        },
+      }
+    );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },
