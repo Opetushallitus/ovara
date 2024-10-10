@@ -47,6 +47,7 @@ export class ExternalRolesStack extends cdk.Stack {
         'ecs:ListTaskDefinitionFamilies',
         'ecs:DescribeTaskDefinition',
         'ecs:RegisterTaskDefinition',
+        'ecs:RunTask',
         'events:ListRules',
         'events:ListTargetsByRule',
         'events:PutTargets',
