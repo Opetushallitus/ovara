@@ -152,7 +152,7 @@ export class S3Stack extends cdk.Stack {
       {
         defaultRootObject: 'index.html',
         defaultBehavior: {
-          origin: new cloudfrontOrigins.S3Origin(dokumentaatioBucket),
+          origin: new cloudfrontOrigins.S3StaticWebsiteOrigin(dokumentaatioBucket),
         },
         domainNames: [`dokumentaatio.${config.publicHostedZone}`],
         minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
