@@ -81,14 +81,14 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        uses: aws-actions/amazon-ecs-render-task-definition@v1.5.2
         with:
           task-definition: task-definition.json
           container-name: ScheduledContainer
           image: ${{ secrets.AWS_OVARA_UTILITY_ECR_DBT_RUNNER_REPO }}:${{ inputs.image-tag }}
 
       - name: Deploy to Amazon ECS Scheduled Tasks
-        uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.0.0
+        uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.1.0
         with:
           cluster: ${{ env.ECS_CLUSTER_NAME }}
           rule-prefix: ${{ env.SCHEDULED_TASK_RULE_PREFIX }}
