@@ -152,7 +152,9 @@ export class S3Stack extends cdk.Stack {
       {
         defaultRootObject: 'index.html',
         defaultBehavior: {
-          origin: new cloudfrontOrigins.S3StaticWebsiteOrigin(dokumentaatioBucket),
+          origin:
+            cloudfrontOrigins.S3BucketOrigin.withOriginAccessControl(dokumentaatioBucket),
+          viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         },
         domainNames: [`dokumentaatio.${config.publicHostedZone}`],
         minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
@@ -253,6 +255,10 @@ export class S3Stack extends cdk.Stack {
       {
         id: 'AwsSolutions-CFR3',
         reason: 'Not interested in access logs',
+      },
+      {
+        id: 'AwsSolutions-CFR5',
+        reason: 'False positive',
       },
     ]);
   }
