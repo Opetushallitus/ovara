@@ -4,6 +4,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
+import { CfnRule } from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
@@ -145,6 +146,73 @@ export class EcsStack extends cdk.Stack {
     scheduledFargateTask.taskDefinition
       .obtainExecutionRole()
       .grantPassRole(props.githubActionsDeploymentRole);
+
+    const eventsRule = scheduledFargateTask.eventRule.node.defaultChild as CfnRule;
+
+    const eventsRole = new iam.Role(this, 'EventsRole', {
+      assumedBy: new iam.ServicePrincipal('events.amazonaws.com'),
+    });
+
+    eventsRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['ecs:RunTask'],
+        conditions: {
+          ArnEquals: {
+            'ecs:cluster': ecsCluster.clusterArn,
+          },
+        },
+        resources: [
+          scheduledFargateTask.taskDefinition.taskDefinitionArn.substring(
+            0,
+            scheduledFargateTask.taskDefinition.taskDefinitionArn.lastIndexOf(':') + 1
+          ) + '*',
+        ],
+      })
+    );
+
+    eventsRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['ecs:TagResource'],
+        resources: [`arn:aws:ecs:${this.region}:*:task/${ecsClusterName}/*`],
+      })
+    );
+
+    eventsRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['iam:PassRole'],
+        resources: [
+          scheduledFargateTask.taskDefinition.taskRole.roleArn,
+          scheduledFargateTask.taskDefinition.executionRole!.roleArn,
+        ],
+      })
+    );
+
+    eventsRule.targets = [
+      {
+        arn: ecsCluster.clusterArn,
+        id: 'Target0',
+        roleArn: eventsRole.roleArn,
+        ecsParameters: {
+          launchType: 'FARGATE',
+          taskCount: 1,
+          taskDefinitionArn: scheduledFargateTask.taskDefinition.taskDefinitionArn,
+          networkConfiguration: {
+            awsVpcConfiguration: {
+              securityGroups: [ecsSecurityGroup.securityGroupId],
+              subnets: [
+                props.vpc.selectSubnets({
+                  subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+                }).subnets[0].subnetId,
+                props.vpc.selectSubnets({
+                  subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+                }).subnets[1].subnetId,
+              ],
+              assignPublicIp: 'DISABLED',
+            },
+          },
+        },
+      },
+    ];
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },
