@@ -23,6 +23,7 @@ positional arguments:
   deploy                builds and deploys the stack to target environment, environment must be supplied.
   delete                deletes the stack from target environment, environment must be supplied.
   build                 only builds the Lambda & synthesizes CDK (useful when developing)
+  diff                  show difference between running environment and the template generated from code
   stack                 name of the stack (BastionStack, DatabaseStack, NetworkStack or All)
   environment           Environment name (tuotanto, testi or kehitys)
 
@@ -53,6 +54,11 @@ optional arguments:
 
     deploy)
     deploy="true"
+    shift
+    ;;
+
+    diff)
+    diff="true"
     shift
     ;;
 
@@ -105,6 +111,14 @@ if [[ "${build}" == "true" ]]; then
     cd "${git_root}/cdk/"
     npm run build
     cdk synth --region eu-west-1 --profile $aws_profile
+fi
+
+if [[ "${diff}" == "true" ]]; then
+    echo "Comparing current template to the running environment"
+    export ENVIRONMENT=$environment
+    cd "${git_root}/cdk/"
+    npm run build
+    cdk diff $stack -c "environment=$environment" -c "ecsImageTag=${image}" --region eu-west-1 --profile $aws_profile
 fi
 
 if [[ "${deploy}" == "true" ]]; then
