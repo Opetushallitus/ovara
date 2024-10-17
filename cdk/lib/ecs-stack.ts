@@ -1,5 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as appscaling from 'aws-cdk-lib/aws-applicationautoscaling';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
@@ -8,6 +10,7 @@ import { CfnRule } from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as sns from 'aws-cdk-lib/aws-sns';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -18,6 +21,7 @@ export interface EcsStackProps extends GenericStackProps {
   auroraSecurityGroup: ec2.ISecurityGroup;
   ecsImageTag: string;
   githubActionsDeploymentRole: iam.IRole;
+  slackAlarmIntegrationSnsTopic: sns.ITopic;
   vpc: ec2.IVpc;
 }
 
@@ -26,6 +30,12 @@ export class EcsStack extends cdk.Stack {
     super(scope, id, props);
 
     const config: Config = props.config;
+
+    const addActionsToAlarm = (alarm: cloudwatch.Alarm) => {
+      alarm.addAlarmAction(
+        new cloudwatchActions.SnsAction(props.slackAlarmIntegrationSnsTopic)
+      );
+    };
 
     const ecsSecurityGroupName = `${config.environment}-ovara-ecs-sg`;
     const ecsSecurityGroup = new ec2.SecurityGroup(this, ecsSecurityGroupName, {
@@ -213,6 +223,41 @@ export class EcsStack extends cdk.Stack {
         },
       },
     ];
+
+    // Metriikat ja hälytykset
+
+    const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
+    const dbtRunnerFailedErrorMetricName = 'DbtRunnerFailedError';
+
+    const dbtRunnerFailedErrorMetric = new cloudwatch.Metric({
+      namespace: ovaraCustomMetricsNamespace,
+      metricName: dbtRunnerFailedErrorMetricName,
+      period: cdk.Duration.minutes(5),
+      unit: cloudwatch.Unit.NONE,
+      statistic: cloudwatch.Stats.SUM,
+    });
+
+    new logs.MetricFilter(
+      this,
+      `${config.environment}-dbtRunnerFailedErrorMetricFilter`,
+      {
+        filterPattern: logs.FilterPattern.literal('"Done. PASS" -"ERROR=0"'),
+        logGroup: dbtTaskLogGroup,
+        metricName: dbtRunnerFailedErrorMetricName,
+        metricNamespace: ovaraCustomMetricsNamespace,
+      }
+    );
+
+    const dbtRunnerFailedErrorAlarm = new cloudwatch.Alarm(this, 'AlarmId', {
+      metric: dbtRunnerFailedErrorMetric,
+      evaluationPeriods: 3,
+      datapointsToAlarm: 1,
+      alarmName: `${config.environment}-ovara-DbtRunnerFailedErrorError`,
+      alarmDescription: 'DBT-ajossa tapahtui virhe',
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+      threshold: 0,
+    });
+    addActionsToAlarm(dbtRunnerFailedErrorAlarm);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },
