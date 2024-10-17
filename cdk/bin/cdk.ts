@@ -74,6 +74,7 @@ const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
   githubActionsDeploymentRole: externalRolesStack.githubActionsDeploymentRole,
   ecsImageTag: ecsImageTag,
+  slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   vpc: networkStack.vpc,
   ...props,
 });
