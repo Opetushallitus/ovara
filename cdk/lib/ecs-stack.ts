@@ -228,6 +228,7 @@ export class EcsStack extends cdk.Stack {
 
     const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
     const dbtRunnerFailedErrorMetricName = 'DbtRunnerFailedError';
+    const dbtRunnerKestoMetricName = 'DbtRunnerKesto';
 
     const dbtRunnerFailedErrorMetric = new cloudwatch.Metric({
       namespace: ovaraCustomMetricsNamespace,
@@ -252,12 +253,31 @@ export class EcsStack extends cdk.Stack {
       metric: dbtRunnerFailedErrorMetric,
       evaluationPeriods: 3,
       datapointsToAlarm: 1,
-      alarmName: `${config.environment}-ovara-DbtRunnerFailedErrorError`,
+      alarmName: `${config.environment}-ovara-DbtRunnerFailedError`,
       alarmDescription: 'DBT-ajossa tapahtui virhe',
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       threshold: 0,
     });
     addActionsToAlarm(dbtRunnerFailedErrorAlarm);
+
+    new cloudwatch.Metric({
+      namespace: ovaraCustomMetricsNamespace,
+      metricName: dbtRunnerKestoMetricName,
+      period: cdk.Duration.minutes(5),
+      unit: cloudwatch.Unit.NONE,
+      statistic: cloudwatch.Stats.SUM,
+    });
+
+    new logs.MetricFilter(this, `${config.environment}-dbtRunnerKestMetricFilter`, {
+      filterPattern: logs.FilterPattern.spaceDelimited('text1', 'text2', 'kesto', 'text3')
+        .whereString('text1', '=', 'Ajon')
+        .whereString('text2', '=', 'kesto')
+        .whereString('text3', '=', 's'),
+      logGroup: dbtTaskLogGroup,
+      metricName: dbtRunnerKestoMetricName,
+      metricNamespace: ovaraCustomMetricsNamespace,
+      metricValue: '$kesto',
+    });
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },
