@@ -264,7 +264,7 @@ export class EcsStack extends cdk.Stack {
       namespace: ovaraCustomMetricsNamespace,
       metricName: dbtRunnerKestoMetricName,
       period: cdk.Duration.minutes(5),
-      unit: cloudwatch.Unit.NONE,
+      unit: cloudwatch.Unit.SECONDS,
       statistic: cloudwatch.Stats.SUM,
     });
 
