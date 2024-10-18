@@ -62,19 +62,19 @@ export const tiedostot: Tiedostot = {
     batchSize: 100000,
   },
   organisaatio_organisaatio: {
-    lampiKey: 'fulldump/organisaatio/v2/json/organisaatio.json',
+    lampiKey: 'fulldump/organisaatio/v3/json/organisaatio.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatio__{}__{}_{}.json',
     batchSize: 50000,
     intervalHours: 6,
   },
   organisaatio_organisaatiosuhde: {
-    lampiKey: 'fulldump/organisaatio/v2/json/organisaatiosuhde.json',
+    lampiKey: 'fulldump/organisaatio/v3/json/organisaatiosuhde.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatiosuhde__{}__{}_{}.json',
     batchSize: 5000,
     intervalHours: 6,
   },
   organisaatio_osoite: {
-    lampiKey: 'fulldump/organisaatio/v2/json/osoite.json',
+    lampiKey: 'fulldump/organisaatio/v3/json/osoite.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_osoite__{}__{}_{}.json',
     batchSize: 50000,
     intervalHours: 6,
