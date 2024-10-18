@@ -8,9 +8,11 @@ on:
         required: true
         type: string
       environment:
-        description: 'Environment which to deploy to (testi/tuotanto)'
-        required: true
-        type: string
+        type: choice
+        description: 'Environment which to deploy to'
+        options:
+          - testi
+          - tuotanto
   workflow_dispatch:
     inputs:
       image-tag:
@@ -18,9 +20,11 @@ on:
         required: true
         type: string
       environment:
-        description: 'Environment which to deploy to (testi/tuotanto)'
-        required: true
-        type: string
+        type: choice
+        description: 'Environment which to deploy to'
+        options:
+          - testi
+          - tuotanto
 
 permissions:
   id-token: write
