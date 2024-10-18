@@ -100,7 +100,8 @@ export const tiedostotyyppiByLampiKey = (lampiKey: string): string => {
   return tiedostotyyppi;
 };
 
-const disabledLampiKeys = ['fulldump/oppijanumerorekisteri/v2/json/henkilo.json'];
+//const disabledLampiKeys: string[] = ['fulldump/oppijanumerorekisteri/v2/json/henkilo.json'];
+const disabledLampiKeys: Array<string> = [];
 
 export const lampiKeyExists = (lampiKey: string) => {
   if (disabledLampiKeys.includes(lampiKey)) return false;
