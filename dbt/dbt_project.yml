@@ -31,7 +31,10 @@ models:
         - columns: ['dw_metadata_stg_stored_at']
       +docs:
         node_color: "#00008b"
-
+      +pre-hook:
+        - "{{ stg_start() }}"
+      +post-hook:
+        - "{{ stg_end() }}"
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
