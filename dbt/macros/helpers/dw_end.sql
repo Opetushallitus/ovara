@@ -15,6 +15,6 @@ using data as s
 when matched
 	then update set start_time=s.start_time
 when not matched
-then insert values (model,raw_table,start_time)
+then insert values (model,raw_table,start_time,false)
 {% endif %}
 {%- endmacro %}
