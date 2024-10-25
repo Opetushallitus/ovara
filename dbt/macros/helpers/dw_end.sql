@@ -1,4 +1,4 @@
-{% macro stg_end() -%}
+{% macro dw_end() -%}
 {%- if target.name == 'prod' %}
 with data as (
     select
@@ -6,7 +6,7 @@ with data as (
         replace(regexp_replace(split_part(model, '.', 3),'stg_',''),'"','') as raw_table,
         start_time
         from raw.dbt_runs dr
-    where model = '{{ this }}'
+    where model = replace ('{{ this }}','dw','stg')
 )
 
 merge into raw.completed_dbt_runs as t
