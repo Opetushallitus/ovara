@@ -1,6 +1,6 @@
 {% macro tempdata_cleanup() -%}
 {%- if target.name == 'prod' %}
-    {% set query = 'select raw_table from raw.completed_dbt_runs' %}
+    {% set query = 'select raw_table from raw.completed_dbt_runs where execute' %}
     {% set tables = run_query(query) %}
     {% set tables_list = tables.rows %}
     {% for row in tables_list %}
