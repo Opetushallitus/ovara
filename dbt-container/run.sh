@@ -21,4 +21,6 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
+dbt run-operation tempdata_cleanup --target=prod
+
 exit 0
