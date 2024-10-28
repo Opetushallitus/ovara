@@ -15,7 +15,7 @@
         {% set sql = 'vacuum full stg.stg_'+table %}
         {% do run_query(sql) %}
         {{ print ('Completed cleaning table '+table) }}
-        {{ print (--------------------------------------------------------------) }}
+        {{ print ('--------------------------------------------------------------') }}
     {% endfor %}
 {% endif %}
 {%- endmacro %}
