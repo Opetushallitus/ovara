@@ -1,6 +1,6 @@
 {% macro tempdata_cleanup() -%}
 {%- if target.name == 'prod' %}
-    {% set query = 'select raw_table from raw.completed_dbt_runs where execute' %}
+    {% set query = 'select raw_table from raw.completed_dbt_runs where execute order by 1' %}
     {% set tables = run_query(query) %}
     {% set tables_list = tables.rows %}
     {% for row in tables_list %}
@@ -14,8 +14,6 @@
         {% do run_query(sql) %}
         {% set sql = 'vacuum full stg.stg_'+table %}
         {% do run_query(sql) %}
-        {{ print ('Completed cleaning table '+table) }}
-        {{ print ('--------------------------------------------------------------') }}
     {% endfor %}
 {% endif %}
 {%- endmacro %}
