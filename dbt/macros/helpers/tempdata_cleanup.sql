@@ -3,6 +3,7 @@
     {% set query = 'select raw_table from raw.completed_dbt_runs where execute order by 1' %}
     {% set tables = run_query(query) %}
     {% set tables_list = tables.rows %}
+    {{ print ('----------------------------------------------------------') }}
     {% for row in tables_list %}
         {% set table = row[0] %}
         {{ print ('Cleaning table '+table) }}
@@ -15,5 +16,6 @@
         {% set sql = 'vacuum full stg.stg_'+table %}
         {% do run_query(sql) %}
     {% endfor %}
+{{ print ('Cleaning completed') }}
 {% endif %}
 {%- endmacro %}
