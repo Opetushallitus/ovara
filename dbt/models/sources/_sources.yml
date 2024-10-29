@@ -35,3 +35,7 @@ sources:
       description: Valintarekisterin ilmoittautumistietoja
     - name: valintarekisteri_vastaanotto
       description: Valintarekisterin vastaanottotietoja
+    - name: completed_dbt_runs
+      description: |
+        Sisältää jokaiselle tiedostolle tiedon koska viimeisin dw-ajo on mennyt tuotannossa onnistuneesti läpi.
+        Raw- ja stg-kerroksista voidaan poistaa kaikki rivit jotka ovat tätä aikaleimaa vanhempaa

@@ -21,4 +21,8 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
+start=$(date +%s)
+dbt run-operation tempdata_cleanup --target=prod
+echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
+
 exit 0

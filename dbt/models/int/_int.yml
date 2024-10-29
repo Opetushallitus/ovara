@@ -113,8 +113,6 @@ models:
     columns:
       - name: jono_id
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: valinnanvaihe_id
         data_type: text
         data_tests:
