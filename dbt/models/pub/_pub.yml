@@ -3,8 +3,7 @@ models:
     description: Sisältää aktiiviset hakutoiveet
     columns:
       - name: hakutoive_id
-        description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja
-          hakukohde_oid
+        description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
@@ -85,18 +84,13 @@ models:
       - name: pohjakoulutuskoodit
         data_type: jsonb
         description: >
-          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat
-          tälle hakukohteelle määritettyjä. Muoto on jsonb-array koska koodeja
-          voi olla useampia
+          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat tälle hakukohteelle määritettyjä. Muoto on jsonb-array koska koodeja voi olla useampia
       - name: hakuajat
         description: >
-          Kentässä on kaikki hakukohteen hakuajat jsonb-muotoisena. Jos
-          hakukohteella on määritelty "käytetään haun aikataulua" on haun
-          hakuaikoja käytetty, muuten hakukohteelle määritetyt hakuajat
+          Kentässä on kaikki hakukohteen hakuajat jsonb-muotoisena. Jos hakukohteella on määritelty "käytetään haun aikataulua" on haun hakuaikoja käytetty, muuten hakukohteelle määritetyt hakuajat
         data_type: jsonb
       - name: kaytetaan_haun_aikataulua
-        description: Jos tässä kentässä on arvo true, niin hakukohteen hakuaikoina
-          käytetään haun hakuaikoja.
+        description: Jos tässä kentässä on arvo true, niin hakukohteen hakuaikoina käytetään haun hakuaikoja.
         data_type: boolean
   - name: pub_dim_haku
     description: Hakujen tietoja
@@ -144,10 +138,7 @@ models:
         description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
   - name: pub_dim_koulutus
     description: >
-      Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on
-      useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
-      Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on
-      useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
+      Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta. Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
     columns:
       - name: koulutus_oid
         description: Koulutuksen oid
@@ -170,15 +161,13 @@ models:
         data_type: text
         description: koulutuksen tila
       - name: tarjoajat
-        description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle
-          koulutukselle,jsonb array-muotoisena
+        description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle koulutukselle,jsonb array-muotoisena
         data_type: jsonb
       - name: kielivalinta
         description: kaikki kielet joilla koulutus järjestetään
         data_type: jsonb
       - name: opintojenlaajuus
-        description: Opintojen laajuus. Jos on laajuus määritelty näytetään se arvo,
-          muuten näytetään min - max arvot
+        description: Opintojen laajuus. Jos on laajuus määritelty näytetään se arvo, muuten näytetään min - max arvot
         data_type: text
       - name: laajuusyksikko_nimi
         data_type: jsonb
@@ -187,16 +176,13 @@ models:
         description: Kaikki koulutuksen koulutuskoodit järjestyksessä
         data_type: jsonb
       - name: alempi_kk_aste
-        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen
-          koulutuskoodeilta alkaa merkillä 6
+        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 6
         data_type: integer
       - name: ylempi_kk_aste
-        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen
-          koulutuskoodeilta alkaa merkillä 7
+        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 7
         data_type: integer
       - name: koulutus_koodi
-        description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on
-          haettu
+        description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
         data_type: text
       - name: okmohjauksenala
         data_type: integer
@@ -217,16 +203,13 @@ models:
         description: Kaikki koulutuksen koulutuskoodit järjestyksessä
         data_type: jsonb
       - name: alempi_kk_aste
-        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen
-          koulutuskoodeilta alkaa merkillä 6
+        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 6
         data_type: integer
       - name: ylempi_kk_aste
-        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen
-          koulutuskoodeilta alkaa merkillä 7
+        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 7
         data_type: integer
       - name: koulutus_koodi
-        description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on
-          haettu
+        description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
         data_type: text
       - name: okmohjauksenala
         data_type: integer
@@ -291,6 +274,10 @@ models:
       - name: suunniteltukestokuukaudet
         description: Koulutuksen suunniteltu kesto kuukausissa
         data_type: integer
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: koulutuksen_alkamiskausityyppi
+        data_type: text
   - name: pub_fct_hakemus
     description: Hakemusten tietoja
     columns:
@@ -332,28 +319,27 @@ models:
               pk_table_name: ref('pub_dim_hakukohde')
               pk_column_name: hakukohde_oid
   - name: pub_dim_henkilo
-    description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu
-      sekä Atarusta että ONR:stä
+    description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
     columns:
       - name: henkilo_hakemus_id
         description: yksilöivä tunniste, hashattu yhdistelmä henkilöoid, ja hakemus_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: hakemus_oid
         description: hakemuksen tunniste
         data_type: text
         data_tests:
           - not_null
-# tämä foreign key ei vielä toimi koska vanhat hakemukset puuttuvat järjestelmästä
-#          - dbt_constraints.foreign_key:
-#              pk_table_name: ref('pub_fct_hakemus')
-#              pk_column_name: hakemus_oid
+      # tämä foreign key ei vielä toimi koska vanhat hakemukset puuttuvat järjestelmästä
+      #          - dbt_constraints.foreign_key:
+      #              pk_table_name: ref('pub_fct_hakemus')
+      #              pk_column_name: hakemus_oid
       - name: etuminet
         data_type: text
       - name: sukunimi
@@ -389,10 +375,8 @@ models:
       - name: sahkoinenviestintalupa
         data_type: boolean
       - name: kansalaisuus
-        description: Priorisoitu kansalaisuus jos henkilöllä on useampi kansalaisuus.
-          järjestys on Suomi, EU/ETA, muut
+        description: Priorisoitu kansalaisuus jos henkilöllä on useampi kansalaisuus. järjestys on Suomi, EU/ETA, muut
         data_type: text
       - name: kansalaisuusluokka
-        description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 =
-          EU/ETA, 3 = muut"
+        description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 = EU/ETA, 3 = muut"
         data_type: integer

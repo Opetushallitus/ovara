@@ -29,6 +29,7 @@ int as (
         kaus.koodinimi as kausi_nimi,
         coalesce(tote.koulutuksen_alkamisvuosi, date_part('year', tote.koulutuksenalkamispaivamaara))::int
         as koulutuksen_alkamisvuosi,
+        tote.alkamiskausityyppi as koulutuksen_alkamiskausityyppi,
         tote.suunniteltukestovuodet,
         tote.suunniteltukestokuukaudet
     from toteutus as tote
