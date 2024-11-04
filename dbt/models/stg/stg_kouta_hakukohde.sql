@@ -42,6 +42,7 @@ final as (
         as valintaperusteenValintakokeidenLisatilaisuudet,
         (data -> 'metadata' -> 'kynnysehto')::jsonb as kynnysehto,
         (data -> 'metadata' ->> 'kaytetaanHaunAlkamiskautta')::boolean as kaytetaanHaunAlkamiskautta,
+        (data -> 'metadata' -> 'koulutuksenAlkamiskausi')::jsonb as koulutuksenAlkamiskausi,
         (data -> 'metadata' -> 'aloituspaikat' ->> 'lukumaara')::int as aloituspaikat,
         (data -> 'metadata' -> 'aloituspaikat' ->> 'ensikertalaisille')::int as aloituspaikat_ensikertalaisille,
         (data -> 'metadata' -> 'aloituspaikat' -> 'kuvaus')::jsonb as aloituspaikat_kuvaus,

@@ -32,20 +32,7 @@ final as (
         data -> 'metadata' -> 'opetus' ->> 'maksullisuustyyppi'::varchar as maksullisuustyyppi,
         (data -> 'metadata' -> 'opetus' -> 'maksullisuusKuvaus')::jsonb as maksullisuusKuvaus,
         (data -> 'metadata' -> 'opetus' ->> 'maksunMaara')::float as maksunMaara,
-        data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
-        ->> 'alkamiskausityyppi'::varchar as alkamiskausityyppi,
-        (
-            data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
-            -> 'henkilokohtaisenSuunnitelmanLisatiedot'
-        )::jsonb as henkilokohtaisenSuunnitelmanLisatiedot,
-        data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi'
-        ->> 'koulutuksenAlkamiskausiKoodiUri'::varchar as koulutuksenAlkamiskausiKoodiUri,
-        (
-            data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamisvuosi'
-        )::int as koulutuksenAlkamisvuosi,
-        (
-            data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamispaivamaara'
-        )::timestamptz as koulutuksenAlkamispaivamaara,
+        (data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi')::jsonb as koulutuksenAlkamiskausi,
         (data -> 'metadata' -> 'opetus' -> 'lisatiedot')::jsonb as lisatiedot,
         (data -> 'metadata' -> 'opetus' ->> 'onkoApuraha')::boolean as onkoApuraha,
         (data -> 'metadata' -> 'opetus' ->> 'suunniteltuKestoVuodet')::int as suunniteltuKestoVuodet,

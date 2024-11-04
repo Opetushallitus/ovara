@@ -33,10 +33,9 @@ final as (
         ) as toteutus_nimi,
         koulutusoid as koulutus_oid,
         organisaatiooid as organisaatio_oid,
-        tyyppi as koulutustyyppi,
-        koulutuksenalkamisvuosi::int as koulutuksen_alkamisvuosi,
+
         {{ dbt_utils.star(from=ref('dw_kouta_toteutus'),
-            except=['nimi_fi','nimi_sv','nimi_en','koulutusoid','organisaatiooid','tyyppi','koulutuksenalkamisvuosi','oid']) }}
+            except=['nimi_fi','nimi_sv','nimi_en','koulutusoid','organisaatiooid','oid']) }}
 
     from int
 )

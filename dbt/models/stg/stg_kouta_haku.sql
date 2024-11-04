@@ -33,12 +33,7 @@ final as (
         (data -> 'metadata' -> 'yhteyshenkilot')::jsonb as yhteyshenkilot,
         (data -> 'metadata' -> 'tulevaisuudenAikataulu')::jsonb as tulevaisuudenAikataulu,
         data -> 'metadata' ->> 'isMuokkaajaOphVirkailija'::varchar as isMuokkaajaOphVirkailija,
-        data -> 'metadata' -> 'koulutuksenAlkamiskausi' ->> 'alkamiskausityyppi'::varchar as alkamiskausityyppi,
-        (data -> 'metadata' -> 'koulutuksenAlkamiskausi' -> 'henkilokohtaisenSuunnitelmanLisatiedot')::jsonb
-        as henkilokohtaisenSuunnitelmanLisatiedot,
-        data -> 'metadata' -> 'koulutuksenAlkamiskausi' -> 'koulutuksenAlkamiskausiKoodiUri'::varchar
-        as koulutuksenAlkamiskausiKoodiUri,
-        (data -> 'metadata' -> 'koulutuksenAlkamiskausi' ->> 'koulutuksenAlkamisvuosi')::int as koulutuksenAlkamisvuosi,
+        (data -> 'metadata' -> 'koulutuksenAlkamiskausi')::jsonb as koulutuksenAlkamiskausi,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         (data -> 'hakuajat')::jsonb as hakuajat,
         data ->> 'muokkaaja' as muokkaaja,
