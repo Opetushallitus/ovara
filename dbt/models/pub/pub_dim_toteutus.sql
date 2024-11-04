@@ -12,28 +12,59 @@ with toteutus as (
     select * from {{ ref('int_kouta_toteutus') }}
 ),
 
-kausi_koodi as (
-    select * from {{ ref('pub_dim_koodisto_kausi') }}
-),
-
 int as (
     select
-        tote.toteutus_oid,
-        tote.toteutus_nimi,
-        tote.tunniste as ulkoinen_tunniste,
-        tote.tila,
-        tote.organisaatio_oid,
-        tote.koulutus_oid,
-        tote.koulutuksenalkamiskausikoodiuri,
-        kaus.koodiarvo as kausi_koodi,
-        kaus.koodinimi as kausi_nimi,
-        coalesce(tote.koulutuksen_alkamisvuosi, date_part('year', tote.koulutuksenalkamispaivamaara))::int
-        as koulutuksen_alkamisvuosi,
-        tote.alkamiskausityyppi as koulutuksen_alkamiskausityyppi,
-        tote.suunniteltukestovuodet,
-        tote.suunniteltukestokuukaudet
-    from toteutus as tote
-    left join kausi_koodi as kaus on tote.koulutuksenalkamiskausikoodiuri = kaus.versioitu_koodiuri
+        toteutus_oid,
+        toteutus_nimi,
+        tunniste as ulkoinen_tunniste,
+        tila,
+        organisaatio_oid,
+        koulutus_oid,
+        koulutuksenAlkamiskausi as koulutuksen_alkamiskausi,
+        suunniteltukestovuodet,
+        suunniteltukestokuukaudet,
+        koulutuksenalkamiskausi ->> 'alkamiskausityyppi' as koulutuksenalkamiskausityyppi,
+        koulutuksenalkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri' as koulutuksenalkamiskausikoodiuri,
+        (koulutuksenalkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksenalkamisvuosi,
+        (koulutuksenalkamiskausi ->> 'koulutuksenAlkamispaivamaara')::date as koulutuksenalkamispaivamaara,
+        koulutuksenalkamiskausi ->> 'henkilokohtaisenSuunnitelmanLisatiedot' as henkilokohtaisensunnitelmanlisatiedot
+    from toteutus
+),
+
+step2 as (
+    select
+        *,
+        case
+            when koulutuksenalkamiskausityyppi = 'alkamiskausi ja -vuosi' then koulutuksenalkamiskausikoodiuri
+            when koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
+                and date_part('month',koulutuksenalkamispaivamaara) <= 6 then 'kausi_k#1'
+                        when koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
+                and date_part('month',koulutuksenalkamispaivamaara) >= 6 then 'kausi_s#1'
+        end as koulutuksen_alkamiskausi_koodiuri,
+        case
+            when koulutuksenalkamiskausityyppi = 'alkamiskausi ja -vuosi' then koulutuksenalkamisvuosi
+            when koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta' then date_part('year',koulutuksenalkamispaivamaara)
+        end as koulutuksen_alkamisvuosi,
+        henkilokohtaisensunnitelmanlisatiedot as henkilokohtaisen_sunnitelman_lisatiedot
+    from int
+),
+
+final as (
+    select
+        toteutus_oid,
+        toteutus_nimi,
+        ulkoinen_tunniste,
+        tila,
+        organisaatio_oid,
+        koulutus_oid,
+        koulutuksen_alkamiskausi,
+        suunniteltukestovuodet,
+        suunniteltukestokuukaudet,
+        koulutuksenalkamiskausityyppi as koulutuksen_alkamiskausi_tyyppi,
+        koulutuksen_alkamiskausi_koodiuri,
+        koulutuksen_alkamisvuosi,
+        henkilokohtaisen_sunnitelman_lisatiedot
+    from step2
 )
 
-select * from int
+select * from final

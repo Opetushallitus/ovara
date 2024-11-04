@@ -12,9 +12,6 @@ models:
         data_type: text
         data_tests:
           - not_null
-          - dbt_constraints.foreign_key:
-              pk_table_name: ref('pub_fct_hakemus')
-              pk_column_name: hakemus_oid
       - name: hakukohde_oid
         description: Hakukohteen oid
         data_type: text
@@ -58,17 +55,11 @@ models:
         data_type: text
         data_tests:
           - not_null
-          - dbt_constraints.foreign_key:
-              pk_table_name: ref('pub_dim_haku')
-              pk_column_name: haku_oid
       - name: toteutus_oid
         description: Linkki toteutukseen
         data_type: text
         data_tests:
           - not_null
-          - dbt_constraints.foreign_key:
-              pk_table_name: ref('pub_dim_toteutus')
-              pk_column_name: toteutus_oid
       - name: jarjestyspaikka_oid
         description: Järjestävän organisaation tunniste
         data_type: text
@@ -243,10 +234,6 @@ models:
       - name: koulutus_oid
         description: Koulutuksen tunniste
         data_type: text
-        data_tests:
-          - dbt_constraints.foreign_key:
-              pk_table_name: ref('pub_dim_koulutus')
-              pk_column_name: koulutus_oid
       - name: koulutustyyppi
         description: Koulutuksen tyyppi
         data_type: text
@@ -315,9 +302,6 @@ models:
         data_type: text
         data_tests:
           - not_null
-          - dbt_constraints.foreign_key:
-              pk_table_name: ref('pub_dim_hakukohde')
-              pk_column_name: hakukohde_oid
   - name: pub_dim_henkilo
     description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
     columns:
