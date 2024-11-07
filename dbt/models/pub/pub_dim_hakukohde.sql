@@ -59,7 +59,9 @@ int as (
         end as tutkinnon_taso_sykli,
         coalesce(
             hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksenalkamiskausi, tote.koulutuksen_alkamiskausi))
-        ) as koulutuksen_alkamiskausi
+        ) as koulutuksen_alkamiskausi,
+        hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
+        coalesce(hako.jarjestaaurheilijanammkoulutusta,false) as jarjestaa_urheilijan_ammkoulutusta
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -106,7 +108,9 @@ final as (
             when koulutuksen_alkamiskausi_tyyppi = 'alkamiskausi ja -vuosi' then koulutuksen_alkamisvuosi
             when koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta' then date_part('year',koulutuksen_alkamispaivamaara)
         end as koulutuksen_alkamisvuosi,
-        henkilokohtaisen_sunnitelman_lisatiedot
+        henkilokohtaisen_sunnitelman_lisatiedot,
+        toinen_aste_onko_kaksoistutkinto,
+        jarjestaa_urheilijan_ammkoulutusta
     from step2
 )
 
