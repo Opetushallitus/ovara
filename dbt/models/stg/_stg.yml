@@ -1,7 +1,6 @@
 models:
   - name: stg_valintapiste_service_pistetieto
-    description: Tämä taulu sisältää valintakokeiden pisteet. Taulussa on yksi rivi
-      per hakemus ja pääsykoe.
+    description: Tämä taulu sisältää valintakokeiden pisteet. Taulussa on yksi rivi per hakemus ja pääsykoe.
     columns:
       - name: valintakoe_hakemus_id
         data_type: text
@@ -81,8 +80,7 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: Hetki jolloin tiedot poimittiin lähdejärjestelmästä. Tässä tiedossa
-          ei ole mukana datan muokkaushetkeä
+        description: Hetki jolloin tiedot poimittiin lähdejärjestelmästä. Tässä tiedossa ei ole mukana datan muokkaushetkeä
         data_tests:
           - not_null
         data_type: timestamp with time zone
@@ -108,7 +106,7 @@ models:
         data_type: text
         description: ""
         data_tests:
-        - not_null
+          - not_null
       - name: komo
         description: ""
         data_type: text
@@ -131,12 +129,10 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: poistettu
         description: ""
         data_type: boolean
@@ -156,7 +152,7 @@ models:
         data_type: text
         description: ""
         data_tests:
-        - not_null
+          - not_null
       - name: suoritus
         description: ""
         data_type: text
@@ -176,12 +172,10 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: deleted
         description: ""
         data_type: boolean
@@ -227,12 +221,10 @@ models:
         description: ""
         data_type: timestamp with time zone
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: poistettu
         description: ""
         data_type: boolean
@@ -266,12 +258,10 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: poistettu
         description: ""
         data_type: boolean
@@ -289,8 +279,7 @@ models:
         data_tests:
           - not_null
       - name: isensikertalainen
-        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä
-          menettämisenPeruste.
+        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä menettämisenPeruste.
         data_type: boolean
       - name: menettamisenperuste
         description: ""
@@ -322,7 +311,7 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -458,7 +447,7 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -493,7 +482,7 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
@@ -510,15 +499,15 @@ models:
       - name: vastaanotto_id
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: hakukohde_oid
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: henkilo_oid
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: ilmoittaja
         data_type: text
       - name: selite
@@ -530,7 +519,45 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
         data_tests:
-        - not_null
+          - not_null
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+  - name: stg_sure_harkinnanvaraisuudet
+    columns:
+      - name: hakemusoid
+        data_type: text
+      - name: hakutoiveet
+        data_type: json
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+  - name: stg_sure_proxysuoritukset
+    columns:
+      - name: hakemusoid
+        data_type: text
+      - name: hakuoid
+        data_type: text
+      - name: henkilooid
+        data_type: text
+      - name: pohjakoulutus
+        data_type: text
+      - name: keyvalues
+        data_type: jsonb
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at

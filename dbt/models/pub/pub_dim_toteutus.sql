@@ -20,7 +20,7 @@ int as (
         tila,
         organisaatio_oid,
         koulutus_oid,
-        koulutuksenAlkamiskausi as koulutuksen_alkamiskausi,
+        koulutuksenalkamiskausi as koulutuksen_alkamiskausi,
         suunniteltukestovuodet,
         suunniteltukestokuukaudet,
         koulutuksenalkamiskausi ->> 'alkamiskausityyppi' as koulutuksenalkamiskausityyppi,
@@ -36,14 +36,20 @@ step2 as (
         *,
         case
             when koulutuksenalkamiskausityyppi = 'alkamiskausi ja -vuosi' then koulutuksenalkamiskausikoodiuri
-            when koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
-                and date_part('month',koulutuksenalkamispaivamaara) <= 6 then 'kausi_k#1'
-                        when koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
-                and date_part('month',koulutuksenalkamispaivamaara) >= 6 then 'kausi_s#1'
+            when
+                koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
+                and date_part('month', koulutuksenalkamispaivamaara) <= 6 then 'kausi_k#1'
+            when
+                koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
+                and date_part('month', koulutuksenalkamispaivamaara) >= 6 then 'kausi_s#1'
         end as koulutuksen_alkamiskausi_koodiuri,
         case
-            when koulutuksenalkamiskausityyppi = 'alkamiskausi ja -vuosi' then koulutuksenalkamisvuosi
-            when koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta' then date_part('year',koulutuksenalkamispaivamaara)
+            when
+                koulutuksenalkamiskausityyppi = 'alkamiskausi ja -vuosi'
+                then koulutuksenalkamisvuosi
+            when
+                koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
+                then date_part('year', koulutuksenalkamispaivamaara)
         end as koulutuksen_alkamisvuosi,
         henkilokohtaisensunnitelmanlisatiedot as henkilokohtaisen_sunnitelman_lisatiedot
     from int

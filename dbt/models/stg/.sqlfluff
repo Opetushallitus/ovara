@@ -1,2 +1,2 @@
 [sqlfluff]
-exclude_rules = CP02
+exclude_rules = CP02,RF02

@@ -27,9 +27,7 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -82,9 +80,7 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -153,9 +149,7 @@ models:
         description: ""
         data_type: timestamp with time zone
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -206,8 +200,7 @@ models:
         data_tests:
           - not_null
       - name: isensikertalainen
-        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä
-          menettämisenPeruste.
+        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä menettämisenPeruste.
         data_type: boolean
       - name: menettamisenperuste
         description: ""
@@ -270,9 +263,7 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -306,3 +297,19 @@ models:
       - name: dw_metadata_dw_stored_at
         description: ""
         data_type: timestamp with time zone
+  - name: int_sure_harkinnanvaraisuudet
+    description: Tämä taulu sisältää harkinnanvaraisuuden tietoja
+    columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: harkinnanvaraisuude_syy
+        data_type: text
+  - name: int_sure_pohjakoulutus
+    description: Tämä taulu sisältää pohjakoulutustiedot
+    columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: pohjakoulutus
+        data_type: text

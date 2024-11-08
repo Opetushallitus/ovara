@@ -61,7 +61,7 @@ int as (
             hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksenalkamiskausi, tote.koulutuksen_alkamiskausi))
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
-        coalesce(hako.jarjestaaurheilijanammkoulutusta,false) as jarjestaa_urheilijan_ammkoulutusta
+        coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -99,14 +99,18 @@ final as (
         koulutuksen_alkamiskausi_tyyppi,
         case
             when koulutuksen_alkamiskausi_tyyppi = 'alkamiskausi ja -vuosi' then koulutuksen_alkamiskausi_koodiuri
-            when koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
-                and date_part('month',koulutuksen_alkamispaivamaara) <= 6 then 'kausi_k#1'
-                        when koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
-                and date_part('month',koulutuksen_alkamispaivamaara) >= 6 then 'kausi_s#1'
+            when
+                koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
+                and date_part('month', koulutuksen_alkamispaivamaara) <= 6 then 'kausi_k#1'
+            when
+                koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
+                and date_part('month', koulutuksen_alkamispaivamaara) >= 6 then 'kausi_s#1'
         end as koulutuksen_alkamiskausi_koodiuri,
         case
             when koulutuksen_alkamiskausi_tyyppi = 'alkamiskausi ja -vuosi' then koulutuksen_alkamisvuosi
-            when koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta' then date_part('year',koulutuksen_alkamispaivamaara)
+            when
+                koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
+                then date_part('year', koulutuksen_alkamispaivamaara)
         end as koulutuksen_alkamisvuosi,
         henkilokohtaisen_sunnitelman_lisatiedot,
         toinen_aste_onko_kaksoistutkinto,
@@ -115,5 +119,3 @@ final as (
 )
 
 select * from final
-
-
