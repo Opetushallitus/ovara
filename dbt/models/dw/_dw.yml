@@ -222,10 +222,7 @@ models:
     description: >-
       Valintaperusteiden tietoja
 
-      lähdejärjestelmästä ei löydy muokkausaikaleimaa, joten tässä käytetään
-      tiedoston luontihetkeä muokattu-aikaleimana. Tämä arvo voi olla
-      duplikaatti jos sama tiedosto luetaan useaan kertaan, joten tämä DW-malli
-      on erilainen.
+      lähdejärjestelmästä ei löydy muokkausaikaleimaa, joten tässä käytetään tiedoston luontihetkeä muokattu-aikaleimana. Tämä arvo voi olla duplikaatti jos sama tiedosto luetaan useaan kertaan, joten tämä DW-malli on erilainen.
     columns:
       - name: valinnanvaihe_id
         description: ""
@@ -269,9 +266,7 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: muokattu on tiedoston luontihetki, koska kannassa ei ole
-          muutostietoja. Tämä tarkoittaa sitä että tällä voin olla
-          duplikaattiarvoja (sama tiedosto luettu useampaan kertaan)
+        description: muokattu on tiedoston luontihetki, koska kannassa ei ole muutostietoja. Tämä tarkoittaa sitä että tällä voin olla duplikaattiarvoja (sama tiedosto luettu useampaan kertaan)
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -332,9 +327,7 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
       - name: deleted
         description: ""
@@ -402,9 +395,7 @@ models:
         description: ""
         data_type: boolean
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -594,9 +585,7 @@ models:
         description: ""
         data_type: timestamp with time zone
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -660,9 +649,7 @@ models:
         description: ""
         data_type: text
       - name: muokattu
-        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi
-          vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen
-          kanssa.
+        description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
         data_tests:
           - not_null
@@ -710,8 +697,7 @@ models:
         data_tests:
           - not_null
       - name: isensikertalainen
-        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä
-          menettämisenPeruste.
+        description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä menettämisenPeruste.
         data_type: boolean
       - name: menettamisenperuste
         description: ""
@@ -780,8 +766,7 @@ models:
     description: hakemusten valintakokeet purettu riveille
     columns:
       - name: osallistuminen_id
-        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen
-          id:stä
+        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen id:stä
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
@@ -1108,6 +1093,24 @@ models:
         data_type: text
       - name: arvo
         data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+  - name: dw_sure_harkinnanvaraisuudet
+    columns:
+      - name: hakemusoid
+        data_type: text
+      - name: hakutoiveet
+        data_type: json
       - name: dw_metadata_source_timestamp_at
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
