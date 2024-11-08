@@ -306,3 +306,10 @@ models:
         data_type: text
       - name: harkinnanvaraisuude_syy
         data_type: text
+  - name: int_sure_pohjakoulutus
+    description: Tämä taulu sisältää pohjakoulutustiedot
+    columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: pohjakoulutus
+        data_type: text
