@@ -7,9 +7,9 @@
     )
 }}
 
-with source as (
-    select * from {{ref('dw_sure_harkinnanvaraisuudet') }}
-),
+with source as ( -- noqa: PRS
+    select * from {{ ref('dw_sure_harkinnanvaraisuudet') }} -- noqa: PRS
+), -- noqa: PRS
 
 rows as (
      select
