@@ -13,7 +13,6 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 //import * as cr from 'aws-cdk-lib/custom-resources';
@@ -63,16 +62,6 @@ export class DatabaseStack extends cdk.Stack {
       allowAllOutbound: true,
     });
 
-    const rdsProxySecurityGroup = new ec2.SecurityGroup(
-      this,
-      `${config.environment}-ovaraAuroraRdsProxySecurityGroup`,
-      {
-        securityGroupName: `${config.environment}-ovara-aurora-rds-proxy`,
-        vpc: vpc,
-      }
-    );
-    rdsProxySecurityGroup.addIngressRule(rdsProxySecurityGroup, ec2.Port.tcp(5432));
-
     new cdk.CfnOutput(this, 'PostgresSecurityGroupId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-securitygroupid`,
       description: 'Postgres security group id',
@@ -114,7 +103,7 @@ export class DatabaseStack extends cdk.Stack {
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
-        securityGroups: [this.auroraSecurityGroup, rdsProxySecurityGroup],
+        securityGroups: [this.auroraSecurityGroup],
         credentials: {
           username: 'oph',
           password: cdk.SecretValue.ssmSecure(
@@ -154,34 +143,6 @@ export class DatabaseStack extends cdk.Stack {
       ttl: cdk.Duration.seconds(300),
     });
 
-    // RDS Proxy
-
-    const opintopolkuProxyUserSecret = new secretsmanager.Secret(
-      this,
-      `${config.environment}-ovara-aurora-cluster-opintopolku-proxy-secret`,
-      {
-        generateSecretString: {
-          secretStringTemplate: JSON.stringify({
-            username: 'opintopolku',
-          }),
-          generateStringKey: 'password',
-          excludePunctuation: true,
-          includeSpace: false,
-        },
-      }
-    );
-
-    const rdsProxy = auroraCluster.addProxy(`${config.environment}-OvaraAuroraRDSProxy`, {
-      secrets: [opintopolkuProxyUserSecret],
-      vpc: vpc,
-      vpcSubnets: {
-        subnets: vpc.privateSubnets,
-      },
-      debugLogging: true,
-      borrowTimeout: cdk.Duration.seconds(30),
-      securityGroups: [rdsProxySecurityGroup],
-    });
-
     // PrivateLink
 
     const privateLinkNlb = new elbv2.NetworkLoadBalancer(
@@ -195,7 +156,7 @@ export class DatabaseStack extends cdk.Stack {
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
-        securityGroups: [this.auroraSecurityGroup, rdsProxySecurityGroup],
+        securityGroups: [this.auroraSecurityGroup],
         enforceSecurityGroupInboundRulesOnPrivateLinkTraffic: false,
       }
     );
@@ -280,7 +241,7 @@ export class DatabaseStack extends cdk.Stack {
       'RDS_ENDPOINT',
       auroraCluster.clusterEndpoint.hostname
     );
-    //privateLinkNlbManagementLambda.addEnvironment('RDS_ENDPOINT', rdsProxy.endpoint);
+
     privateLinkNlbManagementLambda.addEnvironment(
       'RDS_PORT',
       auroraCluster.clusterEndpoint.port.toString()
