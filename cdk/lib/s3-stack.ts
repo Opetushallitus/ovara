@@ -205,7 +205,7 @@ export class S3Stack extends cdk.Stack {
         alarmName: `${config.environment}-siirtotiedostoQueueAlarm`,
         alarmDescription: `Alarm for ${siirtotiedostoQueue.queueName}`,
         metric: siirtotiedostoQueue.metricApproximateNumberOfMessagesVisible(),
-        threshold: 10,
+        threshold: 200,
         evaluationPeriods: 1,
         comparisonOperator:
           cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,

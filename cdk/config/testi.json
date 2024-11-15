@@ -5,8 +5,8 @@
     },
     "deletionProtection": false,
     "enablePerformanceInsights": true,
-    "iopsStorage": false,
-    "maxCapacity": 32,
+    "iopsStorage": true,
+    "maxCapacity": 16,
     "minCapacity": 2
   },
   "environment": "testi",
