@@ -133,7 +133,7 @@ export class EcsStack extends cdk.Stack {
         //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         schedule: schedule,
         securityGroups: [ecsSecurityGroup],
-        enabled: false,
+        enabled: true,
       }
     );
 
