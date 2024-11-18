@@ -145,6 +145,22 @@ export class DatabaseStack extends cdk.Stack {
 
     // PrivateLink
 
+    const privateLinkNlbSecurityGroup = new ec2.SecurityGroup(
+      this,
+      'PrivateLinkNlbsSecurityGroup',
+      {
+        securityGroupName: `${config.environment}-opiskelijavalinnanraportointi-privatelink-nlb`,
+        vpc: vpc,
+        allowAllOutbound: true,
+      }
+    );
+
+    this.auroraSecurityGroup.addIngressRule(
+      privateLinkNlbSecurityGroup,
+      ec2.Port.tcp(5432),
+      'DB sallittu PrivateLinkNlb:lta'
+    );
+
     const privateLinkNlb = new elbv2.NetworkLoadBalancer(
       this,
       `${config.environment}-rdsPrivateLinkNlb`,
@@ -156,7 +172,7 @@ export class DatabaseStack extends cdk.Stack {
         vpcSubnets: {
           subnets: vpc.privateSubnets,
         },
-        securityGroups: [this.auroraSecurityGroup],
+        securityGroups: [privateLinkNlbSecurityGroup],
         enforceSecurityGroupInboundRulesOnPrivateLinkTraffic: false,
       }
     );
