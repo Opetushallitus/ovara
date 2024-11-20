@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('ovara', 'sure_proxysuoritukset') }}
+    select * from {{ source('ovara', 'sure_proxysuoritus') }}
 
     {% if is_incremental() %}
         where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})

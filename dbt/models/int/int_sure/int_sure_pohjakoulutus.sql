@@ -8,7 +8,7 @@
 }}
 
 with raw as (
-    select * from {{ ref('dw_sure_proxysuoritukset') }} where pohjakoulutus is not null
+    select * from {{ ref('dw_sure_proxysuoritus') }} where pohjakoulutus is not null
 ),
 
 final as (
