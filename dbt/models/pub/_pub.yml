@@ -364,3 +364,32 @@ models:
       - name: kansalaisuusluokka
         description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 = EU/ETA, 3 = muut"
         data_type: integer
+  - name: pub_dim_organisaatio
+    description: Tämä taului sisältää organisaation tiedot
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        description: Organisaation oid
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        description: Organisaation lokalisoidut nimet
+        data_type: jsonb
+      - name: sijaintikunta
+        data_type: text
+      - name: sijaintikunta_nimi
+        data_type: jsonb
+      - name: opetuskielet
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: tila
+        data_type: text
+  - name: pub_dim_organisaatio_rakenne
+    description:
+      Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
+    columns:
+      - name: parent_oid
+        data_type: text
+      - name: child_oid
+        data_type: text
