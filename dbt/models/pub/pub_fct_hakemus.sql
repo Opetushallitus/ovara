@@ -1,6 +1,9 @@
 {{
   config(
-    materialized = 'table'
+    materialized = 'table',
+    indexes = [
+        {'columns':['haku_oid']}
+    ]
     )
 }}
 
@@ -23,3 +26,4 @@ int as (
 )
 
 select * from int
+order by haku_oid
