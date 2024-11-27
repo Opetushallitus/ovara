@@ -15,3 +15,4 @@ select
     parent_oid,
     child_oid
 from source
+order by 1,2

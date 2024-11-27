@@ -24,9 +24,19 @@ org (parent_oid, child_oid) as (
     	org2.organisaatio_oid as child_oid
     from organisaatio as org2
     inner join org as orga on orga.child_oid = org2.ylempi_organisaatio
+),
+
+final as (
+    select
+        parent_oid,
+        child_oid
+    from org
+    union
+    select
+	    organisaatio_oid as parent_oid,
+    	organisaatio_oid as child_oid
+    from organisaatio
 )
 
-select
-    parent_oid,
-    child_oid
-from org
+select * from final
+
