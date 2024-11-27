@@ -53,4 +53,3 @@ final as (
 )
 
 select * from final
-order by haku_oid

@@ -13,17 +13,17 @@ with recursive organisaatio as (
 
 org (parent_oid, child_oid) as (
     select
-    	ylempi_organisaatio as parent_oid,
-    	organisaatio_oid as child_oid
+        ylempi_organisaatio as parent_oid,
+        organisaatio_oid as child_oid
     from organisaatio
 
     union all
 
     select
-    	orga.parent_oid,
-    	org2.organisaatio_oid as child_oid
+        orga.parent_oid,
+        org2.organisaatio_oid as child_oid
     from organisaatio as org2
-    inner join org as orga on orga.child_oid = org2.ylempi_organisaatio
+    inner join org as orga on org2.ylempi_organisaatio = orga.child_oid
 ),
 
 final as (
@@ -33,10 +33,9 @@ final as (
     from org
     union
     select
-	    organisaatio_oid as parent_oid,
-    	organisaatio_oid as child_oid
+        organisaatio_oid as parent_oid,
+        organisaatio_oid as child_oid
     from organisaatio
 )
 
 select * from final
-
