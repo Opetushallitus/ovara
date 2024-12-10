@@ -147,7 +147,11 @@ exports.handler = async (event: APIGatewayProxyEventV2, context: Context) => {
       await dynamo.send(putCommand);
     }
   } else {
-    console.log(`Tuntematon tiedosto: ${lampiKey}`);
+    if (lampiFileHandlerActive) {
+      console.log(`Tuntematon tiedosto: ${lampiKey}`);
+    } else {
+      console.log(`Tiedostojen käsittely on poissa päältä`);
+    }
   }
 
   return {
