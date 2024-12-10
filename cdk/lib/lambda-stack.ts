@@ -456,6 +456,7 @@ export class LambdaStack extends cdk.Stack {
           environment: config.environment,
           lampiSiirtotiedostoQueueUrl: lampiSiirtotiedostoQueue.queueUrl,
           lampiAuthTokenSecretName: lampiAuthTokenSecretName,
+          lampiFileHandlerActive: config.lampiFileHandlerActive,
         },
         bundling: {
           commandHooks: {

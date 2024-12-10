@@ -10,5 +10,6 @@
   "vpc": {
     "maxAzs": 3,
     "netGateways": 1
-  }
+  },
+  "lampiFileHandlerActive": "false"
 }
