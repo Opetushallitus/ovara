@@ -18,6 +18,7 @@ export interface Config {
     minCapacity: number;
   };
   environment: string;
+  lampiFileHandlerActive: string;
   profile: string;
   publicHostedZone: string;
   siirtotiedostot: {
