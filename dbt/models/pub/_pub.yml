@@ -1,6 +1,9 @@
 models:
   - name: pub_dim_hakutoive
     description: Sisältää aktiiviset hakutoiveet
+    config:
+      contract:
+        enforced: true
     columns:
       - name: hakutoive_id
         description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
@@ -36,6 +39,9 @@ models:
         data_type: timestamp with time zone
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: hakukohde_oid
         data_type: text
@@ -44,7 +50,7 @@ models:
       - name: hakukohde_nimi
         description: Hakukohteen nimet
         data_type: jsonb
-      - name: externalid
+      - name: ulkoinen_tunniste
         description: Ulkoinen tunniste
         data_type: text
       - name: tila
@@ -72,19 +78,36 @@ models:
       - name: hakukohdekoodiuri
         description: hakukohteen koodi
         data_type: text
-      - name: pohjakoulutuskoodit
-        data_type: jsonb
-        description: >
-          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat tälle hakukohteelle määritettyjä. Muoto on jsonb-array koska koodeja voi olla useampia
       - name: hakuajat
-        description: >
+        description: >-
           Kentässä on kaikki hakukohteen hakuajat jsonb-muotoisena. Jos hakukohteella on määritelty "käytetään haun aikataulua" on haun hakuaikoja käytetty, muuten hakukohteelle määritetyt hakuajat
         data_type: jsonb
       - name: kaytetaan_haun_aikataulua
         description: Jos tässä kentässä on arvo true, niin hakukohteen hakuaikoina käytetään haun hakuaikoja.
         data_type: boolean
+      - name: on_valintakoe
+        data_type: boolean
+      - name: tutkinnon_taso_sykli
+        data_type: integer
+      - name: koulutuksen_alkamiskausi
+        data_type: jsonb
+      - name: koulutuksen_alkamiskausi_tyyppi
+        data_type: text
+      - name: koulutuksen_alkamiskausi_koodiuri
+        data_type: text
+      - name: koulutuksen_alkamisvuosi
+        data_type: double precision
+      - name: henkilokohtaisen_sunnitelman_lisatiedot
+        data_type: text
+      - name: toinen_aste_onko_kaksoistutkinto
+        data_type: boolean
+      - name: jarjestaa_urheilijan_ammkoulutusta
+        data_type: boolean
   - name: pub_dim_haku
     description: Hakujen tietoja
+    config:
+      contract:
+        enforced: true
     columns:
       - name: haku_oid
         description: Haun tunniste
@@ -94,7 +117,7 @@ models:
       - name: haku_nimi
         description: Kaikki haun nimet jsonb-objektina
         data_type: jsonb
-      - name: externalid
+      - name: ulkoinen_tunniste
         description: Ulkoinen tunniste
         data_type: text
       - name: tila
@@ -103,6 +126,8 @@ models:
       - name: hakutapakoodiuri
         description: Tieto hakutavasta koodiurina
         data_type: text
+      - name: hakuajat
+        data_type: jsonb
       - name: hakutapa_koodi
         description: Hakutavan koodi
         data_type: text
@@ -127,9 +152,14 @@ models:
       - name: kohdejoukontarkenne_nimi
         data_type: jsonb
         description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
+      - name: koulutuksenalkamiskausi
+        data_type: jsonb
   - name: pub_dim_koulutus
-    description: >
+    description: >-
       Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta. Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: koulutus_oid
         description: Koulutuksen oid
@@ -139,18 +169,18 @@ models:
       - name: koulutus_nimi
         description: Koulutuksen nimet
         data_type: jsonb
-      - name: organisaatio_oid
-        data_type: text
-        description: Omistavan organisaation oid
-      - name: externalid
+      - name: ulkoinen_tunniste
         description: Ulkoinen tunniste
         data_type: text
-      - name: koulutustyyppi
-        data_type: text
-        description: Koulutuksen tyyppi
       - name: tila
         data_type: text
         description: koulutuksen tila
+      - name: organisaatio_oid
+        data_type: text
+        description: Omistavan organisaation oid
+      - name: koulutustyyppi
+        data_type: text
+        description: Koulutuksen tyyppi
       - name: tarjoajat
         description: Kaikki organisaatiot jotka tarjoavat toteutuksen tälle koulutukselle,jsonb array-muotoisena
         data_type: jsonb
@@ -167,11 +197,11 @@ models:
         description: Kaikki koulutuksen koulutuskoodit järjestyksessä
         data_type: jsonb
       - name: alempi_kk_aste
-        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 6
-        data_type: integer
+        description: Alempi kk_aste on tosi jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 6
+        data_type: boolean
       - name: ylempi_kk_aste
-        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 7
-        data_type: integer
+        description: Ylempi kk_aste on tosi jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 7
+        data_type: boolean
       - name: koulutus_koodi
         description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
         data_type: text
@@ -188,37 +218,17 @@ models:
       - name: kansallinenkoulutusluokitus2016koulutusalataso3
         data_type: text
       - name: jatkotutkinto
-        desription: Jatkotutkinto on 1 jos ensimmäinen koulutuskoodi alkaa merkillä 8
-        data_type: integer
-      - name: koulutus_koodit
-        description: Kaikki koulutuksen koulutuskoodit järjestyksessä
-        data_type: jsonb
-      - name: alempi_kk_aste
-        description: Alempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 6
-        data_type: integer
-      - name: ylempi_kk_aste
-        description: Ylempi kk_aste on 1 jos vähintään yksi koulutuksen koulutuskoodeilta alkaa merkillä 7
-        data_type: integer
-      - name: koulutus_koodi
-        description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
-        data_type: text
-      - name: okmohjauksenala
-        data_type: integer
-      - name: kansallinenkoulutusluokitus2016koulutusastetaso1
-        data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusastetaso2
-        data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusalataso1
-        data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusalataso2
-        data_type: text
-      - name: kansallinenkoulutusluokitus2016koulutusalataso3
-        data_type: text
-      - name: jatkotutkinto
-        desription: Jatkotutkinto on 1 jos ensimmäinen koulutuskoodi alkaa merkillä 8
+        desription: Jatkotutkinto on tosi jos ensimmäinen koulutuskoodi alkaa merkillä 8
+        data_type: boolean
+      - name: laakis
+        data_type: boolean
+      - name: kk_tutkinnon_taso
         data_type: integer
   - name: pub_dim_toteutus
     description: Toteutuksen tietoja
+    config:
+      contract:
+        enforced: true
     columns:
       - name: toteutus_oid
         data_type: text
@@ -228,45 +238,38 @@ models:
       - name: toteutus_nimi
         description: Toteutuksen nimi kaikilla kielillä
         data_type: jsonb
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: tila
+        description: Toteutuksen tila
+        data_type: text
       - name: organisaatio_oid
         data_type: text
         description: Omistavan organisaation oid
       - name: koulutus_oid
         description: Koulutuksen tunniste
         data_type: text
-      - name: koulutustyyppi
-        description: Koulutuksen tyyppi
-        data_type: text
-      - name: tila
-        description: Toteutuksen tila
-        data_type: text
-      - name: tunniste
-        description: Ulkoinen tunniste
-        data_type: text
-      - name: koulutuksenalkamiskausikoodiuri
-        description: Koulutuksen alkamiskauden koodiuri
-        data_type: text
-      - name: kausi_koodi
-        description: Koulutuksen alkamiskauden koodi
-        data_type: text
-      - name: kausi_nimi
-        description: Koulutuksen alkamiskauden nimi
+      - name: koulutuksen_alkamiskausi
         data_type: jsonb
-      - name: koulutuksen_alkamisvuosi
-        data_type: int
-        description: Koulutuksen alkamisvuosi
       - name: suunniteltukestovuodet
         description: Koulutuksen suunniteltu kesto vuosissa
         data_type: integer
       - name: suunniteltukestokuukaudet
         description: Koulutuksen suunniteltu kesto kuukausissa
         data_type: integer
-      - name: ulkoinen_tunniste
+      - name: koulutuksen_alkamiskausi_tyyppi
         data_type: text
-      - name: koulutuksen_alkamiskausityyppi
+      - name: koulutuksen_alkamiskausi_koodiuri
+        data_type: text
+      - name: koulutuksen_alkamisvuosi
+        data_type: int
+      - name: henkilokohtaisen_sunnitelman_lisatiedot
         data_type: text
   - name: pub_fct_hakemus
     description: Hakemusten tietoja
+    config:
+      contract:
+        enforced: true
     columns:
       - name: hakemus_oid
         description: Hakemuksen tunniste
@@ -283,13 +286,18 @@ models:
         description: Saako hakemuksen hyväksyntä julkaista
         data_type: boolean
       - name: koulutusmarkkinointilupa
-        description: Salliiko hakij amarkkinoinnin
+        description: Salliiko hakija markkinoinnin
+        data_type: boolean
+      - name: sahkoinenviestintalupa
         data_type: boolean
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
+    config:
+      contract:
+        enforced: true
     columns:
       - name: hakukohderyhma_oid
         description: Hakukohderyhmän tunniste
@@ -304,6 +312,9 @@ models:
           - not_null
   - name: pub_dim_henkilo
     description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
+    config:
+      contract:
+        enforced: true
     columns:
       - name: henkilo_hakemus_id
         description: yksilöivä tunniste, hashattu yhdistelmä henkilöoid, ja hakemus_oid
@@ -366,6 +377,9 @@ models:
         data_type: integer
   - name: pub_dim_organisaatio
     description: Tämä taului sisältää organisaation tiedot
+    config:
+      contract:
+        enforced: true
     columns:
       - name: organisaatio_oid
         data_type: text
@@ -386,8 +400,10 @@ models:
       - name: tila
         data_type: text
   - name: pub_dim_organisaatio_rakenne
-    description:
-      Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
+    description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: parent_oid
         data_type: text

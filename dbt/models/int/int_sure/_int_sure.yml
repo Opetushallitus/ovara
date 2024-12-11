@@ -297,15 +297,6 @@ models:
       - name: dw_metadata_dw_stored_at
         description: ""
         data_type: timestamp with time zone
-  - name: int_sure_harkinnanvaraisuudet
-    description: Tämä taulu sisältää harkinnanvaraisuuden tietoja
-    columns:
-      - name: hakemus_oid
-        data_type: text
-      - name: hakukohde_oid
-        data_type: text
-      - name: harkinnanvaraisuude_syy
-        data_type: text
   - name: int_sure_pohjakoulutus
     description: Tämä taulu sisältää pohjakoulutustiedot
     columns:

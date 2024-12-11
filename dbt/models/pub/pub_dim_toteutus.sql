@@ -46,10 +46,10 @@ step2 as (
         case
             when
                 koulutuksenalkamiskausityyppi = 'alkamiskausi ja -vuosi'
-                then koulutuksenalkamisvuosi
+                then koulutuksenalkamisvuosi::int
             when
                 koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
-                then date_part('year', koulutuksenalkamispaivamaara)
+                then date_part('year', koulutuksenalkamispaivamaara)::int
         end as koulutuksen_alkamisvuosi,
         henkilokohtaisensunnitelmanlisatiedot as henkilokohtaisen_sunnitelman_lisatiedot
     from int
