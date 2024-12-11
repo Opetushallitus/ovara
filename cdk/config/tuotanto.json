@@ -7,6 +7,10 @@
   "environment": "tuotanto",
   "profile": "oph-opiskelijavalinnan-raportointi-prod",
   "publicHostedZone": "ovara.opintopolku.fi",
+  "siirtotiedostot": {
+    "lampiBucketName": "oph-lampi-prod",
+    "ovaraBucketName": "tuotanto-siirtotiedostot"
+  },
   "vpc": {
     "maxAzs": 3,
     "netGateways": 1
