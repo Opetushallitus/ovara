@@ -179,9 +179,9 @@ export class DatabaseStack extends cdk.Stack {
 
     const privateLinkTargetGroup = new elbv2.NetworkTargetGroup(
       this,
-      `${config.environment}-rdsPrivateLinkTargetGroup`,
+      `${config.environment}-rdsPrivateLinkTG`,
       {
-        targetGroupName: `${config.environment}-rdsPrivateLinkTargetGroup`,
+        targetGroupName: `${config.environment}-rdsPrivateLinkTG`,
         vpc: vpc,
         port: auroraCluster.clusterEndpoint.port,
         protocol: elbv2.Protocol.TCP,

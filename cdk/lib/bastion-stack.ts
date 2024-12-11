@@ -150,9 +150,9 @@ export class BastionStack extends cdk.Stack {
 
     const bastionNetworkTargetGroup = new elb.NetworkTargetGroup(
       this,
-      `${config.environment}-bastion-nlb-target-group`,
+      `${config.environment}-bastion-nlb-tg`,
       {
-        targetGroupName: `${config.environment}-bastion-nlb-target-group`,
+        targetGroupName: `${config.environment}-bastion-nlb-tg`,
         port: 22,
         protocol: elb.Protocol.TCP_UDP,
         connectionTermination: true,
@@ -163,7 +163,7 @@ export class BastionStack extends cdk.Stack {
     bastionAutoScalingGroup.attachToNetworkTargetGroup(bastionNetworkTargetGroup);
 
     nlbListener.addTargetGroups(
-      `${config.environment}-bastion-nlb-target-groups`,
+      `${config.environment}-bastion-nlb-tgs`,
       bastionNetworkTargetGroup
     );
 
