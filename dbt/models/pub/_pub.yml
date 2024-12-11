@@ -36,6 +36,9 @@ models:
         data_type: timestamp with time zone
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
+    config:
+      contract:
+        enforced: true
     columns:
       - name: hakukohde_oid
         data_type: text
@@ -44,7 +47,7 @@ models:
       - name: hakukohde_nimi
         description: Hakukohteen nimet
         data_type: jsonb
-      - name: externalid
+      - name: ulkoinen_tunniste
         description: Ulkoinen tunniste
         data_type: text
       - name: tila
@@ -72,16 +75,30 @@ models:
       - name: hakukohdekoodiuri
         description: hakukohteen koodi
         data_type: text
-      - name: pohjakoulutuskoodit
-        data_type: jsonb
-        description: >
-          Tähän sarakkeeseen on haettu kaikki pohjakoulutuskoodit jotka ovat tälle hakukohteelle määritettyjä. Muoto on jsonb-array koska koodeja voi olla useampia
       - name: hakuajat
-        description: >
+        description: >-
           Kentässä on kaikki hakukohteen hakuajat jsonb-muotoisena. Jos hakukohteella on määritelty "käytetään haun aikataulua" on haun hakuaikoja käytetty, muuten hakukohteelle määritetyt hakuajat
         data_type: jsonb
       - name: kaytetaan_haun_aikataulua
         description: Jos tässä kentässä on arvo true, niin hakukohteen hakuaikoina käytetään haun hakuaikoja.
+        data_type: boolean
+      - name: on_valintakoe
+        data_type: boolean
+      - name: tutkinnon_taso_sykli
+        data_type: integer
+      - name: koulutuksen_alkamiskausi
+        data_type: jsonb
+      - name: koulutuksen_alkamiskausi_tyyppi
+        data_type: text
+      - name: koulutuksen_alkamiskausi_koodiuri
+        data_type: text
+      - name: koulutuksen_alkamisvuosi
+        data_type: double precision
+      - name: henkilokohtaisen_sunnitelman_lisatiedot
+        data_type: text
+      - name: toinen_aste_onko_kaksoistutkinto
+        data_type: boolean
+      - name: jarjestaa_urheilijan_ammkoulutusta
         data_type: boolean
   - name: pub_dim_haku
     description: Hakujen tietoja
@@ -386,8 +403,7 @@ models:
       - name: tila
         data_type: text
   - name: pub_dim_organisaatio_rakenne
-    description:
-      Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
+    description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
     columns:
       - name: parent_oid
         data_type: text
