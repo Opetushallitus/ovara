@@ -35,8 +35,6 @@ models:
       - name: maksuvelvollinen
         description: onko maksuvelvollisuutta
         data_type: text
-      - name: muokattu
-        data_type: timestamp with time zone
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
