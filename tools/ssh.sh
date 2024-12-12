@@ -25,7 +25,7 @@ else
     profile="oph-opiskelijavalinnan-raportointi-qa"
 fi
 
-instanceId=`aws ec2 describe-instances --profile ${profile} --filters 'Name=tag:Name,Values=testi-BastionStack/testi-BastionAutoScalingGroup' 'Name=instance-state-name,Values=running' --output text --query 'Reservations[*].Instances[*].InstanceId'`
+instanceId=`aws ec2 describe-instances --profile ${profile} --filters "Name=tag:Name,Values=${envname}-BastionStack/${envname}-BastionAutoScalingGroup" 'Name=instance-state-name,Values=running' --output text --query 'Reservations[*].Instances[*].InstanceId'`
 
 if [ -z "${3}" ]
 then
