@@ -98,11 +98,7 @@ export class EcsStack extends cdk.Stack {
       imageVersion
     );
 
-    const schedule = appscaling.Schedule.cron({
-      minute: '30',
-      hour: '5-15/1', //Tunnit UTC-ajassa
-      weekDay: '2-6/1',
-    });
+    const schedule = appscaling.Schedule.cron(config.dbtCron);
     const scheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
       this,
       dbtFargateTaskName,
