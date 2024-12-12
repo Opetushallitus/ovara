@@ -286,7 +286,7 @@ export class DatabaseStack extends cdk.Stack {
 
     const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
       this,
-      '/testi/opintopolku-account-id'
+      `/${config.environment}/opintopolku-account-id`
     );
 
     const privateLinkVpcEndpointService = new ec2.VpcEndpointService(
