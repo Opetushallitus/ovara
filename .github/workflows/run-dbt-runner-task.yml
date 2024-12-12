@@ -23,4 +23,60 @@ permissions:
 jobs:
   deploy:
     name: Run current installed DBT Runner task
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure AWS credentials
+        if: ${{ inputs.environment == 'testi' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_TESTI_ROLE_ARN }}
+          role-session-name: testi-dbt-runner-deploy
+          aws-region: eu-west-1
+
+      - name: Configure AWS credentials
+        if: ${{ inputs.environment == 'tuotanto' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_TUOTANTO_ROLE_ARN }}
+          role-session-name: tuotanto-dbt-runner-deploy
+          aws-region: eu-west-1
+
+      - name: Configure ENV parameters
+        if: ${{ inputs.environment == 'testi' }}
+        run: |
+          echo "FAMILY_PREFIX=testiEcsStacktestidbttaskScheduledTaskDef" >> $GITHUB_ENV
+          echo "ECS_CLUSTER_NAME=testi-ecs-cluster" >> $GITHUB_ENV
+
+      - name: Configure ENV parameters
+        if: ${{ inputs.environment == 'tuotanto' }}
+        run: |
+          echo "FAMILY_PREFIX=DUMMY" >> $GITHUB_ENV
+          echo "ECS_CLUSTER_NAME=DUMMY" >> $GITHUB_ENV
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition `aws ecs list-task-definition-families --family-prefix ${{ env.FAMILY_PREFIX }} | jq -r '.families[0]'` --query taskDefinition > task-definition.json
+          echo $(cat task-definition.json | jq 'del(
+                  .taskDefinitionArn,
+                  .requiresAttributes,
+                  .compatibilities,
+                  .revision,
+                  .status,
+                  .registeredAt,
+                  .registeredBy
+              )' ) > task-definition.json
+
+      - name: Run Task on Amazon ECS
+        uses: smitp/amazon-ecs-run-task@v1
+        with:
+          task-definition: task-definition.json
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          count: 1
+          started-by: github-actions-${{ github.actor }}
+          wait-for-finish: true
