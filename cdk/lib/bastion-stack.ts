@@ -128,7 +128,7 @@ export class BastionStack extends cdk.Stack {
       'sudo dnf -y install postgresql15 cronie'
     );
     bastionAutoScalingGroup.userData.addCommands(
-      'sudo -u ec2-user aws s3 sync s3://testi-deployment/bastion /home/ec2-user/bastion'
+      `sudo -u ec2-user aws s3 sync s3://${config.environment}-deployment/bastion /home/ec2-user/bastion`
     );
     bastionAutoScalingGroup.userData.addCommands('chmod u+x /home/ec2-user/bastion/*.sh');
     bastionAutoScalingGroup.userData.addCommands(
@@ -200,11 +200,12 @@ export class BastionStack extends cdk.Stack {
       value: `bastion.${config.publicHostedZone}`,
     });
 
-    const publicKeySecret = secretsmanager.Secret.fromSecretCompleteArn(
+    const publicKeySecret = secretsmanager.Secret.fromSecretNameV2(
       this,
       `${config.environment}-bastion-public-keys`,
-      'arn:aws:secretsmanager:eu-west-1:654654623010:secret:bastion/public_keys-t4jUjo'
+      'bastion/public_keys'
     );
+
     publicKeySecret.grantRead(bastionAutoScalingGroup.role);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
