@@ -87,7 +87,7 @@ export class DatabaseStack extends cdk.Stack {
         serverlessV2MinCapacity: config.aurora.minCapacity,
         serverlessV2MaxCapacity: config.aurora.maxCapacity,
         deletionProtection: config.aurora.deletionProtection,
-        removalPolicy: cdk.RemovalPolicy.DESTROY, // TODO: päivitä kun siirrytään tuotantoon
+        removalPolicy: cdk.RemovalPolicy.RETAIN,
         writer: rds.ClusterInstance.serverlessV2('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
           enablePerformanceInsights: config.aurora.enablePerformanceInsights,
@@ -96,7 +96,7 @@ export class DatabaseStack extends cdk.Stack {
           rds.ClusterInstance.serverlessV2('Reader', {
             caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
             enablePerformanceInsights: true,
-            scaleWithWriter: false, // TODO: Pitäisikö olla true ainakin tuotannossa
+            scaleWithWriter: config.aurora.scaleReaderWithWriter,
           }),
         ],
         vpc: vpc,

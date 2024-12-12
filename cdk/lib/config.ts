@@ -17,6 +17,7 @@ export interface Config {
     iopsStorage: boolean;
     maxCapacity: number;
     minCapacity: number;
+    scaleReaderWithWriter: boolean;
   };
   environment: string;
   lampiFileHandlerActive: string;
