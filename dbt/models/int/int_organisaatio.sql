@@ -50,8 +50,12 @@ int as (
         org1.sijaintikunta,
         org1.tila,
         org1.opetuskielet,
-        org1.organisaatiotyypit
-    from organisaatio as org1
+        org1.organisaatiotyypit,
+        org1.oppilaitostyyppi,
+        org1.oppilaitosnumero,
+        org1.alkupvm,
+        org1.lakkautuspvm
+        from organisaatio as org1
     left join ylempi_toimipiste as ylto on org1.ylempi_organisaatio = ylto.organisaatio_oid
 ),
 
@@ -78,7 +82,11 @@ final as (
         kunt.koodinimi as sijaintikunta_nimi,
         raw1.opetuskielet,
         orgt.organisaatiotyypit,
-        raw1.tila
+        raw1.tila,
+        raw1.oppilaitostyyppi,
+        raw1.oppilaitosnumero,
+        raw1.alkupvm,
+        raw1.lakkautuspvm
     from int as raw1
     left join kunta as kunt on raw1.sijaintikunta = kunt.koodiuri
     left join organisaatiotyyppi as orgt on raw1.organisaatio_oid = orgt.organisaatio_oid
