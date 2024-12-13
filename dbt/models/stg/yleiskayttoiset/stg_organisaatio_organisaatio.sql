@@ -22,6 +22,9 @@ final as (
         data ->> 'kotipaikka' as sijaintikunta,
         array_to_json(string_to_array((data ->> 'opetuskielet')::varchar, ','))::jsonb as opetuskielet,
         data ->> 'parent_oid' as ylempi_organisaatio,
+        data ->> 'oppilaitostyyppi' as oppilaitostyyppi,
+        data ->> 'oppilaitosnumero' as oppilaitosnumero,
+        (data ->> 'lakkautuspvm')::timestamptz as lakkautuspvm,
         {{ metadata_columns() }}
     from source
 )

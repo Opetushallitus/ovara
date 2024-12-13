@@ -19,7 +19,11 @@ final as (
         sijaintikunta_nimi,
         opetuskielet,
         organisaatiotyypit,
-        tila
+        tila,
+        oppilaitostyyppi,
+        oppilaitosnumero,
+        alkupvm,
+        lakkautuspvm
     from source
 )
 

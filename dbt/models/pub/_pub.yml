@@ -374,7 +374,7 @@ models:
         description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 = EU/ETA, 3 = muut"
         data_type: integer
   - name: pub_dim_organisaatio
-    description: Tämä taului sisältää organisaation tiedot
+    description: Tämä taulu sisältää organisaation tiedot
     config:
       contract:
         enforced: true
@@ -397,6 +397,14 @@ models:
         data_type: jsonb
       - name: tila
         data_type: text
+      - name: oppilaitostyyppi
+        data_type: text
+      - name: oppilaitosnumero
+        data_type: text
+      - name: alkupvm
+        data_type: timestamptz  
+      - name: lakkautuspvm
+        data_type: timestamptz
   - name: pub_dim_organisaatio_rakenne
     description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
     config:
