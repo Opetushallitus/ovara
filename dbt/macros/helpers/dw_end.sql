@@ -1,5 +1,9 @@
 {% macro dw_end() -%}
 {%- if target.name == 'prod' %}
+
+{% set query = 'CREATE TABLE if not exists raw.completed_dbt_runs (model text NULL, raw_table text NULL, start_time timestamptz NULL,	"execute" bool NULL);' %}
+{% do run_query(query) %}
+
 with data as (
     select
         model,

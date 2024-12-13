@@ -1,5 +1,9 @@
 {% macro stg_start() -%}
 {%- if target.name == 'prod' %}
+
+{% set query = 'CREATE TABLE if not exists raw.dbt_runs (model text NULL,start_time timestamptz NULL);'%}
+{% do run_query(query) %}
+
     with data as (
 	select
 		'{{ this }}' as model,
