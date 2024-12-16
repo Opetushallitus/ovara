@@ -21,7 +21,7 @@
     "maxAzs": 3,
     "netGateways": 1
   },
-  "lampiFileHandlerActive": "false",
+  "lampiFileHandlerActive": "true",
   "dbtCron": {
     "minute": "30",
     "hour": "5-15/1",
