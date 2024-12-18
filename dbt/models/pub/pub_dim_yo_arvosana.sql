@@ -9,7 +9,7 @@
 }}
 
 with arvosana as (
-    select * from {{ ref('int_sure_arvosana') }} where asteikko='YO'
+    select * from {{ ref('int_sure_arvosana') }} where asteikko = 'YO'
 ),
 
 suoritus as (
@@ -32,10 +32,10 @@ int as (
         arvosana.source,
         arvosana.jarjestys,
         arvosana.arvot,
-        suoritus.henkilooid as henkilooid,
-        suoritus.tila as tila,        
+        suoritus.henkilooid,
+        suoritus.tila,
         suoritus.valmistuminen as pvm
-    from arvosana 
+    from arvosana
     left join suoritus on arvosana.suoritus = suoritus.resourceid
 )
 

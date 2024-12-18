@@ -8,7 +8,7 @@
 }}
 
 with source as (
-    select * from  {{ ref('int_organisaatio') }}
+    select * from {{ ref('int_organisaatio') }}
 ),
 
 final as (
