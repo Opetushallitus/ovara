@@ -361,7 +361,7 @@ export class EcsStack extends cdk.Stack {
             LAMPI_S3_BUCKET: lampiSiirtajaTempS3Bucket.bucketName,
           },
           secrets: {
-            DBT_PASSWORD_PROD: ecs.Secret.fromSsmParameter(
+            DB_PASSWORD: ecs.Secret.fromSsmParameter(
               ssm.StringParameter.fromSecureStringParameterAttributes(
                 this,
                 `${config.environment}-lampiSiirtajaauroraAppPassword`,

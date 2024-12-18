@@ -3,7 +3,7 @@ import PgClient from 'pg-native';
 const dbHost = process.argv[2];
 const dbUsername = process.argv[3];
 const dbPassword = process.argv[4];
-const lampiS3Baucket = process.argv[5];
+const lampiS3Bucket = process.argv[5];
 
 const dbUri = `postgresql://${dbUsername}:${dbPassword}@${dbHost}:5432/ovara`;
 
@@ -11,7 +11,7 @@ const validateCommandlineArgs = () => {
   if(!dbHost) throw Error("Tietokannan osoite puuttuu");
   if(!dbUsername) throw Error("Tietokannan käyttäjänimi puuttuu");
   if(!dbPassword) throw Error("Tietokannan salasana puuttuu");
-  if(!lampiS3Baucket) throw Error("Lammen S3-ampärin nimi puuttuu");
+  if(!lampiS3Bucket) throw Error("Lammen S3-ampärin nimi puuttuu");
 }
 
 const getTables = (schemaName: String) => {
@@ -32,6 +32,7 @@ const getTables = (schemaName: String) => {
 const main = async () => {
   validateCommandlineArgs();
   console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
+  console.log(`Lampi S3-ämpäri: ${lampiS3Bucket}`.replace(dbPassword, '*****'));
 }
 
 main();
