@@ -1,0 +1,40 @@
+name: Build Lampi-siirtäjä Container
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-lampi-siirtaja.yml'
+      - 'lampi-siirtaja-container/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy-container:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_UTILITY_ROLE_ARN }}
+          role-session-name: ovara-lampi-siirtaja-ecr-push
+          aws-region: eu-west-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ovara-dbt-runner
+          IMAGE_TAG: ga-${{ github.run_number }}
+        run: |
+            cd lampi-siirtaja-container
+            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+            docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
