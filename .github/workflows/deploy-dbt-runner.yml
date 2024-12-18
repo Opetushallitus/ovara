@@ -65,8 +65,9 @@ jobs:
       - name: Configure ENV parameters
         if: ${{ inputs.environment == 'tuotanto' }}
         run: |
-          echo "FAMILY_PREFIX=DUMMY" >> $GITHUB_ENV
-          echo "ECS_CLUSTER_NAME=DUMMY" >> $GITHUB_ENV
+          echo "FAMILY_PREFIX=tuotantoEcsStacktuotantodbttaskScheduledTaskDef" >> $GITHUB_ENV
+          echo "ECS_CLUSTER_NAME=tuotanto-ecs-cluster" >> $GITHUB_ENV
+          echo "SCHEDULED_TASK_RULE_PREFIX=tuotanto-scheduledFargateTaskRule"  >> $GITHUB_ENV
 
       - name: Download task definition
         run: |

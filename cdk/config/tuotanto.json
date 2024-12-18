@@ -2,13 +2,29 @@
   "aurora": {
     "backup": {
       "deleteAfterDays": 35
-    }
+    },
+    "deletionProtection": false,
+    "enablePerformanceInsights": true,
+    "iopsStorage": true,
+    "maxCapacity": 16,
+    "minCapacity": 2,
+    "scaleReaderWithWriter": true
   },
   "environment": "tuotanto",
   "profile": "oph-opiskelijavalinnan-raportointi-prod",
   "publicHostedZone": "ovara.opintopolku.fi",
+  "siirtotiedostot": {
+    "lampiBucketName": "oph-lampi-prod",
+    "ovaraBucketName": "tuotanto-siirtotiedostot"
+  },
   "vpc": {
     "maxAzs": 3,
     "netGateways": 1
+  },
+  "lampiFileHandlerActive": "true",
+  "dbtCron": {
+    "minute": "30",
+    "hour": "5-15/1",
+    "weekDay": "2-6/1"
   }
 }

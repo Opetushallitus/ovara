@@ -24,6 +24,8 @@ exports.handler = async (event: APIGatewayProxyEventV2, context: Context) => {
   const dateFormatString = 'yyyy-MM-dd HH:mm:ss.SSSxxx';
 
   const lampiAuthTokenSecretName = process.env.lampiAuthTokenSecretName;
+  const lampiFileHandlerActive =
+    process.env.lampiFileHandlerActive?.toLowerCase() === 'true';
 
   const parameterCommand = new GetParameterCommand({
     Name: lampiAuthTokenSecretName,
@@ -61,7 +63,7 @@ exports.handler = async (event: APIGatewayProxyEventV2, context: Context) => {
   const lampiS3Event: LampiS3Event = lampiEvent.s3;
   const lampiKey = lampiS3Event.object.key;
 
-  if (lampiKeyExists(lampiKey)) {
+  if (lampiKeyExists(lampiKey) && lampiFileHandlerActive) {
     const client = new DynamoDBClient({});
     const dynamo = DynamoDBDocumentClient.from(client);
 
@@ -145,7 +147,11 @@ exports.handler = async (event: APIGatewayProxyEventV2, context: Context) => {
       await dynamo.send(putCommand);
     }
   } else {
-    console.log(`Tuntematon tiedosto: ${lampiKey}`);
+    if (lampiFileHandlerActive) {
+      console.log(`Tuntematon tiedosto: ${lampiKey}`);
+    } else {
+      console.log(`Tiedostojen käsittely on poissa päältä`);
+    }
   }
 
   return {

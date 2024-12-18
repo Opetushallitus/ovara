@@ -9,6 +9,9 @@ start=$(date +%s)
 cd dbt
 . venv/bin/activate
 
+dbt seed -s raw_taulut --target=prod
+dbt run-operation create_raw_tables --target=prod
+
 if [[ -z "$1" ]]; then
   echo "Running DBT without any extra paramaters"
   dbt build --target=prod

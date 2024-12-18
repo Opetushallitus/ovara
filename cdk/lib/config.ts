@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 
 import * as cdk from 'aws-cdk-lib';
+import * as appscaling from 'aws-cdk-lib/aws-applicationautoscaling';
 
 export interface GenericStackProps extends cdk.StackProps {
   config: Config;
@@ -16,8 +17,11 @@ export interface Config {
     iopsStorage: boolean;
     maxCapacity: number;
     minCapacity: number;
+    scaleReaderWithWriter: boolean;
   };
   environment: string;
+  lampiFileHandlerActive: string;
+  dbtCron: appscaling.CronOptions;
   profile: string;
   publicHostedZone: string;
   siirtotiedostot: {

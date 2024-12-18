@@ -2,7 +2,6 @@ import * as cdk from 'aws-cdk-lib';
 import * as asg from 'aws-cdk-lib/aws-autoscaling';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as kms from 'aws-cdk-lib/aws-kms';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
@@ -62,18 +61,18 @@ export class BastionStack extends cdk.Stack {
       }
     );
 
-    const nlbAccessLogsBucketName = `${config.environment}-bastion-nlb-access-logs`;
-    const nlbAccessLogsBucket = new s3.Bucket(this, nlbAccessLogsBucketName, {
-      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryptionKey: new kms.Key(this, `${nlbAccessLogsBucketName}-s3BucketKMSKey`, {
-        enableKeyRotation: true,
-      }),
-      serverAccessLogsBucket: new s3.Bucket(
-        this,
-        `${nlbAccessLogsBucketName}-server-access-logs`
-      ),
-    });
+    // const nlbAccessLogsBucketName = `${config.environment}-bastion-nlb-access-logs`;
+    // const nlbAccessLogsBucket = new s3.Bucket(this, nlbAccessLogsBucketName, {
+    //   objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+    //   blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+    //   encryptionKey: new kms.Key(this, `${nlbAccessLogsBucketName}-s3BucketKMSKey`, {
+    //     enableKeyRotation: true,
+    //   }),
+    //   serverAccessLogsBucket: new s3.Bucket(
+    //     this,
+    //     `${nlbAccessLogsBucketName}-server-access-logs`
+    //   ),
+    // });
 
     const bastionNetworkLoadBalancer = new elb.NetworkLoadBalancer(
       this,
@@ -91,7 +90,7 @@ export class BastionStack extends cdk.Stack {
       }
     );
 
-    bastionNetworkLoadBalancer.logAccessLogs(nlbAccessLogsBucket);
+    //bastionNetworkLoadBalancer.logAccessLogs(nlbAccessLogsBucket);
 
     const bastionAutoScalingGroup = new asg.AutoScalingGroup(
       this,
@@ -129,7 +128,7 @@ export class BastionStack extends cdk.Stack {
       'sudo dnf -y install postgresql15 cronie'
     );
     bastionAutoScalingGroup.userData.addCommands(
-      'sudo -u ec2-user aws s3 sync s3://testi-deployment/bastion /home/ec2-user/bastion'
+      `sudo -u ec2-user aws s3 sync s3://${config.environment}-deployment/bastion /home/ec2-user/bastion`
     );
     bastionAutoScalingGroup.userData.addCommands('chmod u+x /home/ec2-user/bastion/*.sh');
     bastionAutoScalingGroup.userData.addCommands(
@@ -150,9 +149,9 @@ export class BastionStack extends cdk.Stack {
 
     const bastionNetworkTargetGroup = new elb.NetworkTargetGroup(
       this,
-      `${config.environment}-bastion-nlb-target-group`,
+      `${config.environment}-bastion-nlb-tg`,
       {
-        targetGroupName: `${config.environment}-bastion-nlb-target-group`,
+        targetGroupName: `${config.environment}-bastion-nlb-tg`,
         port: 22,
         protocol: elb.Protocol.TCP_UDP,
         connectionTermination: true,
@@ -163,7 +162,7 @@ export class BastionStack extends cdk.Stack {
     bastionAutoScalingGroup.attachToNetworkTargetGroup(bastionNetworkTargetGroup);
 
     nlbListener.addTargetGroups(
-      `${config.environment}-bastion-nlb-target-groups`,
+      `${config.environment}-bastion-nlb-tgs`,
       bastionNetworkTargetGroup
     );
 
@@ -201,11 +200,12 @@ export class BastionStack extends cdk.Stack {
       value: `bastion.${config.publicHostedZone}`,
     });
 
-    const publicKeySecret = secretsmanager.Secret.fromSecretCompleteArn(
+    const publicKeySecret = secretsmanager.Secret.fromSecretNameV2(
       this,
       `${config.environment}-bastion-public-keys`,
-      'arn:aws:secretsmanager:eu-west-1:654654623010:secret:bastion/public_keys-t4jUjo'
+      'bastion/public_keys'
     );
+
     publicKeySecret.grantRead(bastionAutoScalingGroup.role);
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
@@ -214,6 +214,10 @@ export class BastionStack extends cdk.Stack {
       { id: 'AwsSolutions-L1', reason: 'TODO: Fix or add proper reason' },
       { id: 'AwsSolutions-AS3', reason: 'TODO: Fix or add proper reason' },
       { id: 'AwsSolutions-IAM4', reason: 'TODO: Fix or add proper reason' },
+      {
+        id: 'AwsSolutions-ELB2',
+        reason: 'TODO: Add access logs / are they even needed?',
+      },
     ]);
   }
 }

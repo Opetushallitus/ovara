@@ -69,7 +69,7 @@ export class S3Stack extends cdk.Stack {
 
     const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
       this,
-      '/testi/opintopolku-account-id'
+      `/${config.environment}/opintopolku-account-id`
     );
 
     const s3CrossAccountRole = new iam.Role(
