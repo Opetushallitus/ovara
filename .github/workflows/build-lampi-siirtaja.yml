@@ -32,7 +32,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ovara-dbt-runner
+          REPOSITORY: ovara-lampi-siirtaja
           IMAGE_TAG: ga-${{ github.run_number }}
         run: |
             cd lampi-siirtaja-container
