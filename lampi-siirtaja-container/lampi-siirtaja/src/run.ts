@@ -32,7 +32,7 @@ const getTables = (schemaName: String) => {
 const main = async () => {
   validateCommandlineArgs();
   console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
-  console.log(`Lampi S3-ämpäri: ${lampiS3Bucket}`.replace(dbPassword, '*****'));
+  console.log(`Lampi S3-ämpäri: ${lampiS3Bucket}`);
 }
 
 main();

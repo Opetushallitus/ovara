@@ -379,6 +379,10 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
+    lampiSiirtajaTempS3Bucket.grantReadWrite(
+      lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
+    );
+
     lampiSiirtajaScheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
       new iam.PolicyStatement({
         actions: [
