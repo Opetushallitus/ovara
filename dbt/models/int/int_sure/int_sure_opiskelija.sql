@@ -14,9 +14,7 @@ with raw as (
 ),
 
 int as (
-    select
-        *
-    from raw
+    select * from raw
     where row_nr = 1
 ),
 

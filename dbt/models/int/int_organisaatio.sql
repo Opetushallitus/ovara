@@ -55,7 +55,7 @@ int as (
         org1.oppilaitosnumero,
         org1.alkupvm,
         org1.lakkautuspvm
-        from organisaatio as org1
+    from organisaatio as org1
     left join ylempi_toimipiste as ylto on org1.ylempi_organisaatio = ylto.organisaatio_oid
 ),
 

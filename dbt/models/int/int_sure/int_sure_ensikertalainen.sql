@@ -7,9 +7,7 @@
 }}
 
 with int as (
-    select
-        *
-    from {{ ref('dw_sure_ensikertalainen') }}
+    select * from {{ ref('dw_sure_ensikertalainen') }}
 ),
 
 final as (

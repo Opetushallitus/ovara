@@ -19,7 +19,7 @@ int as (
         isensikertalainen,
         menettamisenperuste,
         menettamisenpaivamaara
-    from ensikertalainen 
+    from ensikertalainen
 )
 
 select * from int
