@@ -10,6 +10,7 @@ import { CfnRule } from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cdkNag from 'cdk-nag';
@@ -327,7 +328,22 @@ export class EcsStack extends cdk.Stack {
       lampiSiirtajaImageVersion
     );
 
-    const lampiSiirtajaSchedule = appscaling.Schedule.cron(config.dbtCron);
+    // Tilapäinen S3-ämpäri testausta varten
+    const lampiSiirtajaTempS3Bucket = new s3.Bucket(
+      this,
+      `${config.environment}-temp-lampi-siirtaja-bucket`,
+      {
+        bucketName: `${config.environment}-temp-lampi-siirtaja-bucket`,
+        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+        serverAccessLogsBucket: new s3.Bucket(
+          this,
+          `${config.environment}-temp-lampi-siirtaja-bucket-server-access-logs`
+        ),
+      }
+    );
+
+    const lampiSiirtajaSchedule = appscaling.Schedule.cron(config.lampiSiirtajaCron);
     const lampiSiirtajaScheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
       this,
       lampiSiirtajaFargateTaskName,
@@ -340,15 +356,15 @@ export class EcsStack extends cdk.Stack {
           cpu: 1024,
           memoryLimitMiB: 2048,
           environment: {
-            POSTGRES_HOST_PROD: `raportointi.db.${config.publicHostedZone}`,
-            DBT_PORT_PROD: '5432',
-            DBT_USERNAME_PROD: 'app',
+            POSTGRES_HOST: `raportointi.db.${config.publicHostedZone}`,
+            DB_USERNAME: 'app',
+            LAMPI_S3_BUCKET: lampiSiirtajaTempS3Bucket.bucketName,
           },
           secrets: {
             DBT_PASSWORD_PROD: ecs.Secret.fromSsmParameter(
               ssm.StringParameter.fromSecureStringParameterAttributes(
                 this,
-                `${config.environment}-auroraAppPassword`,
+                `${config.environment}-lampiSiirtajaauroraAppPassword`,
                 {
                   parameterName: `/${config.environment}/aurora/raportointi/app-user-password`,
                 }
@@ -387,7 +403,7 @@ export class EcsStack extends cdk.Stack {
     const lampiSiirtajaEventsRule = lampiSiirtajaScheduledFargateTask.eventRule.node
       .defaultChild as CfnRule;
 
-    const lampiSiirtajaEventsRole = new iam.Role(this, 'EventsRole', {
+    const lampiSiirtajaEventsRole = new iam.Role(this, 'LampiSiirtajaEventsRole', {
       assumedBy: new iam.ServicePrincipal('events.amazonaws.com'),
     });
 
@@ -518,6 +534,7 @@ export class EcsStack extends cdk.Stack {
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: "Can't fix this." },
       { id: 'AwsSolutions-ECS2', reason: 'Static environment variables' },
+      { id: 'AwsSolutions-S10', reason: 'Tilapäinen S3-ämpäri' },
     ]);
   }
 }

@@ -27,5 +27,10 @@
     "minute": "30",
     "hour": "5-15/2",
     "weekDay": "2-6/1"
+  },
+  "lampiSiirtajaCron": {
+    "minute": "0",
+    "hour": "5-15/1",
+    "weekDay": "2-6/1"
   }
 }
