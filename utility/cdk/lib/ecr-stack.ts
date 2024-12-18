@@ -16,6 +16,12 @@ export class EcrStack extends cdk.Stack {
       imageScanOnPush: true,
     });
 
+    const lampiSiirtajaRepositoryName = 'ovara-lampi-siirtaja';
+    const lampiSiirtajaRepository = new ecr.Repository(this, lampiSiirtajaRepositoryName, {
+      repositoryName: lampiSiirtajaRepositoryName,
+      imageScanOnPush: true,
+    });
+
     const githubOidcProvider = new iam.OpenIdConnectProvider(this, `OvaraUtilityGithubOidcProvider`, {
       url: 'https://token.actions.githubusercontent.com',
       thumbprints: ['6938fd4d98bab03faadb97b34396831e3780aea1'],
@@ -36,6 +42,7 @@ export class EcrStack extends cdk.Stack {
     });
 
     dbtRunnerRepository.grantPush(githubActionsDeploymentRole);
+    lampiSiirtajaRepository.grantPush(githubActionsDeploymentRole);
 
     const ovaraTestiAccountId = ssm.StringParameter.valueForStringParameter(
       this,
