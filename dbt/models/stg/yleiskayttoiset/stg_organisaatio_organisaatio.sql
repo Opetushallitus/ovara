@@ -3,7 +3,7 @@ with source as (
 
     {% if is_incremental() %}
 
-        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+        where dw_metadata_dbt_copied_at > (select coalesce(max(dw_metadata_dbt_copied_at), '1899-12-31') from {{ this }})
 
     {% endif %}
 

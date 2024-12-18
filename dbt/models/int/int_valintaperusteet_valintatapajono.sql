@@ -61,27 +61,27 @@ existing_rows as (
         select * from {{ this }}
         where hakukohde_oid in (select hakukohde_oid from valintatapajonoja)
     {% else %}
-    select
-        null as jono_id,
-        null as valinnanvaihe_id,
-        null as hakukohde_oid,
-        null as nimi,
-        null as kuvaus,
-        null::int as aloituspaikat,
-        null as tyyppi_uri,
-        null::int as prioriteetti,
-        null::boolean as siirretaan_sijoitteluun,
-        null as tasasijasaanto,
-        null::timestamptz as ei_lasketa_paivamaaran_jalkeen,
-        null::boolean as ei_varasijatayttoa,
-        null::boolean as merkitse_myoh_auto,
-        null::boolean as poissa_oleva_taytto,
-        null::boolean as kaikki_ehdon_tayttavat_hyvaksytaan,
-        null::boolean as kaytetaan_valintalaskentaa,
-        null::boolean as valmis_sijoiteltavaksi,
-        null::boolean as valisijoittelu,
-        null::boolean as poistetaanko_hylatyt,
-        null::jsonb as jarjestyskriteerit
+        select
+            null as jono_id,
+            null as valinnanvaihe_id,
+            null as hakukohde_oid,
+            null as nimi,
+            null as kuvaus,
+            null::int as aloituspaikat,
+            null as tyyppi_uri,
+            null::int as prioriteetti,
+            null::boolean as siirretaan_sijoitteluun,
+            null as tasasijasaanto,
+            null::timestamptz as ei_lasketa_paivamaaran_jalkeen,
+            null::boolean as ei_varasijatayttoa,
+            null::boolean as merkitse_myoh_auto,
+            null::boolean as poissa_oleva_taytto,
+            null::boolean as kaikki_ehdon_tayttavat_hyvaksytaan,
+            null::boolean as kaytetaan_valintalaskentaa,
+            null::boolean as valmis_sijoiteltavaksi,
+            null::boolean as valisijoittelu,
+            null::boolean as poistetaanko_hylatyt,
+            null::jsonb as jarjestyskriteerit
     {% endif %}
 )
 
