@@ -68,6 +68,20 @@ export class EcrStack extends cdk.Stack {
       ]
     }));
 
+    lampiSiirtajaRepository.addToResourcePolicy(new PolicyStatement({
+      actions: [
+        'ecr:GetAuthorizationToken',
+        'ecr:BatchCheckLayerAvailability',
+        'ecr:GetDownloadUrlForLayer',
+        'ecr:BatchGetImage',
+      ],
+      effect: iam.Effect.ALLOW,
+      principals: [
+        new iam.ArnPrincipal(`arn:aws:iam::${ovaraTestiAccountId}:root`),
+        new iam.ArnPrincipal(`arn:aws:iam::${ovaraTuotantoAccountId}:root`),
+      ]
+    }));
+
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-IAM5', reason: 'In this case it is ok.' },
     ]);
