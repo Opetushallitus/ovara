@@ -1,10 +1,17 @@
 import PgClient from 'pg-native';
 
+import {
+  S3Client,
+  CopyObjectCommand,
+  ObjectNotInActiveTierError,
+  waitUntilObjectExists, GetObjectCommand, GetObjectCommandOutput, PutObjectCommand, PutObjectCommandOutput,
+} from '@aws-sdk/client-s3';
+
 const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 const lampiS3Bucket = process.env.LAMPI_S3_BUCKET;
-const ovaraLampitSiirtajaBucket = process.env.OVARA_LAMPI_SIIRTAJA_BUCKET;
+const ovaraLampiSiirtajaBucket = process.env.OVARA_LAMPI_SIIRTAJA_BUCKET;
 
 const dbUri = `postgresql://${dbUsername}:${dbPassword}@${dbHost}:5432/ovara`;
 
@@ -36,7 +43,7 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
     from aws_s3.query_export_to_s3(
         'select * from ${schemaName}.${tableName}',
         aws_commons.create_s3_uri(
-            '${ovaraLampitSiirtajaBucket}', 
+            '${ovaraLampiSiirtajaBucket}', 
             '${schemaName}.${tableName}.csv', 
             'eu-west-1'
         ),
@@ -49,14 +56,41 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
   console.log(`S3 copy result for table ${tableName}: ${JSON.stringify(result, null, 4)}`);
 }
 
+const copyFileToLampi = async (sourceKey: string) => {
+  const ovaraS3Client: S3Client = new S3Client({});
+  const lampiS3Client: S3Client = new S3Client({});
+  const destinationKey = sourceKey;
+
+  const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
+    new GetObjectCommand({
+      Bucket: ovaraLampiSiirtajaBucket,
+      Key: sourceKey,
+    }),
+  );
+
+  const putObjectCommandOutput: PutObjectCommandOutput = await lampiS3Client.send(
+    new PutObjectCommand({
+      Bucket: lampiS3Bucket,
+      Key: destinationKey,
+      Body: getObjectCommandOutput.Body
+    })
+  );
+
+  console.log(
+    `Successfully copied ${ovaraLampiSiirtajaBucket}/${sourceKey} to ${lampiS3Bucket}/${destinationKey}`,
+  );
+
+  console.log(`putObjectCommandOutput: ${JSON.stringify(putObjectCommandOutput, null, 4)}`);
+}
+
 const main = async () => {
   validateParameters();
   console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
   const schemaName = 'pub';
   const tableNames: string[] = getTableNames(schemaName);
   console.log(`Table names: ${tableNames}`);
-  //tableNames.slice(0, 2).forEach((tableName: string) => {
-  tableNames.forEach((tableName: string) => {
+  //tableNames.forEach((tableName: string) => {
+  tableNames.slice(0, 2).forEach((tableName: string) => {
     copyTableToS3(schemaName, tableName);
   });
 }
