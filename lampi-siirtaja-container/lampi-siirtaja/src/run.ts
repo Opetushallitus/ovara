@@ -84,10 +84,10 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
   );
 
   console.log(
-    `Successfully copied ${ovaraLampiSiirtajaBucket}/${sourceKey} to ${lampiS3Bucket}/${destinationKey}`,
+    `Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`,
   );
 
-  console.log(`putObjectCommandOutput: ${JSON.stringify(putObjectCommandOutput, null, 4)}`);
+  //console.log(`putObjectCommandOutput: ${JSON.stringify(putObjectCommandOutput, null, 4)}`);
 
   const manifestItem = {
     key: destinationKey,
@@ -110,18 +110,30 @@ const uploadManifestToLampi = async (manifest: ManifestItem[]) => {
 
 const main = async () => {
   validateParameters();
-  console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
-  const schemaName = 'pub';
-  const tableNames: string[] = getTableNames(schemaName).slice(0, 2);
-  console.log(`Table names: ${tableNames}`);
+  console.log(`Aloitetaan Ovaran tietojen kopiointi Lampeen`);
+  console.log(`Tietokannan konfiguraatio: ${dbUri}`.replace(dbPassword, '*****'));
+  const schemaNames = ['pub', 'stg'];
   const manifest: ManifestItem[] = [];
-  for (const tableName of tableNames) {
-    copyTableToS3(schemaName, tableName);
-    const sourceKey = `${schemaName}.${tableName}.csv`;
-    const manifestItem = await copyFileToLampi(sourceKey);
-    manifest.push(manifestItem);
+  for (const schemaName of schemaNames) {
+    console.log(`Aloitetaan skeeman "${schemaName}" taulujen siirtäminen Lampeen`);
+    //const tableNames: string[] = getTableNames(schemaName).slice(0, 2);
+    const tableNames: string[] = getTableNames(schemaName);
+    console.log(`Table names: ${tableNames}`);
+    for (const tableName of tableNames) {
+      console.log(`Aloitetaan skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäriin`);
+      copyTableToS3(schemaName, tableName);
+      console.log(`Skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäriin valmistui`);
+      const sourceKey = `${schemaName}.${tableName}.csv`;
+      console.log(`Aloitetaan skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin (key: "${sourceKey}")`);
+      const manifestItem = await copyFileToLampi(sourceKey);
+      console.log(`Aloitetaan skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin valmistui (key: "${sourceKey}")`);
+      manifest.push(manifestItem);
+    }
+    console.log(`Aloitetaan skeeman "${schemaName}" taulujen siirtäminen Lampeen valmistui`);
   }
+  console.log(`Aloitetaan manifest-tiedoston siirtäminen Lampeen`)
   await uploadManifestToLampi(manifest);
+  console.log(`Aloitetaan manifest-tiedoston siirtäminen Lampeen valmistui`)
 }
 
 main().then(() => console.log('Ovaran tietojen siirtäminen Lampeen valmistui'));
