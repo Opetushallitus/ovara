@@ -1,11 +1,12 @@
 import PgClient from 'pg-native';
-
+import { NodeJsClient } from "@smithy/types";
 import {
   S3Client,
   CopyObjectCommand,
   ObjectNotInActiveTierError,
   waitUntilObjectExists, GetObjectCommand, GetObjectCommandOutput, PutObjectCommand, PutObjectCommandOutput,
 } from '@aws-sdk/client-s3';
+import { Readable } from 'node:stream';
 
 const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
@@ -62,8 +63,8 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
 }
 
 const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
-  const ovaraS3Client: S3Client = new S3Client({});
-  const lampiS3Client: S3Client = new S3Client({});
+  const ovaraS3Client: S3Client = new S3Client({}) as NodeJsClient<S3Client>;
+  const lampiS3Client: S3Client = new S3Client({}) as NodeJsClient<S3Client>;
   const destinationKey = sourceKey;
 
   const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
@@ -73,13 +74,15 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
     }),
   );
 
-  const bodyString: string = await getObjectCommandOutput.Body.transformToString();
+  //const bodyString: string = await getObjectCommandOutput.Body.transformToString();
 
   const putObjectCommandOutput: PutObjectCommandOutput = await lampiS3Client.send(
     new PutObjectCommand({
       Bucket: lampiS3Bucket,
       Key: destinationKey,
-      Body: bodyString
+      Body: getObjectCommandOutput.Body,
+      ContentLength: getObjectCommandOutput.ContentLength
+      //Body: bodyString
     })
   );
 
