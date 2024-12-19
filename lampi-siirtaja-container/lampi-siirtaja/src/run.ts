@@ -29,14 +29,14 @@ const getTableNames = (schemaName: string): string[] => {
   return rows.map(row => row.table_name);
 }
 
-const copyTableToS3 = (tableName: string) => {
+const copyTableToS3 = (schemaName: string, tableName: string) => {
   const sql = `
     select *
     from aws_s3.query_export_to_s3(
-        'select * from ${tableName}',
+        'select * from ${schemaName}.${tableName}',
         aws_commons.create_s3_uri(
             '${lampiS3Bucket}', 
-            '${tableName}.csv', 
+            '${schemaName}.${tableName}.csv', 
             'eu-west-1'
         ),
         options := 'FORMAT CSV, HEADER TRUE' 
@@ -52,10 +52,11 @@ const main = async () => {
   validateParameters();
   console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
   console.log(`Lampi S3-ämpäri: ${lampiS3Bucket}`);
-  const tableNames: string[] = getTableNames('pub');
+  const schemaName = 'pub';
+  const tableNames: string[] = getTableNames(schemaName);
   console.log(`Table names: ${tableNames}`);
   tableNames.slice(0, 2).forEach((tableName: string) => {
-    copyTableToS3(tableName);
+    copyTableToS3(schemaName, tableName);
   });
 }
 
