@@ -22,6 +22,11 @@ const validateParameters = () => {
   if(!lampiS3Bucket) throw Error("Lammen S3-ampärin nimi puuttuu");
 }
 
+type ManifestItem = {
+  key: string;
+  s3Version: string;
+};
+
 const getTableNames = (schemaName: string): string[] => {
 
   const sql = `
@@ -56,7 +61,7 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
   console.log(`S3 copy result for table ${tableName}: ${JSON.stringify(result, null, 4)}`);
 }
 
-const copyFileToLampi = async (sourceKey: string) => {
+const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
   const ovaraS3Client: S3Client = new S3Client({});
   const lampiS3Client: S3Client = new S3Client({});
   const destinationKey = sourceKey;
@@ -83,20 +88,40 @@ const copyFileToLampi = async (sourceKey: string) => {
   );
 
   console.log(`putObjectCommandOutput: ${JSON.stringify(putObjectCommandOutput, null, 4)}`);
+
+  const manifestItem = {
+    key: destinationKey,
+    s3Version: putObjectCommandOutput.VersionId
+  };
+
+  return manifestItem;
+}
+
+const uploadManifestToLampi = async (manifest: ManifestItem[]) => {
+  const lampiS3Client: S3Client = new S3Client({});
+  const destinationKey = 'manifest.json';
+
+  await lampiS3Client.send(new PutObjectCommand({
+    Bucket: lampiS3Bucket,
+    Key: destinationKey,
+    Body: JSON.stringify(manifest, null, 4)
+  }));
 }
 
 const main = async () => {
   validateParameters();
   console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
   const schemaName = 'pub';
-  const tableNames: string[] = getTableNames(schemaName);
+  const tableNames: string[] = getTableNames(schemaName).slice(0, 2);
   console.log(`Table names: ${tableNames}`);
-  //tableNames.forEach((tableName: string) => {
-  tableNames.slice(0, 2).forEach((tableName: string) => {
+  const manifest: ManifestItem[] = [];
+  for (const tableName of tableNames) {
     copyTableToS3(schemaName, tableName);
     const sourceKey = `${schemaName}.${tableName}.csv`;
-    copyFileToLampi(sourceKey);
-  });
+    const manifestItem = await copyFileToLampi(sourceKey);
+    manifest.push(manifestItem);
+  }
+  await uploadManifestToLampi(manifest);
 }
 
-main();
+main().then(() => console.log('Ovaran tietojen siirtäminen Lampeen valmistui'));
