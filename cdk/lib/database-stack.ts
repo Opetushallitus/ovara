@@ -30,6 +30,7 @@ export interface DatabaseStackProps extends GenericStackProps {
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
   public readonly lampiTiedostoKasiteltyTable: dynamodb.ITableV2;
+  public readonly auroraCluster: rds.IDatabaseCluster;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
@@ -123,6 +124,7 @@ export class DatabaseStack extends cdk.Stack {
           : rds.DBClusterStorageType.AURORA,
       }
     );
+    this.auroraCluster = auroraCluster;
 
     new cdk.CfnOutput(this, 'AuroraClusterResourceId', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-aurora-cluster-resourceid`,

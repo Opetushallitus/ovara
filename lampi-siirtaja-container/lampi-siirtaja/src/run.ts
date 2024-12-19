@@ -34,7 +34,11 @@ const copyTableToS3 = (tableName: string) => {
     select *
     from aws_s3.query_export_to_s3(
         'select * from ${tableName}',
-        aws_commons.create_s3_uri('${lampiS3Bucket}', '${tableName}.csv', 'eu-west-1'),
+        aws_commons.create_s3_uri(
+            '${lampiS3Bucket}', 
+            '${tableName}.csv', 
+            'eu-west-1'
+        ),
         options := 'FORMAT CSV, HEADER TRUE' 
     );
   `;
