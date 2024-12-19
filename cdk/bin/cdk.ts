@@ -19,10 +19,9 @@ import { S3Stack } from '../lib/s3-stack';
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
 const ecsImageTag = app.node.tryGetContext('ecsImageTag');
-const props = getGenericStackProps(environmentName);
+const accountId = process.env.CDK_DEFAULT_ACCOUNT || '';
+const props = getGenericStackProps(environmentName, accountId);
 const config = props.config;
-
-const accountId = process.env.CDK_DEFAULT_ACCOUNT;
 
 const externalRolesStack = new ExternalRolesStack(
   app,
@@ -71,6 +70,7 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
 });
 
 const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
+  auroraCluster: databaseStack.auroraCluster,
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
   githubActionsDeploymentRole: externalRolesStack.githubActionsDeploymentRole,
   ecsImageTag: ecsImageTag,

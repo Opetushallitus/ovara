@@ -71,5 +71,7 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant rds
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant insert_raw_role to insert_raw_user;"
 echo "Creating AWS S3 extension"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create extension aws_s3 cascade;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema aws_s3 to app;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant execute on all functions in schema aws_s3 to app;"
 echo ""
 echo "DONE!"
