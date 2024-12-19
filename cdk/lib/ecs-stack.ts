@@ -10,6 +10,7 @@ import { CfnRule } from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as rds from 'aws-cdk-lib/aws-rds';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
@@ -19,6 +20,7 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface EcsStackProps extends GenericStackProps {
+  auroraCluster: rds.IDatabaseCluster;
   auroraSecurityGroup: ec2.ISecurityGroup;
   ecsImageTag: string;
   githubActionsDeploymentRole: iam.IRole;
@@ -342,6 +344,41 @@ export class EcsStack extends cdk.Stack {
         ),
       }
     );
+
+    const rdsExportPolicy = new iam.ManagedPolicy(
+      this,
+      `${config.environment}-ovara-aurora-export-policy`,
+      {
+        statements: [
+          new iam.PolicyStatement({
+            sid: `${config.environment}OvaraAuroraExportExport`,
+            effect: Effect.ALLOW,
+            actions: ['s3:PutObject', 's3:AbortMultipartUpload'],
+            resources: [
+              lampiSiirtajaTempS3Bucket.bucketArn,
+              lampiSiirtajaTempS3Bucket.arnForObjects('*'),
+            ],
+          }),
+        ],
+      }
+    );
+
+    const rdsExportRole = new iam.Role(
+      this,
+      `${config.environment}-ovara-aurora-export-role`,
+      {
+        assumedBy: new iam.ServicePrincipal('rds.amazonaws.com'),
+        managedPolicies: [rdsExportPolicy],
+      }
+    );
+
+    const cfnDbCluster = props.auroraCluster.node.defaultChild as rds.CfnDBCluster;
+    cfnDbCluster.associatedRoles = [
+      {
+        featureName: 's3Export',
+        roleArn: rdsExportRole.roleArn,
+      },
+    ];
 
     const lampiSiirtajaSchedule = appscaling.Schedule.cron(config.lampiSiirtajaCron);
     const lampiSiirtajaScheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
