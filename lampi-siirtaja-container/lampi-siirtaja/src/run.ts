@@ -2,11 +2,11 @@ import PgClient from 'pg-native';
 import { NodeJsClient } from "@smithy/types";
 import {
   S3Client,
-  CopyObjectCommand,
-  ObjectNotInActiveTierError,
-  waitUntilObjectExists, GetObjectCommand, GetObjectCommandOutput, PutObjectCommand, PutObjectCommandOutput,
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  PutObjectCommand,
+  PutObjectCommandOutput,
 } from '@aws-sdk/client-s3';
-import { Readable } from 'node:stream';
 
 const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
@@ -58,8 +58,9 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
   `;
   const pgClient = new PgClient();
   pgClient.connectSync(dbUri);
-  const result = pgClient.querySync(sql);
-  console.log(`S3 copy result for table ${tableName}: ${JSON.stringify(result, null, 4)}`);
+  const queryResult = pgClient.querySync(sql);
+  console.log(`Taulun ${tableName} kopioinnin tulos | Rivien määrä:  ${queryResult.rows_uploaded} | Tiedostojen määrä: ${queryResult.files_uploaded} | Tiedostojen koko: ${queryResult.bytes_uploaded}`);
+  if(queryResult.files_uploaded !== '1') console.error(`Scheman ${schemaName} taulusta ${tableName} muodostui S3-ämpäriin useampi kuin yksi tiedosto (${queryResult.files_uploaded})`);
 }
 
 const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
@@ -74,30 +75,21 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
     }),
   );
 
-  //const bodyString: string = await getObjectCommandOutput.Body.transformToString();
-
   const putObjectCommandOutput: PutObjectCommandOutput = await lampiS3Client.send(
     new PutObjectCommand({
       Bucket: lampiS3Bucket,
       Key: destinationKey,
       Body: getObjectCommandOutput.Body,
       ContentLength: getObjectCommandOutput.ContentLength
-      //Body: bodyString
     })
   );
 
-  console.log(
-    `Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`,
-  );
+  console.log(`Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`,);
 
-  //console.log(`putObjectCommandOutput: ${JSON.stringify(putObjectCommandOutput, null, 4)}`);
-
-  const manifestItem = {
+  return {
     key: destinationKey,
     s3Version: putObjectCommandOutput.VersionId
   };
-
-  return manifestItem;
 }
 
 const uploadManifestToLampi = async (manifest: ManifestItem[]) => {
@@ -118,21 +110,20 @@ const main = async () => {
   const schemaNames = ['pub', 'stg'];
   const manifest: ManifestItem[] = [];
   for (const schemaName of schemaNames) {
-    console.log(`Aloitetaan skeeman "${schemaName}" taulujen siirtäminen Lampeen`);
-    //const tableNames: string[] = getTableNames(schemaName).slice(0, 2);
+    console.log(`Aloitetaan scheman "${schemaName}" taulujen siirtäminen Lampeen`);
     const tableNames: string[] = getTableNames(schemaName);
     console.log(`Table names: ${tableNames}`);
     for (const tableName of tableNames) {
-      console.log(`Aloitetaan skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäriin`);
+      console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin`);
       copyTableToS3(schemaName, tableName);
-      console.log(`Skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäriin valmistui`);
+      console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin valmistui`);
       const sourceKey = `${schemaName}.${tableName}.csv`;
-      console.log(`Aloitetaan skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin (key: "${sourceKey}")`);
+      console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin (key: "${sourceKey}")`);
       const manifestItem = await copyFileToLampi(sourceKey);
-      console.log(`Aloitetaan skeeman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin valmistui (key: "${sourceKey}")`);
+      console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin valmistui (key: "${sourceKey}")`);
       manifest.push(manifestItem);
     }
-    console.log(`Aloitetaan skeeman "${schemaName}" taulujen siirtäminen Lampeen valmistui`);
+    console.log(`Scheman "${schemaName}" taulujen siirtäminen Lampeen valmistui`);
   }
   console.log(`Aloitetaan manifest-tiedoston siirtäminen Lampeen`)
   await uploadManifestToLampi(manifest);
