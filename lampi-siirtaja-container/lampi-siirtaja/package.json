@@ -4,6 +4,7 @@
   "main": "dist/run.js",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.715.0",
+    "@smithy/types": "^3.7.2",
     "bindings": "^1.5.0",
     "file-uri-to-path": "^1.0.0",
     "libpq": "^1.8.13",
