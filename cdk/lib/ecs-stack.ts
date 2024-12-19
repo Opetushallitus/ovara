@@ -345,6 +345,21 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
+    const lampiSiirtajaS3Bucket = new s3.Bucket(
+      this,
+      `${config.environment}-lampi-siirtaja-bucket`,
+      {
+        bucketName: `${config.environment}-lampi-siirtaja-bucket`,
+        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+        serverAccessLogsBucket: new s3.Bucket(
+          this,
+          `${config.environment}-lampi-siirtaja-bucket-server-access-logs`
+        ),
+        versioned: true,
+      }
+    );
+
     const rdsExportPolicy = new iam.ManagedPolicy(
       this,
       `${config.environment}-ovara-aurora-export-policy`,
@@ -355,8 +370,8 @@ export class EcsStack extends cdk.Stack {
             effect: Effect.ALLOW,
             actions: ['s3:PutObject', 's3:AbortMultipartUpload'],
             resources: [
-              lampiSiirtajaTempS3Bucket.bucketArn,
-              lampiSiirtajaTempS3Bucket.arnForObjects('*'),
+              lampiSiirtajaS3Bucket.bucketArn,
+              lampiSiirtajaS3Bucket.arnForObjects('*'),
             ],
           }),
         ],
@@ -396,6 +411,7 @@ export class EcsStack extends cdk.Stack {
             POSTGRES_HOST: `raportointi.db.${config.publicHostedZone}`,
             DB_USERNAME: 'app',
             LAMPI_S3_BUCKET: lampiSiirtajaTempS3Bucket.bucketName,
+            OVARA_LAMPI_SIIRTAJA_BUCKET: lampiSiirtajaS3Bucket.bucketName,
           },
           secrets: {
             DB_PASSWORD: ecs.Secret.fromSsmParameter(
@@ -417,6 +433,10 @@ export class EcsStack extends cdk.Stack {
     );
 
     lampiSiirtajaTempS3Bucket.grantReadWrite(
+      lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
+    );
+
+    lampiSiirtajaS3Bucket.grantReadWrite(
       lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
     );
 
