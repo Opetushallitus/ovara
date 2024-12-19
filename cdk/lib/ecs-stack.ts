@@ -341,6 +341,7 @@ export class EcsStack extends cdk.Stack {
           this,
           `${config.environment}-temp-lampi-siirtaja-bucket-server-access-logs`
         ),
+        versioned: true,
       }
     );
 
