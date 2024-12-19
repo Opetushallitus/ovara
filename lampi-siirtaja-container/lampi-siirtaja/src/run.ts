@@ -4,6 +4,7 @@ const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 const lampiS3Bucket = process.env.LAMPI_S3_BUCKET;
+const ovaraLampitSiirtajaBucket = process.env.OVARA_LAMPI_SIIRTAJA_BUCKET;
 
 const dbUri = `postgresql://${dbUsername}:${dbPassword}@${dbHost}:5432/ovara`;
 
@@ -35,7 +36,7 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
     from aws_s3.query_export_to_s3(
         'select * from ${schemaName}.${tableName}',
         aws_commons.create_s3_uri(
-            '${lampiS3Bucket}', 
+            '${ovaraLampitSiirtajaBucket}', 
             '${schemaName}.${tableName}.csv', 
             'eu-west-1'
         ),
@@ -51,11 +52,11 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
 const main = async () => {
   validateParameters();
   console.log(`Tietokanta-URI: ${dbUri}`.replace(dbPassword, '*****'));
-  console.log(`Lampi S3-ämpäri: ${lampiS3Bucket}`);
   const schemaName = 'pub';
   const tableNames: string[] = getTableNames(schemaName);
   console.log(`Table names: ${tableNames}`);
-  tableNames.slice(0, 2).forEach((tableName: string) => {
+  //tableNames.slice(0, 2).forEach((tableName: string) => {
+  tableNames.forEach((tableName: string) => {
     copyTableToS3(schemaName, tableName);
   });
 }
