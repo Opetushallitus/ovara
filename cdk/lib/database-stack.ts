@@ -14,8 +14,8 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as sns from 'aws-cdk-lib/aws-sns';
+import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
-//import * as cr from 'aws-cdk-lib/custom-resources';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -282,6 +282,10 @@ export class DatabaseStack extends cdk.Stack {
         sourceIds: [auroraCluster.clusterIdentifier],
         sourceType: 'db-cluster',
       }
+    );
+
+    auroraClusterFailoverSnsTopic.addSubscription(
+      new snsSubscriptions.LambdaSubscription(privateLinkNlbManagementLambda)
     );
 
     const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
