@@ -68,11 +68,13 @@ const copyFileToLampi = async (sourceKey: string) => {
     }),
   );
 
+  const bodyString: string = await getObjectCommandOutput.Body.transformToString();
+
   const putObjectCommandOutput: PutObjectCommandOutput = await lampiS3Client.send(
     new PutObjectCommand({
       Bucket: lampiS3Bucket,
       Key: destinationKey,
-      Body: getObjectCommandOutput.Body
+      Body: bodyString
     })
   );
 
