@@ -80,7 +80,8 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
       Bucket: lampiS3Bucket,
       Key: destinationKey,
       Body: getObjectCommandOutput.Body,
-      ContentLength: getObjectCommandOutput.ContentLength
+      ContentLength: getObjectCommandOutput.ContentLength,
+      ContentType: 'text/csv'
     })
   );
 
@@ -105,18 +106,24 @@ const uploadManifestToLampi = async (manifest: ManifestItem[]) => {
 
 const main = async () => {
   validateParameters();
+
   console.log(`Aloitetaan Ovaran tietojen kopiointi Lampeen`);
   console.log(`Tietokannan konfiguraatio: ${dbUri}`.replace(dbPassword, '*****'));
+
   const schemaNames = ['pub', 'stg'];
   const manifest: ManifestItem[] = [];
+
   for (const schemaName of schemaNames) {
+
     console.log(`Aloitetaan scheman "${schemaName}" taulujen siirtäminen Lampeen`);
     const tableNames: string[] = getTableNames(schemaName);
     console.log(`Table names: ${tableNames}`);
+
     for (const tableName of tableNames) {
       console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin`);
       copyTableToS3(schemaName, tableName);
       console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin valmistui`);
+
       const sourceKey = `${schemaName}.${tableName}.csv`;
       console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin (key: "${sourceKey}")`);
       const manifestItem = await copyFileToLampi(sourceKey);
