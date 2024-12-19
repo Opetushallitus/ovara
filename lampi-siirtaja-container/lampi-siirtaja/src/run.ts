@@ -92,6 +92,8 @@ const main = async () => {
   //tableNames.forEach((tableName: string) => {
   tableNames.slice(0, 2).forEach((tableName: string) => {
     copyTableToS3(schemaName, tableName);
+    const sourceKey = `${schemaName}.${tableName}.csv`;
+    copyFileToLampi(sourceKey);
   });
 }
 
