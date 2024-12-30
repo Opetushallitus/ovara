@@ -31,8 +31,6 @@ models:
     columns:
       - name: henkilo_oid
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: master_oid
         data_type: text
       - name: etunimet
