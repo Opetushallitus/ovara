@@ -402,7 +402,7 @@ models:
       - name: oppilaitosnumero
         data_type: text
       - name: alkupvm
-        data_type: timestamptz  
+        data_type: timestamptz
       - name: lakkautuspvm
         data_type: timestamptz
   - name: pub_dim_organisaatio_rakenne
@@ -415,3 +415,75 @@ models:
         data_type: text
       - name: child_oid
         data_type: text
+  - name: pub_dim_koulutustoimija
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: parent_oids
+        data_type: jsonb
+  - name: pub_dim_oppilaitos
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: parent_oids
+        data_type: jsonb
+  - name: pub_dim_toimipiste
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: parent_oids
+        data_type: jsonb
+  - name: pub_dim_toimipiste_ja_toimipisteet
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: parent_oids
+        data_type: jsonb
+      - name: children
+        data_type: jsonb
+  - name: pub_dim_oppilaitos_ja_toimipisteet
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: parent_oids
+        data_type: jsonb
+      - name: children
+        data_type: jsonb
+  - name: pub_dim_koulutustoimija_ja_toimipisteet
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: parent_oids
+        data_type: jsonb
+      - name: children
+        data_type: jsonb
