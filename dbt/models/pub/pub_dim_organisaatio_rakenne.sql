@@ -2,7 +2,8 @@
   config(
     materialized = 'table',
     indexes = [
-    {'columns':['parent_oid']}
+    {'columns':['parent_oid']},
+    {'columns':['child_oid']}
     ]
     )
 }}
