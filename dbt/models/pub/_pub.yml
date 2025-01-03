@@ -423,6 +423,8 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
       - name: parent_oids
         data_type: jsonb
   - name: pub_dim_oppilaitos
@@ -433,6 +435,8 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
       - name: parent_oids
         data_type: jsonb
   - name: pub_dim_toimipiste
@@ -443,6 +447,8 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
       - name: parent_oids
         data_type: jsonb
   - name: pub_dim_toimipiste_ja_toimipisteet
@@ -455,6 +461,8 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
       - name: parent_oids
         data_type: jsonb
       - name: children
@@ -469,6 +477,8 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
       - name: parent_oids
         data_type: jsonb
       - name: children
@@ -483,6 +493,8 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
       - name: parent_oids
         data_type: jsonb
       - name: children
