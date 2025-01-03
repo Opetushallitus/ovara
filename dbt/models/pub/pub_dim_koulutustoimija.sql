@@ -18,6 +18,7 @@ final as (
         orga.organisaatio_oid,
         orga.organisaatio_nimi,
         orga.organisaatiotyypit,
+        orga.oppilaitostyyppi,
         jsonb_agg(rake.parent_oid) as parent_oids
     from
         organisaatio as orga
@@ -28,7 +29,8 @@ final as (
     group by
         orga.organisaatio_oid,
         orga.organisaatio_nimi,
-        orga.organisaatiotyypit
+        orga.organisaatiotyypit,
+        orga.oppilaitostyyppi
 )
 
 select * from final

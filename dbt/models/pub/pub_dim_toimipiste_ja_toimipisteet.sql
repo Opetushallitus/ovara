@@ -7,6 +7,7 @@ final as (
         toim.organisaatio_oid,
         toim.organisaatio_nimi,
         toim.organisaatiotyypit,
+        toim.oppilaitostyyppi,
         toim.parent_oids,
         coalesce(
             jsonb_agg(distinct alto.*) filter (
@@ -22,7 +23,8 @@ final as (
         toim.organisaatio_oid,
         toim.organisaatio_nimi,
         toim.organisaatiotyypit,
-        toim.parent_oids
+        toim.parent_oids,
+        toim.oppilaitostyyppi
 )
 
 select * from final
