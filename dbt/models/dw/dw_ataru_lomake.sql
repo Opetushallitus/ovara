@@ -16,7 +16,7 @@ with raw as (
         row_number() over (partition by id, versio_id, muokattu order by dw_metadata_dbt_copied_at desc) as _row_nr
     from {{ ref('stg_ataru_lomake') }}
     {% if is_incremental() %}
-        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
+        where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t)
     {% endif %}
 ),
 
