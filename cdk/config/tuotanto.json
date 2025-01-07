@@ -22,6 +22,7 @@
     "netGateways": 1
   },
   "lampiFileHandlerActive": "true",
+  "dbtProcessingEnabled": "true",
   "dbtCron": {
     "minute": "30",
     "hour": "5-15/1",

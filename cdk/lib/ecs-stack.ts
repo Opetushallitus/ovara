@@ -43,6 +43,8 @@ export class EcsStack extends cdk.Stack {
       vpc: props.vpc,
       allowAllOutbound: true,
     });
+    const dbtProcessingEnabled =
+      process.env.dbtProcessingEnabled?.toLowerCase() === 'true';
 
     props.auroraSecurityGroup.addIngressRule(
       ecsSecurityGroup,
@@ -130,7 +132,7 @@ export class EcsStack extends cdk.Stack {
         //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         schedule: schedule,
         securityGroups: [ecsSecurityGroup],
-        enabled: true,
+        enabled: dbtProcessingEnabled,
       }
     );
 
