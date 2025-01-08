@@ -43,8 +43,6 @@ export class EcsStack extends cdk.Stack {
       vpc: props.vpc,
       allowAllOutbound: true,
     });
-    const dbtProcessingEnabled =
-      process.env.dbtProcessingEnabled?.toLowerCase() === 'true';
 
     props.auroraSecurityGroup.addIngressRule(
       ecsSecurityGroup,
@@ -101,6 +99,8 @@ export class EcsStack extends cdk.Stack {
     );
 
     const schedule = appscaling.Schedule.cron(config.dbtCron);
+    const dbtProcessingEnabled = config.dbtProcessingEnabled?.toLowerCase() === 'true';
+
     const scheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
       this,
       dbtFargateTaskName,
