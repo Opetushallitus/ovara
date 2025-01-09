@@ -59,6 +59,7 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
   const pgClient = new PgClient();
   pgClient.connectSync(dbUri);
   const queryResult = pgClient.querySync(sql);
+  console.log(`QueryResult: ${JSON.stringify(queryResult, null, 4)}`);
   console.log(`Taulun ${tableName} kopioinnin tulos | Rivien määrä:  ${queryResult.rows_uploaded} | Tiedostojen määrä: ${queryResult.files_uploaded} | Tiedostojen koko: ${queryResult.bytes_uploaded}`);
   if(queryResult.files_uploaded !== '1') console.error(`Scheman ${schemaName} taulusta ${tableName} muodostui S3-ämpäriin useampi kuin yksi tiedosto (${queryResult.files_uploaded})`);
 }
