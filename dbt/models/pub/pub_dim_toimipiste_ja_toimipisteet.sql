@@ -17,7 +17,10 @@ final as (
         ) as children
     from
         toimipiste as toim
-    left join toimipiste as alto
+        left join
+            (	select *,
+                '[]'::jsonb as children from toimipiste
+            ) as alto
         on alto.parent_oids ? toim.organisaatio_oid
     group by
         toim.organisaatio_oid,
