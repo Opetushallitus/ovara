@@ -1,12 +1,13 @@
 import PgClient from 'pg-native';
-import { NodeJsClient } from "@smithy/types";
+import { NodeJsClient } from '@smithy/types';
 import {
   S3Client,
   GetObjectCommand,
   GetObjectCommandOutput,
   PutObjectCommand,
-  PutObjectCommandOutput,
+  PutObjectCommandOutput, CompleteMultipartUploadCommandOutput,
 } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 
 const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
@@ -76,6 +77,7 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
     }),
   );
 
+  /*
   const putObjectCommandOutput: PutObjectCommandOutput = await lampiS3Client.send(
     new PutObjectCommand({
       Bucket: lampiS3Bucket,
@@ -85,12 +87,31 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
       ContentType: 'text/csv'
     })
   );
+  */
+  const target = {
+    Bucket: lampiS3Bucket,
+    Key: destinationKey,
+    Body: getObjectCommandOutput.Body,
+    ContentLength: getObjectCommandOutput.ContentLength,
+    ContentType: 'text/csv'
+  }
 
-  console.log(`Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`,);
+  const parallelUploads3 = new Upload({
+    client: lampiS3Client,
+    queueSize: 8,
+    partSize: 1024,
+    leavePartsOnError: false,
+    params: target,
+  });
+
+  const completeMultipartUploadCommandOutput: CompleteMultipartUploadCommandOutput = await parallelUploads3.done();
+
+  console.log(`Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`);
 
   return {
     key: destinationKey,
-    s3Version: putObjectCommandOutput.VersionId
+    s3Version: completeMultipartUploadCommandOutput.VersionId
+    //s3Version: putObjectCommandOutput.VersionId
   };
 }
 
