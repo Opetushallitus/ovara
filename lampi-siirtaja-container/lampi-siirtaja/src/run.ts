@@ -61,8 +61,9 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
   pgClient.connectSync(dbUri);
   const queryResult = pgClient.querySync(sql);
   console.log(`QueryResult: ${JSON.stringify(queryResult, null, 4)}`);
-  console.log(`Taulun ${tableName} kopioinnin tulos | Rivien määrä:  ${queryResult.rows_uploaded} | Tiedostojen määrä: ${queryResult.files_uploaded} | Tiedostojen koko: ${queryResult.bytes_uploaded}`);
-  if(queryResult.files_uploaded !== '1') console.error(`Scheman ${schemaName} taulusta ${tableName} muodostui S3-ämpäriin useampi kuin yksi tiedosto (${queryResult.files_uploaded})`);
+  const result = queryResult[0] || {};
+  console.log(`Taulun ${tableName} kopioinnin tulos | Rivien määrä:  ${result.rows_uploaded} | Tiedostojen määrä: ${result.files_uploaded} | Tiedostojen koko: ${result.bytes_uploaded}`);
+  if(result.files_uploaded !== '1') console.error(`Scheman ${schemaName} taulusta ${tableName} muodostui S3-ämpäriin useampi kuin yksi tiedosto (${result.files_uploaded})`);
 }
 
 const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
@@ -96,7 +97,7 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
     ContentType: 'text/csv'
   }
 
-  const parallelUploads3 = new Upload({
+  const parallelS3Upload = new Upload({
     client: lampiS3Client,
     queueSize: 4, // rinnakkaisuus
     partSize: 524288000, // 500MB
@@ -104,7 +105,7 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
     params: target,
   });
 
-  const completeMultipartUploadCommandOutput: CompleteMultipartUploadCommandOutput = await parallelUploads3.done();
+  const completeMultipartUploadCommandOutput: CompleteMultipartUploadCommandOutput = await parallelS3Upload.done();
 
   console.log(`Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`);
 

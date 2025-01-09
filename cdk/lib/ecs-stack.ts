@@ -407,8 +407,8 @@ export class EcsStack extends cdk.Stack {
         scheduledFargateTaskImageOptions: {
           image: lampiSiirtajaImage,
           logDriver: lampiSiirtajaLogDriver,
-          cpu: 1024,
-          memoryLimitMiB: 2048,
+          cpu: 2048,
+          memoryLimitMiB: 6144,
           environment: {
             POSTGRES_HOST: `raportointi.db.${config.publicHostedZone}`,
             DB_USERNAME: 'app',
