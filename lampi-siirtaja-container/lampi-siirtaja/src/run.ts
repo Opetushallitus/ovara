@@ -98,8 +98,8 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
 
   const parallelUploads3 = new Upload({
     client: lampiS3Client,
-    queueSize: 8,
-    partSize: 1024,
+    queueSize: 4, // rinnakkaisuus
+    partSize: 524288000, // 500MB
     leavePartsOnError: false,
     params: target,
   });
