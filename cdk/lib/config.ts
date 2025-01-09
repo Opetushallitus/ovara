@@ -24,6 +24,7 @@ export interface Config {
   lampiFileHandlerActive: string;
   dbtProcessingEnabled: string;
   dbtCron: appscaling.CronOptions;
+  lampiSiirtajaEnabled: string;
   lampiSiirtajaCron: appscaling.CronOptions;
   profile: string;
   publicHostedZone: string;

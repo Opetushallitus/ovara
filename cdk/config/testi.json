@@ -28,6 +28,7 @@
     "hour": "5-15/1",
     "weekDay": "2-6/1"
   },
+  "lampiSiirtajaEnabled": "true",
   "lampiSiirtajaCron": {
     "minute": "0",
     "hour": "5-15/1",

@@ -397,6 +397,7 @@ export class EcsStack extends cdk.Stack {
     ];
 
     const lampiSiirtajaSchedule = appscaling.Schedule.cron(config.lampiSiirtajaCron);
+    const lampiSiirtajaEnabled = config.lampiSiirtajaEnabled?.toLowerCase() === 'true';
     const lampiSiirtajaScheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
       this,
       lampiSiirtajaFargateTaskName,
@@ -429,7 +430,7 @@ export class EcsStack extends cdk.Stack {
         //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         schedule: lampiSiirtajaSchedule,
         securityGroups: [ecsSecurityGroup],
-        enabled: true,
+        enabled: lampiSiirtajaEnabled,
       }
     );
 

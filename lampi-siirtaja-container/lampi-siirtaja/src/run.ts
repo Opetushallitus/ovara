@@ -50,7 +50,7 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
         'select * from ${schemaName}.${tableName}',
         aws_commons.create_s3_uri(
             '${ovaraLampiSiirtajaBucket}', 
-            '${schemaName}.${tableName}.csv', 
+            '${tableName}.csv', 
             'eu-west-1'
         ),
         options := 'FORMAT CSV, HEADER TRUE' 
@@ -124,7 +124,7 @@ const main = async () => {
       copyTableToS3(schemaName, tableName);
       console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin valmistui`);
 
-      const sourceKey = `${schemaName}.${tableName}.csv`;
+      const sourceKey = `${tableName}.csv`;
       console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin (key: "${sourceKey}")`);
       const manifestItem = await copyFileToLampi(sourceKey);
       console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin valmistui (key: "${sourceKey}")`);
