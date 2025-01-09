@@ -104,7 +104,7 @@ export class EcsStack extends cdk.Stack {
       dbtRunnerRepository,
       dbtRunnerImageVersion
     );
-    
+
     const dbtRunnerSchedule = appscaling.Schedule.cron(config.dbtCron);
     const dbtProcessingEnabled = config.dbtProcessingEnabled?.toLowerCase() === 'true';
     const dbtRunnerScheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
