@@ -135,7 +135,6 @@ export class EcsStack extends cdk.Stack {
             ),
           },
         },
-        //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         schedule: dbtRunnerSchedule,
         securityGroups: [ecsSecurityGroup],
         enabled: dbtProcessingEnabled,
@@ -342,7 +341,7 @@ export class EcsStack extends cdk.Stack {
           this,
           `${config.environment}-temp-lampi-siirtaja-bucket-server-access-logs`
         ),
-        versioned: true,
+        versioned: false,
       }
     );
 
@@ -357,7 +356,7 @@ export class EcsStack extends cdk.Stack {
           this,
           `${config.environment}-lampi-siirtaja-bucket-server-access-logs`
         ),
-        versioned: true,
+        versioned: false,
       }
     );
 
@@ -427,7 +426,6 @@ export class EcsStack extends cdk.Stack {
             ),
           },
         },
-        //schedule: appscaling.Schedule.expression('rate(5 minutes)'),
         schedule: lampiSiirtajaSchedule,
         securityGroups: [ecsSecurityGroup],
         enabled: lampiSiirtajaEnabled,
