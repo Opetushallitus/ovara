@@ -79,7 +79,8 @@ jobs:
                   .revision,
                   .status,
                   .registeredAt,
-                  .registeredBy
+                  .registeredBy,
+                  .enableFaultInjection
               )' ) > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
