@@ -345,12 +345,18 @@ export class LambdaStack extends cdk.Stack {
               `/${config.environment}/lampi-external-id`
             ),
             ovaraBucketName: config.siirtotiedostot.ovaraBucketName,
+            host: dbEndpointName,
+            database: 'ovara',
+            user: 'insert_raw_user',
+            port: '5432',
           },
           bundling: {
             commandHooks: {
               beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
               beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
-              afterBundling: (inputDir: string, outputDir: string): Array<string> => [],
+              afterBundling: (inputDir: string, outputDir: string): Array<string> => [
+                `cp ${inputDir}/lambda/lampi/eu-west-1-bundle.pem ${outputDir}`,
+              ],
             },
           },
         }
