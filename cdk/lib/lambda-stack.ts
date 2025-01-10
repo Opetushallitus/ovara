@@ -275,6 +275,7 @@ export class LambdaStack extends cdk.Stack {
         roleName: `${config.environment}-LampiLambdaRole`,
         assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
         inlinePolicies: {
+          dbConnectPolicyDocument,
           siirtotiedostoBucketContentDocument,
           siirtotiedostoKeyDocument,
         },

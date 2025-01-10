@@ -71,7 +71,7 @@ export const main: lambda.Handler = async (
     throw new Error(message);
   }
 
-  if (tiedostotyyppi == '') {
+  if (tiedostotyyppi == 'onr_henkilo') {
     console.log('Siivotaan henkilöiden tiedot pois raw.onr_henkilo-taulusta');
 
     const host = process.env.host || '';
@@ -95,7 +95,7 @@ export const main: lambda.Handler = async (
       dialect: 'postgres',
       dialectOptions: {
         ssl: {
-          //enableTrace: true,
+          enableTrace: false,
           rejectUnauthorized: false,
           cert: fs.readFileSync(__dirname + '/eu-west-1-bundle.pem').toString(),
         },

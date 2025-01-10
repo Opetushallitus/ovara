@@ -69,6 +69,7 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant ins
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create user insert_raw_user;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant rds_iam to insert_raw_user;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant insert_raw_role to insert_raw_user;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant truncate on all tables in schema raw to insert_raw_role;"
 echo "Creating AWS S3 extension"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create extension aws_s3 cascade;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema aws_s3 to app;"
