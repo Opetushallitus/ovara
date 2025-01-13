@@ -10,6 +10,7 @@ import {
 import { Upload } from '@aws-sdk/lib-storage';
 
 import MultiStream from 'multistream';
+import { Readable } from 'node:stream';
 
 const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
@@ -76,28 +77,40 @@ const copyFileToLampi = async (sourceKey: string, numberOfFiles: number): Promis
 
   console.log(`${sourceKey} | tiedostojen määrä: ${numberOfFiles}`);
 
-  const streams = [];
+  let bodyStream;
   let contentLength = 0;
-  for(let i = 1; i <= numberOfFiles; i++) {
-    const partSourceKey = i === 1 ? sourceKey : `${sourceKey}_part${i}`;
-    console.log(`${sourceKey} | partSourceKey: ${partSourceKey}`);
+  if(numberOfFiles > 1) {
+    const streams = [];
+    for(let i = 1; i <= numberOfFiles; i++) {
+      const partSourceKey = i === 1 ? sourceKey : `${sourceKey}_part${i}`;
+      console.log(`${sourceKey} | partSourceKey: ${partSourceKey}`);
 
+      const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
+        new GetObjectCommand({
+          Bucket: ovaraLampiSiirtajaBucket,
+          Key: partSourceKey,
+        }),
+      );
+      streams.push(getObjectCommandOutput.Body);
+      contentLength = contentLength + getObjectCommandOutput.ContentLength;
+    }
+
+    bodyStream = new MultiStream(streams);
+  } else {
     const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
       new GetObjectCommand({
         Bucket: ovaraLampiSiirtajaBucket,
-        Key: partSourceKey,
+        Key: sourceKey,
       }),
     );
-    streams.push(getObjectCommandOutput.Body);
-    contentLength = contentLength + getObjectCommandOutput.ContentLength;
+    bodyStream = getObjectCommandOutput.Body;
+    contentLength = getObjectCommandOutput.ContentLength;
   }
-
-  const multiStream = new MultiStream(streams);
 
   const target = {
     Bucket: lampiS3Bucket,
     Key: destinationKey,
-    Body: multiStream,
+    Body: bodyStream,
     ContentLength: contentLength,
     ContentType: 'text/csv'
   }
