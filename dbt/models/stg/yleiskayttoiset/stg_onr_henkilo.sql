@@ -1,6 +1,18 @@
+{{
+  config(
+    materialized = 'table',
+    indexes = [
+        {'columns': ['henkilo_oid']}
+    ]
+    )
+}}
+
 with source as (
     select * from {{ source('ovara', 'onr_henkilo') }}
-
+    {#
+    is_incremental is never true because of config materialized=table
+    this table is being truncated whenever a new file is processed
+    #}
     {% if is_incremental() %}
 
         where dw_metadata_dbt_copied_at > (
@@ -8,6 +20,7 @@ with source as (
         )
 
     {% endif %}
+    {# end of incremental logic #}
 ),
 
 final as (
