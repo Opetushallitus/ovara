@@ -3,10 +3,13 @@ import * as fs from 'fs';
 
 import * as s3 from '@aws-sdk/client-s3';
 import * as sts from '@aws-sdk/client-sts';
+import { Signer } from '@aws-sdk/rds-signer';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { SQSEvent } from 'aws-lambda';
 import { Context } from 'aws-lambda/handler';
 import * as dateFns from 'date-fns-tz';
+import * as pg from 'pg';
+import { Options, Sequelize } from 'sequelize';
 
 import * as common from './common';
 import { LampiS3Event } from './common';
@@ -18,6 +21,13 @@ const { parser } = require('stream-json');
 const { streamArray } = require('stream-json/streamers/StreamArray');
 const { batch } = require('stream-json/utils/Batch');
 const format = require('string-format');
+
+const DEFAULT_DB_POOL_PARAMS = {
+  max: 1,
+  min: 0,
+  idle: 120000,
+  acquire: 10000,
+};
 
 export const main: lambda.Handler = async (
   event: string | SQSEvent,
@@ -59,6 +69,46 @@ export const main: lambda.Handler = async (
     const message = `Tuntematon tiedostotyyppi: ${tiedostotyyppi}`;
     console.error(message);
     throw new Error(message);
+  }
+
+  if (tiedostotyyppi == 'onr_henkilo') {
+    console.log('Siivotaan henkilöiden tiedot pois raw.onr_henkilo-taulusta');
+
+    const host = process.env.host || '';
+    const username = process.env.user || '';
+    const database = process.env.database || '';
+
+    const portStr = process.env.port;
+    const port = portStr ? Number(portStr) : 5432;
+
+    const signer = new Signer({ hostname: host, port, username });
+    const token = await signer.getAuthToken();
+
+    const databaseConfig: Options = {
+      ...DEFAULT_DB_POOL_PARAMS,
+      host,
+      port,
+      database,
+      username,
+      password: token,
+      dialectModule: pg,
+      dialect: 'postgres',
+      dialectOptions: {
+        ssl: {
+          enableTrace: false,
+          rejectUnauthorized: false,
+          cert: fs.readFileSync(__dirname + '/eu-west-1-bundle.pem').toString(),
+        },
+      },
+      logging: false,
+    };
+
+    const dbClient = new Sequelize(databaseConfig);
+    await dbClient.authenticate();
+
+    await dbClient.query('truncate table raw.onr_henkilo');
+
+    console.log('Siivottu henkilöiden tiedot pois raw.onr_henkilo-taulusta');
   }
 
   const lampiBucketName = process.env.lampiBucketName;

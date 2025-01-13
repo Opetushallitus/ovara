@@ -56,11 +56,11 @@ export const tiedostot: Tiedostot = {
     ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
     batchSize: 500000,
   },
-  onr_yhteystieto: {
-    lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/yhteystieto.json',
-    ovaraKeyTemplate: 'onr/onr_yhteystieto__{}__{}_{}.json',
-    batchSize: 100000,
-  },
+  // onr_yhteystieto: {
+  //   lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/yhteystieto.json',
+  //   ovaraKeyTemplate: 'onr/onr_yhteystieto__{}__{}_{}.json',
+  //   batchSize: 100000,
+  // },
   organisaatio_organisaatio: {
     lampiKey: 'fulldump/organisaatio/v3/json/organisaatio.json',
     ovaraKeyTemplate: 'organisaatio/organisaatio_organisaatio__{}__{}_{}.json',
