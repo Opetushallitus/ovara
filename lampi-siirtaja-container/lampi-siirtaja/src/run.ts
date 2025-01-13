@@ -137,7 +137,9 @@ const main = async () => {
   console.log(`Aloitetaan Ovaran tietojen kopiointi Lampeen`);
   console.log(`Tietokannan konfiguraatio: ${dbUri}`.replace(dbPassword, '*****'));
 
-  const schemaNames = ['pub', 'dw'];
+  //const schemaNames = ['pub', 'dw'];
+  // Tilapäisesti vain dw schema
+  const schemaNames = ['dw'];
   const manifest: ManifestItem[] = [];
 
   for (const schemaName of schemaNames) {
