@@ -17,7 +17,7 @@ data as (
     select
         model,
         raw_table,
-        case when raw_table = 'onr_henkilo' then start_time - interval '1 hour' else start_time end as start_time
+        start_time
     from raw
 )
 
