@@ -97,7 +97,7 @@ const copyFileToLampi = async (sourceKey: string, numberOfFiles: number): Promis
   const target = {
     Bucket: lampiS3Bucket,
     Key: destinationKey,
-    Body: multiStream.Body,
+    Body: multiStream,
     ContentLength: contentLength,
     ContentType: 'text/csv'
   }
