@@ -12,6 +12,7 @@ final as (
         kotu.organisaatio_nimi,
         kotu.organisaatiotyypit,
         kotu.oppilaitostyyppi,
+        kotu.tila,
         kotu.parent_oids,
         coalesce(
             jsonb_agg(distinct opto.*) filter (
@@ -27,8 +28,10 @@ final as (
         kotu.organisaatio_oid,
         kotu.organisaatio_nimi,
         kotu.organisaatiotyypit,
-        kotu.parent_oids,
-        kotu.oppilaitostyyppi
+        kotu.oppilaitostyyppi,
+        kotu.tila,
+        kotu.parent_oids
+
 )
 
 select * from final

@@ -12,6 +12,7 @@ final as (
         oppi.organisaatio_nimi,
         oppi.organisaatiotyypit,
         oppi.oppilaitostyyppi,
+        oppi.tila,
         oppi.parent_oids,
         coalesce(
             jsonb_agg(distinct topi.*) filter (
@@ -28,6 +29,7 @@ final as (
         oppi.organisaatio_nimi,
         oppi.organisaatiotyypit,
         oppi.oppilaitostyyppi,
+        oppi.tila,
         oppi.parent_oids
 )
 
