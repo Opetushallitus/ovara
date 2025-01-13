@@ -9,6 +9,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 
+import MultiStream from 'multistream';
+
 const dbHost = process.env.POSTGRES_HOST;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -44,7 +46,7 @@ const getTableNames = (schemaName: string): string[] => {
   return rows.map(row => row.table_name);
 }
 
-const copyTableToS3 = (schemaName: string, tableName: string) => {
+const copyTableToS3 = (schemaName: string, tableName: string): number => {
   const sql = `
     select *
     from aws_s3.query_export_to_s3(
@@ -64,36 +66,39 @@ const copyTableToS3 = (schemaName: string, tableName: string) => {
   const result = queryResult[0] || {};
   console.log(`Taulun ${tableName} kopioinnin tulos | Rivien määrä:  ${result.rows_uploaded} | Tiedostojen määrä: ${result.files_uploaded} | Tiedostojen koko: ${result.bytes_uploaded}`);
   if(result.files_uploaded !== '1') console.error(`Scheman ${schemaName} taulusta ${tableName} muodostui S3-ämpäriin useampi kuin yksi tiedosto (${result.files_uploaded})`);
+  return result.files_uploaded;
 }
 
-const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
+const copyFileToLampi = async (sourceKey: string, numberOfFiles: number): Promise<ManifestItem> => {
   const ovaraS3Client: S3Client = new S3Client({}) as NodeJsClient<S3Client>;
   const lampiS3Client: S3Client = new S3Client({}) as NodeJsClient<S3Client>;
   const destinationKey = sourceKey;
 
-  const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
-    new GetObjectCommand({
-      Bucket: ovaraLampiSiirtajaBucket,
-      Key: sourceKey,
-    }),
-  );
+  console.log(`${sourceKey} | tiedostojen määrä: ${numberOfFiles}`);
 
-  /*
-  const putObjectCommandOutput: PutObjectCommandOutput = await lampiS3Client.send(
-    new PutObjectCommand({
-      Bucket: lampiS3Bucket,
-      Key: destinationKey,
-      Body: getObjectCommandOutput.Body,
-      ContentLength: getObjectCommandOutput.ContentLength,
-      ContentType: 'text/csv'
-    })
-  );
-  */
+  const streams = [];
+  let contentLength = 0;
+  for(let i = 1; i <= numberOfFiles; i++) {
+    const partSourceKey = i === 1 ? sourceKey : `${sourceKey}_part${i}`;
+    console.log(`${sourceKey} | partSourceKey: ${partSourceKey}`);
+
+    const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
+      new GetObjectCommand({
+        Bucket: ovaraLampiSiirtajaBucket,
+        Key: partSourceKey,
+      }),
+    );
+    streams.push(getObjectCommandOutput.Body);
+    contentLength = contentLength + getObjectCommandOutput.ContentLength;
+  }
+
+  const multiStream = new MultiStream(streams);
+
   const target = {
     Bucket: lampiS3Bucket,
     Key: destinationKey,
-    Body: getObjectCommandOutput.Body,
-    ContentLength: getObjectCommandOutput.ContentLength,
+    Body: multiStream,
+    ContentLength: contentLength,
     ContentType: 'text/csv'
   }
 
@@ -112,7 +117,6 @@ const copyFileToLampi = async (sourceKey: string): Promise<ManifestItem> => {
   return {
     key: destinationKey,
     s3Version: completeMultipartUploadCommandOutput.VersionId
-    //s3Version: putObjectCommandOutput.VersionId
   };
 }
 
@@ -144,12 +148,12 @@ const main = async () => {
 
     for (const tableName of tableNames) {
       console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin`);
-      copyTableToS3(schemaName, tableName);
+      const numberOfFiles = copyTableToS3(schemaName, tableName);
       console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen tietokannasta Ovaran S3-ämpäriin valmistui`);
 
       const sourceKey = `${tableName}.csv`;
       console.log(`Aloitetaan scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin (key: "${sourceKey}")`);
-      const manifestItem = await copyFileToLampi(sourceKey);
+      const manifestItem = await copyFileToLampi(sourceKey, numberOfFiles);
       console.log(`Scheman "${schemaName}" taulun "${tableName}" siirtäminen Ovaran S3-ämpäristä Lammen S3-ämpäriin valmistui (key: "${sourceKey}")`);
       manifest.push(manifestItem);
     }
