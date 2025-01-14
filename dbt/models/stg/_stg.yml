@@ -41,8 +41,6 @@ models:
       - name: valinnanvaihe_id
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: hakukohde_oid
         description: ""
         data_type: text
