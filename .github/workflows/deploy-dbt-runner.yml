@@ -1,4 +1,5 @@
 name: Deploy DBT Runner
+run-name: Deploy DBT runner image ${{ inputs.image-tag }} to environment ${{ inputs.environment }}
 
 on:
   workflow_call:
