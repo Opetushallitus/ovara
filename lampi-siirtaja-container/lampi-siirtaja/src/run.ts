@@ -5,7 +5,10 @@ import {
   GetObjectCommand,
   GetObjectCommandOutput,
   PutObjectCommand,
-  PutObjectCommandOutput, CompleteMultipartUploadCommandOutput,
+  PutObjectCommandOutput,
+  CompleteMultipartUploadCommandOutput,
+  CreateMultipartUploadCommand,
+  CreateMultipartUploadCommandOutput, UploadPartCommand, UploadPartCommandOutput, CompleteMultipartUploadCommand,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 
@@ -77,26 +80,80 @@ const copyFileToLampi = async (sourceKey: string, numberOfFiles: number): Promis
 
   console.log(`${sourceKey} | tiedostojen määrä: ${numberOfFiles}`);
 
-  let contentLength = 0;
+  //let contentLength = 0;
   const streams = [];
   for(let i = 1; i <= numberOfFiles; i++) {
     const partSourceKey = i === 1 ? sourceKey : `${sourceKey}_part${i}`;
     console.log(`${sourceKey} | partSourceKey: ${partSourceKey}`);
 
-    const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
-      new GetObjectCommand({
-        Bucket: ovaraLampiSiirtajaBucket,
-        Key: partSourceKey,
-      }),
-    );
-    streams.push(getObjectCommandOutput.Body);
-    contentLength = contentLength + getObjectCommandOutput.ContentLength;
+
+    if(i === 1) {
+      const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
+        new GetObjectCommand({
+          Bucket: ovaraLampiSiirtajaBucket,
+          Key: partSourceKey,
+        }),
+      );
+      streams.push(getObjectCommandOutput.Body);
+    } else {
+      streams.push(async () => {
+        const getObjectCommandOutput: GetObjectCommandOutput = await ovaraS3Client.send(
+          new GetObjectCommand({
+            Bucket: ovaraLampiSiirtajaBucket,
+            Key: partSourceKey,
+          }),
+        );
+        return getObjectCommandOutput.Body;
+      });
+    }
+    //contentLength = contentLength + getObjectCommandOutput.ContentLength;
   }
 
   const bodyStream = new MultiStream(streams);
   const passThrough = new PassThrough();
   bodyStream.pipe(passThrough);
 
+  const createMultipartUploadCommand: CreateMultipartUploadCommand = new CreateMultipartUploadCommand({
+    Bucket: lampiS3Bucket,
+    Key: destinationKey,
+    ContentType: 'text/csv'
+  });
+
+  const createMultipartUploadCommandOutput: CreateMultipartUploadCommandOutput = await lampiS3Client.send(createMultipartUploadCommand);
+  const uploadId = createMultipartUploadCommandOutput.UploadId;
+
+  let i = 1;
+  const parts = [];
+  while (true) {
+    const { done, value } = await passThrough.read(103809024); // 99 MB
+    if (done) {
+      break;
+    } else {
+      const uploadPartCommand: UploadPartCommand = new UploadPartCommand({
+        Bucket: lampiS3Bucket,
+        Key: destinationKey,
+        PartNumber: i++,
+        UploadId: uploadId,
+        Body: value
+      });
+
+      const uploadPartCommandOutput: UploadPartCommandOutput = await lampiS3Client.send(uploadPartCommand);
+      parts.push(uploadPartCommandOutput.ETag);
+    }
+  }
+
+  const completeMultipartUploadCommand: CompleteMultipartUploadCommand = new CompleteMultipartUploadCommand({
+    Bucket: lampiS3Bucket,
+    Key: destinationKey,
+    UploadId: uploadId,
+    MultipartUpload: {
+      Parts: parts
+    }
+  });
+
+  const completeMultipartUploadCommandOutput: CompleteMultipartUploadCommandOutput = await lampiS3Client.send(completeMultipartUploadCommand);
+
+  /*
   const target = {
     Bucket: lampiS3Bucket,
     Key: destinationKey,
@@ -114,6 +171,7 @@ const copyFileToLampi = async (sourceKey: string, numberOfFiles: number): Promis
   });
 
   const completeMultipartUploadCommandOutput: CompleteMultipartUploadCommandOutput = await parallelS3Upload.done();
+  */
 
   console.log(`Siirretty ${ovaraLampiSiirtajaBucket}/${sourceKey} => ${lampiS3Bucket}/${destinationKey}`);
 
