@@ -12,7 +12,7 @@ with source as (
 
 final as (
     select
-        data -> 'valinnanVaihe' ->> 'valinnanVaiheOid'::varchar as valinnanvaihe_id,
+        coalesce(data -> 'valinnanVaihe' ->> 'valinnanVaiheOid'::varchar,'puuttuu') as valinnanvaihe_id,
         data ->> 'hakukohdeOid'::varchar as hakukohde_oid,
         data ->> 'hakuOid'::varchar as haku_oid,
         data ->> 'tarjoajaOid'::varchar as tarjoaja_oid,
