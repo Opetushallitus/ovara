@@ -27,7 +27,7 @@ final as (
         toimipiste as toim
     left join
         tyhja_array as alto
-        on alto.parent_oids ? toim.organisaatio_oid
+        on alto.parent_oids ? toim.organisaatio_oid and alto.organisaatio_oid != toim.organisaatio_oid
     group by
         toim.organisaatio_oid,
         toim.organisaatio_nimi,
