@@ -2,7 +2,7 @@ package fi.oph.opintopolku.ovara.db.domain;
 
 public class S3ExportResult {
     private Long rows_uploaded;
-    private Long files_uploaded;
+    private Integer files_uploaded;
     private Long bytes_uploaded;
 
     public Long getRows_uploaded() {
@@ -13,11 +13,11 @@ public class S3ExportResult {
         this.rows_uploaded = rows_uploaded;
     }
 
-    public Long getFiles_uploaded() {
+    public Integer getFiles_uploaded() {
         return files_uploaded;
     }
 
-    public void setFiles_uploaded(Long files_uploaded) {
+    public void setFiles_uploaded(Integer files_uploaded) {
         this.files_uploaded = files_uploaded;
     }
 
