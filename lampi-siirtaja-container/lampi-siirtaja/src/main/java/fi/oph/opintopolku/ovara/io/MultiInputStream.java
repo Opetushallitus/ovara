@@ -7,14 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 public class MultiInputStream extends InputStream {
-    private final Enumeration<Future<S3ObjectInputStream>> e;
+    private final Enumeration<Supplier<S3ObjectInputStream>> e;
     private InputStream in;
 
-    public MultiInputStream(Enumeration<Future<S3ObjectInputStream>> e) throws IOException {
+    public MultiInputStream(Enumeration<Supplier<S3ObjectInputStream>> e) throws IOException {
         this.e = e;
         peekNextStream();
     }
@@ -26,14 +25,10 @@ public class MultiInputStream extends InputStream {
         peekNextStream();
     }
 
-    private void peekNextStream() throws IOException {
+    private void peekNextStream() {
         if (e.hasMoreElements()) {
-            Future<? extends InputStream> f = e.nextElement();
-            try {
-                in = f.get();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new IOException(e);
-            }
+            Supplier<S3ObjectInputStream> s = e.nextElement();
+            in = s.get();
             if (in == null)
                 throw new NullPointerException();
         } else {
