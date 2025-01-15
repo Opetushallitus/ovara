@@ -30,7 +30,7 @@ public class LampiSiirtajaService {
             schemaName -> {
               try {
                 LOG.info("Haetaan scheman {} taulut", schemaName);
-                List<String> tableNames = db.getTableNames("pub");
+                List<String> tableNames = db.getTableNames(schemaName);
                 LOG.info("Scheman {} taulut: {}", schemaName, tableNames);
                 LOG.info("Viedään scheman {} datat Ovaran AWS S3-ämpäriin", schemaName);
                 List<Pair<String, S3ExportResult>> exportToS3Results =
