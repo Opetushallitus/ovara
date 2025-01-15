@@ -25,7 +25,7 @@ public class LampiSiirtajaService {
   public void run() throws Exception {
     DatabaseToS3 db = new DatabaseToS3(config);
 
-    Stream.of("pub")
+    Stream.of("pub", "dw")
         .forEach(
             schemaName -> {
               try {
