@@ -55,7 +55,7 @@ jobs:
         run: |
             cd lampi-siirtaja-container
             cd lampi-siirtaja
-            mvn -B clean package
+            mvn -B clean spotless:check package
             cd -
             docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG

@@ -2,13 +2,13 @@ package fi.oph.opintopolku.ovara.db.domain;
 
 public class Table {
 
-    private String tablename;
+  private String tablename;
 
-    public String getTablename() {
-        return tablename;
-    }
+  public String getTablename() {
+    return tablename;
+  }
 
-    public void setTablename(String tablename) {
-        this.tablename = tablename;
-    }
+  public void setTablename(String tablename) {
+    this.tablename = tablename;
+  }
 }
