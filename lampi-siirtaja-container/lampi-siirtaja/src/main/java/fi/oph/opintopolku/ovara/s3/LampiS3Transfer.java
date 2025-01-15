@@ -24,7 +24,7 @@ public class LampiS3Transfer {
 
   private static final Logger LOG = LoggerFactory.getLogger(LampiS3Transfer.class);
 
-  private static final int UPLOAD_PART_SIZE = 5 * 1024 * 1024;
+  private static final int UPLOAD_PART_SIZE = 99 * 1024 * 1024;
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   private final Config config;
