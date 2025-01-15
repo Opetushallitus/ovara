@@ -2,6 +2,8 @@ package fi.oph.opintopolku.ovara;
 
 import com.amazonaws.regions.Regions;
 import fi.oph.opintopolku.ovara.db.DatabaseToS3;
+import fi.oph.opintopolku.ovara.db.domain.S3ExportResult;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,9 @@ public class App {
             try {
                 LOG.info("Haetaan scheman {} taulut", schemaName);
                 List<String> tableNames = db.getTableNames("pub");
-                LOG.info("Scheman {} taulut: ", tableNames);
+                LOG.info("Scheman {} taulut: {}", schemaName, tableNames);
+                LOG.info("Viedään scheman {} datat Ovaran AWS S3-ämpäriin", schemaName);
+                List<Pair<String, S3ExportResult>> results = db.exportTablesToS3(schemaName, tableNames);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

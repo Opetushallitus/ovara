@@ -9,12 +9,16 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.javatuples.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DatabaseToS3 {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseToS3.class);
 
     private final Config config;
 
@@ -32,7 +36,7 @@ public class DatabaseToS3 {
     private static final String EXPORT_TABLE_TO_S3_SQL = """
         select *
         from aws_s3.query_export_to_s3(
-            'select * from ?',
+            ?,
             aws_commons.create_s3_uri(
                 ?, 
                 ?, 
@@ -71,6 +75,7 @@ public class DatabaseToS3 {
     }
 
     private Pair<String, S3ExportResult> exportTableToS3(String schemaName, String tableName) throws Exception {
+        LOG.info("Aloitetaan scheman {} taulun {} vienti Ovaran S3-ämpäriin", schemaName, tableName);
         ResultSetHandler<S3ExportResult> h = new BeanHandler<S3ExportResult>(S3ExportResult.class);
 
         Connection connection = getConnection();
@@ -81,10 +86,12 @@ public class DatabaseToS3 {
                     connection,
                     EXPORT_TABLE_TO_S3_SQL,
                     h,
-                    String.format("%s.%s", schemaName, tableName),
+                    String.format("select * from %s.%s", schemaName, tableName),
                     config.ovaraS3Bucket(),
                     String.format("%s.csv", tableName),
                     config.awsRegion());
+
+            LOG.info("Scheman {} taulun {} vienti Ovaran S3-ämpäriin valmistui. Tulokset: {}", schemaName, tableName, s3ExportResult.toString());
 
             return new Pair<>(tableName, s3ExportResult);
 
