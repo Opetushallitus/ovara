@@ -61,17 +61,25 @@ public class LampiS3Transfer {
       uploadRequest.withLastPart(true);
     }
 
-    System.out.printf(
-        String.format(
-            "Submitting uploadPartId: %d of partSize: %d%n", eachPartId, inputStream.available()));
+    LOG.info(
+        "Lähetetään tiedoston {} palanen {} jonka koko on {}",
+        uploadFilename,
+        eachPartId,
+        inputStream.available());
 
     UploadPartResult uploadResult = lampiS3Client.uploadPart(uploadRequest);
 
-    System.out.printf(String.format("Successfully submitted uploadPartId: %d%n", eachPartId));
+    LOG.info("Lähetetty tiedoston {} palanen {}", uploadFilename, eachPartId);
     return uploadResult.getPartETag();
   }
 
   public String transferToLampi(String filename, int numberOfFiles) throws Exception {
+
+    LOG.info(
+        "Aloitetaan tiedoston {} lähettäminen Lammen S3-ämpäriin joka on {} palassa",
+        filename,
+        numberOfFiles);
+
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentType("text/csv");
     InitiateMultipartUploadRequest initRequest =
@@ -125,6 +133,9 @@ public class LampiS3Transfer {
         new CompleteMultipartUploadRequest(config.lampiS3Bucket(), filename, uploadId, parts);
     CompleteMultipartUploadResult completeMultipartUploadResult =
         lampiS3Client.completeMultipartUpload(completeRequest);
+
+    LOG.info("Tiedoston {} lähettäminen Lammen S3-ämpäriin valmistui", filename);
+
     return completeMultipartUploadResult.getVersionId();
   }
 }
