@@ -6,8 +6,8 @@ echo "Running Lampi-siirtäjä..."
 
 start=$(date +%s)
 
-cd /root/lampi-siirtaja
-npm start
+cd /root
+java -jar ovara-lampi-siirtaja.jar
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 

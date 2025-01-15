@@ -410,6 +410,7 @@ export class EcsStack extends cdk.Stack {
           memoryLimitMiB: 6144,
           environment: {
             POSTGRES_HOST: `raportointi.db.${config.publicHostedZone}`,
+            POSTGRES_PORT: '5432',
             DB_USERNAME: 'app',
             LAMPI_S3_BUCKET: lampiSiirtajaTempS3Bucket.bucketName,
             OVARA_LAMPI_SIIRTAJA_BUCKET: lampiSiirtajaS3Bucket.bucketName,

@@ -9,20 +9,20 @@ case "$(uname -m)" in
 esac
 echo $ARCHITECTURE
 
-echo "Installing needed software"
-apk --no-cache add \
-  python3 \
-  py3-pip \
-  libpq-dev \
-  g++ \
-  make
+#echo "Installing needed software"
+#apk --no-cache add \
+#  python3 \
+#  py3-pip \
+#  libpq-dev \
+#  g++ \
+#  make
 
 echo "Listing contents of /root folder"
 ls -Al /root
 
-echo "Listing contents of /root/lampi-siirtaja folder"
-ls -Al /root/lampi-siirtaja
+#echo "Listing contents of /root/lampi-siirtaja folder"
+#ls -Al /root/lampi-siirtaja
 
-echo "Installing dependencies with npm"
-cd /root/lampi-siirtaja
-npm ci
+#echo "Installing dependencies with npm"
+#cd /root/lampi-siirtaja
+#npm ci
