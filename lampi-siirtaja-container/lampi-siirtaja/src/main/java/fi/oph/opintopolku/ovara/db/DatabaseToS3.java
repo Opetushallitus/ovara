@@ -5,12 +5,13 @@ import fi.oph.opintopolku.ovara.db.domain.S3ExportResult;
 import fi.oph.opintopolku.ovara.db.domain.Table;
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,24 +64,21 @@ public class DatabaseToS3 {
     }
   }
 
-  public List<Pair<String, S3ExportResult>> exportTablesToS3(
-      String schemaName, List<String> tableNames) throws Exception {
-    List<Pair<String, S3ExportResult>> results =
-        tableNames.stream()
-            .map(
+  public Map<String, S3ExportResult> exportTablesToS3(String schemaName, List<String> tableNames) {
+    return tableNames.stream()
+        .collect(
+            Collectors.toMap(
+                tableName -> tableName,
                 tableName -> {
                   try {
                     return exportTableToS3(schemaName, tableName);
                   } catch (Exception e) {
                     throw new RuntimeException(e);
                   }
-                })
-            .toList();
-    return results;
+                }));
   }
 
-  private Pair<String, S3ExportResult> exportTableToS3(String schemaName, String tableName)
-      throws Exception {
+  private S3ExportResult exportTableToS3(String schemaName, String tableName) throws Exception {
     LOG.info("Aloitetaan scheman {} taulun {} vienti Ovaran S3-ämpäriin", schemaName, tableName);
     ResultSetHandler<S3ExportResult> h = new BeanHandler<S3ExportResult>(S3ExportResult.class);
 
@@ -104,7 +102,7 @@ public class DatabaseToS3 {
           tableName,
           s3ExportResult.toString());
 
-      return new Pair<>(tableName, s3ExportResult);
+      return s3ExportResult;
 
     } finally {
       DbUtils.close(connection);
