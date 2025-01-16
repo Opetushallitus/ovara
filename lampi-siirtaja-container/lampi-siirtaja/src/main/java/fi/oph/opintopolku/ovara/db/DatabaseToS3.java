@@ -94,7 +94,7 @@ public class DatabaseToS3 {
               String.format("select * from %s.%s", schemaName, tableName),
               config.ovaraS3Bucket(),
               String.format("%s.csv", tableName),
-              config.awsRegion());
+              config.awsRegion().id());
 
       LOG.info(
           "Scheman {} taulun {} vienti Ovaran S3-ämpäriin valmistui. Tulokset: {}",

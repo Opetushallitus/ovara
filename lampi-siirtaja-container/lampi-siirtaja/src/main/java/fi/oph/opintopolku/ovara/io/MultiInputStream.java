@@ -1,18 +1,19 @@
 package fi.oph.opintopolku.ovara.io;
 
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.function.Supplier;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 public class MultiInputStream extends InputStream {
-  private final Enumeration<Supplier<S3ObjectInputStream>> e;
+  private final Enumeration<Supplier<ResponseInputStream<GetObjectResponse>>> e;
   private InputStream in;
 
-  public MultiInputStream(Enumeration<Supplier<S3ObjectInputStream>> e) {
+  public MultiInputStream(Enumeration<Supplier<ResponseInputStream<GetObjectResponse>>> e) {
     this.e = e;
     peekNextStream();
   }
@@ -26,7 +27,7 @@ public class MultiInputStream extends InputStream {
 
   private void peekNextStream() {
     if (e.hasMoreElements()) {
-      Supplier<S3ObjectInputStream> s = e.nextElement();
+      Supplier<ResponseInputStream<GetObjectResponse>> s = e.nextElement();
       in = s.get();
       if (in == null) throw new NullPointerException();
     } else {

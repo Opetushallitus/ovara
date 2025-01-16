@@ -1,10 +1,10 @@
 package fi.oph.opintopolku.ovara;
 
-import com.amazonaws.regions.Regions;
 import fi.oph.opintopolku.ovara.config.Config;
 import fi.oph.opintopolku.ovara.service.LampiSiirtajaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.regions.Region;
 
 public class App {
 
@@ -22,7 +22,7 @@ public class App {
             System.getenv("DB_PASSWORD"),
             System.getenv("OVARA_LAMPI_SIIRTAJA_BUCKET"),
             System.getenv("LAMPI_S3_BUCKET"),
-            Regions.EU_WEST_1.getName(),
+            Region.EU_WEST_1,
             "fulldump/ovara/v1/");
 
     LampiSiirtajaService service = new LampiSiirtajaService(config);
