@@ -103,7 +103,10 @@ public class DatabaseToS3 {
           s3ExportResult.toString());
 
       return s3ExportResult;
-
+    } catch (Exception e) {
+      LOG.error(
+          "Scheman {} taulun {} vienti Ovaran S3-ämpäriin epäonnistui", schemaName, tableName, e);
+      throw new RuntimeException(e);
     } finally {
       DbUtils.close(connection);
     }
