@@ -7,8 +7,8 @@ import fi.oph.opintopolku.ovara.s3.LampiS3Transfer;
 import fi.oph.opintopolku.ovara.s3.manifest.ManifestItem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
-import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +34,14 @@ public class LampiSiirtajaService {
                 List<String> tableNames = db.getTableNames(schemaName);
                 LOG.info("Scheman {} taulut: {}", schemaName, tableNames);
                 LOG.info("Viedään scheman {} datat Ovaran AWS S3-ämpäriin", schemaName);
-                List<Pair<String, S3ExportResult>> exportToS3Results =
+                Map<String, S3ExportResult> exportToS3Results =
                     db.exportTablesToS3(schemaName, tableNames);
                 LOG.info("Scheman {} datojen vienti Ovaran AWS S3-ämpäriin valmistui", schemaName);
                 LOG.info("Aloitetaan scheman {} tiedostojen siirto Lammen S3-ämpäriin", schemaName);
                 List<ManifestItem> manifestItems = new ArrayList<>();
                 exportToS3Results.forEach(
-                    result -> {
-                      String tableName = result.getValue0();
-                      int numberOfFiles = result.getValue1().getFiles_uploaded();
+                    (tableName, s3ExportResult) -> {
+                      int numberOfFiles = s3ExportResult.getFiles_uploaded();
 
                       String filename = String.format("%s.csv", tableName);
                       String uploadFilename =
