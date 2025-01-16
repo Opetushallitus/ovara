@@ -6,17 +6,14 @@ import com.amazonaws.services.s3.model.*;
 import com.google.common.collect.Iterators;
 import fi.oph.opintopolku.ovara.config.Config;
 import fi.oph.opintopolku.ovara.io.MultiInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
+import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +22,6 @@ public class LampiS3Transfer {
   private static final Logger LOG = LoggerFactory.getLogger(LampiS3Transfer.class);
 
   private static final int UPLOAD_PART_SIZE = 99 * 1024 * 1024;
-  private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   private final Config config;
   private final AmazonS3 ovaraS3Client;
@@ -43,6 +39,24 @@ public class LampiS3Transfer {
   private Supplier<S3ObjectInputStream> constructSupplier(String downloadFilename) {
     return () ->
         ovaraS3Client.getObject(config.ovaraS3Bucket(), downloadFilename).getObjectContent();
+  }
+
+  public void startGZIPCompressing(OutputStream out, InputStream in) {
+    try (GZIPOutputStream gOut = new GZIPOutputStream(out)) {
+      byte[] buffer = new byte[10240];
+      int len;
+      while ((len = in.read(buffer)) != -1) {
+        gOut.write(buffer, 0, len);
+      }
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    } finally {
+      try {
+        out.close();
+      } catch (Exception e) {
+        LOG.error("GZIP-pakkauksen streamin sulkeminen epäonnistui", e);
+      }
+    }
   }
 
   private PartETag submitTaskForUploading(
@@ -73,7 +87,8 @@ public class LampiS3Transfer {
     return uploadResult.getPartETag();
   }
 
-  public String transferToLampi(String filename, int numberOfFiles) throws Exception {
+  public String transferToLampi(String filename, String uploadFilename, int numberOfFiles)
+      throws Exception {
 
     LOG.info(
         "Aloitetaan tiedoston {} lähettäminen Lammen S3-ämpäriin joka on {} palassa",
@@ -82,8 +97,9 @@ public class LampiS3Transfer {
 
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentType("text/csv");
+    metadata.setContentEncoding("gzip");
     InitiateMultipartUploadRequest initRequest =
-        new InitiateMultipartUploadRequest(config.lampiS3Bucket(), filename)
+        new InitiateMultipartUploadRequest(config.lampiS3Bucket(), uploadFilename)
             .withObjectMetadata(metadata);
     InitiateMultipartUploadResult initResult = lampiS3Client.initiateMultipartUpload(initRequest);
 
@@ -102,14 +118,21 @@ public class LampiS3Transfer {
     Enumeration<Supplier<S3ObjectInputStream>> streams =
         Iterators.asEnumeration(streamsFList.iterator());
 
-    InputStream inputStream = new MultiInputStream(streams);
+    InputStream multiInputStream = new MultiInputStream(streams);
+
+    final PipedOutputStream pipedOutputStream = new PipedOutputStream();
+    PipedInputStream pipedInputStream = new PipedInputStream();
+    pipedInputStream.connect(pipedOutputStream);
+
+    Thread thread = new Thread(() -> startGZIPCompressing(pipedOutputStream, multiInputStream));
+    thread.start();
 
     int bytesRead, bytesAdded = 0;
     byte[] data = new byte[UPLOAD_PART_SIZE];
     ByteArrayOutputStream bufferOutputStream = new ByteArrayOutputStream();
     List<PartETag> parts = new ArrayList<>();
 
-    while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+    while ((bytesRead = pipedInputStream.read(data, 0, data.length)) != -1) {
       bufferOutputStream.write(data, 0, bytesRead);
 
       if (bytesAdded < UPLOAD_PART_SIZE) {
@@ -118,7 +141,7 @@ public class LampiS3Transfer {
       }
       PartETag partETag =
           submitTaskForUploading(
-              filename, new ByteArrayInputStream(bufferOutputStream.toByteArray()), false);
+              uploadFilename, new ByteArrayInputStream(bufferOutputStream.toByteArray()), false);
       parts.add(partETag);
       bufferOutputStream.reset(); // flush the bufferOutputStream
       bytesAdded = 0; // reset the bytes added to 0
@@ -126,11 +149,11 @@ public class LampiS3Transfer {
 
     PartETag partETag =
         submitTaskForUploading(
-            filename, new ByteArrayInputStream(bufferOutputStream.toByteArray()), true);
+            uploadFilename, new ByteArrayInputStream(bufferOutputStream.toByteArray()), true);
     parts.add(partETag);
 
     CompleteMultipartUploadRequest completeRequest =
-        new CompleteMultipartUploadRequest(config.lampiS3Bucket(), filename, uploadId, parts);
+        new CompleteMultipartUploadRequest(config.lampiS3Bucket(), uploadFilename, uploadId, parts);
     CompleteMultipartUploadResult completeMultipartUploadResult =
         lampiS3Client.completeMultipartUpload(completeRequest);
 

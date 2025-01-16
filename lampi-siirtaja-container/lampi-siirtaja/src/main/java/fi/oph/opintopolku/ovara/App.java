@@ -22,7 +22,8 @@ public class App {
             System.getenv("DB_PASSWORD"),
             System.getenv("OVARA_LAMPI_SIIRTAJA_BUCKET"),
             System.getenv("LAMPI_S3_BUCKET"),
-            Regions.EU_WEST_1.getName());
+            Regions.EU_WEST_1.getName(),
+            "fulldump/ovara/v1/");
 
     LampiSiirtajaService service = new LampiSiirtajaService(config);
     service.run();

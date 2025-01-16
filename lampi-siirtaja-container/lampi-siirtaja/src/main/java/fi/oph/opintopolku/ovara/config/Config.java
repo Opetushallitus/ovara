@@ -7,4 +7,5 @@ public record Config(
     String postgresPassword,
     String ovaraS3Bucket,
     String lampiS3Bucket,
-    String awsRegion) {}
+    String awsRegion,
+    String lampiKeyPrefix) {}
