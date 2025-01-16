@@ -25,7 +25,8 @@ public class LampiSiirtajaService {
   public void run() throws Exception {
     DatabaseToS3 db = new DatabaseToS3(config);
 
-    Stream.of("pub", "dw")
+    // Stream.of("pub", "dw")
+    Stream.of("pub")
         .forEach(
             schemaName -> {
               try {
@@ -52,11 +53,18 @@ public class LampiSiirtajaService {
                       try {
                         String versionId =
                             transfer.transferToLampi(filename, uploadFilename, numberOfFiles);
-                        manifestItems.add(new ManifestItem(uploadFilename, versionId));
+                        // manifestItems.add(new ManifestItem(uploadFilename, versionId));
+                        // Ovaran testiämpärissä ei ole versionti päällä
+                        manifestItems.add(
+                            new ManifestItem(
+                                uploadFilename, versionId == null ? "DUMMY" : versionId));
                       } catch (Exception e) {
                         throw new RuntimeException(e);
                       }
                     });
+                LOG.info("Siirretään manifest.json Lampeen");
+                LampiS3Transfer manifestTransfer = new LampiS3Transfer(config);
+                manifestTransfer.uploadManifest(manifestItems);
                 LOG.info("Scheman {} tiedostojen siirto Lammen S3-ämpäriin valmistui", schemaName);
               } catch (Exception e) {
                 throw new RuntimeException(e);

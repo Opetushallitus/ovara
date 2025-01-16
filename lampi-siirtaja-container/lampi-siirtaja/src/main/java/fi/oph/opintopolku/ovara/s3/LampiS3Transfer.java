@@ -4,9 +4,12 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.google.common.collect.Iterators;
+import com.google.gson.Gson;
 import fi.oph.opintopolku.ovara.config.Config;
 import fi.oph.opintopolku.ovara.io.MultiInputStream;
+import fi.oph.opintopolku.ovara.s3.manifest.ManifestItem;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -22,11 +25,13 @@ public class LampiS3Transfer {
   private static final Logger LOG = LoggerFactory.getLogger(LampiS3Transfer.class);
 
   private static final int UPLOAD_PART_SIZE = 99 * 1024 * 1024;
+  private static final String MANIFEST_FILENAME = "manifest.json";
 
   private final Config config;
   private final AmazonS3 ovaraS3Client;
   private final AmazonS3 lampiS3Client;
   private final AtomicInteger uploadPartId = new AtomicInteger(0);
+  private final Gson gson;
 
   private String uploadId;
 
@@ -34,6 +39,7 @@ public class LampiS3Transfer {
     this.config = config;
     this.ovaraS3Client = AmazonS3ClientBuilder.standard().build();
     this.lampiS3Client = AmazonS3ClientBuilder.standard().build();
+    this.gson = new Gson();
   }
 
   private Supplier<S3ObjectInputStream> constructSupplier(String downloadFilename) {
@@ -160,5 +166,20 @@ public class LampiS3Transfer {
     LOG.info("Tiedoston {} lähettäminen Lammen S3-ämpäriin valmistui", filename);
 
     return completeMultipartUploadResult.getVersionId();
+  }
+
+  public void uploadManifest(List<ManifestItem> manifestItems) {
+    String uploadFilename = config.lampiKeyPrefix() + MANIFEST_FILENAME;
+
+    String json = gson.toJson(manifestItems);
+    InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+
+    LOG.info("Manifest: {}", json);
+
+    ObjectMetadata metadata = new ObjectMetadata();
+    PutObjectRequest putObjectRequest =
+        new PutObjectRequest(config.lampiS3Bucket(), uploadFilename, inputStream, metadata);
+
+    lampiS3Client.putObject(putObjectRequest);
   }
 }
