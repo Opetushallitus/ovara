@@ -44,12 +44,15 @@ public class LampiSiirtajaService {
                       int numberOfFiles = result.getValue1().getFiles_uploaded();
 
                       String filename = String.format("%s.csv", tableName);
+                      String uploadFilename =
+                          String.format("%s%s.gz", config.lampiKeyPrefix(), filename);
 
                       LampiS3Transfer transfer = new LampiS3Transfer(config);
 
                       try {
-                        String versionId = transfer.transferToLampi(filename, numberOfFiles);
-                        manifestItems.add(new ManifestItem(filename, versionId));
+                        String versionId =
+                            transfer.transferToLampi(filename, uploadFilename, numberOfFiles);
+                        manifestItems.add(new ManifestItem(uploadFilename, versionId));
                       } catch (Exception e) {
                         throw new RuntimeException(e);
                       }
