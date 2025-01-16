@@ -29,7 +29,8 @@ public class DatabaseToS3 {
       """
         select table_name as tablename
         from information_schema.tables
-        where table_schema = ?;
+        where table_schema = ?
+        order by table_name asc;
     """;
 
   private static final String EXPORT_TABLE_TO_S3_SQL =
