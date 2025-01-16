@@ -1,5 +1,7 @@
 package fi.oph.opintopolku.ovara.config;
 
+import software.amazon.awssdk.regions.Region;
+
 public record Config(
     String postgresHost,
     Integer postgresPort,
@@ -7,5 +9,5 @@ public record Config(
     String postgresPassword,
     String ovaraS3Bucket,
     String lampiS3Bucket,
-    String awsRegion,
+    Region awsRegion,
     String lampiKeyPrefix) {}

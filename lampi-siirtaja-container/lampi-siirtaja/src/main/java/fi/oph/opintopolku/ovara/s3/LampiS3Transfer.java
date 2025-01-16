@@ -1,8 +1,5 @@
 package fi.oph.opintopolku.ovara.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.*;
 import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import fi.oph.opintopolku.ovara.config.Config;
@@ -19,6 +16,11 @@ import java.util.stream.IntStream;
 import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
 
 public class LampiS3Transfer {
 
@@ -28,8 +30,8 @@ public class LampiS3Transfer {
   private static final String MANIFEST_FILENAME = "manifest.json";
 
   private final Config config;
-  private final AmazonS3 ovaraS3Client;
-  private final AmazonS3 lampiS3Client;
+  private final S3Client ovaraS3Client;
+  private final S3Client lampiS3Client;
   private final AtomicInteger uploadPartId = new AtomicInteger(0);
   private final Gson gson;
 
@@ -37,14 +39,26 @@ public class LampiS3Transfer {
 
   public LampiS3Transfer(Config config) {
     this.config = config;
-    this.ovaraS3Client = AmazonS3ClientBuilder.standard().build();
-    this.lampiS3Client = AmazonS3ClientBuilder.standard().build();
     this.gson = new Gson();
+    this.ovaraS3Client =
+        S3Client.builder()
+            .region(config.awsRegion())
+            .credentialsProvider(ContainerCredentialsProvider.create())
+            .build();
+    this.lampiS3Client =
+        S3Client.builder()
+            .region(config.awsRegion())
+            .credentialsProvider(ContainerCredentialsProvider.create())
+            .build();
   }
 
-  private Supplier<S3ObjectInputStream> constructSupplier(String downloadFilename) {
-    return () ->
-        ovaraS3Client.getObject(config.ovaraS3Bucket(), downloadFilename).getObjectContent();
+  private Supplier<ResponseInputStream<GetObjectResponse>> constructSupplier(
+      String downloadFilename) {
+    return () -> {
+      GetObjectRequest getObjectRequest =
+          GetObjectRequest.builder().bucket(config.ovaraS3Bucket()).key(downloadFilename).build();
+      return ovaraS3Client.getObject(getObjectRequest);
+    };
   }
 
   public void startGZIPCompressing(OutputStream out, InputStream in) {
@@ -65,21 +79,18 @@ public class LampiS3Transfer {
     }
   }
 
-  private PartETag submitTaskForUploading(
+  private CompletedPart submitTaskForUploading(
       String uploadFilename, ByteArrayInputStream inputStream, boolean isFinalPart) {
     int eachPartId = uploadPartId.incrementAndGet();
     UploadPartRequest uploadRequest =
-        new UploadPartRequest()
-            .withBucketName(config.lampiS3Bucket())
-            .withKey(uploadFilename)
-            .withUploadId(uploadId)
-            .withPartNumber(eachPartId)
-            .withPartSize(inputStream.available())
-            .withInputStream(inputStream);
+        UploadPartRequest.builder()
+            .bucket(config.lampiS3Bucket())
+            .key(uploadFilename)
+            .uploadId(uploadId)
+            .partNumber(eachPartId)
+            .build();
 
-    if (isFinalPart) {
-      uploadRequest.withLastPart(true);
-    }
+    RequestBody requestBody = RequestBody.fromInputStream(inputStream, inputStream.available());
 
     LOG.info(
         "Lähetetään tiedoston {} palanen {} jonka koko on {}",
@@ -87,10 +98,14 @@ public class LampiS3Transfer {
         eachPartId,
         inputStream.available());
 
-    UploadPartResult uploadResult = lampiS3Client.uploadPart(uploadRequest);
+    UploadPartResponse uploadPartResponse = lampiS3Client.uploadPart(uploadRequest, requestBody);
 
     LOG.info("Lähetetty tiedoston {} palanen {}", uploadFilename, eachPartId);
-    return uploadResult.getPartETag();
+
+    CompletedPart completedPart =
+        CompletedPart.builder().partNumber(eachPartId).eTag(uploadPartResponse.eTag()).build();
+
+    return completedPart;
   }
 
   public String transferToLampi(String filename, String uploadFilename, int numberOfFiles)
@@ -101,17 +116,20 @@ public class LampiS3Transfer {
         filename,
         numberOfFiles);
 
-    ObjectMetadata metadata = new ObjectMetadata();
-    metadata.setContentType("text/csv");
-    metadata.setContentEncoding("gzip");
-    InitiateMultipartUploadRequest initRequest =
-        new InitiateMultipartUploadRequest(config.lampiS3Bucket(), uploadFilename)
-            .withObjectMetadata(metadata);
-    InitiateMultipartUploadResult initResult = lampiS3Client.initiateMultipartUpload(initRequest);
+    CreateMultipartUploadRequest createRequest =
+        CreateMultipartUploadRequest.builder()
+            .bucket(config.lampiS3Bucket())
+            .key(uploadFilename)
+            .contentType("text/csv")
+            .contentEncoding("gzip")
+            .build();
 
-    uploadId = initResult.getUploadId();
+    CreateMultipartUploadResponse createResponse =
+        lampiS3Client.createMultipartUpload(createRequest);
 
-    List<Supplier<S3ObjectInputStream>> streamsFList =
+    uploadId = createResponse.uploadId();
+
+    List<Supplier<ResponseInputStream<GetObjectResponse>>> streamsFList =
         IntStream.rangeClosed(1, numberOfFiles)
             .mapToObj(
                 fileNumber -> {
@@ -121,7 +139,7 @@ public class LampiS3Transfer {
                 })
             .toList();
 
-    Enumeration<Supplier<S3ObjectInputStream>> streams =
+    Enumeration<Supplier<ResponseInputStream<GetObjectResponse>>> streams =
         Iterators.asEnumeration(streamsFList.iterator());
 
     InputStream multiInputStream = new MultiInputStream(streams);
@@ -136,7 +154,7 @@ public class LampiS3Transfer {
     int bytesRead, bytesAdded = 0;
     byte[] data = new byte[UPLOAD_PART_SIZE];
     ByteArrayOutputStream bufferOutputStream = new ByteArrayOutputStream();
-    List<PartETag> parts = new ArrayList<>();
+    List<CompletedPart> completedParts = new ArrayList<>();
 
     while ((bytesRead = pipedInputStream.read(data, 0, data.length)) != -1) {
       bufferOutputStream.write(data, 0, bytesRead);
@@ -145,30 +163,35 @@ public class LampiS3Transfer {
         bytesAdded += bytesRead;
         continue;
       }
-      PartETag partETag =
+      CompletedPart completedPart =
           submitTaskForUploading(
               uploadFilename, new ByteArrayInputStream(bufferOutputStream.toByteArray()), false);
-      parts.add(partETag);
+      completedParts.add(completedPart);
       bufferOutputStream.reset(); // flush the bufferOutputStream
       bytesAdded = 0; // reset the bytes added to 0
     }
 
-    PartETag partETag =
+    CompletedPart completedPart =
         submitTaskForUploading(
             uploadFilename, new ByteArrayInputStream(bufferOutputStream.toByteArray()), true);
-    parts.add(partETag);
+    completedParts.add(completedPart);
 
     CompleteMultipartUploadRequest completeRequest =
-        new CompleteMultipartUploadRequest(config.lampiS3Bucket(), uploadFilename, uploadId, parts);
-    CompleteMultipartUploadResult completeMultipartUploadResult =
+        CompleteMultipartUploadRequest.builder()
+            .bucket(config.lampiS3Bucket())
+            .key(uploadFilename)
+            .uploadId(uploadId)
+            .multipartUpload(CompletedMultipartUpload.builder().parts(completedParts).build())
+            .build();
+    CompleteMultipartUploadResponse completeMultipartUploadResult =
         lampiS3Client.completeMultipartUpload(completeRequest);
 
     LOG.info("Tiedoston {} lähettäminen Lammen S3-ämpäriin valmistui", filename);
 
-    return completeMultipartUploadResult.getVersionId();
+    return completeMultipartUploadResult.versionId();
   }
 
-  public void uploadManifest(List<ManifestItem> manifestItems) {
+  public void uploadManifest(List<ManifestItem> manifestItems) throws Exception {
     String uploadFilename = config.lampiKeyPrefix() + MANIFEST_FILENAME;
 
     String json = gson.toJson(manifestItems);
@@ -176,10 +199,11 @@ public class LampiS3Transfer {
 
     LOG.info("Manifest: {}", json);
 
-    ObjectMetadata metadata = new ObjectMetadata();
     PutObjectRequest putObjectRequest =
-        new PutObjectRequest(config.lampiS3Bucket(), uploadFilename, inputStream, metadata);
+        PutObjectRequest.builder().bucket(config.lampiS3Bucket()).key(uploadFilename).build();
 
-    lampiS3Client.putObject(putObjectRequest);
+    RequestBody requestBody = RequestBody.fromInputStream(inputStream, inputStream.available());
+
+    lampiS3Client.putObject(putObjectRequest, requestBody);
   }
 }
