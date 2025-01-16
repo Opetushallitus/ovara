@@ -58,6 +58,7 @@ public class LampiSiirtajaService {
                             new ManifestItem(
                                 uploadFilename, versionId == null ? "DUMMY" : versionId));
                       } catch (Exception e) {
+                        LOG.error("Manifest-tiedoston siirtäminen Lampeen epäonnistui", e);
                         throw new RuntimeException(e);
                       }
                     });
