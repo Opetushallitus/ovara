@@ -1,0 +1,61 @@
+name: Run Lampi-siirtäjä
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: 'Environment (testi/tuotanto)'
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Environment (testi/tuotanto)'
+        options:
+          - testi
+          - tuotanto
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Run Lampi-siirtäjä
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure AWS credentials (TESTI)
+        if: ${{ inputs.environment == 'testi' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_TESTI_ROLE_ARN }}
+          role-session-name: testi-dbt-runner-deploy
+          aws-region: eu-west-1
+
+      - name: Configure AWS credentials (TUOTANTO)
+        if: ${{ inputs.environment == 'tuotanto' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OVARA_TUOTANTO_ROLE_ARN }}
+          role-session-name: tuotanto-dbt-runner-deploy
+          aws-region: eu-west-1
+
+      - name: Run scheduled task (TESTI)
+        if: ${{ inputs.environment == 'testi' }}
+        run: |
+          ci-tools/run-testi-lampi-siirtaja.sh
+
+      - name: Run scheduled task (TUOTANTO)
+        if: ${{ inputs.environment == 'tuotanto' }}
+        run: |
+          ci-tools/run-tuotanto-lampi-siirtaja.sh    
+
