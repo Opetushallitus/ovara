@@ -25,6 +25,8 @@ public class LampiSiirtajaService {
   public void run() throws Exception {
     DatabaseToS3 db = new DatabaseToS3(config);
 
+    List<ManifestItem> manifestItems = new ArrayList<>();
+
     Stream.of("pub", "dw")
         // Stream.of("pub")
         .forEach(
@@ -38,7 +40,6 @@ public class LampiSiirtajaService {
                     db.exportTablesToS3(schemaName, tableNames);
                 LOG.info("Scheman {} datojen vienti Ovaran AWS S3-ämpäriin valmistui", schemaName);
                 LOG.info("Aloitetaan scheman {} tiedostojen siirto Lammen S3-ämpäriin", schemaName);
-                List<ManifestItem> manifestItems = new ArrayList<>();
                 exportToS3Results.forEach(
                     (tableName, s3ExportResult) -> {
                       int numberOfFiles = s3ExportResult.getFiles_uploaded();
@@ -62,13 +63,13 @@ public class LampiSiirtajaService {
                         throw new RuntimeException(e);
                       }
                     });
-                LOG.info("Siirretään manifest.json Lampeen");
-                LampiS3Transfer manifestTransfer = new LampiS3Transfer(config);
-                manifestTransfer.uploadManifest(manifestItems);
                 LOG.info("Scheman {} tiedostojen siirto Lammen S3-ämpäriin valmistui", schemaName);
               } catch (Exception e) {
                 throw new RuntimeException(e);
               }
             });
+    LOG.info("Siirretään manifest.json Lampeen");
+    LampiS3Transfer manifestTransfer = new LampiS3Transfer(config);
+    manifestTransfer.uploadManifest(manifestItems);
   }
 }
