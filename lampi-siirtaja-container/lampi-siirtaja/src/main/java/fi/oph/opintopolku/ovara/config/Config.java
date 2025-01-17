@@ -10,4 +10,7 @@ public record Config(
     String ovaraS3Bucket,
     String lampiS3Bucket,
     Region awsRegion,
-    String lampiKeyPrefix) {}
+    String lampiKeyPrefix,
+    String lampiRoleArn,
+    String lampiRoleSessionName,
+    String lampiExternalId) {}

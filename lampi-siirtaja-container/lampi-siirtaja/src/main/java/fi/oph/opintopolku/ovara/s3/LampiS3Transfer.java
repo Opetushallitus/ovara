@@ -21,6 +21,9 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.sts.StsClient;
+import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider;
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 
 public class LampiS3Transfer {
 
@@ -45,11 +48,37 @@ public class LampiS3Transfer {
             .region(config.awsRegion())
             .credentialsProvider(ContainerCredentialsProvider.create())
             .build();
+
+    StsClient stsClient =
+        StsClient.builder()
+            .region(config.awsRegion())
+            .credentialsProvider(ContainerCredentialsProvider.create())
+            .build();
+
+    AssumeRoleRequest assumeRoleRequest =
+        AssumeRoleRequest.builder()
+            .roleArn(config.lampiRoleArn())
+            .roleSessionName(config.lampiRoleSessionName())
+            .externalId(config.lampiExternalId())
+            .build();
+
+    this.lampiS3Client =
+        S3Client.builder()
+            .region(config.awsRegion())
+            .credentialsProvider(
+                StsAssumeRoleCredentialsProvider.builder()
+                    .stsClient(stsClient)
+                    .refreshRequest(assumeRoleRequest)
+                    .build())
+            .build();
+
+    /*
     this.lampiS3Client =
         S3Client.builder()
             .region(config.awsRegion())
             .credentialsProvider(ContainerCredentialsProvider.create())
             .build();
+     */
   }
 
   private Supplier<ResponseInputStream<GetObjectResponse>> constructSupplier(

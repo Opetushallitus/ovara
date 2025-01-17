@@ -23,7 +23,10 @@ public class App {
             System.getenv("OVARA_LAMPI_SIIRTAJA_BUCKET"),
             System.getenv("LAMPI_S3_BUCKET"),
             Region.EU_WEST_1,
-            "fulldump/ovara/v1/");
+            "fulldump/ovara/v1/",
+            System.getenv("LAMPI_ROLE_ARN"),
+            System.getenv("LAMPI_ROLE_SESSION_NAME"),
+            System.getenv("LAMPI_EXTERNAL_ID"));
 
     LampiSiirtajaService service = new LampiSiirtajaService(config);
     service.run();
