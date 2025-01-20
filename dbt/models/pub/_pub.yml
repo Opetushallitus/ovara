@@ -493,7 +493,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: organisaatio_nimi
         data_type: jsonb
       - name: organisaatiotyypit
@@ -504,3 +504,28 @@ models:
         data_type: jsonb
       - name: children
         data_type: jsonb
+  - name: pub_dim_valinnantulos
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_oid
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: valinnantila
+        data_type: text
+      - name: ehdollisestihyvaksyttavissa
+        data_type: boolean
+      - name: ehdollisenhyvaksymisenehto
+        data_type: jsonb
+      - name: valinnantilankuvauksenteksti
+        data_type: jsonb
+      - name: julkaistavissa
+        data_type: boolean
+      - name: hyvaksyperuuntunut
+        data_type: boolean

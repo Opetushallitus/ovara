@@ -6,8 +6,7 @@ models:
         description: Koulutuksen oid
         data_type: text
       - name: koulutuskoodiuri
-        description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla
-          useampi koulutuskoodi
+        description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla useampi koulutuskoodi
         data_type: text
   - name: int_hakukohderyhma_hakukohde
     description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
@@ -28,9 +27,7 @@ models:
       - name: muokattu
         data_type: timestamptz
   - name: int_organisaatio_osoite
-    description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla
-      voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne
-      löytyvät eri taulusta.
+    description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne löytyvät eri taulusta.
     columns:
       - name: organisaatio_oid
         description: Organisaation OID
@@ -56,8 +53,7 @@ models:
     description: >
       Sisältää organisaatiopalvelun organisaatiot.
 
-      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista:
-      koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
+      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista: koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
     columns:
       - name: organisaatio_oid
         data_type: text
@@ -78,8 +74,7 @@ models:
       - name: organisaatiotyypit
         data_type: jsonb
   - name: int_onr_henkilo_kansalaisuus
-    description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä
-      henkilöllä voi olla useampi kansalaisuus
+    description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä henkilöllä voi olla useampi kansalaisuus
     columns:
       - name: kansalaisuus_id
         data_type: text
@@ -98,18 +93,13 @@ models:
       ### Valintaperusteiden valintatapajonoja
 
 
-      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset
-      valintatapajonot jokaiselta vaiheelta.
+      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset valintatapajonot jokaiselta vaiheelta.
 
-      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä
-      sisältää tiedon koska se on viimeksi tallennettu.
+      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä sisältää tiedon koska se on viimeksi tallennettu.
 
-      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet,
-      ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
+      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet, ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
 
-      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki
-      rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi
-      muuttunut vai ei
+      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi muuttunut vai ei
     columns:
       - name: jono_id
         data_type: text
@@ -169,3 +159,27 @@ models:
       - name: hakukohderyhma_nimi
         description: Hakukohderyhmän nimet
         data_type: jsonb
+  - name: int_valintarekisteri_valinnantulos
+    columns:
+      - name: valinnantulos_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_oid
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: valinnantila
+        data_type: text
+      - name: ehdollisestihyvaksyttavissa
+        data_type: boolean
+      - name: ehdollisenhyvaksymisenehto
+        data_type: jsonb
+      - name: valinnantilankuvauksenteksti
+        data_type: jsonb
+      - name: julkaistavissa
+        data_type: boolean
+      - name: hyvaksyperuuntunut
+        data_type: boolean
