@@ -29,7 +29,7 @@ int as (
             when onr1.hetu is not null
                 then onr1.etunimet
             else atar.etunimet
-        end as etuminet,
+        end as etunimet,
         case
             when onr1.hetu is not null
                 then onr1.sukunimi
@@ -50,11 +50,14 @@ int as (
         atar.valintatuloksen_julkaisulupa,
         atar.sahkoinenviestintalupa,
         kans.kansalaisuus,
-        kans.kansalaisuusluokka
+        kans.kansalaisuus_nimi,
+        kans.kansalaisuusluokka,
+        onr1.turvakielto
     from ataru as atar
     inner join onr as hmap on atar.henkilo_oid = hmap.henkilo_oid
     inner join onr as onr1 on hmap.master_oid = onr1.henkilo_oid
     left join kansalaisuus as kans on onr1.henkilo_oid = kans.henkilo_oid
+
 
 )
 
