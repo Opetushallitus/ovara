@@ -4,7 +4,7 @@
     )
 }}
 
-with raw as (
+with raw as not materialized(
     select
         *,
         row_number() over (partition by oid order by versio_id desc, muokattu desc) as row_nr

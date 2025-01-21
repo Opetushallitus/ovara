@@ -291,6 +291,11 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+      - name: kaksoistutkinto_kiinnostaa
+        data_type: boolean
+      - name: tutkinto_urheilijana_kiinnostaa
+        data_type: boolean
+
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
     config:
@@ -333,7 +338,7 @@ models:
       #          - dbt_constraints.foreign_key:
       #              pk_table_name: ref('pub_fct_hakemus')
       #              pk_column_name: hakemus_oid
-      - name: etuminet
+      - name: etunimet
         data_type: text
       - name: sukunimi
         data_type: text
@@ -370,9 +375,14 @@ models:
       - name: kansalaisuus
         description: Priorisoitu kansalaisuus jos henkilöllä on useampi kansalaisuus. järjestys on Suomi, EU/ETA, muut
         data_type: text
+      - name: kansalaisuus_nimi
+        description: kansalaisuuden nimi käännöksineen json-muodossa
+        data_type: jsonb
       - name: kansalaisuusluokka
         description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 = EU/ETA, 3 = muut"
         data_type: integer
+      - name: turvakielto
+        data_type: boolean
   - name: pub_dim_organisaatio
     description: Tämä taulu sisältää organisaation tiedot
     config:
@@ -488,7 +498,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: organisaatio_nimi
         data_type: jsonb
       - name: organisaatiotyypit
@@ -499,3 +509,28 @@ models:
         data_type: jsonb
       - name: children
         data_type: jsonb
+  - name: pub_dim_valinnantulos
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_oid
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: valinnantila
+        data_type: text
+      - name: ehdollisestihyvaksyttavissa
+        data_type: boolean
+      - name: ehdollisenhyvaksymisenehto
+        data_type: jsonb
+      - name: valinnantilankuvauksenteksti
+        data_type: jsonb
+      - name: julkaistavissa
+        data_type: boolean
+      - name: hyvaksyperuuntunut
+        data_type: boolean

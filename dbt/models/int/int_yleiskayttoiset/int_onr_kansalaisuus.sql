@@ -20,6 +20,17 @@ maa_valtioryhma as (
     where valtioryhma_koodiarvo in ('EU', 'ETA')
 ),
 
+maat as not materialized (
+    select
+        koodiarvo,
+        nimi_fi,
+        nimi_sv,
+        nimi_en
+    from {{ ref('int_koodisto_maa_2') }}
+    where viimeisin_versio
+),
+
+
 kansalaisuus_riveille as not materialized (
     select
         henkilo_oid,
@@ -55,9 +66,15 @@ final as (
     select
         henkilo_oid,
         kansalaisuus,
+        jsonb_build_object(
+            'en', maat.nimi_en,
+            'sv', maat.nimi_sv,
+            'fi', maat.nimi_fi
+        ) as kansalaisuus_nimi,
         kansalaisuusluokka,
         haluttu_kansalaisuus = 1 as priorisoitu_kansalaisuus
-    from haluttu_kansalaisuus
+    from haluttu_kansalaisuus as kans
+    left join maat on kans.kansalaisuus = maat.koodiarvo
 )
 
 select * from final

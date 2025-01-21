@@ -28,6 +28,9 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: dw_onr_henkilo
+    config:
+      pre_hook: set work_mem='6GB'
+      post_hook: set work_mem='256MB'
     columns:
       - name: henkilo_oid
         data_type: text
