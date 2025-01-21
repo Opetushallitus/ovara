@@ -291,6 +291,11 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+      - name: kaksoistutkinto_kiinnostaa
+        data_type: boolean
+      - name: tutkinto_urheilijana_kiinnostaa
+        data_type: boolean
+
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
     config:
