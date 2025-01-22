@@ -9,3 +9,11 @@ seeds:
       1) Lisää taulun nimi seeds/raw_taulut.csv-tiedostoon omalle riville  
       2) aja # dbt seed --target=prod  
       3) aja # dbt run-operation create_raw_tables --target=prod  
+  - name: raw_haunkohdejoukko
+    config:
+      schema: raw
+      column_types: 
+        haunkohdejoukko: text
+        haun_tyyppi: text
+    description: Tässä taulussa löytyy haunkohdejoukot ja tieto siitä onko haku toisen asteen vai korkeakoulu
+
