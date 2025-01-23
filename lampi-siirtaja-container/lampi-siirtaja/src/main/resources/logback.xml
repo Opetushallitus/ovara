@@ -1,0 +1,14 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Europe/Helsinki} [%t] %-5level %c: %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <logger name="software.amazon.awssdk" level="warn" />
+</configuration>
