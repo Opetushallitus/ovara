@@ -27,8 +27,8 @@ public class LampiSiirtajaService {
 
     List<ManifestItem> manifestItems = new ArrayList<>();
 
-    // Stream.of("pub", "dw")
-    Stream.of("pub")
+    Stream.of("pub", "dw")
+        // Stream.of("pub")
         .forEach(
             schemaName -> {
               try {
