@@ -27,8 +27,8 @@ public class LampiSiirtajaService {
 
     List<ManifestItem> manifestItems = new ArrayList<>();
 
-    Stream.of("pub", "dw")
-        // Stream.of("pub")
+    // Stream.of("pub", "dw")
+    Stream.of("pub")
         .forEach(
             schemaName -> {
               try {
@@ -59,7 +59,7 @@ public class LampiSiirtajaService {
                             new ManifestItem(
                                 uploadFilename, versionId == null ? "DUMMY" : versionId));
                       } catch (Exception e) {
-                        LOG.error("Manifest-tiedoston siirtäminen Lampeen epäonnistui", e);
+                        LOG.error("Tiedoston {} siirtäminen Lampeen epäonnistui", filename, e);
                         throw new RuntimeException(e);
                       }
                     });

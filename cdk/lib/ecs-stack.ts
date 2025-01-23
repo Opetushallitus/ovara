@@ -412,12 +412,12 @@ export class EcsStack extends cdk.Stack {
             POSTGRES_HOST: `raportointi.db.${config.publicHostedZone}`,
             POSTGRES_PORT: '5432',
             DB_USERNAME: 'app',
-            LAMPI_S3_BUCKET: lampiSiirtajaTempS3Bucket.bucketName,
-            //LAMPI_S3_BUCKET: config.siirtotiedostot.lampiBucketName,
+            //LAMPI_S3_BUCKET: lampiSiirtajaTempS3Bucket.bucketName,
+            LAMPI_S3_BUCKET: config.siirtotiedostot.lampiBucketName,
             OVARA_LAMPI_SIIRTAJA_BUCKET: lampiSiirtajaS3Bucket.bucketName,
             LAMPI_ROLE_ARN: ssm.StringParameter.valueForStringParameter(
               this,
-              `/${config.environment}/lampi-role`
+              `/${config.environment}/lampi-write-role`
             ),
             LAMPI_ROLE_SESSION_NAME: 'ovara-lampi-export',
             LAMPI_EXTERNAL_ID: ssm.StringParameter.valueForStringParameter(
