@@ -443,14 +443,14 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
-    lampiSiirtajaScheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
+    lampiSiirtajaScheduledFargateTask.taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['sts:AssumeRole'],
         resources: [
           ssm.StringParameter.valueForStringParameter(
             this,
-            `/${config.environment}/lampi-role`
+            `/${config.environment}/lampi-write-role`
           ),
         ],
       })
