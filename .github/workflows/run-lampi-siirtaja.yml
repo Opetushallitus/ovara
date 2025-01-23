@@ -1,4 +1,5 @@
 name: Run Lampi-siirtäjä
+run-name: Run Lampi-siirtäjä in environment ${{ inputs.environment }}
 
 on:
   workflow_call:

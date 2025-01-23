@@ -1,4 +1,5 @@
 name: Deploy Lampi-siirtäjä
+run-name: Deploy Lampi-siirtäjä image ${{ inputs.image-tag }} to environment ${{ inputs.environment }}
 
 on:
   workflow_call:

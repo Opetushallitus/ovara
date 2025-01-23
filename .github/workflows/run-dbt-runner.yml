@@ -1,4 +1,5 @@
 name: Run DBT Runner
+run-name: Run DBT Runner in environment ${{ inputs.environment }}
 
 on:
   workflow_call:
