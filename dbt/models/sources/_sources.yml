@@ -41,3 +41,4 @@ sources:
         Raw- ja stg-kerroksista voidaan poistaa kaikki rivit jotka ovat tätä aikaleimaa vanhempaa
     - name: sure_harkinnanvaraisuus
     - name: sure_proxysuoritus
+    - name: valintarekisteri_hyvaksyttyjulkaistuhakutoive

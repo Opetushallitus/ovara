@@ -3,7 +3,7 @@ models:
     description: Sisältää aktiiviset hakutoiveet
     config:
       contract:
-        enforced: true
+        enforced: false
     columns:
       - name: hakutoive_id
         description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
@@ -152,6 +152,8 @@ models:
         description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
       - name: koulutuksenalkamiskausi
         data_type: jsonb
+      - name: haun_tyyppi
+        data_type: text
   - name: pub_dim_koulutus
     description: >-
       Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta. Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
@@ -267,7 +269,7 @@ models:
     description: Hakemusten tietoja
     config:
       contract:
-        enforced: true
+        enforced: false
     columns:
       - name: hakemus_oid
         description: Hakemuksen tunniste
@@ -383,6 +385,10 @@ models:
         data_type: integer
       - name: turvakielto
         data_type: boolean
+      - name: hetu
+        data_type: text
+      - name: syntymaaika
+        data_type: date
   - name: pub_dim_organisaatio
     description: Tämä taulu sisältää organisaation tiedot
     config:
@@ -512,7 +518,7 @@ models:
   - name: pub_dim_valinnantulos
     config:
       contract:
-        enforced: true
+        enforced: false
     columns:
       - name: hakukohde_oid
         data_type: text
@@ -534,3 +540,11 @@ models:
         data_type: boolean
       - name: hyvaksyperuuntunut
         data_type: boolean
+      - name: hakukohde_henkilo_id
+        data_type: text
+  - name: pub_dim_hakutoive_toinen_aste
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key

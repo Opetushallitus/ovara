@@ -9,8 +9,7 @@
 
 {% set table = 'int_valintarekisteri_valinnantulos' %}
 
-with raw as
-(
+with raw as (
     select
         {{ dbt_utils.star(from=ref(table),except=['valinnantulos_id']) }}
     from {{ ref(table) }}

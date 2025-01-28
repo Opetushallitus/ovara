@@ -48,11 +48,16 @@ final as (
         data -> 'keyValues' ->> 'phone'::varchar as puhelin,
         data -> 'keyValues' ->> 'secondary-completed-base-education–country'::varchar
         as pohjakoulutuksen_maa_toinen_aste,
-        (data -> 'keyValues')::jsonb as keyvalues,
         (data ->> 'modified_time')::timestamptz as muokattu,
         {{ metadata_columns() }}
 
     from source
 )
 
-select * from final
+select
+    {{ dbt_utils.generate_surrogate_key(
+        ['oid',
+        'versio_id']
+    ) }} as hakemus_versio_id,
+    *
+from final

@@ -1,11 +1,11 @@
 {{
   config(
     materialized = 'incremental',
-    unique_key = ['oid','versio_id','muokattu'],
+    unique_key = ['hakemus_versio_id','muokattu'],
     incremental_strategy = 'merge',
     indexes = [
-          {'columns': ['oid','versio_id','muokattu']},
-          {'columns': ['dw_metadata_dw_stored_at']}
+          {'columns': ['hakemus_versio_id','muokattu','tila']},
+          {'columns': ['dw_metadata_dw_stored_at']},
       ],
     )
 }}

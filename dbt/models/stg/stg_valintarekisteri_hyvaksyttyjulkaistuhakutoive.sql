@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('ovara', 'valintarekisteri_vastaanotto') }}
+    select * from {{ source('ovara', 'valintarekisteri_hyvaksyttyjulkaistuhakutoive') }}
 
     {% if is_incremental() %}
 
@@ -14,18 +14,20 @@ raw as (
     select
         data ->> 'hakukohdeOid' as hakukohde_oid,
         data ->> 'henkiloOid' as henkilo_oid,
+        (data ->> 'hyvaksyttyJaJulkaistu')::timestamptz as hyvaksyttyJaJulkaistu,
         data ->> 'ilmoittaja' as ilmoittaja,
         data ->> 'selite' as selite,
-        data ->> 'action' as operaatio,
-        (data ->> 'id')::int as id,
-        (data ->> 'timestamp')::timestamptz as muokattu,
+        (data ->> 'systemTime')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 ),
 
 final as (
     select
-        {{ hakukohde_henkilo_id() }},
+        {{ dbt_utils.generate_surrogate_key(
+            ['hakukohde_oid',
+            'henkilo_oid']
+            ) }} as hakukohde_henkilo_id,
         *
     from raw
 )

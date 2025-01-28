@@ -24,7 +24,7 @@ final as (
             '[]'::jsonb
         ) as children
     from
-        toimipiste as toim
+        toimipiste as toim --noqa: ST09
     left join
         tyhja_array as alto
         on alto.parent_oids ? toim.organisaatio_oid and alto.organisaatio_oid != toim.organisaatio_oid
