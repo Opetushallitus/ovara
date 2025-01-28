@@ -10,46 +10,21 @@
     )
 }}
 
-with hakutoive as (
-    select
-        hakutoive_id,
-        hakemus_oid,
-        hakukohde_oid,
-        hakutoivenumero,
-        poistettu,
-        muokattu
-    from {{ ref('int_ataru_hakutoive') }}
-    where not poistettu
-),
-
-sora as (
-    select
-        hakutoive_id,
-        sora_terveys,
-        sora_aiempi
-    from {{ ref('int_ataru_soratietoja') }}
-),
-
-maksuvelvollisuus as (
-    select
-        hakutoive_id,
-        tila as maksuvelvollinen
-    from {{ ref('int_ataru_maksuvelvollisuus') }}
+with hakutoive as not materialized (
+    select * from {{ ref('int_hakutoive') }}
 ),
 
 final as (
     select
-        hato.hakutoive_id,
-        hato.hakemus_oid,
-        hato.hakukohde_oid,
-        hato.hakutoivenumero,
-        hato.poistettu,
-        sora.sora_terveys,
-        sora.sora_aiempi,
-        mave.maksuvelvollinen
-    from hakutoive as hato
-    left join sora on hato.hakutoive_id = sora.hakutoive_id
-    left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
+        hakutoive_id,
+        hakukohde_henkilo_id,
+        hakemus_oid,
+        henkilo_oid,
+        hakukohde_oid,
+        hakutoivenumero,
+        viimeinen_vastaanottopaiva,
+        vastaanottotieto
+    from hakutoive
 )
 
 select * from final

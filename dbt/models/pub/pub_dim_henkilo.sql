@@ -52,12 +52,13 @@ int as (
         kans.kansalaisuus,
         kans.kansalaisuus_nimi,
         kans.kansalaisuusluokka,
-        onr1.turvakielto
+        onr1.turvakielto,
+        onr1.hetu,
+        onr1.syntymaaika
     from ataru as atar
     inner join onr as hmap on atar.henkilo_oid = hmap.henkilo_oid
     inner join onr as onr1 on hmap.master_oid = onr1.henkilo_oid
     left join kansalaisuus as kans on onr1.henkilo_oid = kans.henkilo_oid
-
 
 )
 

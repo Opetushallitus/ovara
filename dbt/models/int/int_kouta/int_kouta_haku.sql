@@ -5,26 +5,33 @@ with raw as (
     from {{ ref('dw_kouta_haku') }}
 ),
 
+kohdejoukot as (
+    select * from {{ ref('raw_haunkohdejoukko') }}
+),
+
 int as (
     select
         *,
         coalesce(nimi_fi, coalesce(nimi_sv, nimi_en)) as nimi_fi_new,
         coalesce(nimi_sv, coalesce(nimi_fi, nimi_en)) as nimi_sv_new,
-        coalesce(nimi_en, coalesce(nimi_fi, nimi_sv)) as nimi_en_new
+        coalesce(nimi_en, coalesce(nimi_fi, nimi_sv)) as nimi_en_new,
+        substring(kohdejoukkokoodiuri from '_(.+)#') as kohdejoukko
     from raw
     where row_nr = 1
 ),
 
 final as (
     select
-        oid as haku_oid,
+        inta.oid as haku_oid,
         jsonb_build_object(
-            'en', nimi_en_new,
-            'sv', nimi_sv_new,
-            'fi', nimi_fi_new
+            'en', inta.nimi_en_new,
+            'sv', inta.nimi_sv_new,
+            'fi', inta.nimi_fi_new
         ) as haku_nimi,
-        {{ dbt_utils.star(from=ref('dw_kouta_haku'), except=['oid','nimi_fi','nimi_sv','nimi_en']) }}
-    from int
+        {{ dbt_utils.star(from=ref('dw_kouta_haku'), except=['oid','nimi_fi','nimi_sv','nimi_en']) }},
+        kojo.haun_tyyppi
+    from int as inta
+    left join kohdejoukot as kojo on inta.kohdejoukko = kojo.haunkohdejoukko
 )
 
 select * from final

@@ -2,6 +2,8 @@
   config(
     indexes = [
         {'columns': ['muokattu']},
+        {'columns': ['poistettu']},
+        {'columns': ['hakukohde_henkilo_id']},
     ],
     materialized = 'incremental',
     incremental_strategy = 'merge',
@@ -23,6 +25,7 @@
 with raw as (
     select
         hakemus_oid,
+        henkilo_oid,
         hakukohde,
         muokattu,
         tila,
@@ -36,6 +39,7 @@ with raw as (
 latest_hakemus as (
     select
         hakemus_oid,
+        henkilo_oid,
         hakukohde,
         muokattu,
         tila,
@@ -46,6 +50,7 @@ latest_hakemus as (
 hakutoive_raw as (
     select
         hakemus_oid,
+        henkilo_oid,
         muokattu,
         tila,
         dw_metadata_dbt_copied_at,
@@ -55,11 +60,9 @@ hakutoive_raw as (
 
 hakutoivenro as (
     select
-        {{ dbt_utils.generate_surrogate_key(
-            ['hakemus_oid',
-            'hakukohde_oid']
-        ) }} as hakutoive_id,
+        {{ hakutoive_id() }},
         hakemus_oid,
+        henkilo_oid,
         hakukohde_oid,
         muokattu,
         tila,
@@ -71,7 +74,12 @@ hakutoivenro as (
 final as (
     select
         hakutoive_id,
+        {{ dbt_utils.generate_surrogate_key(
+            ['hakukohde_oid',
+            'henkilo_oid']
+            ) }} as hakukohde_henkilo_id,
         hakemus_oid,
+        henkilo_oid,
         hakukohde_oid,
         hakutoivenumero,
         case

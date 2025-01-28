@@ -12,8 +12,10 @@ with source as (
 
 final as (
     select
-        data ->> 'key' as id,
+        data ->> 'key' as haku_oid,
         (data ->> 'lastModified')::timestamptz as muokattu,
+        to_timestamp((data -> 'values' -> 'PH_OPVP' ->> 'date')::bigint / 1000)::timestamptz as vastaanotto_paattyy,
+        (data -> 'values' -> 'PH_HPVOA' ->> 'value')::int as hakijakohtainen_paikan_vastaanottoaika,
         (data -> 'values')::jsonb as arvot,
         {{ metadata_columns() }}
     from source

@@ -17,9 +17,16 @@ with raw as (
         tiedot,
         dw_metadata_dw_stored_at
     from {{ ref('int_ataru_hakemus') }}
-    {% if is_incremental() %}
-        where dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
-    {% endif %}
+    where
+        tiedot ?| array[
+            '66a6855f-d807-4331-98ea-f14098281fc1',
+            '6a5e1a0f-f47e-479e-884a-765b85bd438c',
+            'sora-terveys',
+            'sora-aiempi'
+        ]
+        {% if is_incremental() %}
+            and dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
+        {% endif %}
 ),
 
 sora_terveys as (
@@ -61,8 +68,8 @@ final as (
         as hakutoive_id,
         hato.hakemus_oid,
         hato.hakukohde_oid,
-        sote.sora_terveys,
-        soai.sora_aiempi,
+        coalesce(sote.sora_terveys, '0') = '1' as sora_terveys,
+        coalesce(soai.sora_aiempi, '0') = '1' as sora_aiempi,
         hato.dw_metadata_dw_stored_at
     from hakutoive as hato
     inner join sora_terveys as sote

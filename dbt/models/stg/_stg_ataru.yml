@@ -5,8 +5,6 @@ models:
       - name: oid
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: lomake_id
         description: ""
         data_type: uuid
@@ -22,8 +20,6 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        data_tests:
-          - not_null
       - name: tila
         description: ""
         data_type: text
@@ -132,12 +128,8 @@ models:
       - name: id
         description: ""
         data_type: uuid
-        data_tests:
-          - not_null
       - name: versio_id
         description: ""
-        data_tests:
-          - not_null
         data_type: integer
       - name: poistettu
         description: ""
@@ -160,8 +152,6 @@ models:
       - name: muokattu
         description: ""
         data_type: timestamp with time zone
-        data_tests:
-          - not_null
       - name: luoja
         description: ""
         data_type: text
