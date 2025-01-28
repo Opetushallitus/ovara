@@ -11,7 +11,14 @@ with raw as ( --noqa: PRS
         hakemus_oid,
         jsonb_object_keys(tiedot) as keys,
         tiedot
-from {{ ref('int_ataru_hakemus') }}
+    from {{ ref('int_ataru_hakemus') }}
+    where tiedot ?|
+        array[
+            '4fe08958-c0b7-4847-8826-e42503caa662',
+            '32b8440f-d6f0-4a8b-8f67-873344cc3488',
+            'kaksoistutkinto-lukio',
+            'kaksoistutkinto-amm'
+        ]
 ),
 
 rows as (
