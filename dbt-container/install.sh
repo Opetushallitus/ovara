@@ -12,7 +12,9 @@ echo $ARCHITECTURE
 echo "Installing needed software"
 apk --no-cache add \
   python3 \
-  py3-pip
+  py3-pip \
+  aws-cli \
+  tzdata
 
 ln -sf /usr/bin/python3 /usr/bin/python
 ln -sf /usr/bin/pip3 /usr/bin/pip
