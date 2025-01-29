@@ -105,6 +105,22 @@ export class EcsStack extends cdk.Stack {
       dbtRunnerImageVersion
     );
 
+    const ovaraDokumentaatioBucket = s3.Bucket.fromBucketName(
+      this,
+      `${config.environment}-ovara-dokumentaatio`,
+      `${config.environment}-ovara-dokumentaatio`
+    );
+    const dbtLogsBucket = new s3.Bucket(this, `${config.environment}-dbt-logs`, {
+      bucketName: `${config.environment}-dbt-logs`,
+      objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      serverAccessLogsBucket: new s3.Bucket(
+        this,
+        `${config.environment}-dbt-logs-bucket-server-access-logs`
+      ),
+      versioned: false,
+    });
+
     const dbtRunnerSchedule = appscaling.Schedule.cron(config.dbtCron);
     const dbtProcessingEnabled = config.dbtProcessingEnabled?.toLowerCase() === 'true';
     const dbtRunnerScheduledFargateTask = new ecsPatterns.ScheduledFargateTask(
@@ -122,6 +138,8 @@ export class EcsStack extends cdk.Stack {
             POSTGRES_HOST_PROD: `raportointi.db.${config.publicHostedZone}`,
             DBT_PORT_PROD: '5432',
             DBT_USERNAME_PROD: 'app',
+            OVARA_DOC_BUCKET: ovaraDokumentaatioBucket.bucketName,
+            DBT_LOGS_BUCKET: dbtLogsBucket.bucketName,
           },
           secrets: {
             DBT_PASSWORD_PROD: ecs.Secret.fromSsmParameter(
@@ -153,6 +171,11 @@ export class EcsStack extends cdk.Stack {
         resources: ['*'],
       })
     );
+
+    ovaraDokumentaatioBucket.grantReadWrite(
+      dbtRunnerScheduledFargateTask.taskDefinition.taskRole
+    );
+    dbtLogsBucket.grantReadWrite(dbtRunnerScheduledFargateTask.taskDefinition.taskRole);
 
     dbtRunnerScheduledFargateTask.taskDefinition
       .obtainExecutionRole()
