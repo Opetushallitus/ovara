@@ -150,7 +150,7 @@ models:
       - name: kohdejoukontarkenne_nimi
         data_type: jsonb
         description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
-      - name: koulutuksenalkamiskausi
+      - name: koulutuksen_alkamiskausi
         data_type: jsonb
       - name: haun_tyyppi
         data_type: text

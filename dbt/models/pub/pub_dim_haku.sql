@@ -9,7 +9,7 @@
 }}
 
 with haku as (
-    select * from {{ ref('int_kouta_haku') }}
+    select * from {{ ref('int_haku') }}
 ),
 
 hakutapakoodi as (
@@ -28,7 +28,7 @@ step1 as (
     select
         haku.haku_oid,
         haku.haku_nimi,
-        haku.externalid as ulkoinen_tunniste,
+        ulkoinen_tunniste,
         haku.tila,
         haku.hakutapakoodiuri,
         haku.hakuajat,
@@ -40,7 +40,7 @@ step1 as (
         haku.kohdejoukontarkennekoodiuri,
         hatr.koodiarvo as kohdejoukontarkenne_koodi,
         hatr.koodinimi as kohdejoukontarkenne_nimi,
-        haku.koulutuksenalkamiskausi,
+        haku.koulutuksen_alkamiskausi_yhd as koulutuksen_alkamiskausi,
         haku.haun_tyyppi
     from haku as haku
     inner join hakutapakoodi as hata on haku.hakutapakoodiuri = hata.versioitu_koodiuri

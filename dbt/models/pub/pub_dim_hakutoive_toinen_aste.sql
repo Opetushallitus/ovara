@@ -25,6 +25,7 @@ toinen_aste as (
     select hake.hakemus_oid
     from {{ ref('int_ataru_hakemus') }} as hake
     inner join {{ ref('int_kouta_haku') }} as haku on hake.haku_oid = haku.haku_oid
+    where haku.haun_tyyppi = 'toinen_aste'
 ),
 
 kaksoistutkinto as (
