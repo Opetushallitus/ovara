@@ -28,7 +28,8 @@ final as (
             'sv', inta.nimi_sv_new,
             'fi', inta.nimi_fi_new
         ) as haku_nimi,
-        {{ dbt_utils.star(from=ref('dw_kouta_haku'), except=['oid','nimi_fi','nimi_sv','nimi_en']) }},
+        koulutuksenalkamiskausi as koulutuksen_alkamiskausi,
+        {{ dbt_utils.star(from=ref('dw_kouta_haku'), except=['oid','nimi_fi','nimi_sv','nimi_en','koulutuksenalkamiskausi']) }},
         kojo.haun_tyyppi
     from int as inta
     left join kohdejoukot as kojo on inta.kohdejoukko = kojo.haunkohdejoukko
