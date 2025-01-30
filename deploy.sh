@@ -2,11 +2,8 @@
 
 set -eo pipefail
 
-if [ $# == 0  ] || [ $# -lt 2 ]
-then
-    echo 'Please provide at least 1 argument . Use -h or --help for usage information.'
-    exit 0
-fi
+# Set argument to '-h' if no arguments are provided
+if [[ ${#} -eq 0 ]]; then set -- '-h'; fi
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
