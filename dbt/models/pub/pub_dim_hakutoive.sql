@@ -23,7 +23,8 @@ final as (
         hakukohde_oid,
         hakutoivenumero,
         viimeinen_vastaanottopaiva,
-        vastaanottotieto
+        vastaanottotieto,
+        valintatapajonot
     from hakutoive
 )
 
