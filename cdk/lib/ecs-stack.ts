@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as appscaling from 'aws-cdk-lib/aws-applicationautoscaling';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
@@ -33,6 +34,18 @@ export class EcsStack extends cdk.Stack {
     super(scope, id, props);
 
     const config: Config = props.config;
+
+    const ecsProsessiOnKaynnissaTable = new dynamodb.TableV2(
+      this,
+      'ecsProsessiOnKaynnissa',
+      {
+        tableName: 'ecsProsessiOnKaynnissa',
+        partitionKey: {
+          name: 'prosessi',
+          type: dynamodb.AttributeType.STRING,
+        },
+      }
+    );
 
     const addActionsToAlarm = (alarm: cloudwatch.Alarm) => {
       alarm.addAlarmAction(
@@ -176,6 +189,9 @@ export class EcsStack extends cdk.Stack {
       dbtRunnerScheduledFargateTask.taskDefinition.taskRole
     );
     dbtLogsBucket.grantReadWrite(dbtRunnerScheduledFargateTask.taskDefinition.taskRole);
+    ecsProsessiOnKaynnissaTable.grantReadWriteData(
+      dbtRunnerScheduledFargateTask.taskDefinition.taskRole
+    );
 
     dbtRunnerScheduledFargateTask.taskDefinition
       .obtainExecutionRole()
@@ -484,6 +500,10 @@ export class EcsStack extends cdk.Stack {
     );
 
     lampiSiirtajaS3Bucket.grantReadWrite(
+      lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
+    );
+
+    ecsProsessiOnKaynnissaTable.grantReadWriteData(
       lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
     );
 
