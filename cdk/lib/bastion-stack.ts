@@ -125,6 +125,9 @@ export class BastionStack extends cdk.Stack {
     );
 
     bastionAutoScalingGroup.userData.addCommands(
+      'sudo echo "ClientAliveInterval 60" >> /etc/ssh/sshd_config && sudo echo "ClientAliveCountMax 5" >> /etc/ssh/sshd_config && sudo systemctl restart sshd'
+    );
+    bastionAutoScalingGroup.userData.addCommands(
       'sudo dnf -y install postgresql15 cronie'
     );
     bastionAutoScalingGroup.userData.addCommands(
