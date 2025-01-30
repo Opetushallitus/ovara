@@ -506,6 +506,10 @@ export class EcsStack extends cdk.Stack {
     ecsProsessiOnKaynnissaTable.grantReadWriteData(
       lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
     );
+    ecsProsessiOnKaynnissaTable.grant(
+      lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole,
+      ...['dynamodb:PartiQLSelect', 'dynamodb:PartiQLUpdate']
+    );
 
     lampiSiirtajaScheduledFargateTask.taskDefinition.addToExecutionRolePolicy(
       new iam.PolicyStatement({

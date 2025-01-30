@@ -9,13 +9,14 @@ start=$(date +%s)
 cd dbt
 . venv/bin/activate
 
-IS_RUNNING=$(aws dynamodb execute-statement --statement "SELECT onKaynnissa FROM ecsProsessiOnKaynnissa WHERE prosessi='dbt-scheduled-task'" | jq ' .Items.[0].onKaynnissa.S ')
-if [ $IS_RUNNING == "true" ] ; then
+IS_RUNNING=$(aws dynamodb execute-statement --statement "SELECT onKaynnissa FROM ecsProsessiOnKaynnissa WHERE prosessi='dbt-scheduled-task'" | jq -r ' .Items.[0].onKaynnissa.S ')
+echo "Onko edellinen ajo käynnissä: $IS_RUNNING"
+if [[ "$IS_RUNNING" = "true" ]]; then
   echo "ERROR: Edellinen ajo on vielä käynnissä."
   exit 1
 fi
 
-echo "Merkitetään DynamoDB:hen että prosessi on ajossa"
+echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *"
 
 dbt seed -s raw_taulut --target=prod
@@ -50,7 +51,7 @@ CURRENT_TIME="$(TZ=Europe/Helsinki date +%Y-%m-%d_%H:%M:%S%Z)"
 echo "$CURRENT_TIME"
 aws s3 cp ./logs s3://$DBT_LOGS_BUCKET/$CURRENT_TIME --recursive --include 'logs/dbt.log*' --content-type 'text/plain'
 
-echo "Merkitetään DynamoDB:hen että prosessi ei ole enää ajossa"
+echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *"
 
 exit 0

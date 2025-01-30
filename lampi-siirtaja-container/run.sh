@@ -4,13 +4,14 @@ set -e
 
 echo "Running Lampi-siirtäjä..."
 
-IS_RUNNING=$(aws dynamodb execute-statement --statement "SELECT onKaynnissa FROM ecsProsessiOnKaynnissa WHERE prosessi='lampi-scheduled-task'" | jq ' .Items.[0].onKaynnissa.S ')
-if [ $IS_RUNNING == "true" ] ; then
+IS_RUNNING=$(aws dynamodb execute-statement --statement "SELECT onKaynnissa FROM ecsProsessiOnKaynnissa WHERE prosessi='lampi-scheduled-task'" | jq -r ' .Items.[0].onKaynnissa.S ')
+echo "Onko edellinen ajo käynnissä: $IS_RUNNING"
+if [[ "$IS_RUNNING" = "true" ]]; then
   echo "ERROR: Edellinen ajo on vielä käynnissä."
   exit 1
 fi
 
-echo "Merkitetään DynamoDB:hen että prosessi on ajossa"
+echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='lampi-scheduled-task' RETURNING ALL NEW *"
 
 start=$(date +%s)
@@ -20,7 +21,7 @@ java -jar ovara-lampi-siirtaja.jar
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
-echo "Merkitetään DynamoDB:hen että prosessi ei ole enää ajossa"
+echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='lampi-scheduled-task' RETURNING ALL NEW *"
 
 exit 0
