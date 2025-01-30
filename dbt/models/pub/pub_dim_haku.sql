@@ -4,7 +4,11 @@
 
 {{
     config(
-        materialized = 'table'
+        materialized = 'table',
+        indexes = [
+            {'columns': ['koulutuksen_alkamiskausi'],
+            "type": "gin"}
+        ]
     )
 }}
 
