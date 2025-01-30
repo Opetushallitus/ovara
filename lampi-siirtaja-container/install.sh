@@ -11,7 +11,8 @@ echo $ARCHITECTURE
 
 echo "Installing needed software"
 apk --no-cache add \
-    jq
+  aws-cli \
+  jq
 
 echo "Listing contents of /root folder"
 ls -Al /root
