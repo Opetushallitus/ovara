@@ -189,8 +189,9 @@ export class EcsStack extends cdk.Stack {
       dbtRunnerScheduledFargateTask.taskDefinition.taskRole
     );
     dbtLogsBucket.grantReadWrite(dbtRunnerScheduledFargateTask.taskDefinition.taskRole);
-    ecsProsessiOnKaynnissaTable.grantReadWriteData(
-      dbtRunnerScheduledFargateTask.taskDefinition.taskRole
+    ecsProsessiOnKaynnissaTable.grant(
+      dbtRunnerScheduledFargateTask.taskDefinition.taskRole,
+      ...['dynamodb:PartiQLSelect', 'dynamodb:PartiQLUpdate']
     );
 
     dbtRunnerScheduledFargateTask.taskDefinition
@@ -503,9 +504,6 @@ export class EcsStack extends cdk.Stack {
       lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
     );
 
-    ecsProsessiOnKaynnissaTable.grantReadWriteData(
-      lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole
-    );
     ecsProsessiOnKaynnissaTable.grant(
       lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole,
       ...['dynamodb:PartiQLSelect', 'dynamodb:PartiQLUpdate']
