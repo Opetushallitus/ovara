@@ -14,7 +14,8 @@ apk --no-cache add \
   python3 \
   py3-pip \
   aws-cli \
-  tzdata
+  tzdata \
+  jq
 
 ln -sf /usr/bin/python3 /usr/bin/python
 ln -sf /usr/bin/pip3 /usr/bin/pip
