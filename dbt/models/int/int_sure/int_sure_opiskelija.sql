@@ -21,10 +21,10 @@ int as (
 final as (
     select
         resourceid,
-        oppilaitosoid,
+        oppilaitosoid as oppilaitos_oid,
         luokkataso,
         luokka,
-        henkilooid,
+        henkilooid as henkilo_oid,
         alkupaiva,
         loppupaiva,
         muokattu,
