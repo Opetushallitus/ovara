@@ -3,38 +3,36 @@ models:
     description: Sisältää aktiiviset hakutoiveet
     config:
       contract:
-        enforced: false
+        enforced: true
     columns:
       - name: hakutoive_id
         description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
+      - name: hakukohde_henkilo_id
+        data_type: text
       - name: hakemus_oid
         description: hakemuksen oid
         data_type: text
-        data_tests:
-          - not_null
       - name: hakukohde_oid
         description: Hakukohteen oid
         data_type: text
-        data_tests:
-          - not_null
+      - name: henkilo_oid
+        data_type: text
       - name: hakutoivenumero
         description: Hakutoiveen järjestysnumero
         data_type: bigint
-      - name: poistettu
-        description: Onko hakutoive poistettu
-        data_type: boolean
-      - name: sora_terveys
-        description: Onko SORA-terveystietoja
+      - name: viimeinen_vastaanottopaiva
+        data_type: timestamptz
+        description: | 
+          Tähän on laskettu hakijakohtainen viimeinen vastaanottohetki ohjausparametrien hakijakohtainen vastaanotto-tiedon perusteella.
+          Eli julkaisuhetken perusteella katsotaan jos hakija saa lisäaikaa ottaa vastaan opiskelupaikkansa
+      - name: vastaanottotieto
         data_type: text
-      - name: sora_aiempi
-        description: Onko aiempia SORA-terveystietoja
-        data_type: text
-      - name: maksuvelvollinen
-        description: onko maksuvelvollisuutta
-        data_type: text
+      - name: valintatapajonot
+        data_type: jsonb
+        description: Hakutoiveen kaikkien valintatapajonojen tiedot json-muotoisena
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
