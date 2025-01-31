@@ -42,3 +42,4 @@ sources:
     - name: sure_harkinnanvaraisuus
     - name: sure_proxysuoritus
     - name: valintarekisteri_hyvaksyttyjulkaistuhakutoive
+    - name: valintarekisteri_jonosija
