@@ -20,7 +20,7 @@ final as (
         data ->> 'organization-oid'::varchar as organisaatio_oid,
         (data ->> 'created-time')::timestamptz as muokattu,
         data ->> 'created-by'::varchar as luoja,
-        (data -> 'flat-content')::jsonb as content,
+        (data -> 'flat-content')::jsonb as content, --noqa: RF04
         {{ metadata_columns() }}
     from source
 )
