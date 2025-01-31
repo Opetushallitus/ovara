@@ -349,8 +349,8 @@ models:
       - name: postitoimipaikka
         data_type: text
       - name: kotikunta
-        description: kotikunnan koodi
-        data_type: integer
+        description: kotikunnan koodi tai tekstinä tallennettu tieto
+        data_type: text
       - name: ulkomainen_kunta
         description: Ulkomaisen kunnan nimi suoraan hakemuksesta
         data_type: text
