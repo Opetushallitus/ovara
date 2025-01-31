@@ -1,6 +1,9 @@
 models:
   - name: stg_ataru_hakemus
     description: ""
+    config:
+      pre_hook: set work_mem='6GB'
+      post_hook: set work_mem='256MB'
     columns:
       - name: oid
         description: ""
@@ -124,6 +127,9 @@ models:
         data_type: integer
   - name: stg_ataru_lomake
     description: ""
+    config:
+      pre_hook: set work_mem='6GB'
+      post_hook: set work_mem='256MB'
     columns:
       - name: id
         description: ""
