@@ -26,15 +26,19 @@ final as (
         henkilo_oid,
         valinnantila as valinnan_tila,
         ehdollisestihyvaksyttavissa as ehdollisesti_hyvaksyttavissa,
+        valinnantila as valinnan_tila,
+        ehdollisestihyvaksyttavissa as ehdollisesti_hyvaksyttavissa,
         jsonb_build_object(
             'en', ehdollisenhyvaksymisenehtoen,
             'sv', ehdollisenhyvaksymisenehtosv,
             'fi', ehdollisenhyvaksymisenehtofi
         ) as ehdollisen_hyvaksymisen_ehto,
+        ) as ehdollisen_hyvaksymisen_ehto,
         jsonb_build_object(
             'en', valinnantilankuvauksentekstien,
             'sv', valinnantilankuvauksentekstisv,
             'fi', valinnantilankuvauksentekstifi
+        ) as valinnantilan_kuvauksen_teksti,
         ) as valinnantilan_kuvauksen_teksti,
         julkaistavissa,
         hyvaksyperuuntunut
