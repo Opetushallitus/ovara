@@ -249,6 +249,8 @@ models:
         data_type: text
       - name: koulutuksen_alkamiskausi
         data_type: jsonb
+      - name: oppilaitoksen_opetuskieli
+        data_type: jsonb
       - name: suunniteltukestovuodet
         description: Koulutuksen suunniteltu kesto vuosissa
         data_type: integer
