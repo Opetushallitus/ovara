@@ -17,7 +17,8 @@ relaatio as (
 final as (
     select
         rela.ylakoodiuri || '#' || rela.ylakoodiversio as versioitu_koodiuri,
-        kal1.koodiarvo as kansallinenkoulutusluokitus2016koulutusalataso1
+        kal1.koodiarvo as kansallinenkoulutusluokitus2016koulutusalataso1,
+        kal1.koodinimi as kansallinenkoulutusluokitus2016koulutusalataso1_nimi
     from
         kal1
     inner join relaatio as rela on
