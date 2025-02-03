@@ -1,5 +1,14 @@
 with source as (
     select * from {{ source('ovara', 'valintarekisteri_jonosija') }}
+
+    {% if is_incremental() %}
+
+        where dw_metadata_dbt_copied_at > (
+            select coalesce(max(dw_metadata_dbt_copied_at), '1899-12-31') from {{ this }}
+        )
+
+    {% endif %}
+
 ),
 
 final as (

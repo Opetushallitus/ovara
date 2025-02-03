@@ -93,7 +93,7 @@ models:
         data_type: text
       - name: koulutuksen_alkamisvuosi
         data_type: double precision
-      - name: henkilokohtaisen_sunnitelman_lisatiedot
+      - name: henkilokohtaisen_suunnitelman_lisatiedot
         data_type: text
       - name: toinen_aste_onko_kaksoistutkinto
         data_type: boolean
@@ -248,6 +248,8 @@ models:
         description: Koulutuksen tunniste
         data_type: text
       - name: koulutuksen_alkamiskausi
+        data_type: jsonb
+      - name: oppilaitoksen_opetuskieli
         data_type: jsonb
       - name: suunniteltukestovuodet
         description: Koulutuksen suunniteltu kesto vuosissa

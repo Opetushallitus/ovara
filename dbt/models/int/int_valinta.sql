@@ -20,8 +20,12 @@ rivit as (
         jsonb_build_object(
             'valintatapajono_oid', vatu.valintatapajono_oid,
             'valinnan_tila', case
-                when vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA') and josi.hyvaksytty_harkinnanvaraisesti
-                then 'HYVAKSYTTY_HARKINNANVARAISESTI' else vatu.valinnan_tila end,
+                when
+                    vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
+                    and josi.hyvaksytty_harkinnanvaraisesti
+                    then 'HYVAKSYTTY_HARKINNANVARAISESTI'
+                else vatu.valinnan_tila
+            end,
             'ehdollisesti_hyvaksyttavissa', vatu.ehdollisesti_hyvaksyttavissa,
             'ehdollisen_hyvaksymisen_ehto', vatu.ehdollisen_hyvaksymisen_ehto,
             'valinnantilan_kuvauksen_teksti', vatu.valinnantilan_kuvauksen_teksti,
@@ -39,8 +43,8 @@ rivit as (
     left join jonosijat as josi on vatu.hakemus_hakukohde_valintatapa_id = josi.hakemus_hakukohde_valintatapa_id
 )
 
- select
-     hakutoive_id,
+select
+    hakutoive_id,
     jsonb_agg(valintatapajonot) as valintatapajonot
- from rivit
- group by 1
+from rivit
+group by 1

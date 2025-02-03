@@ -75,7 +75,7 @@ step2 as (
         koulutuksen_alkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri' as koulutuksen_alkamiskausi_koodiuri,
         (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksen_alkamisvuosi,
         (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::date as koulutuksen_alkamispaivamaara,
-        koulutuksen_alkamiskausi ->> 'henkilokohtaisenSuunnitelmanLisatiedot' as henkilokohtaisen_sunnitelman_lisatiedot
+        koulutuksen_alkamiskausi ->> 'henkilokohtaisenSuunnitelmanLisatiedot' as henkilokohtaisen_suunnitelman_lisatiedot
     from int
 ),
 
@@ -112,7 +112,7 @@ final as (
                 koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
                 then date_part('year', koulutuksen_alkamispaivamaara)
         end as koulutuksen_alkamisvuosi,
-        henkilokohtaisen_sunnitelman_lisatiedot,
+        henkilokohtaisen_suunnitelman_lisatiedot,
         toinen_aste_onko_kaksoistutkinto,
         jarjestaa_urheilijan_ammkoulutusta
     from step2

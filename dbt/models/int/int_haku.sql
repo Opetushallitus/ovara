@@ -23,43 +23,49 @@ koulutuksen_alkamiskausi_rivit as (
             when koulutuksenalkamiskausi ->> 'alkamiskausityyppi' = 'alkamiskausi ja -vuosi'
                 then (koulutuksenalkamiskausi ->> 'koulutuksenAlkamisvuosi')::int
             when koulutuksenalkamiskausi ->> 'alkamiskausityyppi' = 'tarkka alkamisajankohta'
-                then date_part('year',(koulutuksenalkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz)::int
+                then date_part('year', (koulutuksenalkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz)::int
             else -1
         end as alkamisvuosi,
         case
             when koulutuksenalkamiskausi ->> 'alkamiskausityyppi' = 'alkamiskausi ja -vuosi'
                 then koulutuksenalkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri'
-        when koulutuksenalkamiskausi ->> 'alkamiskausityyppi' = 'tarkka alkamisajankohta'
-            then
-            case
-                when date_part('month',(koulutuksenalkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz)::int < 8
-                    then 'kausi_k#1'
-                    else 'kausi_s#1'
-                end
+            when koulutuksenalkamiskausi ->> 'alkamiskausityyppi' = 'tarkka alkamisajankohta'
+                then
+                    case
+                        when
+                            date_part(
+                                'month', (koulutuksenalkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz
+                            )::int < 8
+                            then 'kausi_k#1'
+                        else 'kausi_s#1'
+                    end
         end as kausi
     from hakukohde
     where koulutuksenalkamiskausi is not null
 
     union all
-        select
+    select
         haku_oid,
         case
             when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'alkamiskausi ja -vuosi'
                 then (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int
             when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'tarkka alkamisajankohta'
-                then date_part('year',(koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz)::int
+                then date_part('year', (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz)::int
             else -1
         end as alkamisvuosi,
-    case
-        when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'alkamiskausi ja -vuosi'
-            then koulutuksen_alkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri'
-        when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'tarkka alkamisajankohta'
-            then
-                case
-                    when date_part('month',(koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz)::int < 8
-                    then 'kausi_k#1'
-                    else 'kausi_s#1'
-                end
+        case
+            when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'alkamiskausi ja -vuosi'
+                then koulutuksen_alkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri'
+            when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'tarkka alkamisajankohta'
+                then
+                    case
+                        when
+                            date_part(
+                                'month', (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz
+                            )::int < 8
+                            then 'kausi_k#1'
+                        else 'kausi_s#1'
+                    end
         end as kausi
     from haku
     where koulutuksen_alkamiskausi is not null
@@ -67,18 +73,18 @@ koulutuksen_alkamiskausi_rivit as (
 
 koulutuksen_alkamiskausi_koodit as (
     select distinct
-    haku_oid,
-    case
-        when alkamisvuosi=-1 then jsonb_build_object(
-            'type','henkkoht'
+        haku_oid,
+        case
+            when alkamisvuosi = -1
+                then jsonb_build_object('type', 'henkkoht')
+            when alkamisvuosi is null
+                then '{}'
+            else jsonb_build_object(
+                'type', 'kausivuosi',
+                'koulutuksenAlkamisvuosi', alkamisvuosi,
+                'koulutuksenAlkamiskausiKoodiUri', kausi
             )
-        when alkamisvuosi is null then '{}'
-        else jsonb_build_object(
-            'type','kausivuosi',
-            'koulutuksenAlkamisvuosi',alkamisvuosi,
-            'koulutuksenAlkamiskausiKoodiUri',kausi
-            )
-    end as koulutuksen_alkamiskausi
+        end as koulutuksen_alkamiskausi
     from koulutuksen_alkamiskausi_rivit
 ),
 
