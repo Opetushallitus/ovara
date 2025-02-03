@@ -93,7 +93,7 @@ models:
         data_type: text
       - name: koulutuksen_alkamisvuosi
         data_type: double precision
-      - name: henkilokohtaisen_sunnitelman_lisatiedot
+      - name: henkilokohtaisen_suunnitelman_lisatiedot
         data_type: text
       - name: toinen_aste_onko_kaksoistutkinto
         data_type: boolean
