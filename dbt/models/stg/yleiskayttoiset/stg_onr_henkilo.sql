@@ -2,7 +2,8 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns': ['henkilo_oid']}
+        {'columns': ['henkilo_oid']},
+        {'columns': ['muokattu']}
     ]
     )
 }}
@@ -36,6 +37,8 @@ final as (
         (data ->> 'sukupuoli')::int as sukupuoli,
         (data ->> 'turvakielto')::boolean = 't' as turvakielto,
         (data ->> 'yksiloityvtj')::boolean = 't' as yksiloityvtj,
+        (data ->> 'created')::timestamptz as luotu,
+        (data ->> 'updated')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 )
