@@ -42,11 +42,9 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
-if [ is_error -ne "1" ]
 start=$(date +%s)
 dbt run-operation tempdata_cleanup --target=prod
 echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
-fi
 
 echo "Generoidaan dokumentaatio"
 dbt docs generate --target=prod
