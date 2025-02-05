@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set +e
 
 echo "Running Ovara DBT script..."
 
@@ -22,13 +22,23 @@ aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET on
 dbt seed -s raw_taulut --target=prod
 dbt run-operation create_raw_tables --target=prod
 
+is_error="0"
+
 if [[ -z "$1" ]]; then
   echo "Running DBT without any extra paramaters"
-  dbt build --target=prod
+  if dbt build --target=prod ; then
+  	is_error="0"
+  else
+    is_error="1"
+  fi
   echo "Finished running DBT"
 else
   echo "Running DBT with extra paramaters: $1"
-  dbt build --target=prod "$1"
+  if dbt build --target=prod "$1"; then
+  	is_error="0"
+  else
+    is_error="1"
+  fi
   echo "Finished running DBT"
 fi
 
@@ -53,5 +63,10 @@ aws s3 cp ./logs s3://$DBT_LOGS_BUCKET/$CURRENT_TIME --recursive --include 'logs
 
 echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *"
+
+if [ $is_error -eq "1" ]; then
+	echo "Error: Ajossa tapahtui virhe"
+	exit 1
+fi
 
 exit 0
