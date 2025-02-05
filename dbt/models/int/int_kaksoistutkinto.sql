@@ -16,8 +16,8 @@ with raw as ( --noqa: PRS
         array[
             '4fe08958-c0b7-4847-8826-e42503caa662',
             '32b8440f-d6f0-4a8b-8f67-873344cc3488',
-            'kaksoistutkinto-lukio',
-            'kaksoistutkinto-amm'
+            'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
+            'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
         ]
 ),
 
@@ -25,8 +25,8 @@ rows as (
     select * from raw where
     keys like '4fe08958-c0b7-4847-8826-e42503caa662_%'
     or keys like '32b8440f-d6f0-4a8b-8f67-873344cc3488_%'
-    or keys like 'kaksoistutkinto-lukio_%'
-    or keys like 'kaksoistutkinto-amm_%'
+    or keys like 'lukio_opinnot_ammatillisen_perustutkinnon_ohella_%'
+    or keys like 'ammatilliset_opinnot_lukio_opintojen_ohella_%'
 ),
 
 final as (
