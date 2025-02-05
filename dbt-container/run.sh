@@ -22,21 +22,31 @@ aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET on
 dbt seed -s raw_taulut --target=prod
 dbt run-operation create_raw_tables --target=prod
 
+is_error=0
+
 if [[ -z "$1" ]]; then
   echo "Running DBT without any extra paramaters"
   dbt build --target=prod
+  if [ $? -ne 0]; then
+	is_error="1"
+  fi
   echo "Finished running DBT"
 else
   echo "Running DBT with extra paramaters: $1"
   dbt build --target=prod "$1"
+  if [ $? -ne 0]; then
+	is_error="1"
+  fi
   echo "Finished running DBT"
 fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
+if [ is_error -ne "1" ]
 start=$(date +%s)
 dbt run-operation tempdata_cleanup --target=prod
 echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
+fi
 
 echo "Generoidaan dokumentaatio"
 dbt docs generate --target=prod
@@ -53,5 +63,10 @@ aws s3 cp ./logs s3://$DBT_LOGS_BUCKET/$CURRENT_TIME --recursive --include 'logs
 
 echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *"
+
+if [ is_error -eq "1" ]; then
+	echo "Error: Ajossa tapahtui virhe"
+	exit 1
+fi
 
 exit 0
