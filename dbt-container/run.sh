@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set +e
 
 echo "Running Ovara DBT script..."
 
@@ -22,7 +22,7 @@ aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET on
 dbt seed -s raw_taulut --target=prod
 dbt run-operation create_raw_tables --target=prod
 
-is_error=0
+is_error="0"
 
 if [[ -z "$1" ]]; then
   echo "Running DBT without any extra paramaters"
