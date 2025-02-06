@@ -52,12 +52,12 @@ export const tiedostot: Tiedostot = {
     intervalHours: 6,
   },
   onr_henkilo: {
-    lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/henkilo.json',
+    lampiKey: 'fulldump/oppijanumerorekisteri/v3/json/henkilo.json',
     ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
     batchSize: 500000,
   },
   // onr_yhteystieto: {
-  //   lampiKey: 'fulldump/oppijanumerorekisteri/v2/json/yhteystieto.json',
+  //   lampiKey: 'fulldump/oppijanumerorekisteri/v3/json/yhteystieto.json',
   //   ovaraKeyTemplate: 'onr/onr_yhteystieto__{}__{}_{}.json',
   //   batchSize: 100000,
   // },
