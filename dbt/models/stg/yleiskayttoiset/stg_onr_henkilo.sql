@@ -13,15 +13,18 @@ with source as (
     {#
     is_incremental is never true because of config materialized=table
     this table is being truncated whenever a new file is processed
-    #}
+
     {% if is_incremental() %}
 
-        where dw_metadata_dbt_copied_at > (
-            select coalesce(max(dw_metadata_dbt_copied_at), '1899-12-31') from {{ this }}
+    # process only rows where updated is newer than newest timestamp in dw
+#}
+    where
+        data ->> 'muokattu' > (
+            select coalesce(max('muokattu'), '1899-12-31') from {{ source('onr_henkilo', 'dw_onr_henkilo') }}
         )
-
+{#
     {% endif %}
-    {# end of incremental logic #}
+     end of incremental logic #}
 ),
 
 final as (
