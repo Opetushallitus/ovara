@@ -1,6 +1,8 @@
 {{
   config(
-    materialized = 'table',
+    materialized = 'incremental',
+    unique_key = 'henkilo_oid',
+    incremental_strategy = 'merge',
     indexes = [
         {'columns': ['henkilo_oid','master_oid']},
         {'columns':['henkilo_oid','kansalaisuus']}
@@ -10,6 +12,10 @@
 
 with raw as (
     select * from {{ ref('dw_onr_henkilo') }}
+    {% if is_incremental() %}
+    where muokattu > coalesce((select max(muokattu) from {{ this }}), date('1900-01-01'))
+    {% endif %}
+
 ),
 
 final as (
