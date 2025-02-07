@@ -19,8 +19,8 @@ with source as (
     # process only rows where updated is newer than newest timestamp in dw
 #}
     where
-        data ->> 'muokattu' > (
-            select coalesce(max('muokattu'), '1899-12-31') from {{ source('onr_henkilo', 'dw_onr_henkilo') }}
+        (data ->> 'updated')::timestamptz > (
+            select coalesce(max(muokattu), '1899-12-31') from {{ source('onr_henkilo', 'dw_onr_henkilo') }}
         )
 {#
     {% endif %}
