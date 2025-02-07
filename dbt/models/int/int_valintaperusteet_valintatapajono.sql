@@ -1,8 +1,8 @@
 {{
   config(
+    enabled=false,
     materialized='incremental',
     unique_key ='valinnanvaihe_id',
-    full_refresh = false,
     indexes = [
         {'columns': ['hakukohde_oid']}
     ]

@@ -12,20 +12,12 @@ with source as (
 
 final as (
     select
-        coalesce(data -> 'valinnanVaihe' ->> 'valinnanVaiheOid'::varchar, 'puuttuu') as valinnanvaihe_id,
         data ->> 'hakukohdeOid'::varchar as hakukohde_oid,
         data ->> 'hakuOid'::varchar as haku_oid,
+        (data ->> 'lastModified')::timestamptz as muokattu,
         data ->> 'tarjoajaOid'::varchar as tarjoaja_oid,
-        data -> 'valinnanVaihe' ->> 'nimi'::varchar as valinnanvaihe_nimi,
-        (data -> 'valinnanVaihe' ->> 'valinnanVaiheJarjestysluku')::int as valinnanvaihe_jarjestysluku,
-        (data ->> 'viimeinenValinnanvaihe')::int as viimeinenValinnanvaihe,
-        (data -> 'valinnanVaihe' ->> 'aktiivinen')::boolean as aktiivinen,
-        data -> 'valinnanVaihe' ->> 'valinnanVaiheTyyppi'::varchar as valinnanvaihe_tyyppi,
         (data -> 'hakukohteenValintaperuste')::jsonb as hakukohteenValintaperuste,
-        (data -> 'valinnanVaihe' -> 'valintatapajono')::jsonb as valintatapajono,
-        (data -> 'valinnanVaihe' -> 'valintakoe')::jsonb as valintakoe,
-        (data -> 'valinnanVaihe' ->> 'jonot')::jsonb as jonot,
-        dw_metadata_source_timestamp_at as muokattu,
+        (data -> 'valinnanVaiheet')::jsonb as valinnanvaiheet,
         {{ metadata_columns() }}
     from source
 )

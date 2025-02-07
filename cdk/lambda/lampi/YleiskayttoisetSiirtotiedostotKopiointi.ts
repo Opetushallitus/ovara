@@ -71,44 +71,50 @@ export const main: lambda.Handler = async (
     throw new Error(message);
   }
 
-  if (tiedostotyyppi == 'onr_henkilo') {
-    console.log('Siivotaan henkilöiden tiedot pois raw.onr_henkilo-taulusta');
+  const host = process.env.host || '';
+  const username = process.env.user || '';
+  const database = process.env.database || '';
 
-    const host = process.env.host || '';
-    const username = process.env.user || '';
-    const database = process.env.database || '';
+  const portStr = process.env.port;
+  const port = portStr ? Number(portStr) : 5432;
 
-    const portStr = process.env.port;
-    const port = portStr ? Number(portStr) : 5432;
+  const signer = new Signer({ hostname: host, port, username });
+  const token = await signer.getAuthToken();
 
-    const signer = new Signer({ hostname: host, port, username });
-    const token = await signer.getAuthToken();
-
-    const databaseConfig: Options = {
-      ...DEFAULT_DB_POOL_PARAMS,
-      host,
-      port,
-      database,
-      username,
-      password: token,
-      dialectModule: pg,
-      dialect: 'postgres',
-      dialectOptions: {
-        ssl: {
-          enableTrace: false,
-          rejectUnauthorized: false,
-          cert: fs.readFileSync(__dirname + '/eu-west-1-bundle.pem').toString(),
-        },
+  const databaseConfig: Options = {
+    ...DEFAULT_DB_POOL_PARAMS,
+    host,
+    port,
+    database,
+    username,
+    password: token,
+    dialectModule: pg,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        enableTrace: false,
+        rejectUnauthorized: false,
+        cert: fs.readFileSync(__dirname + '/eu-west-1-bundle.pem').toString(),
       },
-      logging: false,
-    };
+    },
+    logging: false,
+  };
 
-    const dbClient = new Sequelize(databaseConfig);
-    await dbClient.authenticate();
+  const dbClient = new Sequelize(databaseConfig);
+  await dbClient.authenticate();
 
+  if (tiedostotyyppi == 'onr_henkilo') {
+    console.log('Siivotaan tiedot pois raw.onr_henkilo-taulusta');
     await dbClient.query('truncate table raw.onr_henkilo');
-
-    console.log('Siivottu henkilöiden tiedot pois raw.onr_henkilo-taulusta');
+    console.log('Siivottu tiedot pois raw.onr_henkilo-taulusta');
+  } else if (tiedostotyyppi == 'koodisto_koodi') {
+    console.log('Siivotaan tiedot pois raw.koodisto_koodi-taulusta');
+    await dbClient.query('truncate table raw.koodisto_koodi');
+    console.log('Siivottu tiedot pois raw.koodisto_koodi-taulusta');
+  } else if (tiedostotyyppi == 'koodisto_relaatio') {
+    console.log('Siivotaan tiedot pois raw.koodisto_relaatio-taulusta');
+    await dbClient.query('truncate table raw.koodisto_relaatio');
+    console.log('Siivottu tiedot pois raw.koodisto_relaatio-taulusta');
   }
 
   const lampiBucketName = process.env.lampiBucketName;
