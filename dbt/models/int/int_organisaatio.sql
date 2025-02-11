@@ -33,6 +33,14 @@ kunta as (
     select * from {{ ref('int_koodisto_kunta') }} where viimeisin_versio
 ),
 
+maakunta as (
+    select * from {{ ref('int_koodisto_maakunta') }} where viimeisin_versio
+),
+
+kunta_maakunta as (
+    select * from {{ ref('int_koodisto_kunta_maakunta') }} where viimeisin_versio
+),
+
 organisaatiotyyppi as (
     select * from {{ ref('int_organisaatio_organisaatiotyyppi') }}
 ),
@@ -80,6 +88,8 @@ final as (
         raw1.ylempi_organisaatio,
         raw1.sijaintikunta,
         kunt.koodinimi as sijaintikunta_nimi,
+        maak.koodiuri as sijaintimaakunta,
+        maak.koodinimi as sijaintimaakunta_nimi,
         raw1.opetuskielet,
         orgt.organisaatiotyypit,
         raw1.tila,
@@ -90,6 +100,8 @@ final as (
     from int as raw1
     left join kunta as kunt on raw1.sijaintikunta = kunt.koodiuri
     left join organisaatiotyyppi as orgt on raw1.organisaatio_oid = orgt.organisaatio_oid
+    left join kunta_maakunta as kuma on raw1.sijaintikunta = kuma.kunta_koodiuri
+    left join maakunta as maak on kuma.maakunta_koodiuri = maak.koodiuri
 )
 
 select * from final
