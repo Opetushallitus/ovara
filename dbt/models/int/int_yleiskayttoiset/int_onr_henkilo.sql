@@ -5,7 +5,8 @@
     incremental_strategy = 'merge',
     indexes = [
         {'columns': ['henkilo_oid','master_oid']},
-        {'columns':['henkilo_oid','kansalaisuus']}
+        {'columns':['henkilo_oid','kansalaisuus']},
+        {'columns':['muokattu']}
     ]
     )
 }}

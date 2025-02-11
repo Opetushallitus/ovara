@@ -33,6 +33,8 @@ models:
       - name: valintatapajonot
         data_type: jsonb
         description: Hakutoiveen kaikkien valintatapajonojen tiedot json-muotoisena
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
@@ -99,6 +101,10 @@ models:
         data_type: boolean
       - name: jarjestaa_urheilijan_ammkoulutusta
         data_type: boolean
+      - name: oppilaitoksen_opetuskieli
+        data_type: jsonb
+      - name: koulutus_oid
+        data_type: text
   - name: pub_dim_haku
     description: Hakujen tietoja
     config:

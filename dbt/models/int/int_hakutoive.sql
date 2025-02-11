@@ -28,6 +28,10 @@ valinnat as (
     select * from {{ ref('int_valinta') }}
 ),
 
+harkinnanvaraisuus as (
+    select * from {{ ref('int_sure_harkinnanvaraisuus') }}
+),
+
 int as (
     select
         hato.hakutoive_id,
@@ -49,13 +53,15 @@ int as (
         )
         as viimeinen_vastaanottopaiva,
         vaot.vastaanottotieto,
-        vali.valintatapajonot
+        vali.valintatapajonot,
+        hava.harkinnanvaraisuuden_syy
     from hakutoive as hato
     left join julkaistu as julk on hato.hakukohde_henkilo_id = julk.hakukohde_henkilo_id
     left join hakemus as hake on hato.hakemus_oid = hake.hakemus_oid
     left join haku on hake.haku_oid = haku.haku_oid
     left join vastaanotto as vaot on hato.hakukohde_henkilo_id = vaot.hakukohde_henkilo_id
     left join valinnat as vali on hato.hakutoive_id = vali.hakutoive_id
+    left join harkinnanvaraisuus as hava on hato.hakutoive_id = hava.hakutoive_id
 ),
 
 final as (
@@ -78,7 +84,8 @@ final as (
             case when vastaanotto_paattyy::time - viimeinen_vastaanottopaiva::time < '0:00:00'::time then 1 else 0 end
         ) as viimeinen_vastaanottopaiva,
         vastaanottotieto,
-        valintatapajonot
+        valintatapajonot,
+        harkinnanvaraisuuden_syy
     from int
 )
 

@@ -35,6 +35,7 @@ int as (
         hako.tila,
         hako.haku_oid,
         hako.toteutus_oid,
+        koul.koulutus_oid,
         hako.jarjestyspaikka_oid,
         hako.aloituspaikat,
         hako.aloituspaikat_ensikertalaisille,
@@ -61,7 +62,8 @@ int as (
             hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksen_alkamiskausi))
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
-        coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta
+        coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,
+        tote.oppilaitoksen_opetuskieli
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -88,7 +90,9 @@ final as (
         tila,
         haku_oid,
         toteutus_oid,
+        koulutus_oid,
         jarjestyspaikka_oid,
+        oppilaitoksen_opetuskieli,
         aloituspaikat,
         aloituspaikat_ensikertalaisille,
         hakukohdekoodiuri,

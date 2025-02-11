@@ -32,6 +32,10 @@ kaksoistutkinto as (
     select * from {{ ref('int_kaksoistutkinto') }}
 ),
 
+urheilijatutkinto as (
+    select * from {{ ref('int_urheilijatutkinto_hakukohde') }}
+),
+
 ilmoittautuminen as (
     select
         hakukohde_henkilo_id,
@@ -48,12 +52,18 @@ final as (
         coalesce(sora.sora_aiempi, '0') = '1' as sora_aiempi,
         hava.harkinnanvaraisuuden_syy,
         ilmo.tila,
-        coalesce(katu.kaksoistutkinto_kiinnostaa, false::boolean) as kaksoistutkinto_kiinnostaa
+        coalesce(katu.kaksoistutkinto_kiinnostaa, false::boolean) as kaksoistutkinto_kiinnostaa,
+        case
+            when urtu.hakukohde_oid is not null
+            then true::boolean
+            else false::boolean
+        end as urheilijatutkinto_kiinnostaa
     from hakutoive as hato
     left join sora on hato.hakutoive_id = sora.hakutoive_id
     left join harkinnanvaraisuus as hava on hato.hakutoive_id = hava.hakutoive_id
     left join ilmoittautuminen as ilmo on hato.hakukohde_henkilo_id = ilmo.hakukohde_henkilo_id
     left join kaksoistutkinto as katu on hato.hakutoive_id = katu.hakutoive_id
+    left join urheilijatutkinto as urtu on hato.hakukohde_oid = urtu.hakukohde_oid
 )
 
 select final.*
