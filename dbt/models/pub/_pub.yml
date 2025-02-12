@@ -35,6 +35,8 @@ models:
         description: Hakutoiveen kaikkien valintatapajonojen tiedot json-muotoisena
       - name: harkinnanvaraisuuden_syy
         data_type: text
+      - name: haku_oid
+        data_type: text
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:

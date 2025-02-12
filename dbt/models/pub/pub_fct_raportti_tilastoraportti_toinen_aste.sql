@@ -14,10 +14,6 @@ with hakutoive as (
     select * from {{ ref('pub_dim_hakutoive') }}
 ),
 
-hakemus as (
-    select * from {{ ref('pub_fct_hakemus') }}
-),
-
 hakukohde as (
     select * from {{ ref('pub_dim_hakukohde') }}
 ),
@@ -46,7 +42,7 @@ final as (
     select
         hato.hakukohde_oid,
         hako.hakukohde_nimi,
-        hake.haku_oid,
+        hako.haku_oid,
         orga.organisaatio_oid,
         hako.oppilaitoksen_opetuskieli,
         koul.kansallinenkoulutusluokitus2016koulutusalataso1 as koulutusalataso_1,
@@ -75,7 +71,6 @@ final as (
         sum (case when hato.hakutoivenumero =6 then 1 else 0 end) as toive_6,
         sum (case when hato.hakutoivenumero =7 then 1 else 0 end) as toive_7
     from hakutoive as hato
-    join hakemus as hake on hato.hakemus_oid = hake.hakemus_oid
     join hakukohde as hako on hato.hakukohde_oid = hako.hakukohde_oid
     join koulutus as koul on hako.koulutus_oid = koul.koulutus_oid
     join henkilo as henk on hato.henkilo_oid = henk.henkilo_oid and hato.hakemus_oid = henk.hakemus_oid

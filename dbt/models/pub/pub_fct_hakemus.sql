@@ -3,7 +3,9 @@
     materialized = 'table',
     indexes = [
         {'columns':['haku_oid']},
-        {'columns':['henkilo_oid']}
+        {'columns':['henkilo_oid']},
+        {'columns':['hakemus_oid']}
+
     ]
     )
 }}

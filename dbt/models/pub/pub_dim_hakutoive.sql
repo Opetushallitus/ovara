@@ -19,6 +19,7 @@ final as (
         hakutoive_id,
         hakukohde_henkilo_id,
         hakemus_oid,
+        haku_oid,
         henkilo_oid,
         hakukohde_oid,
         hakutoivenumero,

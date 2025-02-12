@@ -4,7 +4,7 @@
         indexes = [
             {'columns':['haku_oid']},
             {'columns':['toteutus_oid']},
-            {'columns':['haku_oid']},
+            {'columns':['koulutus_oid']},
         ]
     )
 }}
