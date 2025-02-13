@@ -41,7 +41,7 @@ models:
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
       contract:
-        enforced: true
+        enforced: false
     columns:
       - name: hakukohde_oid
         data_type: text
@@ -414,6 +414,10 @@ models:
       - name: sijaintikunta
         data_type: text
       - name: sijaintikunta_nimi
+        data_type: jsonb
+      - name: sijaintimaakunta
+        data_type: text
+      - name: sijaintimaakunta_nimi
         data_type: jsonb
       - name: opetuskielet
         data_type: jsonb

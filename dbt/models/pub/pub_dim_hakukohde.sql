@@ -4,7 +4,7 @@
         indexes = [
             {'columns':['haku_oid']},
             {'columns':['toteutus_oid']},
-            {'columns':['koulutus_oid']},
+            {'columns':['koulutus_oid']}
         ]
     )
 }}
@@ -20,24 +20,39 @@ toteutus as (
 haku as (
     select
         *,
-        hakutapa_koodi = '05' as siirtohaku
-    from {{ ref('pub_dim_haku') }}
+        hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
+    from {{ ref('int_kouta_haku') }}
 ),
 
 koulutus as (
     select * from {{ ref('pub_dim_koulutus') }}
 ),
 
+organisaatio as (
+    select * from {{ ref('pub_dim_organisaatio') }}
+),
+
+organisaatio_hakukohteiden_nimet as (
+    select * from {{ ref('int_organisaatio_hakukohteiden_nimet') }}
+),
+
 int as (
     select
         hako.hakukohde_oid,
         hako.hakukohde_nimi,
+        hani.organisaatio_nimi,
+        hani.oppilaitos,
+        hani.toimipiste,
         hako.externalid as ulkoinen_tunniste,
         hako.tila,
         hako.haku_oid,
         hako.toteutus_oid,
         koul.koulutus_oid,
         hako.jarjestyspaikka_oid,
+        orga.sijaintikunta,
+        orga.sijaintikunta_nimi,
+        orga.sijaintimaakunta,
+        orga.sijaintimaakunta_nimi,
         hako.aloituspaikat,
         hako.aloituspaikat_ensikertalaisille,
         hako.hakukohdekoodiuri,
@@ -69,6 +84,8 @@ int as (
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
     left join koulutus as koul on tote.koulutus_oid = koul.koulutus_oid
+    left join organisaatio as orga on hako.jarjestyspaikka_oid = orga.organisaatio_oid
+    left join organisaatio_hakukohteiden_nimet as hani on hako.jarjestyspaikka_oid = hani.jarjestyspaikka_oid
 ),
 
 step2 as (
@@ -87,12 +104,19 @@ final as (
     select
         hakukohde_oid,
         hakukohde_nimi,
+        organisaatio_nimi,
+        toimipiste,
+        oppilaitos,
         ulkoinen_tunniste,
         tila,
         haku_oid,
         toteutus_oid,
         koulutus_oid,
         jarjestyspaikka_oid,
+        sijaintikunta,
+        sijaintikunta_nimi,
+        sijaintimaakunta,
+        sijaintimaakunta_nimi,
         oppilaitoksen_opetuskieli,
         aloituspaikat,
         aloituspaikat_ensikertalaisille,
