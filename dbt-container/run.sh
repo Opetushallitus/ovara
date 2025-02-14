@@ -2,6 +2,10 @@
 
 set +e
 
+echo "Kontin tiedot:"
+cat build.txt
+echo ""
+
 echo "Running Ovara DBT script..."
 
 start=$(date +%s)
@@ -17,7 +21,7 @@ if [[ "$IS_RUNNING" = "true" ]]; then
 fi
 
 echo "Merkitään DynamoDB:hen että prosessi on ajossa"
-aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *"
+aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
 dbt seed -s raw_taulut --target=prod
 dbt run-operation create_raw_tables --target=prod

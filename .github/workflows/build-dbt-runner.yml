@@ -37,5 +37,6 @@ jobs:
           IMAGE_TAG: ga-${{ github.run_number }}
         run: |
             cd dbt-container
+            echo -e "version=ga-${GITHUB_RUN_NUMBER}\nbranch=${GITHUB_REF_NAME}\ncommit=${GITHUB_SHA}\nbuild_time=$(TZ=Europe/Helsinki date +%Y-%m-%d_%H:%M:%S%Z)\n" > build.txt
             docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ../ --file Dockerfile
             docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
