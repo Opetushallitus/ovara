@@ -55,7 +55,7 @@ final as (
         coalesce(katu.kaksoistutkinto_kiinnostaa, false::boolean) as kaksoistutkinto_kiinnostaa,
         case
             when urtu.hakukohde_oid is not null
-            then true::boolean
+                then true::boolean
             else false::boolean
         end as urheilijatutkinto_kiinnostaa
     from hakutoive as hato

@@ -14,7 +14,7 @@
 with raw as (
     select * from {{ ref('dw_onr_henkilo') }}
     {% if is_incremental() %}
-    where muokattu > coalesce((select max(muokattu) from {{ this }}), date('1900-01-01'))
+        where muokattu > coalesce((select max(muokattu) from {{ this }}), date('1900-01-01'))
     {% endif %}
 
 ),
