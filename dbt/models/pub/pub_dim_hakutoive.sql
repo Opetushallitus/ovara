@@ -25,6 +25,7 @@ final as (
         hakutoivenumero,
         viimeinen_vastaanottopaiva,
         vastaanottotieto,
+        ilmoittautumisen_tila,
         valintatapajonot,
         harkinnanvaraisuuden_syy
     from hakutoive

@@ -32,6 +32,10 @@ harkinnanvaraisuus as (
     select * from {{ ref('int_sure_harkinnanvaraisuus') }}
 ),
 
+ilmoittautuminen as (
+    select * from {{ ref('int_valintarekisteri_ilmoittautuminen') }}
+),
+
 int as (
     select
         hato.hakutoive_id,
@@ -54,6 +58,7 @@ int as (
         )
         as viimeinen_vastaanottopaiva,
         vaot.vastaanottotieto,
+        ilmo.tila as ilmoittautumisen_tila,
         vali.valintatapajonot,
         hava.harkinnanvaraisuuden_syy
     from hakutoive as hato
@@ -63,6 +68,7 @@ int as (
     left join vastaanotto as vaot on hato.hakukohde_henkilo_id = vaot.hakukohde_henkilo_id
     left join valinnat as vali on hato.hakutoive_id = vali.hakutoive_id
     left join harkinnanvaraisuus as hava on hato.hakutoive_id = hava.hakutoive_id
+    left join ilmoittautuminen as ilmo on hato.hakukohde_henkilo_id = ilmo.hakukohde_henkilo_id
 ),
 
 final as (
@@ -86,6 +92,7 @@ final as (
             case when vastaanotto_paattyy::time - viimeinen_vastaanottopaiva::time < '0:00:00'::time then 1 else 0 end
         ) as viimeinen_vastaanottopaiva,
         vastaanottotieto,
+        ilmoittautumisen_tila,
         valintatapajonot,
         harkinnanvaraisuuden_syy
     from int
