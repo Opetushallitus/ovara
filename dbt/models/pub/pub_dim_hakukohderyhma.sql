@@ -1,10 +1,7 @@
 {{
   config(
-    materialized = 'table',
-    indexes= [
-        {'columns': ['hakukohde_oid']}
-        ]
-    )
+    materialized = 'table'
+  )
 }}
 
 with ryhma as (
@@ -17,6 +14,7 @@ hakukohteet as (
 
 final as (
     select
+        hako.hakukohderyhma_id,
         ryhm.hakukohderyhma_oid,
         ryhm.hakukohderyhma_nimi,
         hako.hakukohde_oid
