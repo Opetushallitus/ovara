@@ -66,7 +66,7 @@ echo "$CURRENT_TIME"
 aws s3 cp ./logs s3://$DBT_LOGS_BUCKET/$CURRENT_TIME --recursive --include 'logs/dbt.log*' --content-type 'text/plain'
 
 echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
-aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *"
+aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
 if [ $is_error -eq "1" ]; then
 	echo "Error: Ajossa tapahtui virhe"
