@@ -53,19 +53,19 @@ final as (
         jarjestyspaikka_oid,
         case
             when two is null then
-            json_build_object(
+            jsonb_build_object(
                 'fi',three->>'fi',
                 'sv',three->>'sv',
                 'en',three->>'en'
                 )
             when one is null then
-                json_build_object(
+                jsonb_build_object(
                 'fi',concat(two->>'fi',', ',three->>'fi'),
                 'sv',concat(two->>'sv',', ',three->>'sv'),
                 'en',concat(two->>'en',', ',three->>'en')
                 )
             else
-                json_build_object(
+                jsonb_build_object(
                 'fi',concat(one->>'fi',', ',two->>'fi',', ',three->>'fi'),
                 'sv',concat(one->>'sv',', ',two->>'sv',', ',three->>'sv'),
                 'en',concat(one->>'en',', ',two->>'en',', ',three->>'en')
