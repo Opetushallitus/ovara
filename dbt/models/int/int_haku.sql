@@ -1,6 +1,9 @@
 {{
   config(
-    materialized = 'view',
+    materialized = 'table',
+    indexes = [
+        {'columns':['haku_oid']}
+    ]
     )
 }}
 

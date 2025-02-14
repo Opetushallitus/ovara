@@ -17,6 +17,8 @@ final as (
         organisaatio_nimi,
         sijaintikunta,
         sijaintikunta_nimi,
+        sijaintimaakunta,
+        sijaintimaakunta_nimi,
         opetuskielet,
         organisaatiotyypit,
         tila,

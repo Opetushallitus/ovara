@@ -33,6 +33,12 @@ models:
       - name: valintatapajonot
         data_type: jsonb
         description: Hakutoiveen kaikkien valintatapajonojen tiedot json-muotoisena
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: ilmoittautumisen_tila
+        data_type: text
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
@@ -55,13 +61,9 @@ models:
       - name: haku_oid
         description: Linkki hakuun
         data_type: text
-        data_tests:
-          - not_null
       - name: toteutus_oid
         description: Linkki toteutukseen
         data_type: text
-        data_tests:
-          - not_null
       - name: jarjestyspaikka_oid
         description: Järjestävän organisaation tunniste
         data_type: text
@@ -99,6 +101,28 @@ models:
         data_type: boolean
       - name: jarjestaa_urheilijan_ammkoulutusta
         data_type: boolean
+      - name: oppilaitoksen_opetuskieli
+        data_type: jsonb
+      - name: koulutus_oid
+        data_type: text
+      - name: oppilaitos
+        data_type: jsonb
+      - name: organisaatio_nimi
+        data_type: jsonb
+        description: hakukohteen järjestäjäorganisaation toimipisteen ja oppilaitoksen lokalisoidut nimet
+      - name: sijaintikunta
+        data_type: text
+      - name: sijaintikunta_nimi
+        data_type: jsonb
+      - name: sijaintimaakunta
+        data_type: text
+        description: hakukohteen järjestysorganisaation maakunta koodistosta haettuna sijaintikunnan perusteella
+      - name: sijaintimaakunta_nimi
+        data_type: jsonb
+        description: hakukohteen järjestysorganisaation maakunta lokalistoituna koodistosta haettuna sijaintikunnan perusteella
+      - name: toimipiste
+        data_type: jsonb
+        description: Hakutoiveeseen kuuluvan toimipisteen nimet lokalistoituna   
   - name: pub_dim_haku
     description: Hakujen tietoja
     config:
@@ -406,6 +430,10 @@ models:
       - name: sijaintikunta
         data_type: text
       - name: sijaintikunta_nimi
+        data_type: jsonb
+      - name: sijaintimaakunta
+        data_type: text
+      - name: sijaintimaakunta_nimi
         data_type: jsonb
       - name: opetuskielet
         data_type: jsonb

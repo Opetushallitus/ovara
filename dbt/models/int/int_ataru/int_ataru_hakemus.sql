@@ -28,7 +28,9 @@ final as (
             when tila = 'inactivated'
                 then cast(true as boolean)
             else cast(false as boolean)
-        end as poistettu
+        end as poistettu,
+      (tiedot ->> '1dc3311d-2235-40d6-88d2-de2bd63e087b')::boolean as urheilijatutkinto_kiinnostaa
+
     from raw
     where
         row_nr = 1
