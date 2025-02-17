@@ -181,6 +181,10 @@ models:
         data_type: boolean
       - name: urheilijatutkinto_kiinnostaa
         data_type: boolean
+      - name: pohjakoulutus
+        data_type: int
+      - name: pohjakoulutus_nimi
+        data_type: jsonb
   - name: pub_dim_hakutoive
     description: Sisältää aktiiviset hakutoiveet
     config:

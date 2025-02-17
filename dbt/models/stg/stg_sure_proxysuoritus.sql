@@ -15,7 +15,6 @@ final as (
         data ->> 'hakemusOid' as hakemusOid,
         data ->> 'hakuOid' as hakuOid,
         data ->> 'henkiloOid' as HenkiloOid,
-        (data -> 'values' ->> 'POHJAKOULUTUS')::text as pohjakoulutus,
         (data -> 'values')::jsonb as keyvalues,
         {{ metadata_columns() }}
     from source
