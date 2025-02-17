@@ -3,7 +3,6 @@
     indexes = [
         {'columns': ['muokattu']},
         {'columns': ['poistettu']},
-        {'columns': ['hakukohde_henkilo_id']},
     ],
     materialized = 'incremental',
     incremental_strategy = 'merge',

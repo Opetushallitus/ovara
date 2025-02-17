@@ -80,6 +80,9 @@ models:
       - name: jarjestyspaikka_oid
         description: Järjestävän organisaation tunniste
         data_type: text
+      - name: jarjestyspaikka_nimi
+        data_type: jsonb
+        description: Järjestyspaikan nimi organisaatiotaulusta
       - name: aloituspaikat
         description: aloituspaikkojen määrä
         data_type: integer
@@ -118,7 +121,18 @@ models:
         data_type: jsonb
       - name: koulutus_oid
         data_type: text
+      - name: koulutustoimija
+        data_type: text
+      - name: koulutustoimija_nimi
+        data_type: jsonb
       - name: oppilaitos
+        data_type: text
+      - name: oppilaitos_nimi
+        data_type: jsonb
+      - name: toimipiste
+        data_type: text
+        description: Hakutoiveeseen kuuluvan toimipisteen oid
+      - name: toimipiste_nimi
         data_type: jsonb
       - name: organisaatio_nimi
         data_type: jsonb
@@ -133,9 +147,6 @@ models:
       - name: sijaintimaakunta_nimi
         data_type: jsonb
         description: hakukohteen järjestysorganisaation maakunta lokalistoituna koodistosta haettuna sijaintikunnan perusteella
-      - name: toimipiste
-        data_type: jsonb
-        description: Hakutoiveeseen kuuluvan toimipisteen nimet lokalistoituna
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
     config:
@@ -197,6 +208,8 @@ models:
         data_tests:
           - dbt_constraints.primary_key
       - name: hakukohde_henkilo_id
+        data_type: text
+      - name: henkilo_hakemus_id
         data_type: text
       - name: hakemus_oid
         description: hakemuksen oid
