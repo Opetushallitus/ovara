@@ -102,7 +102,7 @@ final as (
     from hakutoive as hato
     inner join hakukohde as hako on hato.hakukohde_oid = hako.hakukohde_oid
     inner join koulutus as koul on hako.koulutus_oid = koul.koulutus_oid
-    inner join henkilo as henk on hato.henkilo_oid = henk.henkilo_oid and hato.hakemus_oid = henk.hakemus_oid
+    inner join henkilo as henk on hato.henkilo_hakemus_id = henk.henkilo_hakemus_id
     left join valintarekisteri as vare on hato.hakukohde_henkilo_id = vare.hakukohde_henkilo_id
     group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 

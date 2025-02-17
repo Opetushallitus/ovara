@@ -75,6 +75,7 @@ final as (
     select
         hakutoive_id,
         hakukohde_henkilo_id,
+        {{ dbt_utils.generate_surrogate_key(['henkilo_oid', 'hakemus_oid']) }} as henkilo_hakemus_id,
         hakemus_oid,
         haku_oid,
         henkilo_oid,

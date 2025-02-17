@@ -1,5 +1,6 @@
 {{
   config(
+    materialized = 'table',
     indexes = [
         {'columns': ['hakutoive_id']}
     ]
