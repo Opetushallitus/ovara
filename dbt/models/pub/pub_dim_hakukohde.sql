@@ -14,7 +14,7 @@ with hakukohde as (
 ),
 
 toteutus as (
-    select * from {{ ref('pub_dim_toteutus') }}
+    select * from {{ ref('int_kouta_toteutus') }}
 ),
 
 haku as (
@@ -34,6 +34,22 @@ organisaatio as (
 
 organisaatio_hakukohteiden_nimet as (
     select * from {{ ref('int_organisaatio_hakukohteiden_nimet') }}
+),
+
+opetuskielirivi as (
+    select
+        hako.hakukohde_oid,
+        split_part(jsonb_array_elements_text(tote.opetuskielikoodiurit),'#',1) opetuskieli
+    from hakukohde as hako
+    left join toteutus as tote on hako.toteutus_oid=tote.toteutus_oid
+    order by 2
+ ),
+opetuskielet as (
+    select
+        hakukohde_oid,
+        jsonb_agg (opetuskieli) as oppilaitoksen_opetuskieli
+    from opetuskielirivi
+    group by hakukohde_oid
 ),
 
 int as (
@@ -80,17 +96,18 @@ int as (
             else 6
         end as tutkinnon_taso_sykli,
         coalesce(
-            hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksen_alkamiskausi))
+            hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi))
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
         coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,
-        tote.oppilaitoksen_opetuskieli
+        opki.oppilaitoksen_opetuskieli
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
     left join koulutus as koul on tote.koulutus_oid = koul.koulutus_oid
     left join organisaatio as orga on hako.jarjestyspaikka_oid = orga.organisaatio_oid
     left join organisaatio_hakukohteiden_nimet as hani on hako.jarjestyspaikka_oid = hani.jarjestyspaikka_oid
+    inner join opetuskielet as opki on hako.hakukohde_oid = opki.hakukohde_oid
 ),
 
 step2 as (

@@ -166,36 +166,6 @@ models:
       - name: hakukohde_oid
         description: Hakukohteen tunniste
         data_type: text
-  - name: pub_dim_hakutoive_toinen_aste
-    description: Raporttikohtaiset tiedot toisen asteen hakijat-raportille
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: hakutoive_id
-        data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
-      - name: hakemus_oid
-        data_type: text
-      - name: hakukohde_oid
-        data_type: text
-      - name: sora_terveys
-        data_type: boolean
-      - name: sora_aiempi
-        data_type: boolean
-      - name: harkinnanvaraisuuden_syy
-        data_type: text
-      - name: tila
-        data_type: text
-      - name: kaksoistutkinto_kiinnostaa
-        data_type: boolean
-      - name: urheilijatutkinto_kiinnostaa
-        data_type: boolean
-      - name: pohjakoulutus
-        data_type: int
-      - name: pohjakoulutus_nimi
-        data_type: jsonb
   - name: pub_dim_hakutoive
     description: Sisältää aktiiviset hakutoiveet
     config:
@@ -676,6 +646,36 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+  - name: pub_fct_raportti_hakijat_toinen_aste
+    description: Raporttikohtaiset tiedot toisen asteen hakijat-raportille
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: sora_terveys
+        data_type: boolean
+      - name: sora_aiempi
+        data_type: boolean
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: kaksoistutkinto_kiinnostaa
+        data_type: boolean
+      - name: urheilijatutkinto_kiinnostaa
+        data_type: boolean
+      - name: pohjakoulutus
+        data_type: int
+      - name: pohjakoulutus_nimi
+        data_type: jsonb
   - name: pub_fct_raportti_tilastoraportti_toinen_aste
     description: |
       Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
@@ -687,28 +687,12 @@ models:
     columns:
       - name: hakukohde_oid
         data_type: text
-      - name: hakukohde_nimi
-        data_type: jsonb
-      - name: haku_oid
-        data_type: text
-      - name: organisaatio_oid
-        data_type: text
-      - name: oppilaitoksen_opetuskieli
-        data_type: jsonb
       - name: koulutusalataso_1
         data_type: text
       - name: koulutusalataso_2
         data_type: text
       - name: koulutusalataso_3
         data_type: text
-      - name: sijaintikunta
-        data_type: text
-      - name: sijaintikunta_nimi
-        data_type: jsonb
-      - name: sijaintimaakunta
-        data_type: text
-      - name: sijaintimaakunta_nimi
-        data_type: jsonb
       - name: harkinnanvaraisuuden_syy
         data_type: text
       - name: sukupuoli

@@ -3,9 +3,6 @@
     materialized = 'table',
     indexes = [
       {'columns':['hakukohde_oid']},
-      {'columns':['haku_oid']},
-      {'columns':['organisaatio_oid']}
-
     ]
     )
 }}
@@ -47,17 +44,9 @@ valintarekisteri as (
 final as (
     select
         hato.hakukohde_oid,
-        hako.hakukohde_nimi,
-        hako.haku_oid,
-        hako.jarjestyspaikka_oid as organisaatio_oid,
-        hako.oppilaitoksen_opetuskieli,
         koul.kansallinenkoulutusluokitus2016koulutusalataso1 as koulutusalataso_1,
         koul.kansallinenkoulutusluokitus2016koulutusalataso2 as koulutusalataso_2,
         koul.kansallinenkoulutusluokitus2016koulutusalataso3 as koulutusalataso_3,
-        hako.sijaintikunta,
-        hako.sijaintikunta_nimi,
-        hako.sijaintimaakunta,
-        hako.sijaintimaakunta_nimi,
         hato.harkinnanvaraisuuden_syy,
         henk.sukupuoli,
         count(distinct hato.henkilo_oid) as hakijat,
@@ -104,7 +93,7 @@ final as (
     inner join koulutus as koul on hako.koulutus_oid = koul.koulutus_oid
     inner join henkilo as henk on hato.henkilo_hakemus_id = henk.henkilo_hakemus_id
     left join valintarekisteri as vare on hato.hakukohde_henkilo_id = vare.hakukohde_henkilo_id
-    group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+    group by 1, 2, 3, 4, 5, 6
 
 )
 
