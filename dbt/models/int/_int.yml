@@ -183,3 +183,25 @@ models:
         data_type: boolean
       - name: hyvaksyperuuntunut
         data_type: boolean
+      - name: hakutoive_id
+        data_type: text
+      - name: hakemus_hakukohde_valintatapa_id
+        data_type: text
+      - name: valinnan_tila
+        data_type: text
+      - name: ehdollisesti_hyvaksyttavissa
+        data_type: boolean
+      - name: ehdollisen_hyvaksymisen_ehto
+        data_type: jsonb
+      - name: valinnantilan_kuvauksen_teksti
+        data_type: jsonb
+  - name: int_valintarekisteri_lukuvuosimaksu
+    columns:
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: maksun_tila
+        data_type: text

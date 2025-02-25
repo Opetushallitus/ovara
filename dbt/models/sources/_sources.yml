@@ -43,3 +43,4 @@ sources:
     - name: sure_proxysuoritus
     - name: valintarekisteri_hyvaksyttyjulkaistuhakutoive
     - name: valintarekisteri_jonosija
+    - name: valintarekisteri_lukuvuosimaksu
