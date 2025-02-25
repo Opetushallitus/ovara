@@ -39,15 +39,16 @@ organisaatio_hakukohteiden_nimet as (
 opetuskielirivi as (
     select
         hako.hakukohde_oid,
-        split_part(jsonb_array_elements_text(tote.opetuskielikoodiurit),'#',1) opetuskieli
+        split_part(jsonb_array_elements_text(tote.opetuskielikoodiurit), '#', 1) as opetuskieli
     from hakukohde as hako
-    left join toteutus as tote on hako.toteutus_oid=tote.toteutus_oid
-    order by 2
- ),
+    left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
+    order by opetuskieli
+),
+
 opetuskielet as (
     select
         hakukohde_oid,
-        jsonb_agg (opetuskieli) as oppilaitoksen_opetuskieli
+        jsonb_agg(opetuskieli) as oppilaitoksen_opetuskieli
     from opetuskielirivi
     group by hakukohde_oid
 ),

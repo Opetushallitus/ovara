@@ -44,7 +44,7 @@ ilmoittautuminen as (
 ),
 
 pohjakoulutus as (
-    select * from  {{ ref('int_sure_proxysuoritus_pohjakoulutus') }}
+    select * from {{ ref('int_sure_proxysuoritus_pohjakoulutus') }}
 ),
 
 final as (

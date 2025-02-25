@@ -96,7 +96,7 @@ final as (
                 )
         end
         as organisaatio_nimi,
-		toimipiste,
+        toimipiste,
         toimipiste_nimi,
         oppilaitos,
         oppilaitos_nimi,

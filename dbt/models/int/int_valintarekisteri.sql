@@ -15,8 +15,8 @@ ilmoittautuminen as (
     select * from {{ ref('int_valintarekisteri_ilmoittautuminen') }}
 ),
 
-final as  (
-select
+final as (
+    select
         coalesce(vast.hakukohde_henkilo_id, ilmo.hakukohde_henkilo_id) as hakukohde_henkilo_id,
         vast.vastaanottotieto,
         ilmo.tila as ilmoittautumisen_tila
