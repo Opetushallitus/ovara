@@ -93,7 +93,7 @@ final as (
     inner join koulutus as koul on hako.koulutus_oid = koul.koulutus_oid
     inner join henkilo as henk on hato.henkilo_hakemus_id = henk.henkilo_hakemus_id
     left join valintarekisteri as vare on hato.hakukohde_henkilo_id = vare.hakukohde_henkilo_id
-    group by 1, 2, 3, 4, 5, 6
+    group by hakukohde_oid, koulutusalataso_1, koulutusalataso_2, koulutusalataso_3, harkinnanvaraisuuden_syy, sukupuoli
 
 )
 

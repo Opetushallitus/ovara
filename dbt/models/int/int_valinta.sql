@@ -48,4 +48,4 @@ select
     hakutoive_id,
     jsonb_agg(valintatapajonot) as valintatapajonot
 from rivit
-group by 1
+group by hakutoive_id

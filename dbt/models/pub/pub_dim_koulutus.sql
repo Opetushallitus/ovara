@@ -29,7 +29,7 @@ koulutustiedot as (
     from koulutus as koul
     cross join lateral jsonb_array_elements_text(koul.koulutuksetkoodiuri) as e (rivikoodiuri)
     inner join koulutus_alat_ja_asteet as kaja on e.rivikoodiuri = kaja.versioitu_koodiuri
-    group by 1
+    group by koulutus_oid
 ),
 
 final as (
