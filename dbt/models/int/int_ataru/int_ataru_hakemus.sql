@@ -28,9 +28,7 @@ final as (
             when tila = 'inactivated'
                 then true::boolean
             else false::boolean
-        end as poistettu,
-        (tiedot ->> '1dc3311d-2235-40d6-88d2-de2bd63e087b')::boolean as urheilijatutkinto_kiinnostaa
-
+        end as poistettu
     from raw
     where
         row_nr = 1

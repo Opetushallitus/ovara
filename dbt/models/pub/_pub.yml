@@ -147,6 +147,12 @@ models:
       - name: sijaintimaakunta_nimi
         data_type: jsonb
         description: hakukohteen järjestysorganisaation maakunta lokalistoituna koodistosta haettuna sijaintikunnan perusteella
+      - name: alempi_kk_aste
+        data_type: boolean
+      - name: ylempi_kk_aste
+        data_type: boolean
+      - name: okmohjauksenala
+        data_type: int
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
     config:
