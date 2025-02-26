@@ -195,6 +195,9 @@ models:
         data_type: jsonb
       - name: valinnantilan_kuvauksen_teksti
         data_type: jsonb
+      - name: valintatiedon_pvm
+        data_type: date
+        description: Valinnantilan viimeisin muutos
   - name: int_valintarekisteri_lukuvuosimaksu
     columns:
       - name: hakukohde_henkilo_id

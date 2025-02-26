@@ -37,7 +37,8 @@ final as (
             'fi', valinnantilankuvauksentekstifi
         ) as valinnantilan_kuvauksen_teksti,
         julkaistavissa,
-        hyvaksyperuuntunut
+        hyvaksyperuuntunut,
+        muokattu::date as valintatiedon_pvm
     from raw where row_nr = 1
 )
 
