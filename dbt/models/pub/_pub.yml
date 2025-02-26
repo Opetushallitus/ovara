@@ -590,6 +590,8 @@ models:
         data_type: boolean
       - name: hyvaksyperuuntunut
         data_type: boolean
+      - name: valintatiedon_pvm
+        data_type: date
   - name: pub_dim_yo_arvosana
     columns:
       - name: resourceid
