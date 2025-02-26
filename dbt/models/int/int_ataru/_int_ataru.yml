@@ -17,28 +17,6 @@ models:
       - name: hakutoivenumero
         description: Hakukohteen järjestysnumero hakemuksessa
         data_type: bigint
-  - name: int_ataru_maksuvelvollisuus
-    description: Tämä taulu sisältää maksuvelvollisuustiedot hakutoiveille
-    columns:
-      - name: hakutoive_id
-        data_type: text
-        description: hashattu kenttä johon on yhdistetty hakemus_oid ja hakukohde_oid.
-        data_tests:
-          - dbt_constraints.primary_key
-      - name: hakemus_oid
-        description: ""
-        data_type: text
-        data_tests:
-          - not_null
-      - name: hakukohde_oid
-        description: ""
-        data_type: text
-        data_tests:
-          - not_null
-      - name: tila
-        description: ""
-        data_type: text
-
   - name: int_ataru_hakemus
     description: Tämä malli sisältää viimeisimmän version hakemuksesta.
     columns:
