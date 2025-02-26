@@ -26,6 +26,7 @@ int as (
         (data ->> 'koodiversioupdated_at')::timestamptz as muokattu,
         data ->> 'tila'::varchar as tila,
         (data ->> 'voimassaalkupvm')::timestamptz as voimassaalkupvm,
+        (data ->> 'voimassaloppuvpm')::timestamptz as voimassaloppupvm,
         {{ metadata_columns() }}
     from source
 ),
