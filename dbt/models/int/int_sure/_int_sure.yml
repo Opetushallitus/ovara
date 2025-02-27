@@ -189,12 +189,12 @@ models:
   - name: int_sure_ensikertalainen
     description: Sisältää Suoritusrekisterin ensikertalainen viimeisimmät tiedot.
     columns:
-      - name: hakuoid
+      - name: haku_oid
         data_type: text
         description: Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty.
         data_tests:
           - not_null
-      - name: henkilooid
+      - name: henkilo_oid
         description: Sen henkilön oid, jolle ensikertalaisuustieto kuuluu
         data_type: text
         data_tests:
