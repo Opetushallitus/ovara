@@ -53,10 +53,6 @@ opetuskielet as (
     group by hakukohde_oid
 ),
 
-koulutustiedot as (
-    select * from {{ ref('int_koodisto_koulutus_alat_ja_asteet') }}
-),
-
 int as (
     select
         hako.hakukohde_oid,
@@ -107,8 +103,8 @@ int as (
         coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,
         opki.oppilaitoksen_opetuskieli,
         koul.alempi_kk_aste,
-	    koul.ylempi_kk_aste,
-	    koul.okmohjauksenala
+        koul.ylempi_kk_aste,
+        koul.okmohjauksenala
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -181,8 +177,8 @@ final as (
         toinen_aste_onko_kaksoistutkinto,
         jarjestaa_urheilijan_ammkoulutusta,
         alempi_kk_aste,
-	    ylempi_kk_aste,
-	    okmohjauksenala
+        ylempi_kk_aste,
+        okmohjauksenala
     from step2
 )
 

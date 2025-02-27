@@ -45,6 +45,11 @@ int as (
         atar.puhelin,
         atar.pohjakoulutuksen_maa_toinen_aste,
         onr1.aidinkieli,
+        case
+            when onr1.aidinkieli = 'fi' then 'fi'
+            when onr1.aidinkieli = 'sv' then 'sv'
+            else 'muu'
+        end as aidinkieliluokka,
         onr1.sukupuoli,
         atar.koulutusmarkkinointilupa,
         atar.valintatuloksen_julkaisulupa,

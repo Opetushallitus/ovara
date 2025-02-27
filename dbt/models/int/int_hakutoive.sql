@@ -36,6 +36,10 @@ ilmoittautuminen as (
     select * from {{ ref('int_valintarekisteri_ilmoittautuminen') }}
 ),
 
+ensikertalainen as (
+    select * from {{ ref('int_sure_ensikertalainen') }}
+),
+
 int as (
     select
         hato.hakutoive_id,
@@ -60,7 +64,8 @@ int as (
         vaot.vastaanottotieto,
         ilmo.tila as ilmoittautumisen_tila,
         vali.valintatapajonot,
-        hava.harkinnanvaraisuuden_syy
+        hava.harkinnanvaraisuuden_syy,
+        enke.isensikertalainen as ensikertalainen
     from hakutoive as hato
     left join julkaistu as julk on hato.hakukohde_henkilo_id = julk.hakukohde_henkilo_id
     left join hakemus as hake on hato.hakemus_oid = hake.hakemus_oid
@@ -69,6 +74,7 @@ int as (
     left join valinnat as vali on hato.hakutoive_id = vali.hakutoive_id
     left join harkinnanvaraisuus as hava on hato.hakutoive_id = hava.hakutoive_id
     left join ilmoittautuminen as ilmo on hato.hakukohde_henkilo_id = ilmo.hakukohde_henkilo_id
+    left join ensikertalainen as enke on hake.haku_oid = enke.haku_oid and hake.henkilo_oid = enke.henkilo_oid
 ),
 
 final as (
@@ -95,7 +101,8 @@ final as (
         vastaanottotieto,
         ilmoittautumisen_tila,
         valintatapajonot,
-        harkinnanvaraisuuden_syy
+        harkinnanvaraisuuden_syy,
+        ensikertalainen
     from int
 )
 
