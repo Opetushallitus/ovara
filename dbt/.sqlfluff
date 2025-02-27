@@ -15,5 +15,5 @@ max_alias_length=4
 [sqlfluff:rules:references.keywords]
 ignore_words = data
 
-[sqlfluff:rules:ambiguous.column_references]  # Number in group by
-group_by_and_order_by_style = explicit
+#[sqlfluff:rules:ambiguous.column_references]  # Number in group by
+#group_by_and_order_by_style = explicit

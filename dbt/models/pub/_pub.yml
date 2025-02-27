@@ -214,6 +214,9 @@ models:
         data_type: text
       - name: ilmoittautumisen_tila
         data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+        description: Onko hakija ensikertalainen tässä kyseisessä haussa
   - name: pub_dim_henkilo
     description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
     config:
@@ -260,6 +263,8 @@ models:
       - name: pohjakoulutuksen_maa_toinen_aste
         data_type: text
       - name: aidinkieli
+        data_type: text
+      - name: aidinkieliluokka
         data_type: text
       - name: sukupuoli
         data_type: integer
