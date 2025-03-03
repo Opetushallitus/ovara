@@ -159,18 +159,30 @@ models:
       contract:
         enforced: true
     columns:
+      - name: hakukohderyhma_oid
+        data_type: text
+        description: hakukohderyhmän tunniste
+      - name: hakukohderyhma_nimi
+        data_type: jsonb
+        description: hakukohderyhmän lokalisoidut nimet
+  - name: pub_dim_hakukohderyhma_ja_hakukohteet
+    description: Hakukohderyhmien tiedot
+    config:
+      contract:
+        enforced: true
+    columns:
       - name: hakukohderyhma_id
         data_type: text
-        data_tests: 
-        - dbt_constraints.primary_key
+        data_tests:
+          - dbt_constraints.primary_key
       - name: hakukohderyhma_oid
         description: Hakukohderyhmän tunniste
         data_type: text
-      - name: hakukohderyhma_nimi
-        description: Hakukohderyhmän nimet
-        data_type: jsonb
       - name: hakukohde_oid
         description: Hakukohteen tunniste
+        data_type: text
+      - name: haku_oid
+        description: Hakukohteen haun tunniste
         data_type: text
   - name: pub_dim_hakutoive
     description: Sisältää aktiiviset hakutoiveet
@@ -389,7 +401,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: organisaatio_nimi
         data_type: jsonb
       - name: organisaatiotyypit
@@ -429,7 +441,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: organisaatio_nimi
         data_type: jsonb
       - name: organisaatiotyypit
@@ -515,7 +527,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: organisaatio_nimi
         data_type: jsonb
       - name: organisaatiotyypit
@@ -660,7 +672,7 @@ models:
         description: Henkilön tunniste
         data_type: text
   - name: pub_fct_raportti_hakijat_toinen_aste
-    description: | 
+    description: |
       Raporttikohtaiset tiedot toisen asteen hakijat-raportille. 
       Tämän taulu lisäksi raportoiniin tarvitaan myös pub_dim_hakutoive
     config:
@@ -669,7 +681,7 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
-        description : Taulun avain. Tämä kenttä on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
+        description: Taulun avain. Tämä kenttä on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
         data_tests:
           - dbt_constraints.primary_key
       - name: hakemus_oid
@@ -692,6 +704,66 @@ models:
         data_type: int
       - name: pohjakoulutus_nimi
         data_type: jsonb
+  - name: pub_fct_raportti_tilastoraportti_kk
+    description: |
+      Tämä raportti sisältää tarvittavat tiedot korkeakulujen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
+      Raportille pitää joinata pub_dim_hakukohde koska sieltä saa hakukohdekohtaista tietoa. Sen jälkeen riittää 
+      sum group by ja suodattaus raportin filtteriehtojen mukaan.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+      - name: aidinkieli
+        description: Äiidnkieli on jaettu kolmeen ryhmään; suomi (fi), ruotsi(sv) tai muu
+        data_type: text
+      - name: kansalaisuus
+        description: |
+          Kansalaisuus on jaettu kolmeen ryhmään; 1=suomi, 2=EU/ETA, 3=muut
+          Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" tässä järjestyksessä
+        data_type: integer
+      - name: sukupuoli
+        description: Sukupuolitieto koodiston mukaan. 1=mies, 2=nainen
+        data_type: integer
+      - name: ensikertalainen
+        data_type: boolean
+      - name: hakijat
+        data_type: bigint
+      - name: ensisijaisia
+        data_type: bigint
+      - name: ensikertalaisia
+        data_type: bigint
+      - name: hyvaksytyt
+        data_type: bigint
+      - name: vastaanottaneet
+        data_type: bigint
+      - name: lasna
+        data_type: bigint
+      - name: poissa
+        data_type: bigint
+      - name: ilm_yht
+        data_type: bigint
+      - name: maksuvelvollisia
+        data_type: bigint
+      - name: valinnan_aloituspaikat
+        data_type: bigint
+      - name: alpa
+        data_type: bigint
+      - name: toive_1
+        data_type: bigint
+      - name: toive_2
+        data_type: bigint
+      - name: toive_3
+        data_type: bigint
+      - name: toive_4
+        data_type: bigint
+      - name: toive_5
+        data_type: bigint
+      - name: toive_6
+        data_type: bigint
+      - name: toive_7
+        data_type: bigint
   - name: pub_fct_raportti_tilastoraportti_toinen_aste
     description: |
       Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
@@ -745,4 +817,3 @@ models:
         data_type: bigint
       - name: toive_7
         data_type: bigint
-

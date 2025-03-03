@@ -7,7 +7,7 @@ with source as (
     from {{ ref('dw_hakukohderyhmapalvelu_ryhma') }}
 ),
 
-raw as (
+hakukohde as (
     select
         hakukohderyhma_oid,
         jsonb_array_elements_text(hakukohde_oid) as hakukohde_oid,
@@ -16,13 +16,19 @@ raw as (
     where rownr = 1
 ),
 
+ryhma as (
+    select * from {{ ref('int_organisaatio_ryhma') }}
+),
+
 final as (
     select
-        {{ dbt_utils.generate_surrogate_key(['hakukohderyhma_oid','hakukohde_oid']) }} as hakukohderyhma_id,
-        hakukohderyhma_oid,
-        hakukohde_oid,
-        muokattu
-    from raw
+        {{ dbt_utils.generate_surrogate_key(['hako.hakukohderyhma_oid','hako.hakukohde_oid']) }} as hakukohderyhma_id,
+        hako.hakukohderyhma_oid,
+        ryhm.hakukohderyhma_nimi,
+        hako.hakukohde_oid,
+        hako.muokattu
+    from hakukohde as hako
+    left join ryhma as ryhm on hako.hakukohderyhma_oid = ryhm.hakukohderyhma_oid
 )
 
 select * from final
