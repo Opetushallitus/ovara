@@ -220,6 +220,19 @@ models:
       - name: valintatapajonot
         data_type: jsonb
         description: Hakutoiveen kaikkien valintatapajonojen tiedot json-muotoisena
+      - name: valintatieto
+        data_type: text
+        description: |
+          Paras valintatieto kaikista valintatapajonoista. Järjestyksessä 
+          - HYVAKSYTTY
+          - HARKINNANVARAISESTI_HYVAKSYTTY
+          - VARASIJALTA_HYVAKSYTTY
+          - VARALLA
+          - PERUUTETTU
+          - PERUNUT
+          - PERUUNTUNUT
+          - HYLATTY
+          - KESKEN
       - name: harkinnanvaraisuuden_syy
         data_type: text
       - name: haku_oid

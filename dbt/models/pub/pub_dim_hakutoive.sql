@@ -29,6 +29,7 @@ final as (
         vastaanottotieto,
         ilmoittautumisen_tila,
         valintatapajonot,
+        valintatieto,
         harkinnanvaraisuuden_syy,
         ensikertalainen
     from hakutoive

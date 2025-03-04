@@ -42,10 +42,42 @@ rivit as (
         ) as valintatapajonot
     from valinnantulos as vatu
     left join jonosijat as josi on vatu.hakemus_hakukohde_valintatapa_id = josi.hakemus_hakukohde_valintatapa_id
+),
+
+valintatapajonot as (
+    select
+        hakutoive_id,
+        jsonb_agg(valintatapajonot) as valintatapajonot
+    from rivit
+    group by hakutoive_id
+),
+
+final as (
+    select
+        hakutoive_id,
+        valintatapajonot,
+        case
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "HYVAKSYTTY")'
+                then 'HYVAKSYTTY'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "HARKINNANVARAISESTI_HYVAKSYTTY")'
+                then 'HARKINNANVARAISESTI_HYVAKSYTTY'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "VARASIJALTA_HYVAKSYTTY")'
+                then 'VARASIJALTA_HYVAKSYTTY'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "VARALLA")'
+                then 'VARALLA'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "PERUUTETTU")'
+                then 'PERUUTETTU'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "PERUNUT")'
+                then 'PERUNUT'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "PERUUNTUNUT")'
+                then 'PERUNUT'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "HYLATTY")'
+                then 'HYLATTY'
+            when valintatapajonot @? '$[*] ? (@.valinnan_tila == "KESKEN")'
+                then 'KESKEN'
+            else null
+        end as valintatieto
+    from valintatapajonot
 )
 
-select
-    hakutoive_id,
-    jsonb_agg(valintatapajonot) as valintatapajonot
-from rivit
-group by hakutoive_id
+select * from final
