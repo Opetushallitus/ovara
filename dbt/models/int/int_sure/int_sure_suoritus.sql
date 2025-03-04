@@ -25,7 +25,7 @@ final as (
         myontaja,
         tila,
         valmistuminen,
-        henkilooid,
+        henkilooid as henkilo_oid,
         yksilollistaminen,
         suorituskieli,
         muokattu,
