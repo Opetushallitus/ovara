@@ -79,11 +79,13 @@ final as (
             when upper(vare.ilmoittautumisen_tila) in ('POISSA', 'POISSA_KOKO_LUKUVUOSI') then 1
             else 0
         end) as poissa,
-        sum(case
-            when vare.ilmoittautumisen_tila is not null
-            and vare.ilmoittautumisen_tila not in ('EI_TEHTY','EI_ILMOITTAUTUNUT')
-            then 1
-            else 0
+        sum(
+            case
+                when
+                    vare.ilmoittautumisen_tila is not null
+                    and vare.ilmoittautumisen_tila not in ('EI_TEHTY', 'EI_ILMOITTAUTUNUT')
+                    then 1
+                else 0
             end
         ) as ilm_yht,
         min(hako.aloituspaikat) as aloituspaikat,

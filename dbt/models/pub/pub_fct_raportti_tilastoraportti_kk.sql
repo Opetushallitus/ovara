@@ -68,11 +68,13 @@ final as (
             when upper(vare.ilmoittautumisen_tila) in ('POISSA', 'POISSA_KOKO_LUKUVUOSI') then 1
             else 0
         end) as poissa,
-        sum(case
-            when vare.ilmoittautumisen_tila is not null
-            and vare.ilmoittautumisen_tila not in ('EI_TEHTY','EI_ILMOITTAUTUNUT')
-            then 1
-            else 0
+        sum(
+            case
+                when
+                    vare.ilmoittautumisen_tila is not null
+                    and vare.ilmoittautumisen_tila not in ('EI_TEHTY', 'EI_ILMOITTAUTUNUT')
+                    then 1
+                else 0
             end
         ) as ilm_yht,
         sum(
@@ -88,7 +90,7 @@ final as (
         sum(case when hakutoivenumero = '3' then 1 else 0 end) as toive_3,
         sum(case when hakutoivenumero = '4' then 1 else 0 end) as toive_4,
         sum(case when hakutoivenumero = '5' then 1 else 0 end) as toive_5,
-        sum(case when hakutoivenumero = '6' then 1 else 0 end) as toive_6,
+        sum(case when hakutoivenumero = '6' then 1 else 0 end) as toive_6
     from hakutoive as hato
     inner join henkilo as henk on hato.henkilo_hakemus_id = henk.henkilo_hakemus_id
     inner join hakukohde as hako on hato.hakukohde_oid = hako.hakukohde_oid
