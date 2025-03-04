@@ -54,4 +54,7 @@ models:
       +persist_docs:
         relation: true
         columns: true
+      +tags: pub
+      koodisto:
+        +tags: koodisto
 

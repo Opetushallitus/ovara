@@ -5,7 +5,7 @@
 }}
 
 with arvosana as (
-    select * from {{ ref('int_sure_arvosana') }}
+    select * from {{ ref('int_sure_arvosana')  }} where asteikko = 'YO'
 ),
 
 suoritus as (
@@ -15,7 +15,7 @@ suoritus as (
 rivi as (
     select
         suoritus,
-        jsonb_object_agg (yo_aine, arvosana) as arvosanat
+        jsonb_object_agg(yo_aine, arvosana) as arvosanat
     from arvosana
     group by suoritus
 ),
@@ -28,4 +28,4 @@ final as (
     inner join rivi on suor.resourceid = rivi.suoritus
 )
 
-select * from final
+select distinct * from final

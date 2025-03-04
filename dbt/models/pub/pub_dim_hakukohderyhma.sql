@@ -12,8 +12,7 @@ final as (
     select distinct
         hakukohderyhma_oid,
         hakukohderyhma_nimi
-    from hakukohderyhma as hary
-
+    from hakukohderyhma
 )
 
 select * from final

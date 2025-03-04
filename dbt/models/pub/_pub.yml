@@ -615,42 +615,17 @@ models:
         data_type: boolean
       - name: valintatiedon_pvm
         data_type: date
-  - name: pub_dim_yo_arvosana
+  - name: pub_dim_arvosana_yo
+    config:
+      contract:
+        enforced: true
     columns:
-      - name: resourceid
+      - name: henkilo_oid
         data_type: text
-      - name: suoritus
-        data_type: text
-      - name: arvosana
-        data_type: text
-      - name: asteikko
-        data_type: text
-      - name: aine
-        data_type: text
-      - name: lisatieto
-        data_type: text
-      - name: valinnainen
-        data_type: boolean
-      - name: muokattu
-        data_type: timestamp with time zone
-      - name: deleted
-        data_type: boolean
-      - name: pisteet
-        data_type: text
-      - name: myonnetty
-        data_type: timestamp with time zone
-      - name: source
-        data_type: text
-      - name: jarjestys
-        data_type: text
-      - name: arvot
-        data_type: text
-      - name: henkilooid
-        data_type: text
-      - name: tila
-        data_type: text
-      - name: pvm
-        data_type: timestamp with time zone
+        data_tests: 
+        - dbt_constraints.primary_key
+      - name: arvosanat
+        data_type: jsonb
   - name: pub_fct_hakemus
     description: Hakemusten tietoja
     config:
@@ -761,8 +736,6 @@ models:
       - name: toive_5
         data_type: bigint
       - name: toive_6
-        data_type: bigint
-      - name: toive_7
         data_type: bigint
   - name: pub_fct_raportti_tilastoraportti_toinen_aste
     description: |
