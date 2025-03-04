@@ -7,7 +7,7 @@
     )
 }}
 
-with hakemus as (
+with hakemus as not materialized (
     select * from {{ ref('int_ataru_hakemus') }}
 ),
 
