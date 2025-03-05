@@ -233,6 +233,9 @@ models:
           - PERUUNTUNUT
           - HYLATTY
           - KESKEN
+      - name: ehdollisesti_hyvaksytty
+        data_type: boolean
+        description: tämä kenttä on true jos valinnoissa on täppä ehdollisesti_hyväksyttävissä ja tila on hyväksytty tai varasijalta_hyväksytty
       - name: harkinnanvaraisuuden_syy
         data_type: text
       - name: haku_oid

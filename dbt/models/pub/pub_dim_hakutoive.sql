@@ -31,6 +31,7 @@ final as (
         ilmoittautumisen_tila,
         valintatapajonot,
         valintatieto,
+        ehdollisesti_hyvaksytty,
         valintatiedon_pvm,
         harkinnanvaraisuuden_syy,
         ensikertalainen
