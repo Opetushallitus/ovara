@@ -33,6 +33,7 @@ models:
         node_color: "#00008b"
       +pre-hook:
         - "{{ stg_start() }}"
+      +tags: stg
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
@@ -42,6 +43,7 @@ models:
         node_color: "#00008b"
       +post-hook:
         - "{{ dw_end() }}"
+      +tags: dw
 
     int:
       +schema: int

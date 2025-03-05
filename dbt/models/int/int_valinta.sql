@@ -32,6 +32,7 @@ rivit as (
                     then 'HARKINNANVARAISESTI_HYVÄKSYTTY'
                 else vatu.valinnan_tila
             end,
+            'valintatiedon_pvm', vatu.valintatiedon_pvm,
             'ehdollisesti_hyvaksytty', case
                 when
                 vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
@@ -49,8 +50,7 @@ rivit as (
             'prioriteetti', josi.prioriteetti,
             'pisteet', josi.pisteet,
             'siirtynyt_toisesta_valintatapajonosta', josi.siirtynyt_toisesta_valintatapajonosta
-        ) as valintatapajonot,
-        valintatiedon_pvm
+        ) as valintatapajonot
     from valinnantulos as vatu
     left join jonosija as josi on vatu.hakemus_hakukohde_valintatapa_id = josi.hakemus_hakukohde_valintatapa_id
     left join jono on vatu.valintatapajono_oid = jono.valintatapajono_oid
@@ -59,15 +59,13 @@ rivit as (
 valintatapajonot as (
     select
         hakutoive_id,
-        jsonb_agg(valintatapajonot) as valintatapajonot,
-        valintatiedon_pvm
+        jsonb_agg(valintatapajonot) as valintatapajonot
     from rivit
     group by
-        hakutoive_id,
-        valintatiedon_pvm
+        hakutoive_id
 ),
 
-final as (
+paras_jono as (
     select
         hakutoive_id,
         valintatapajonot,
@@ -85,20 +83,40 @@ final as (
             when valintatapajonot @? '$[*] ? (@.valinnan_tila == "PERUNUT")'
                 then 'PERUNUT'
             when valintatapajonot @? '$[*] ? (@.valinnan_tila == "PERUUNTUNUT")'
-                then 'PERUNUT'
+                then 'PERUUNTUNUT'
             when valintatapajonot @? '$[*] ? (@.valinnan_tila == "HYLATTY")'
                 then 'HYLATTY'
             when valintatapajonot @? '$[*] ? (@.valinnan_tila == "KESKEN")'
                 then 'KESKEN'
             else null
-        end as valintatieto,
+        end as valintatieto
+    from valintatapajonot
+),
+
+paras_jono_pvm as (
+    select distinct on (hakutoive_id)
+        hakutoive_id,
+        (jonotiedot->>'valintatiedon_pvm')::date as valintatiedon_pvm
+    from paras_jono,
+            lateral jsonb_array_elements(valintatapajonot) jonotiedot
+    where jonotiedot->> 'valinnan_tila' = valintatieto
+    order by
+        1,2
+),
+
+final as (
+    select
+        pajo.hakutoive_id,
+        pajo.valintatapajonot,
+        pajo.valintatieto,
+        pjpv.valintatiedon_pvm,
         case
-            when valintatapajonot @? '$[*] ? (@.ehdollisesti_hyvaksytty==true)'
+            when pajo.valintatapajonot @? '$[*] ? (@.ehdollisesti_hyvaksytty==true)'
                 then true
             else false
-		end as ehdollisesti_hyvaksytty,
-        valintatiedon_pvm
-    from valintatapajonot
+		end as ehdollisesti_hyvaksytty
+    from paras_jono as pajo
+    left join paras_jono_pvm as pjpv on pajo.hakutoive_id = pjpv.hakutoive_id
 )
 
 select * from final
