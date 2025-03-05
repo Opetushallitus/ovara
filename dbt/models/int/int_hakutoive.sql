@@ -65,6 +65,7 @@ int as (
         ilmo.tila as ilmoittautumisen_tila,
         vali.valintatapajonot,
         vali.valintatieto,
+        vali.valintatiedon_pvm,
         hava.harkinnanvaraisuuden_syy,
         enke.isensikertalainen as ensikertalainen
     from hakutoive as hato
@@ -103,6 +104,7 @@ final as (
         ilmoittautumisen_tila,
         valintatapajonot,
         valintatieto,
+        valintatiedon_pvm,
         harkinnanvaraisuuden_syy,
         ensikertalainen
     from int

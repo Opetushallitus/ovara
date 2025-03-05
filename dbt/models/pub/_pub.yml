@@ -242,6 +242,9 @@ models:
       - name: ensikertalainen
         data_type: boolean
         description: Onko hakija ensikertalainen tässä kyseisessä haussa
+      - name: valintatiedon_pvm
+        data_type: date
+        description: Valintatiedon viimeksi päivätty tieto
   - name: pub_dim_henkilo
     description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
     config:
