@@ -7,6 +7,7 @@
         {'columns':['hakemus_oid']},
         {'columns':['hakukohde_oid']},
         {'columns':['henkilo_hakemus_id']},
+        {'columns':['haku_oid']},
     ]
     )
 }}
@@ -30,6 +31,7 @@ final as (
         ilmoittautumisen_tila,
         valintatapajonot,
         valintatieto,
+        valintatiedon_pvm,
         harkinnanvaraisuuden_syy,
         ensikertalainen
     from hakutoive
