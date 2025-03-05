@@ -310,6 +310,8 @@ models:
         data_type: timestamp with time zone
   - name: dw_sure_arvosana
     description: Sisältää Suoritusrekisterin arvosana tietoja
+    config:
+      post_hook: "create index if not exists dw_sure_arvosana_muokattu on {{ this }} (resourceid, muokattu desc)"
     columns:
       - name: resourceid
         data_type: text

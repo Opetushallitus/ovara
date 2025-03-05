@@ -1,8 +1,8 @@
 with raw as (
-    select
-        *,
-        row_number() over (partition by oid order by muokattu desc) as row_nr
-    from {{ ref('dw_kouta_haku') }}
+    select distinct on (oid)
+        *
+        from {{ ref('dw_kouta_haku') }}
+    order by oid, muokattu desc
 ),
 
 kohdejoukot as (
@@ -17,7 +17,7 @@ int as (
         coalesce(nimi_en, coalesce(nimi_fi, nimi_sv)) as nimi_en_new,
         substring(kohdejoukkokoodiuri from '_(.+)#') as kohdejoukko
     from raw
-    where row_nr = 1
+
 ),
 
 koulutuksen_alkamiskausi_rivit as (
