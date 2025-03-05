@@ -32,14 +32,19 @@ rivit as (
                     then 'HARKINNANVARAISESTI_HYVÄKSYTTY'
                 else vatu.valinnan_tila
             end,
-            'ehdollisesti_hyvaksyttavissa', vatu.ehdollisesti_hyvaksyttavissa,
+            'ehdollisesti_hyvaksytty', case
+                when
+                vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
+                    and vatu.ehdollisesti_hyvaksyttavissa
+                    then true
+                else false
+            end,
             'ehdollisen_hyvaksymisen_ehto', vatu.ehdollisen_hyvaksymisen_ehto,
             'valinnantilan_kuvauksen_teksti', vatu.valinnantilan_kuvauksen_teksti,
             'julkaistavissa', vatu.julkaistavissa,
             'hyvaksyperuuntunut', vatu.hyvaksyperuuntunut,
             'hyvaksytty_harkinnanvaraisesti', josi.hyvaksytty_harkinnanvaraisesti,
             'jonosija', josi.jonosija,
-            'varasijan_numero', josi.varasijan_numero,
             'onko_muuttunut_viime_sijoittelussa', josi.onko_muuttunut_viime_sijoittelussa,
             'prioriteetti', josi.prioriteetti,
             'pisteet', josi.pisteet,
@@ -87,6 +92,11 @@ final as (
                 then 'KESKEN'
             else null
         end as valintatieto,
+        case
+            when valintatapajonot @? '$[*] ? (@.ehdollisesti_hyvaksytty==true)'
+                then true
+            else false
+		end as ehdollisesti_hyvaksytty,
         valintatiedon_pvm
     from valintatapajonot
 )
