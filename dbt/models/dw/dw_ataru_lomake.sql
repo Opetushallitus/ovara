@@ -11,13 +11,11 @@
 }}
 
 with raw as (
-    select distinct on (id, versio_id, muokattu)
-        *
-    from {{ ref('stg_ataru_lomake') }}
+    select distinct on (id, versio_id, muokattu) * from {{ ref('stg_ataru_lomake') }}
     {% if is_incremental() %}
         where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t)
     {% endif %}
-    order by id, versio_id, muokattu, dw_metadata_dbt_copied_at desc
+    order by id asc, versio_id desc, muokattu desc, dw_metadata_dbt_copied_at desc
 ),
 
 final as (

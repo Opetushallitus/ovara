@@ -11,17 +11,14 @@
 }}
 
 with raw as (
-    select distinct on (oid, versio_id, muokattu)
-        *
-    from {{ ref('stg_ataru_hakemus') }}
+    select distinct on (oid, versio_id, muokattu) * from {{ ref('stg_ataru_hakemus') }}
     {% if is_incremental() %}
         where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dbt_copied_at) from {{ this }} as t)
     {% endif %}
-    order by oid, versio_id, muokattu, dw_metadata_dbt_copied_at desc
+    order by oid asc, versio_id desc, muokattu desc, dw_metadata_dbt_copied_at desc
 )
 
 select
     {{ dbt_utils.star(from=ref('stg_ataru_hakemus')) }},
     current_timestamp as dw_metadata_dw_stored_at
 from raw
-

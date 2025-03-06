@@ -4,10 +4,8 @@
     )
 }}
 with raw as (
-    select distinct on (haku_oid)
-        *
-    from {{ ref('dw_ohjausparametrit_parameter') }}
-    order by haku_oid, muokattu desc
+    select distinct on (haku_oid) * from {{ ref('dw_ohjausparametrit_parameter') }}
+    order by haku_oid asc, muokattu desc
 ),
 
 final as (

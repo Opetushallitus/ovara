@@ -8,10 +8,8 @@
 }}
 
 with raw as (
-    select distinct on (valinnantulos_id)
-        *
-    from {{ ref('dw_valintarekisteri_valinnantulos') }}
-    order by valinnantulos_id, muokattu desc
+    select distinct on (valinnantulos_id) * from {{ ref('dw_valintarekisteri_valinnantulos') }}
+    order by valinnantulos_id asc, muokattu desc
 ),
 
 final as (
@@ -39,7 +37,7 @@ final as (
         julkaistavissa,
         hyvaksyperuuntunut,
         muokattu::date as valintatiedon_pvm
-   from raw
+    from raw
 )
 
 select * from final

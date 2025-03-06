@@ -24,4 +24,3 @@ with raw as (
 )
 
 select * from raw
-

@@ -7,10 +7,8 @@
 }}
 
 with raw as (
-    select distinct on (resourceid)
-        *
-    from {{ ref('dw_sure_opiskelija') }}
-    order by resourceid, muokattu desc
+    select distinct on (resourceid) * from {{ ref('dw_sure_opiskelija') }}
+    order by resourceid asc, muokattu desc
 ),
 
 final as (
