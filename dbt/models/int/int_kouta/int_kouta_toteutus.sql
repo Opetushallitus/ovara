@@ -10,7 +10,7 @@ with raw as (
     select distinct on (oid)
         *
     from {{ ref('dw_kouta_toteutus') }}
-    order by oid, muokattu
+    order by oid, muokattu desc
 ),
 
 int as (

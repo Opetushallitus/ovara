@@ -842,6 +842,8 @@ models:
         data_type: timestamp with time zone
   - name: dw_valintarekisteri_valinnantulos
     description: Valinnan tuloksia
+    config:
+        post_hook: "create index if not exists dw_valintarekisteri_valinnantulos_muokattu on {{ this }} (valinnantulos_id, muokattu desc)"
     columns:
       - name: valinnantulos_id
         description: Yhdistelmäavain, hakuklohde_oid, valintatapajono_oid ja hakemus_oid

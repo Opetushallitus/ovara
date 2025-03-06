@@ -7,15 +7,10 @@
 }}
 
 with raw as (
-    select
-        *,
-        row_number() over (partition by resourceid order by muokattu desc) as row_nr
+    select distinct on (resourceid)
+        *
     from {{ ref('dw_sure_opiskeluoikeus') }}
-),
-
-int as (
-    select * from raw
-    where row_nr = 1
+    order by resourceid, muokattu desc
 ),
 
 final as (
@@ -29,7 +24,7 @@ final as (
         source,
         muokattu,
         poistettu
-    from int
+    from raw
 )
 
 select * from final

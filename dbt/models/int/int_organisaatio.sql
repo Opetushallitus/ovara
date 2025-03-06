@@ -8,15 +8,11 @@
     )
 }}
 
-with organisaatio_raw as (
-    select
-        *,
-        row_number() over (partition by organisaatio_oid order by muokattu desc) as rownr
+with organisaatio as (
+    select distinct on (organisaatio_oid)
+    *
     from {{ ref('dw_organisaatio_organisaatio') }}
-),
-
-organisaatio as not materialized (
-    select * from organisaatio_raw where rownr = 1
+    order by organisaatio_oid, muokattu desc
 ),
 
 ylempi_toimipiste as (
@@ -27,7 +23,6 @@ ylempi_toimipiste as (
     from organisaatio
     where organisaatiotyypit @> '["organisaatiotyyppi_03"]'
 ),
-
 
 kunta as (
     select * from {{ ref('int_koodisto_kunta') }} where viimeisin_versio
