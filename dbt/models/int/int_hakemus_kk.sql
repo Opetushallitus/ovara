@@ -8,14 +8,11 @@
 }}
 
 with hakemus as not materialized (
-    select
-        *
-    from {{ ref('int_ataru_hakemus') }}
+    select * from {{ ref('int_ataru_hakemus') }}
     where
- 	    kasittelymerkinnat @? '$[*] ? (@.requirement == "eligibility-state")' and
- 	    kasittelymerkinnat @? '$[*] ? (@.requirement == "payment-obligation")' and
-	    tiedot ? 'higher-completed-base-education'
-
+        kasittelymerkinnat @? '$[*] ? (@.requirement == "eligibility-state")'
+        and kasittelymerkinnat @? '$[*] ? (@.requirement == "payment-obligation")'
+        and tiedot ? 'higher-completed-base-education'
 ),
 
 haku as (

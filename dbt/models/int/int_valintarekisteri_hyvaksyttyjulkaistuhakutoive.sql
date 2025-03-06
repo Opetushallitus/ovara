@@ -5,10 +5,8 @@
 }}
 
 with raw as (
-    select distinct on (hakukohde_henkilo_id)
-        *
-    from {{ ref('dw_valintarekisteri_hyvaksyttyjulkaistuhakutoive') }}
-    order by hakukohde_henkilo_id, muokattu desc
+    select distinct on (hakukohde_henkilo_id) * from {{ ref('dw_valintarekisteri_hyvaksyttyjulkaistuhakutoive') }}
+    order by hakukohde_henkilo_id asc, muokattu desc
 ),
 
 final as (

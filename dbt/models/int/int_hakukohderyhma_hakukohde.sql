@@ -4,7 +4,7 @@ with source as (
         muokattu,
         hakukohde_oid
     from {{ ref('dw_hakukohderyhmapalvelu_ryhma') }}
-    order by oid, muokattu desc
+    order by oid asc, muokattu desc
 ),
 
 hakukohde as (

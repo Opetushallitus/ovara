@@ -1,8 +1,6 @@
 with raw as (
-    select distinct on (oid)
-        *
-        from {{ ref('dw_kouta_haku') }}
-    order by oid, muokattu desc
+    select distinct on (oid) * from {{ ref('dw_kouta_haku') }}
+    order by oid asc, muokattu desc
 ),
 
 kohdejoukot as (

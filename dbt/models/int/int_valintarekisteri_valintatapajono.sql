@@ -11,7 +11,7 @@ with raw as (
     select * from {{ ref('dw_valintarekisteri_valintatapajono') }}
 ),
 
-final as(
+final as (
     select
         oid as valintatapajono_oid,
         nimi as valintatapajono_nimi,

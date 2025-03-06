@@ -8,10 +8,8 @@
 }}
 
 with raw as (
-    select distinct on (ilmoittautuminen_id)
-        *
-    from {{ ref('dw_valintarekisteri_ilmoittautuminen') }}
-    order by ilmoittautuminen_id, muokattu desc
+    select distinct on (ilmoittautuminen_id) * from {{ ref('dw_valintarekisteri_ilmoittautuminen') }}
+    order by ilmoittautuminen_id asc, muokattu desc
 ),
 
 final as (
@@ -27,6 +25,6 @@ final as (
         selite,
         tila
     from raw
- )
+)
 
 select * from final

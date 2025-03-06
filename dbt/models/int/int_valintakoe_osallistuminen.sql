@@ -13,7 +13,7 @@ with source as (
         muokattu,
         hakutoiveet
     from {{ ref('dw_valintalaskenta_valintakoe_osallistuminen') }}
-    order by hakemusoid, muokattu desc
+    order by hakemusoid asc, muokattu desc
 ),
 
 hakutoive as (

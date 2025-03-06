@@ -9,7 +9,7 @@ with raw as (
         oid,
         koulutuksetkoodiuri
     from {{ ref("dw_kouta_koulutus") }}
-    order by oid, muokattu desc
+    order by oid asc, muokattu desc
 ),
 
 final as (

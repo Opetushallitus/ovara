@@ -7,10 +7,8 @@
 }}
 
 with raw as (
-    select distinct on (id)
-        *
-    from {{ ref('dw_valintarekisteri_jonosija') }}
-    order by id, muokattu desc
+    select distinct on (id) * from {{ ref('dw_valintarekisteri_jonosija') }}
+    order by id asc, muokattu desc
 ),
 
 final as (

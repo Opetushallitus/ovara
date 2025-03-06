@@ -35,7 +35,7 @@ rivit as (
             'valintatiedon_pvm', vatu.valintatiedon_pvm,
             'ehdollisesti_hyvaksytty', case
                 when
-                vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
+                    vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
                     and vatu.ehdollisesti_hyvaksyttavissa
                     then true
                 else false
@@ -88,7 +88,6 @@ paras_jono as (
                 then 'HYLATTY'
             when valintatapajonot @? '$[*] ? (@.valinnan_tila == "KESKEN")'
                 then 'KESKEN'
-            else null
         end as valintatieto
     from valintatapajonot
 ),
@@ -96,12 +95,12 @@ paras_jono as (
 paras_jono_pvm as (
     select distinct on (hakutoive_id)
         hakutoive_id,
-        (jonotiedot->>'valintatiedon_pvm')::date as valintatiedon_pvm
+        (jonotiedot ->> 'valintatiedon_pvm')::date as valintatiedon_pvm
     from paras_jono,
-            lateral jsonb_array_elements(valintatapajonot) jonotiedot
-    where jonotiedot->> 'valinnan_tila' = valintatieto
+            lateral jsonb_array_elements(valintatapajonot) as jonotiedot
+    where jonotiedot ->> 'valinnan_tila' = valintatieto
     order by
-        1,2
+        1, 2 --noqa: AM06
 ),
 
 final as (

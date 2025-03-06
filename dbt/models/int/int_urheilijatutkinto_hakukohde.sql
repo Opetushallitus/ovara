@@ -1,11 +1,9 @@
 with raw as (
-    select distinct on (id)
-        content
-    from {{ ref('dw_ataru_lomake') }}
+    select distinct on (id) content from {{ ref('dw_ataru_lomake') }}
     where
         content @> '[{"id": "1dc3311d-2235-40d6-88d2-de2bd63e087b"}]'
         or content @> '[{"id": "ammatillinen_perustutkinto_urheilijana"}]'
-    order by id, versio_id, muokattu desc
+    order by id asc, versio_id asc, muokattu desc
 ),
 
 hakukohderyhma_hakukohde as (
