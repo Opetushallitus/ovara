@@ -10,16 +10,17 @@
 }}
 
 with raw as (
-    select
+    select distinct on (valinnanvaihe_id)
         valinnanvaihe_id,
         hakukohde_oid,
         valintatapajono
         ,
-        row_number() over (partition by valinnanvaihe_id order by muokattu desc) as _row_nr
     from {{ ref('dw_valintaperusteet_hakukohde') }}
     {% if is_incremental() %}
         where dw_metadata_dw_stored_at > coalesce((select max(muokattu) from {{ this }}), '1900-01-01')
     {% endif %}
+    order by valinnanvaihe_id, muokattu desc
+
 ),
 
 valintatapajonoja as (
@@ -28,7 +29,6 @@ valintatapajonoja as (
         hakukohde_oid,
         jsonb_array_elements(valintatapajono) as data
     from raw
-    where _row_nr = 1
 ),
 
 rivit as (

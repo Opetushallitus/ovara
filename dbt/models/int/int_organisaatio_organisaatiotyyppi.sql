@@ -8,10 +8,10 @@
 }}
 
 with organisaatio as (
-    select
-        *,
-        row_number() over (partition by organisaatio_oid order by muokattu desc) as rownr
+    select distinct on (organisaatio_oid)
+        *
     from {{ ref('dw_organisaatio_organisaatio') }}
+    order by organisaatio_oid, muokattu desc
 ),
 
 organisaatiotyyppi as (
@@ -23,7 +23,6 @@ organisaatiotyyppirivit as (
         organisaatio_oid,
         jsonb_array_elements_text(organisaatiotyypit) as organisaatiotyyppi
     from organisaatio
-    where rownr = 1
 ),
 
 final as (

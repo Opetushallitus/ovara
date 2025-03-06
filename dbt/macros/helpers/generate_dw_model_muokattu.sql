@@ -28,16 +28,15 @@
 -}}
 
 with _raw as (
-    select
-    *,
-    row_number() over (partition by
+    select distinct on (
     {% for column in key_columns_list -%}
         {{column}}
         {%- if not loop.last -%}
         ,
         {%- endif -%}
     {%- endfor %}
-    order by dw_metadata_dbt_copied_at desc) as rownr
+    )
+    *
     from
     {{ src_model }}
     {% if is_incremental() -%}
@@ -45,19 +44,18 @@ with _raw as (
     where (dw_metadata_stg_stored_at > coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}),date('1900-01-01'))
             or dw_metadata_stg_stored_at is null)
     {%- endif %}
-
-),
-date as (
-    select *,
-    current_timestamp as dw_metadata_dw_stored_at
-    from _raw where rownr=1
+    order by {% for column in key_columns_list -%}
+        {{column}}
+    ,
+    {%- endfor %}
+    dw_metadata_dbt_copied_at desc
 ),
 
 final as (
     select
         {{ dbt_utils.star(from=src_model) }},
-        dw_metadata_dw_stored_at
-    from date
+            current_timestamp as dw_metadata_dw_stored_at
+    from _raw
 )
 
 select * from final
