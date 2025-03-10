@@ -51,7 +51,7 @@ final as (
         coalesce(koti.alempi_kk_aste, false) as alempi_kk_aste,
         coalesce(koti.ylempi_kk_aste, false) as ylempi_kk_aste,
         koul.koulutus_koodi,
-        kala.okmohjauksenala,
+        kala.okm_ohjauksen_ala,
         kala.kansallinenkoulutusluokitus2016koulutusastetaso1,
         kala.kansallinenkoulutusluokitus2016koulutusastetaso2,
         kala.kansallinenkoulutusluokitus2016koulutusalataso1,

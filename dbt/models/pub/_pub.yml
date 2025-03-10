@@ -151,7 +151,7 @@ models:
         data_type: boolean
       - name: ylempi_kk_aste
         data_type: boolean
-      - name: okmohjauksenala
+      - name: okm_ohjauksen_ala
         data_type: int
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
@@ -371,7 +371,7 @@ models:
       - name: koulutus_koodi
         description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
         data_type: text
-      - name: okmohjauksenala
+      - name: okm_ohjauksen_ala
         data_type: integer
       - name: kansallinenkoulutusluokitus2016koulutusastetaso1
         data_type: text
@@ -706,6 +706,14 @@ models:
     config:
       contract:
         enforced: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - hakukohde_oid
+            - aidinkieli
+            - kansalaisuus
+            - sukupuoli
+            - ensikertalainen
     columns:
       - name: hakukohde_oid
         data_type: text
@@ -764,6 +772,15 @@ models:
     config:
       contract:
         enforced: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - hakukohde_oid
+            - koulutusalataso_1
+            - koulutusalataso_2
+            - koulutusalataso_3
+            - harkinnanvaraisuuden_syy
+            - sukupuoli
     columns:
       - name: hakukohde_oid
         data_type: text

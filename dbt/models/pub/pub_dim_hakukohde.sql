@@ -104,7 +104,7 @@ int as (
         opki.oppilaitoksen_opetuskieli,
         koul.alempi_kk_aste,
         koul.ylempi_kk_aste,
-        koul.okmohjauksenala
+        koul.okm_ohjauksen_ala
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -178,7 +178,7 @@ final as (
         jarjestaa_urheilijan_ammkoulutusta,
         alempi_kk_aste,
         ylempi_kk_aste,
-        okmohjauksenala
+        okm_ohjauksen_ala
     from step2
 )
 
