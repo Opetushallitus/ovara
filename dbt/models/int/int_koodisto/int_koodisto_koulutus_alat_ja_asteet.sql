@@ -69,7 +69,7 @@ final as (
                 then 1::bool
             else 0::bool
         end as laakis,
-        okma.okmohjauksenala
+        okma.okmohjauksenala as okm_ohjauksen_ala
     from koulutuskoodi as kood
     inner join kansallinenkoulutusluokitus2016koulutusastetaso1 as kas1
         on kood.versioitu_koodiuri = kas1.versioitu_koodiuri
