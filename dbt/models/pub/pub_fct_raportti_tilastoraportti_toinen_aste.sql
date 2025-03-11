@@ -88,8 +88,6 @@ final as (
                 else 0
             end
         ) as ilm_yht,
-        min(hako.hakukohteen_aloituspaikat) as hakukohteen_aloituspaikat,
-        min(hako.valintaperusteiden_aloituspaikat) as valintaperusteiden_aloituspaikat,
         sum(case when hato.hakutoivenumero = 1 then 1 else 0 end) as toive_1,
         sum(case when hato.hakutoivenumero = 2 then 1 else 0 end) as toive_2,
         sum(case when hato.hakutoivenumero = 3 then 1 else 0 end) as toive_3,
