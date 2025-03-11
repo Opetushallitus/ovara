@@ -36,7 +36,12 @@ final as (
         count(distinct hato.henkilo_oid) as hakijat,
         sum(case when hakutoivenumero = '1' then 1 else 0 end) as ensisijaisia,
         sum(case when ensikertalainen then 1 else 0 end) as ensikertalaisia,
-        sum(1) as hyvaksytyt,
+        sum(
+            case
+                when hato.valintatieto in ('HYVAKSYTTY', 'VARASIJALTA_HYVAKSYTTY') then 1
+                else 0
+            end
+        ) as hyvaksytyt,
         sum(
             case
                 when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI') then 1
@@ -83,8 +88,6 @@ final as (
                 else 0
             end
         ) as maksuvelvollisia,
-        sum(1) as valinnan_aloituspaikat,
-        sum(1) as alpa,
         sum(case when hakutoivenumero = '1' then 1 else 0 end) as toive_1,
         sum(case when hakutoivenumero = '2' then 1 else 0 end) as toive_2,
         sum(case when hakutoivenumero = '3' then 1 else 0 end) as toive_3,

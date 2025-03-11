@@ -83,9 +83,12 @@ models:
       - name: jarjestyspaikka_nimi
         data_type: jsonb
         description: Järjestyspaikan nimi organisaatiotaulusta
-      - name: aloituspaikat
-        description: aloituspaikkojen määrä
-        data_type: integer
+      - name: hakukohteen_aloituspaikat
+        description: aloituspaikkojen määrä hakukohteiden tiedoista
+        data_type: bigint
+      - name: valintaperusteiden_aloituspaikat
+        description: aloituspaikkojen määrä valintaperusteista kun jonossa on siirretäänSijoitteluun = true
+        data_type: bigint
       - name: aloituspaikat_ensikertalaisille
         description: Ensikertalaisten aloituspaikkoja
         data_type: integer
@@ -748,10 +751,6 @@ models:
         data_type: bigint
       - name: maksuvelvollisia
         data_type: bigint
-      - name: valinnan_aloituspaikat
-        data_type: bigint
-      - name: alpa
-        data_type: bigint
       - name: toive_1
         data_type: bigint
       - name: toive_2
@@ -810,8 +809,10 @@ models:
         data_type: bigint
       - name: ilm_yht
         data_type: bigint
-      - name: aloituspaikat
-        data_type: integer
+      - name: hakukohteen_aloituspaikat
+        data_type: bigint
+      - name: valintaperusteiden_aloituspaikat
+        data_type: bigint
       - name: toive_1
         data_type: bigint
       - name: toive_2
