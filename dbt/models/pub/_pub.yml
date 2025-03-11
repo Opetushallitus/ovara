@@ -809,9 +809,6 @@ models:
         data_type: bigint
       - name: ilm_yht
         data_type: bigint
-      - name: hakukohteen_aloituspaikat
-        data_type: bigint
-      - name: valintaperusteiden_aloituspaikat
         data_type: bigint
       - name: toive_1
         data_type: bigint
