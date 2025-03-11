@@ -118,7 +118,8 @@ final as (
         haun_tyyppi,
         para.vastaanotto_paattyy,
         para.hakijakohtainen_paikan_vastaanottoaika,
-        koal.koulutuksen_alkamiskausi as koulutuksen_alkamiskausi_yhd
+        koal.koulutuksen_alkamiskausi as koulutuksen_alkamiskausi_yhd,
+        haku.hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
     from haku
     left join parameter as para on haku.haku_oid = para.haku_oid
     left join koulutuksen_alkamiskausi as koal on haku.haku_oid = koal.haku_oid

@@ -10,7 +10,7 @@
 }}
 
 with hakukohde as (
-    select * from {{ ref('int_kouta_hakukohde') }}
+    select * from {{ ref('int_hakukohde') }}
 ),
 
 toteutus as (
@@ -18,10 +18,7 @@ toteutus as (
 ),
 
 haku as (
-    select
-        *,
-        hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
-    from {{ ref('int_kouta_haku') }}
+    select * from {{ ref('int_haku') }}
 ),
 
 koulutus as (
@@ -36,23 +33,6 @@ organisaatio_hakukohteiden_nimet as (
     select * from {{ ref('int_organisaatio_hakukohteiden_nimet') }}
 ),
 
-opetuskielirivi as (
-    select
-        hako.hakukohde_oid,
-        split_part(jsonb_array_elements_text(tote.opetuskielikoodiurit), '#', 1) as opetuskieli
-    from hakukohde as hako
-    left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
-    order by opetuskieli
-),
-
-opetuskielet as (
-    select
-        hakukohde_oid,
-        jsonb_agg(opetuskieli) as oppilaitoksen_opetuskieli
-    from opetuskielirivi
-    group by hakukohde_oid
-),
-
 int as (
     select
         hako.hakukohde_oid,
@@ -64,7 +44,7 @@ int as (
         hani.oppilaitos_nimi,
         hani.koulutustoimija,
         hani.koulutustoimija_nimi,
-        hako.externalid as ulkoinen_tunniste,
+        hako.ulkoinen_tunniste,
         hako.tila,
         hako.haku_oid,
         hako.toteutus_oid,
@@ -75,7 +55,8 @@ int as (
         orga.sijaintikunta_nimi,
         orga.sijaintimaakunta,
         orga.sijaintimaakunta_nimi,
-        hako.aloituspaikat,
+        hako.hakukohteen_aloituspaikat,
+        hako.valintaperusteiden_aloituspaikat,
         hako.aloituspaikat_ensikertalaisille,
         hako.hakukohdekoodiuri,
         case
@@ -97,11 +78,11 @@ int as (
             else 6
         end as tutkinnon_taso_sykli,
         coalesce(
-            hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi))
+            hako.koulutuksen_alkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi))
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
         coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,
-        opki.oppilaitoksen_opetuskieli,
+        hako.oppilaitoksen_opetuskieli,
         koul.alempi_kk_aste,
         koul.ylempi_kk_aste,
         koul.okm_ohjauksen_ala
@@ -111,7 +92,6 @@ int as (
     left join koulutus as koul on tote.koulutus_oid = koul.koulutus_oid
     left join organisaatio as orga on hako.jarjestyspaikka_oid = orga.organisaatio_oid
     left join organisaatio_hakukohteiden_nimet as hani on hako.jarjestyspaikka_oid = hani.jarjestyspaikka_oid
-    inner join opetuskielet as opki on hako.hakukohde_oid = opki.hakukohde_oid
 ),
 
 step2 as (
@@ -149,7 +129,8 @@ final as (
         sijaintimaakunta,
         sijaintimaakunta_nimi,
         oppilaitoksen_opetuskieli,
-        aloituspaikat,
+        hakukohteen_aloituspaikat,
+        valintaperusteiden_aloituspaikat,
         aloituspaikat_ensikertalaisille,
         hakukohdekoodiuri,
         hakuajat,

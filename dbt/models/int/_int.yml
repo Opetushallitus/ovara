@@ -1,4 +1,51 @@
 models:
+  - name: int_hakukohde
+    description: Hakukohteiden viimeisin tieto.
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: haku_oid
+        data_type: text
+      - name: toteutus_oid
+        data_type: text
+      - name: hakukohde_nimi
+        data_type: jsonb
+        description: Nimi haetaan kaikille kielille, oma kieli jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: jarjestyspaikka_oid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: on_valintakoe
+        data_type: boolean
+      - name: aloituspaikat_ensikertalaisille
+        data_type: integer
+      - name: hakukohdekoodiuri
+        data_type: text
+      - name: kaytetaanhaunaikataulua
+        data_type: boolean
+      - name: hakuajat
+        data_type: jsonb
+      - name: koulutuksen_alkamiskausi
+        data_type: jsonb
+      - name: toinenasteonkokaksoistutkinto
+        data_type: boolean
+      - name: jarjestaaurheilijanammkoulutusta
+        data_type: boolean
+      - name: hakukohteen_aloituspaikat
+        data_type: bigint
+        description: hakukohteen tiedoista otettu aloituspaikkatieto
+      - name: pohjakoulutuskoodit
+        data_type: jsonb
+      - name: valintaperusteiden_aloituspaikat
+        data_type: bigint
+        description: valintaperusteista otetut aloituspaikat yhteensä kun siirretaanSijoitteluun = true
+      - name: oppilaitoksen_opetuskieli
+        data_type: jsonb
+
   - name: int_koulutus_koulutuskoodi
     description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:

@@ -214,6 +214,8 @@ models:
         data_type: timestamp with time zone
   - name: dw_valintaperusteet_hakukohde
     description: Valintaperusteiden tietoja
+    config:
+      post_hook: "create index if not exists dw_valintaperusteet_hakukohde_muokattu on {{ this }} (hakukohde_oid, muokattu desc)"
     columns:
       - name: hakukohde_oid
         data_type: text

@@ -33,13 +33,8 @@ rivit as (
                 else vatu.valinnan_tila
             end,
             'valintatiedon_pvm', vatu.valintatiedon_pvm,
-            'ehdollisesti_hyvaksytty', case
-                when
-                    vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
-                    and vatu.ehdollisesti_hyvaksyttavissa
-                    then true
-                else false
-            end,
+            'ehdollisesti_hyvaksytty', vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
+            and vatu.ehdollisesti_hyvaksyttavissa,
             'ehdollisen_hyvaksymisen_ehto', vatu.ehdollisen_hyvaksymisen_ehto,
             'valinnantilan_kuvauksen_teksti', vatu.valinnantilan_kuvauksen_teksti,
             'julkaistavissa', vatu.julkaistavissa,
@@ -97,10 +92,10 @@ paras_jono_pvm as (
         hakutoive_id,
         (jonotiedot ->> 'valintatiedon_pvm')::date as valintatiedon_pvm
     from paras_jono,
-            lateral jsonb_array_elements(valintatapajonot) as jonotiedot
+        lateral jsonb_array_elements(valintatapajonot) as jonotiedot --noqa: AL05
     where jonotiedot ->> 'valinnan_tila' = valintatieto
-    order by
-        1, 2 --noqa: AM06
+    order by --noqa: AM06
+        1, 2
 ),
 
 final as (
@@ -109,11 +104,7 @@ final as (
         pajo.valintatapajonot,
         pajo.valintatieto,
         pjpv.valintatiedon_pvm,
-        case
-            when pajo.valintatapajonot @? '$[*] ? (@.ehdollisesti_hyvaksytty==true)'
-                then true
-            else false
-		end as ehdollisesti_hyvaksytty
+        pajo.valintatapajonot @? '$[*] ? (@.ehdollisesti_hyvaksytty==true)' as ehdollisesti_hyvaksytty
     from paras_jono as pajo
     left join paras_jono_pvm as pjpv on pajo.hakutoive_id = pjpv.hakutoive_id
 )
