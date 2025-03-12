@@ -14,9 +14,9 @@ with raw as (
 int as (
     select
         *,
-        coalesce(nimi_fi, coalesce(nimi_sv, nimi_en)) as nimi_fi_new,
-        coalesce(nimi_sv, coalesce(nimi_fi, nimi_en)) as nimi_sv_new,
-        coalesce(nimi_en, coalesce(nimi_fi, nimi_sv)) as nimi_en_new
+        coalesce(nimi_fi, nimi_sv, nimi_en) as nimi_fi_new,
+        coalesce(nimi_sv, nimi_fi, nimi_en) as nimi_sv_new,
+        coalesce(nimi_en, nimi_fi, nimi_sv) as nimi_en_new
     from raw
 ),
 
