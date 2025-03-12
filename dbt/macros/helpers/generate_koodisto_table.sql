@@ -31,9 +31,9 @@ int as (
         koodiarvo,
         {% endif -%}
         koodiversio,
-        coalesce(koodinimi_fi,coalesce(koodinimi_sv,koodinimi_en)) as nimi_fi,
-        coalesce(koodinimi_sv,coalesce(koodinimi_fi,koodinimi_en)) as nimi_sv,
-        coalesce(koodinimi_en,coalesce(koodinimi_fi,koodinimi_sv)) as nimi_en,
+        coalesce(koodinimi_fi,koodinimi_sv,koodinimi_en) as nimi_fi,
+        coalesce(koodinimi_sv,koodinimi_fi,koodinimi_en) as nimi_sv,
+        coalesce(koodinimi_en,koodinimi_fi,koodinimi_sv) as nimi_en,
         tila='LUONNOS' as viimeisin_versio,
         voimassaalkupvm,
         voimassaloppupvm

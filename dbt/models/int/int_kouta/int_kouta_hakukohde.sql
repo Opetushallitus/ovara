@@ -20,9 +20,9 @@ final as (
         jarjestyspaikkaoid as jarjestyspaikka_oid,
         externalid as ulkoinen_tunniste,
         jsonb_build_object(
-            'en', coalesce(nimi_en, coalesce(nimi_fi, nimi_sv)),
-            'sv', coalesce(nimi_sv, coalesce(nimi_fi, nimi_en)),
-            'fi', coalesce(nimi_fi, coalesce(nimi_sv, nimi_en))
+            'en', coalesce(nimi_en, nimi_fi, nimi_sv),
+            'sv', coalesce(nimi_sv, nimi_fi, nimi_en),
+            'fi', coalesce(nimi_fi, nimi_sv, nimi_en)
         ) as hakukohde_nimi,
         organisaatiooid as organisaatio_oid,
         {{ dbt_utils.star(

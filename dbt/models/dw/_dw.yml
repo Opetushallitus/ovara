@@ -848,7 +848,7 @@ models:
         post_hook: "create index if not exists dw_valintarekisteri_valinnantulos_muokattu on {{ this }} (valinnantulos_id, muokattu desc)"
     columns:
       - name: valinnantulos_id
-        description: Yhdistelmäavain, hakuklohde_oid, valintatapajono_oid ja hakemus_oid
+        description: Yhdistelmäavain, hakukohde_oid, valintatapajono_oid ja hakemus_oid
         data_type: text
       - name: hakukohde_oid
         data_type: text
