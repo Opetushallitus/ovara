@@ -1,4 +1,21 @@
 models:
+  - name: int_hakutoive_kk
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: maksuvelvollisuus
+        data_type: text
+      - name: hakukelpoisuus
+        data_type: text
+      - name: pohjakoulutus
+        data_type: jsonb
+
   - name: int_hakukohde
     description: Hakukohteiden viimeisin tieto.
     columns:
