@@ -7,11 +7,11 @@ models:
     columns:
       - name: henkilo_oid
         data_type: text
-        data_tests: 
-        - dbt_constraints.primary_key
+        data_tests:
+          - dbt_constraints.primary_key
       - name: arvosanat
         data_type: jsonb
-  
+
   - name: pub_dim_haku
     description: Hakujen tietoja
     config:
@@ -65,7 +65,7 @@ models:
         data_type: jsonb
       - name: haun_tyyppi
         data_type: text
-  
+
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
@@ -432,7 +432,7 @@ models:
         data_type: jsonb
       - name: tila
         data_type: text
- 
+
   - name: pub_dim_koulutustoimija_ja_toimipisteet
     config:
       contract:
@@ -533,7 +533,7 @@ models:
         data_type: timestamptz
       - name: lakkautuspvm
         data_type: timestamptz
-  
+
   - name: pub_dim_organisaatio_rakenne
     description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
     config:
@@ -544,7 +544,7 @@ models:
         data_type: text
       - name: child_oid
         data_type: text
-  
+
   - name: pub_dim_toimipiste
     config:
       contract:
@@ -684,6 +684,26 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+
+  - name: pub_fct_raportti_hakijat_kk
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukelpoisuus
+        data_type: text
+      - name: pohjakoulutus
+        data_type: jsonb
+      - name: maksuvelvollisuus
+        data_type: text
+        description: Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".  
+
   - name: pub_fct_raportti_hakijat_toinen_aste
     description: |
       Raporttikohtaiset tiedot toisen asteen hakijat-raportille. 
@@ -767,6 +787,9 @@ models:
         data_type: bigint
       - name: maksuvelvollisia
         data_type: bigint
+        description: |
+          Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation". 
+          Hakija katsotaan maksuvelvolliseksi jos arvo on "obligated"
       - name: toive_1
         data_type: bigint
       - name: toive_2

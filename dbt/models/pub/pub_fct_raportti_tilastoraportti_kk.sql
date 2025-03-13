@@ -23,7 +23,7 @@ valintarekisteri as (
 ),
 
 hakemus as (
-    select * from {{ ref('int_hakemus_kk') }}
+    select * from {{ ref('int_hakutoive_kk') }}
 ),
 
 final as (
