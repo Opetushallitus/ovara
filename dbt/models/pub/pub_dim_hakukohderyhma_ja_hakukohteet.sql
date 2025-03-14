@@ -1,6 +1,9 @@
 {{
   config(
-    materialized = 'table'
+    materialized = 'table',
+    indexes = [
+        {'columns':['hakukohderyhma_oid','hakukohde_oid']}
+    ]
   )
 }}
 

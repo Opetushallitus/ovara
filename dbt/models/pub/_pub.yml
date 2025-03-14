@@ -303,11 +303,15 @@ models:
       - name: kotikunta
         description: kotikunnan koodi tai tekstinä tallennettu tieto
         data_type: text
+      - name: kotikunta_nimi
+        data_type: jsonb
       - name: ulkomainen_kunta
         description: Ulkomaisen kunnan nimi suoraan hakemuksesta
         data_type: text
       - name: asuinmaa
-        data_type: integer
+        data_type: text
+      - name: asuinmaa_nimi
+        data_type: jsonb
       - name: sahkoposti
         data_type: text
       - name: puhelin
