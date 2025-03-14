@@ -23,10 +23,12 @@ kansalaisuus as not materialized (
 
 kunta as (
     select * from {{ ref('int_koodisto_kunta') }}
+    where viimeisin_versio
 ),
 
 maa as (
     select * from {{ ref('int_koodisto_maa_2') }}
+    where viimeisin_versio
 ),
 
 int as (
