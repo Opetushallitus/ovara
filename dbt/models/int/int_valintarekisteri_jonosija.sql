@@ -7,10 +7,8 @@
 }}
 
 with raw as (
-    select
-        *,
-        row_number() over (partition by id order by muokattu desc) as rownr
-    from {{ ref('dw_valintarekisteri_jonosija') }}
+    select distinct on (id) * from {{ ref('dw_valintarekisteri_jonosija') }}
+    order by id asc, muokattu desc
 ),
 
 final as (
@@ -31,7 +29,6 @@ final as (
         siirtynyt_toisesta_valintatapajonosta,
         sijoitteluajo_id
     from raw
-    where rownr = 1
 )
 
 select * from final

@@ -8,12 +8,12 @@
 }}
 
 with source as (
-    select
+    select distinct on (hakemusoid)
         hakemusoid as hakemus_oid,
         muokattu,
-        hakutoiveet,
-        row_number() over (partition by hakemusoid order by muokattu desc) as row_nr
+        hakutoiveet
     from {{ ref('dw_valintalaskenta_valintakoe_osallistuminen') }}
+    order by hakemusoid asc, muokattu desc
 ),
 
 hakutoive as (
@@ -21,7 +21,7 @@ hakutoive as (
         hakemus_oid,
         jsonb_array_elements(hakutoiveet) as hakutoiveet,
         muokattu
-    from source where row_nr = 1
+    from source
 
 ),
 

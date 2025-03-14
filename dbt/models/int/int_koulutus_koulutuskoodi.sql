@@ -5,11 +5,11 @@
 }}
 
 with raw as (
-    select
+    select distinct on (oid)
         oid,
-        koulutuksetkoodiuri,
-        row_number() over (partition by oid order by muokattu desc) as rownr
+        koulutuksetkoodiuri
     from {{ ref("dw_kouta_koulutus") }}
+    order by oid asc, muokattu desc
 ),
 
 final as (
@@ -22,7 +22,6 @@ final as (
             ), '#', 1
         ) as koulutuskoodiarvo
     from raw
-    where rownr = 1
 )
 
 select * from final

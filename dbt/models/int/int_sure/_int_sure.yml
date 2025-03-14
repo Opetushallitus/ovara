@@ -70,7 +70,7 @@ models:
       - name: valmistuminen
         description: ""
         data_type: timestamp with time zone
-      - name: henkiloOid
+      - name: henkilo_oid
         description: Oppijan henkiloOid
         data_type: text
       - name: yksilollistaminen
@@ -189,12 +189,12 @@ models:
   - name: int_sure_ensikertalainen
     description: Sisältää Suoritusrekisterin ensikertalainen viimeisimmät tiedot.
     columns:
-      - name: hakuoid
+      - name: haku_oid
         data_type: text
         description: Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty.
         data_tests:
           - not_null
-      - name: henkilooid
+      - name: henkilo_oid
         description: Sen henkilön oid, jolle ensikertalaisuustieto kuuluu
         data_type: text
         data_tests:
@@ -297,10 +297,12 @@ models:
       - name: dw_metadata_dw_stored_at
         description: ""
         data_type: timestamp with time zone
-  - name: int_sure_pohjakoulutus
+  - name: int_sure_proxysuoritus_pohjakoulutus
     description: Tämä taulu sisältää pohjakoulutustiedot
     columns:
       - name: hakemus_oid
         data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
       - name: pohjakoulutus
         data_type: text

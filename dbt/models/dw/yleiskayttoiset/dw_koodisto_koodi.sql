@@ -11,7 +11,7 @@
             'dw_metadata_dw_stored_at'
             ],
     indexes = [
-        {'columns': ['koodisto_uri']},
+        {'columns': ['koodistouri']},
         {'columns': ['muokattu']}
     ]
     )

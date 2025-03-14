@@ -8,10 +8,8 @@
 }}
 
 with raw as (
-    select
-        *,
-        row_number() over (partition by hakukohde_henkilo_id order by muokattu desc) as row_nr
-    from {{ ref('dw_valintarekisteri_vastaanotto') }}
+    select distinct on (hakukohde_henkilo_id) * from {{ ref('dw_valintarekisteri_vastaanotto') }}
+    order by hakukohde_henkilo_id asc, muokattu desc
 ),
 
 final as (
@@ -20,7 +18,6 @@ final as (
         selite,
         operaatio as vastaanottotieto
     from raw
-    where row_nr = 1
 )
 
 select * from final

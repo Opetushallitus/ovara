@@ -8,7 +8,7 @@
 }}
 
 with organisaatio as (
-    select distinct organisaatio_oid from {{ ref('int_organisaatio') }}
+    select organisaatio_oid from {{ ref('int_organisaatio') }}
 ),
 
 osoite as (

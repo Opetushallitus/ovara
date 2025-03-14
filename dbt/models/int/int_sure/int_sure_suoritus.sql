@@ -7,15 +7,8 @@
 }}
 
 with raw as (
-    select
-        *,
-        row_number() over (partition by resourceid order by muokattu desc) as row_nr
-    from {{ ref('dw_sure_suoritus') }}
-),
-
-int as (
-    select * from raw
-    where row_nr = 1
+    select distinct on (resourceid) * from {{ ref('dw_sure_suoritus') }}
+    order by resourceid asc, muokattu desc
 ),
 
 final as (
@@ -25,7 +18,7 @@ final as (
         myontaja,
         tila,
         valmistuminen,
-        henkilooid,
+        henkilooid as henkilo_oid,
         yksilollistaminen,
         suorituskieli,
         muokattu,
@@ -33,7 +26,7 @@ final as (
         source,
         vahvistettu,
         arvot
-    from int
+    from raw
 )
 
 select * from final

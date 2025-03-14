@@ -7,11 +7,9 @@
     )
 }}
 
-with raw as not materialized (
-    select
-        *,
-        row_number() over (partition by ilmoittautuminen_id order by muokattu desc) as row_nr
-    from {{ ref('dw_valintarekisteri_ilmoittautuminen') }}
+with raw as (
+    select distinct on (ilmoittautuminen_id) * from {{ ref('dw_valintarekisteri_ilmoittautuminen') }}
+    order by ilmoittautuminen_id asc, muokattu desc
 ),
 
 final as (
@@ -27,7 +25,6 @@ final as (
         selite,
         tila
     from raw
-    where row_nr = 1
 )
 
 select * from final

@@ -12,8 +12,8 @@ with int as (
 
 final as (
     select
-        hakuoid,
-        henkilooid,
+        hakuoid as haku_oid,
+        henkilooid as henkilo_oid,
         isensikertalainen,
         menettamisenperuste,
         menettamisenpaivamaara

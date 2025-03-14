@@ -1,12 +1,9 @@
 with raw as (
-    select
-        content,
-        row_number() over (partition by id order by versio_id desc, muokattu desc) as rownr
-    from {{ ref('dw_ataru_lomake') }}
+    select distinct on (id) content from {{ ref('dw_ataru_lomake') }}
     where
         content @> '[{"id": "1dc3311d-2235-40d6-88d2-de2bd63e087b"}]'
         or content @> '[{"id": "ammatillinen_perustutkinto_urheilijana"}]'
-
+    order by id asc, versio_id asc, muokattu desc
 ),
 
 hakukohderyhma_hakukohde as (
@@ -15,7 +12,7 @@ hakukohderyhma_hakukohde as (
 
 tiedot as (
     select jsonb_array_elements(content) as tiedot
-    from raw where rownr = 1
+    from raw
 ),
 
 hakukohderyhmat as (

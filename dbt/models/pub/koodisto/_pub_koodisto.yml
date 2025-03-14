@@ -180,11 +180,7 @@ models:
       - name: nimi_en
         data_type: text
   - name: pub_dim_koodisto_koulutus_alat_ja_asteet
-    description: Tämä taulu sisältää koulutusten alojen ja asteiden tietoja
-      Kansallisen koulutusluokituksen 2016 mukaisesti. Taulussa on jokaiselle
-      koulutukselle purettu auki kaikkien eri tasojen arvot. Unniikki testaus ei
-      ole mahdollista koska samalla koulutuksella voi olla useampi eri ala- tai
-      tasoarvo
+    description: Tämä taulu sisältää koulutusten alojen ja asteiden tietoja Kansallisen koulutusluokituksen 2016 mukaisesti. Taulussa on jokaiselle koulutukselle purettu auki kaikkien eri tasojen arvot. Unniikki testaus ei ole mahdollista koska samalla koulutuksella voi olla useampi eri ala- tai tasoarvo
     columns:
       - name: versioitu_koodiuri
         data_type: text
@@ -221,13 +217,11 @@ models:
       - name: nimi_en
         data_type: text
   - name: pub_dim_koodisto_kunta_maakunta
-    description: Tämä taulu sisältää tiedot ja yhteyden kunnista ja maakunnista.
-      Taulussa on mukana ainoastaan viimeisin relaatio.
+    description: Tämä taulu sisältää tiedot ja yhteyden kunnista ja maakunnista. Taulussa on mukana ainoastaan viimeisin relaatio.
     columns:
       - name: id
         data_type: text
-        description: Tämä kenttä on hashattu yhdistelmä kunnan ja maakunnan
-          versioiduista URIsta.
+        description: Tämä kenttä on hashattu yhdistelmä kunnan ja maakunnan versioiduista URIsta.
         data_tests:
           - dbt_constraints.primary_key
       - name: kunta_versioitu_koodiuri
@@ -500,3 +494,21 @@ models:
         data_type: text
       - name: nimi_en
         data_type: text
+  - name: pub_dim_koodisto_okmohjauksenala
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: integer
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: koodinimi
+        data_type: jsonb

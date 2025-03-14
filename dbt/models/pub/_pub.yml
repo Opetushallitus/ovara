@@ -1,4 +1,17 @@
 models:
+  - name: pub_dim_arvosana_yo
+    description: YO-arvosanat json-muotoisena. Tässä on SUREn arvosanat käännetty takaisin yo-arvosanoiksi
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: henkilo_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: arvosanat
+        data_type: jsonb
+
   - name: pub_dim_haku
     description: Hakujen tietoja
     config:
@@ -52,6 +65,7 @@ models:
         data_type: jsonb
       - name: haun_tyyppi
         data_type: text
+
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
     config:
@@ -80,9 +94,15 @@ models:
       - name: jarjestyspaikka_oid
         description: Järjestävän organisaation tunniste
         data_type: text
-      - name: aloituspaikat
-        description: aloituspaikkojen määrä
-        data_type: integer
+      - name: jarjestyspaikka_nimi
+        data_type: jsonb
+        description: Järjestyspaikan nimi organisaatiotaulusta
+      - name: hakukohteen_aloituspaikat
+        description: aloituspaikkojen määrä hakukohteiden tiedoista
+        data_type: bigint
+      - name: valintaperusteiden_aloituspaikat
+        description: aloituspaikkojen määrä valintaperusteista kun jonossa on siirretäänSijoitteluun = true
+        data_type: bigint
       - name: aloituspaikat_ensikertalaisille
         description: Ensikertalaisten aloituspaikkoja
         data_type: integer
@@ -118,7 +138,18 @@ models:
         data_type: jsonb
       - name: koulutus_oid
         data_type: text
+      - name: koulutustoimija
+        data_type: text
+      - name: koulutustoimija_nimi
+        data_type: jsonb
       - name: oppilaitos
+        data_type: text
+      - name: oppilaitos_nimi
+        data_type: jsonb
+      - name: toimipiste
+        data_type: text
+        description: Hakutoiveeseen kuuluvan toimipisteen oid
+      - name: toimipiste_nimi
         data_type: jsonb
       - name: organisaatio_nimi
         data_type: jsonb
@@ -133,10 +164,27 @@ models:
       - name: sijaintimaakunta_nimi
         data_type: jsonb
         description: hakukohteen järjestysorganisaation maakunta lokalistoituna koodistosta haettuna sijaintikunnan perusteella
-      - name: toimipiste
-        data_type: jsonb
-        description: Hakutoiveeseen kuuluvan toimipisteen nimet lokalistoituna
+      - name: alempi_kk_aste
+        data_type: boolean
+      - name: ylempi_kk_aste
+        data_type: boolean
+      - name: okm_ohjauksen_ala
+        data_type: int
+
   - name: pub_dim_hakukohderyhma
+    description: Hakukohderyhmien tiedot
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakukohderyhma_oid
+        data_type: text
+        description: hakukohderyhmän tunniste
+      - name: hakukohderyhma_nimi
+        data_type: jsonb
+        description: hakukohderyhmän lokalisoidut nimet
+
+  - name: pub_dim_hakukohderyhma_ja_hakukohteet
     description: Hakukohderyhmien tiedot
     config:
       contract:
@@ -144,43 +192,18 @@ models:
     columns:
       - name: hakukohderyhma_id
         data_type: text
-        data_tests: 
-        - dbt_constraints.primary_key
+        data_tests:
+          - dbt_constraints.primary_key
       - name: hakukohderyhma_oid
         description: Hakukohderyhmän tunniste
         data_type: text
-      - name: hakukohderyhma_nimi
-        description: Hakukohderyhmän nimet
-        data_type: jsonb
       - name: hakukohde_oid
         description: Hakukohteen tunniste
         data_type: text
-  - name: pub_dim_hakutoive_toinen_aste
-    description: Raporttikohtaiset tiedot toisen asteen hakijat-raportille
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: hakutoive_id
+      - name: haku_oid
+        description: Hakukohteen haun tunniste
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
-      - name: hakemus_oid
-        data_type: text
-      - name: hakukohde_oid
-        data_type: text
-      - name: sora_terveys
-        data_type: boolean
-      - name: sora_aiempi
-        data_type: boolean
-      - name: harkinnanvaraisuuden_syy
-        data_type: text
-      - name: tila
-        data_type: text
-      - name: kaksoistutkinto_kiinnostaa
-        data_type: boolean
-      - name: urheilijatutkinto_kiinnostaa
-        data_type: boolean
+
   - name: pub_dim_hakutoive
     description: Sisältää aktiiviset hakutoiveet
     config:
@@ -193,6 +216,8 @@ models:
         data_tests:
           - dbt_constraints.primary_key
       - name: hakukohde_henkilo_id
+        data_type: text
+      - name: henkilo_hakemus_id
         data_type: text
       - name: hakemus_oid
         description: hakemuksen oid
@@ -215,12 +240,35 @@ models:
       - name: valintatapajonot
         data_type: jsonb
         description: Hakutoiveen kaikkien valintatapajonojen tiedot json-muotoisena
+      - name: valintatieto
+        data_type: text
+        description: |
+          Paras valintatieto kaikista valintatapajonoista. Järjestyksessä 
+          - HYVAKSYTTY
+          - HARKINNANVARAISESTI_HYVAKSYTTY
+          - VARASIJALTA_HYVAKSYTTY
+          - VARALLA
+          - PERUUTETTU
+          - PERUNUT
+          - PERUUNTUNUT
+          - HYLATTY
+          - KESKEN
+      - name: ehdollisesti_hyvaksytty
+        data_type: boolean
+        description: tämä kenttä on true jos valinnoissa on täppä ehdollisesti_hyväksyttävissä ja tila on hyväksytty tai varasijalta_hyväksytty
       - name: harkinnanvaraisuuden_syy
         data_type: text
       - name: haku_oid
         data_type: text
       - name: ilmoittautumisen_tila
         data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+        description: Onko hakija ensikertalainen tässä kyseisessä haussa
+      - name: valintatiedon_pvm
+        data_type: date
+        description: Valintatiedon viimeksi päivätty tieto
+
   - name: pub_dim_henkilo
     description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
     config:
@@ -255,11 +303,15 @@ models:
       - name: kotikunta
         description: kotikunnan koodi tai tekstinä tallennettu tieto
         data_type: text
+      - name: kotikunta_nimi
+        data_type: jsonb
       - name: ulkomainen_kunta
         description: Ulkomaisen kunnan nimi suoraan hakemuksesta
         data_type: text
       - name: asuinmaa
-        data_type: integer
+        data_type: text
+      - name: asuinmaa_nimi
+        data_type: jsonb
       - name: sahkoposti
         data_type: text
       - name: puhelin
@@ -267,6 +319,8 @@ models:
       - name: pohjakoulutuksen_maa_toinen_aste
         data_type: text
       - name: aidinkieli
+        data_type: text
+      - name: aidinkieliluokka
         data_type: text
       - name: sukupuoli
         data_type: integer
@@ -291,6 +345,7 @@ models:
         data_type: text
       - name: syntymaaika
         data_type: date
+
   - name: pub_dim_koulutus
     description: >-
       Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta. 
@@ -342,7 +397,7 @@ models:
       - name: koulutus_koodi
         description: Ensimmäinen koulutuskoodi. tämä perusteella ala- ja astetiedot on haettu
         data_type: text
-      - name: okmohjauksenala
+      - name: okm_ohjauksen_ala
         data_type: integer
       - name: kansallinenkoulutusluokitus2016koulutusastetaso1
         data_type: text
@@ -361,6 +416,27 @@ models:
         data_type: boolean
       - name: kk_tutkinnon_taso
         data_type: integer
+
+  - name: pub_dim_koulutustoimija
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
+      - name: parent_oids
+        data_type: jsonb
+      - name: tila
+        data_type: text
+
   - name: pub_dim_koulutustoimija_ja_toimipisteet
     config:
       contract:
@@ -383,7 +459,7 @@ models:
       - name: tila
         data_type: text
 
-  - name: pub_dim_koulutustoimija
+  - name: pub_dim_oppilaitos
     config:
       contract:
         enforced: true
@@ -391,7 +467,7 @@ models:
       - name: organisaatio_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: organisaatio_nimi
         data_type: jsonb
       - name: organisaatiotyypit
@@ -402,6 +478,7 @@ models:
         data_type: jsonb
       - name: tila
         data_type: text
+
   - name: pub_dim_oppilaitos_ja_toimipisteet
     config:
       contract:
@@ -423,35 +500,7 @@ models:
         data_type: jsonb
       - name: tila
         data_type: text
-  - name: pub_dim_oppilaitos
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: organisaatio_oid
-        data_type: text
-        data_tests:
-        - dbt_constraints.primary_key
-      - name: organisaatio_nimi
-        data_type: jsonb
-      - name: organisaatiotyypit
-        data_type: jsonb
-      - name: oppilaitostyyppi
-        data_type: text
-      - name: parent_oids
-        data_type: jsonb
-      - name: tila
-        data_type: text
-  - name: pub_dim_organisaatio_rakenne
-    description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: parent_oid
-        data_type: text
-      - name: child_oid
-        data_type: text
+
   - name: pub_dim_organisaatio
     description: Tämä taulu sisältää organisaation tiedot
     config:
@@ -488,6 +537,38 @@ models:
         data_type: timestamptz
       - name: lakkautuspvm
         data_type: timestamptz
+
+  - name: pub_dim_organisaatio_rakenne
+    description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: parent_oid
+        data_type: text
+      - name: child_oid
+        data_type: text
+
+  - name: pub_dim_toimipiste
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: organisaatio_nimi
+        data_type: jsonb
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
+      - name: parent_oids
+        data_type: jsonb
+      - name: tila
+        data_type: text
+
   - name: pub_dim_toimipiste_ja_toimipisteet
     config:
       contract:
@@ -509,25 +590,7 @@ models:
         data_type: jsonb
       - name: tila
         data_type: text
-  - name: pub_dim_toimipiste
-    config:
-      contract:
-        enforced: true
-    columns:
-      - name: organisaatio_oid
-        data_type: text
-        data_tests:
-        - dbt_constraints.primary_key
-      - name: organisaatio_nimi
-        data_type: jsonb
-      - name: organisaatiotyypit
-        data_type: jsonb
-      - name: oppilaitostyyppi
-        data_type: text
-      - name: parent_oids
-        data_type: jsonb
-      - name: tila
-        data_type: text
+
   - name: pub_dim_toteutus
     description: Toteutuksen tietoja
     config:
@@ -603,42 +666,8 @@ models:
         data_type: boolean
       - name: hyvaksyperuuntunut
         data_type: boolean
-  - name: pub_dim_yo_arvosana
-    columns:
-      - name: resourceid
-        data_type: text
-      - name: suoritus
-        data_type: text
-      - name: arvosana
-        data_type: text
-      - name: asteikko
-        data_type: text
-      - name: aine
-        data_type: text
-      - name: lisatieto
-        data_type: text
-      - name: valinnainen
-        data_type: boolean
-      - name: muokattu
-        data_type: timestamp with time zone
-      - name: deleted
-        data_type: boolean
-      - name: pisteet
-        data_type: text
-      - name: myonnetty
-        data_type: timestamp with time zone
-      - name: source
-        data_type: text
-      - name: jarjestys
-        data_type: text
-      - name: arvot
-        data_type: text
-      - name: henkilooid
-        data_type: text
-      - name: tila
-        data_type: text
-      - name: pvm
-        data_type: timestamp with time zone
+      - name: valintatiedon_pvm
+        data_type: date
   - name: pub_fct_hakemus
     description: Hakemusten tietoja
     config:
@@ -659,6 +688,124 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+
+  - name: pub_fct_raportti_hakijat_kk
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukelpoisuus
+        data_type: text
+      - name: pohjakoulutus
+        data_type: jsonb
+      - name: maksuvelvollisuus
+        data_type: text
+        description: Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".  
+
+  - name: pub_fct_raportti_hakijat_toinen_aste
+    description: |
+      Raporttikohtaiset tiedot toisen asteen hakijat-raportille. 
+      Tämän taulu lisäksi raportoiniin tarvitaan myös pub_dim_hakutoive
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        description: Taulun avain. Tämä kenttä on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: sora_terveys
+        data_type: boolean
+      - name: sora_aiempi
+        data_type: boolean
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: kaksoistutkinto_kiinnostaa
+        data_type: boolean
+      - name: urheilijatutkinto_kiinnostaa
+        data_type: boolean
+      - name: pohjakoulutus
+        data_type: int
+      - name: pohjakoulutus_nimi
+        data_type: jsonb
+  - name: pub_fct_raportti_tilastoraportti_kk
+    description: |
+      Tämä raportti sisältää tarvittavat tiedot korkeakulujen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
+      Raportille pitää joinata pub_dim_hakukohde koska sieltä saa hakukohdekohtaista tietoa. Sen jälkeen riittää 
+      sum group by ja suodattaus raportin filtteriehtojen mukaan.
+    config:
+      contract:
+        enforced: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - hakukohde_oid
+            - aidinkieli
+            - kansalaisuus
+            - sukupuoli
+            - ensikertalainen
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+      - name: aidinkieli
+        description: Äiidnkieli on jaettu kolmeen ryhmään; suomi (fi), ruotsi(sv) tai muu
+        data_type: text
+      - name: kansalaisuus
+        description: |
+          Kansalaisuus on jaettu kolmeen ryhmään; 1=suomi, 2=EU/ETA, 3=muut
+          Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" tässä järjestyksessä
+        data_type: integer
+      - name: sukupuoli
+        description: Sukupuolitieto koodiston mukaan. 1=mies, 2=nainen
+        data_type: integer
+      - name: ensikertalainen
+        data_type: boolean
+      - name: hakijat
+        data_type: bigint
+      - name: ensisijaisia
+        data_type: bigint
+      - name: ensikertalaisia
+        data_type: bigint
+      - name: hyvaksytyt
+        data_type: bigint
+      - name: vastaanottaneet
+        data_type: bigint
+      - name: lasna
+        data_type: bigint
+      - name: poissa
+        data_type: bigint
+      - name: ilm_yht
+        data_type: bigint
+      - name: maksuvelvollisia
+        data_type: bigint
+        description: |
+          Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation". 
+          Hakija katsotaan maksuvelvolliseksi jos arvo on "obligated"
+      - name: toive_1
+        data_type: bigint
+      - name: toive_2
+        data_type: bigint
+      - name: toive_3
+        data_type: bigint
+      - name: toive_4
+        data_type: bigint
+      - name: toive_5
+        data_type: bigint
+      - name: toive_6
+        data_type: bigint
   - name: pub_fct_raportti_tilastoraportti_toinen_aste
     description: |
       Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
@@ -667,31 +814,24 @@ models:
     config:
       contract:
         enforced: true
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - hakukohde_oid
+            - koulutusalataso_1
+            - koulutusalataso_2
+            - koulutusalataso_3
+            - harkinnanvaraisuuden_syy
+            - sukupuoli
     columns:
       - name: hakukohde_oid
         data_type: text
-      - name: hakukohde_nimi
-        data_type: jsonb
-      - name: haku_oid
-        data_type: text
-      - name: organisaatio_oid
-        data_type: text
-      - name: oppilaitoksen_opetuskieli
-        data_type: jsonb
       - name: koulutusalataso_1
         data_type: text
       - name: koulutusalataso_2
         data_type: text
       - name: koulutusalataso_3
         data_type: text
-      - name: sijaintikunta
-        data_type: text
-      - name: sijaintikunta_nimi
-        data_type: jsonb
-      - name: sijaintimaakunta
-        data_type: text
-      - name: sijaintimaakunta_nimi
-        data_type: jsonb
       - name: harkinnanvaraisuuden_syy
         data_type: text
       - name: sukupuoli
@@ -712,8 +852,7 @@ models:
         data_type: bigint
       - name: ilm_yht
         data_type: bigint
-      - name: aloituspaikat
-        data_type: integer
+        data_type: bigint
       - name: toive_1
         data_type: bigint
       - name: toive_2
@@ -728,4 +867,3 @@ models:
         data_type: bigint
       - name: toive_7
         data_type: bigint
-

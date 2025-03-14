@@ -36,7 +36,7 @@ final as (
         data -> 'keyValues' ->> 'postal-office'::varchar as postitoimipaikka,
         data -> 'keyValues' ->> 'city'::varchar as ulk_kunta,
         (data -> 'keyValues' ->> 'home-town') as kotikunta,
-        (data -> 'keyValues' ->> 'country-of-residence')::int as asuinmaa,
+        (data -> 'keyValues' ->> 'country-of-residence')::varchar as asuinmaa,
         (data -> 'keyValues' ->> 'gender')::int as sukupuoli,
         (data -> 'keyValues' -> 'nationality')::jsonb as kansalaisuus,
         (lower((data -> 'keyValues' ->> 'sahkoisen-asioinnin-lupa'::varchar)) = 'kyllä') as sahkoinenviestintalupa,

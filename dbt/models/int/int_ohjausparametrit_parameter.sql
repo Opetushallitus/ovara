@@ -4,10 +4,8 @@
     )
 }}
 with raw as (
-    select
-        *,
-        row_number() over (partition by haku_oid order by muokattu desc) as row_nr
-    from {{ ref('dw_ohjausparametrit_parameter') }}
+    select distinct on (haku_oid) * from {{ ref('dw_ohjausparametrit_parameter') }}
+    order by haku_oid asc, muokattu desc
 ),
 
 final as (
@@ -15,7 +13,7 @@ final as (
         haku_oid,
         vastaanotto_paattyy,
         hakijakohtainen_paikan_vastaanottoaika
-    from raw where row_nr = 1
+    from raw
 )
 
 select * from final

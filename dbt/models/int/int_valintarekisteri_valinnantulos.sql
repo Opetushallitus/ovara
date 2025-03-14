@@ -8,10 +8,8 @@
 }}
 
 with raw as (
-    select
-        *,
-        row_number() over (partition by valinnantulos_id order by muokattu desc) as row_nr
-    from {{ ref('dw_valintarekisteri_valinnantulos') }}
+    select distinct on (valinnantulos_id) * from {{ ref('dw_valintarekisteri_valinnantulos') }}
+    order by valinnantulos_id asc, muokattu desc
 ),
 
 final as (
@@ -37,8 +35,9 @@ final as (
             'fi', valinnantilankuvauksentekstifi
         ) as valinnantilan_kuvauksen_teksti,
         julkaistavissa,
-        hyvaksyperuuntunut
-    from raw where row_nr = 1
+        hyvaksyperuuntunut,
+        muokattu::date as valintatiedon_pvm
+    from raw
 )
 
 select * from final

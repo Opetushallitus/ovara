@@ -6,6 +6,8 @@
     indexes = [
         {'columns':['hakemus_oid']},
         {'columns':['hakukohde_oid']},
+        {'columns':['henkilo_hakemus_id']},
+        {'columns':['haku_oid']},
     ]
     )
 }}
@@ -18,6 +20,7 @@ final as (
     select
         hakutoive_id,
         hakukohde_henkilo_id,
+        henkilo_hakemus_id,
         hakemus_oid,
         haku_oid,
         henkilo_oid,
@@ -27,7 +30,11 @@ final as (
         vastaanottotieto,
         ilmoittautumisen_tila,
         valintatapajonot,
-        harkinnanvaraisuuden_syy
+        valintatieto,
+        ehdollisesti_hyvaksytty,
+        valintatiedon_pvm,
+        harkinnanvaraisuuden_syy,
+        ensikertalainen
     from hakutoive
 )
 

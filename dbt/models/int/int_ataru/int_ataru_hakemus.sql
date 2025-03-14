@@ -5,18 +5,17 @@
     unique_key = 'hakemus_oid',
     indexes = [
         {'columns' :['tiedot'], 'type': 'gin'}
-    ]
+    ],
+    post_hook = "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))"
     )
 }}
 
 with raw as not materialized (
-    select
-        *,
-        row_number() over (partition by oid order by versio_id desc, muokattu desc) as row_nr
-    from {{ ref('dw_ataru_hakemus') }}
+    select distinct on (oid) * from {{ ref('dw_ataru_hakemus') }}
     {% if is_incremental() %}
         where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t)
     {% endif %}
+    order by oid asc, versio_id desc, muokattu desc
 
 ),
 
@@ -28,13 +27,9 @@ final as (
             when tila = 'inactivated'
                 then true::boolean
             else false::boolean
-        end as poistettu,
-        (tiedot ->> '1dc3311d-2235-40d6-88d2-de2bd63e087b')::boolean as urheilijatutkinto_kiinnostaa
-
+        end as poistettu
     from raw
-    where
-        row_nr = 1
-        and henkilo_oid is not null
+    where henkilo_oid is not null
 )
 
 select * from final

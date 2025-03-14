@@ -43,6 +43,10 @@ ilmoittautuminen as (
     from {{ ref('int_valintarekisteri_ilmoittautuminen') }}
 ),
 
+pohjakoulutus as (
+    select * from {{ ref('int_sure_proxysuoritus_pohjakoulutus') }}
+),
+
 final as (
     select
         hato.hakutoive_id,
@@ -57,13 +61,16 @@ final as (
             when urtu.hakukohde_oid is not null
                 then true::boolean
             else false::boolean
-        end as urheilijatutkinto_kiinnostaa
+        end as urheilijatutkinto_kiinnostaa,
+        poko.pohjakoulutus,
+        poko.pohjakoulutus_nimi
     from hakutoive as hato
     left join sora on hato.hakutoive_id = sora.hakutoive_id
     left join harkinnanvaraisuus as hava on hato.hakutoive_id = hava.hakutoive_id
     left join ilmoittautuminen as ilmo on hato.hakukohde_henkilo_id = ilmo.hakukohde_henkilo_id
     left join kaksoistutkinto as katu on hato.hakutoive_id = katu.hakutoive_id
     left join urheilijatutkinto as urtu on hato.hakukohde_oid = urtu.hakukohde_oid
+    left join pohjakoulutus as poko on hato.hakemus_oid = poko.hakemus_oid
 )
 
 select final.*

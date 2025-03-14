@@ -10,18 +10,15 @@
 }}
 
 with hakukohde as (
-    select * from {{ ref('int_kouta_hakukohde') }}
+    select * from {{ ref('int_hakukohde') }}
 ),
 
 toteutus as (
-    select * from {{ ref('pub_dim_toteutus') }}
+    select * from {{ ref('int_kouta_toteutus') }}
 ),
 
 haku as (
-    select
-        *,
-        hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
-    from {{ ref('int_kouta_haku') }}
+    select * from {{ ref('int_haku') }}
 ),
 
 koulutus as (
@@ -41,19 +38,25 @@ int as (
         hako.hakukohde_oid,
         hako.hakukohde_nimi,
         hani.organisaatio_nimi,
-        hani.oppilaitos,
         hani.toimipiste,
-        hako.externalid as ulkoinen_tunniste,
+        hani.toimipiste_nimi,
+        hani.oppilaitos,
+        hani.oppilaitos_nimi,
+        hani.koulutustoimija,
+        hani.koulutustoimija_nimi,
+        hako.ulkoinen_tunniste,
         hako.tila,
         hako.haku_oid,
         hako.toteutus_oid,
         koul.koulutus_oid,
         hako.jarjestyspaikka_oid,
+        orga.organisaatio_nimi as jarjestyspaikka_nimi,
         orga.sijaintikunta,
         orga.sijaintikunta_nimi,
         orga.sijaintimaakunta,
         orga.sijaintimaakunta_nimi,
-        hako.aloituspaikat,
+        hako.hakukohteen_aloituspaikat,
+        hako.valintaperusteiden_aloituspaikat,
         hako.aloituspaikat_ensikertalaisille,
         hako.hakukohdekoodiuri,
         case
@@ -75,11 +78,14 @@ int as (
             else 6
         end as tutkinnon_taso_sykli,
         coalesce(
-            hako.koulutuksenalkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksen_alkamiskausi))
+            hako.koulutuksen_alkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi))
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
         coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,
-        tote.oppilaitoksen_opetuskieli
+        hako.oppilaitoksen_opetuskieli,
+        koul.alempi_kk_aste,
+        koul.ylempi_kk_aste,
+        koul.okm_ohjauksen_ala
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -106,19 +112,25 @@ final as (
         hakukohde_nimi,
         organisaatio_nimi,
         toimipiste,
+        toimipiste_nimi,
         oppilaitos,
+        oppilaitos_nimi,
+        koulutustoimija,
+        koulutustoimija_nimi,
         ulkoinen_tunniste,
         tila,
         haku_oid,
         toteutus_oid,
         koulutus_oid,
         jarjestyspaikka_oid,
+        jarjestyspaikka_nimi,
         sijaintikunta,
         sijaintikunta_nimi,
         sijaintimaakunta,
         sijaintimaakunta_nimi,
         oppilaitoksen_opetuskieli,
-        aloituspaikat,
+        hakukohteen_aloituspaikat,
+        valintaperusteiden_aloituspaikat,
         aloituspaikat_ensikertalaisille,
         hakukohdekoodiuri,
         hakuajat,
@@ -144,7 +156,10 @@ final as (
         end as koulutuksen_alkamisvuosi,
         henkilokohtaisen_suunnitelman_lisatiedot,
         toinen_aste_onko_kaksoistutkinto,
-        jarjestaa_urheilijan_ammkoulutusta
+        jarjestaa_urheilijan_ammkoulutusta,
+        alempi_kk_aste,
+        ylempi_kk_aste,
+        okm_ohjauksen_ala
     from step2
 )
 

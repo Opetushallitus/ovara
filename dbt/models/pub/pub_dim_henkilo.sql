@@ -21,6 +21,16 @@ kansalaisuus as not materialized (
     where priorisoitu_kansalaisuus
 ),
 
+kunta as (
+    select * from {{ ref('int_koodisto_kunta') }}
+    where viimeisin_versio
+),
+
+maa as (
+    select * from {{ ref('int_koodisto_maa_2') }}
+    where viimeisin_versio
+),
+
 int as (
     select
         atar.henkilo_oid,
@@ -39,12 +49,19 @@ int as (
         atar.postinumero,
         atar.postitoimipaikka,
         atar.kotikunta,
+        knta.koodinimi as kotikunta_nimi,
         atar.ulk_kunta as ulkomainen_kunta,
         atar.asuinmaa,
+        maa2.koodinimi as asuinmaa_nimi,
         atar.sahkoposti,
         atar.puhelin,
         atar.pohjakoulutuksen_maa_toinen_aste,
         onr1.aidinkieli,
+        case
+            when onr1.aidinkieli = 'fi' then 'fi'
+            when onr1.aidinkieli = 'sv' then 'sv'
+            else 'muu'
+        end as aidinkieliluokka,
         onr1.sukupuoli,
         atar.koulutusmarkkinointilupa,
         atar.valintatuloksen_julkaisulupa,
@@ -59,6 +76,8 @@ int as (
     inner join onr as hmap on atar.henkilo_oid = hmap.henkilo_oid
     inner join onr as onr1 on hmap.master_oid = onr1.henkilo_oid
     left join kansalaisuus as kans on onr1.henkilo_oid = kans.henkilo_oid
+    left join kunta as knta on atar.kotikunta = knta.koodiarvo
+    left join maa as maa2 on atar.asuinmaa = maa2.koodiarvo
 
 )
 

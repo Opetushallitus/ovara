@@ -11,13 +11,11 @@
 }}
 
 with raw as (
-    select
-        *,
-        row_number() over (partition by id, versio_id, muokattu order by dw_metadata_dbt_copied_at desc) as _row_nr
-    from {{ ref('stg_ataru_lomake') }}
+    select distinct on (id, versio_id, muokattu) * from {{ ref('stg_ataru_lomake') }}
     {% if is_incremental() %}
         where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t)
     {% endif %}
+    order by id asc, versio_id desc, muokattu desc, dw_metadata_dbt_copied_at desc
 ),
 
 final as (
@@ -25,7 +23,6 @@ final as (
         {{ dbt_utils.star(from=ref('stg_ataru_lomake')) }},
         current_timestamp as dw_metadata_dw_stored_at
     from raw
-    where _row_nr = 1
 )
 
 select * from final
