@@ -23,6 +23,10 @@ hakutoive as (
     inner join haku on hate.haku_oid = haku.haku_oid and haku.haun_tyyppi = 'korkeakoulu'
 ),
 
+maksuvelvollisuus as (
+    select * from {{ ref('pub_dim_maksuvelvollisuus') }}
+),
+
 hakemus as (
     select * from {{ ref('int_hakutoive_kk') }}
 ),
@@ -33,9 +37,10 @@ final as (
         hato.henkilo_oid,
         hake.hakukelpoisuus,
         hake.pohjakoulutus,
-        hake.maksuvelvollisuus
+        mave.maksuvelvollisuus
     from hakutoive as hato
     left join hakemus as hake on hato.hakutoive_id = hake.hakutoive_id
+    left join maksuvelvollisuus as mave on mave.hakutoive_id = hake.hakutoive_id
 
 
 )

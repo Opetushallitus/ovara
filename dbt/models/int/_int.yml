@@ -4,7 +4,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
@@ -90,6 +90,14 @@ models:
           - not_null
       - name: muokattu
         data_type: timestamptz
+
+  - name: int_maksuvelvollisuus
+    columns:
+      - name: hakutoive_id
+        data_type: text
+      - name: maksuvelvollisuus
+        data_type: text
+
   - name: int_organisaatio_osoite
     description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne löytyvät eri taulusta.
     columns:

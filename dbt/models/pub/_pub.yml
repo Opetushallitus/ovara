@@ -459,6 +459,17 @@ models:
       - name: tila
         data_type: text
 
+  - name: pub_dim_maksuvelvollisuus
+    description: Sisältää hakutoivetasolla tiedot maksuvelvollisuudesta.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+      - name: maksuvelvollisuus
+        data_type: text
+
   - name: pub_dim_oppilaitos
     config:
       contract:
@@ -697,7 +708,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: henkilo_oid
         data_type: text
       - name: hakukelpoisuus
@@ -706,7 +717,7 @@ models:
         data_type: jsonb
       - name: maksuvelvollisuus
         data_type: text
-        description: Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".  
+        description: Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".
 
   - name: pub_fct_raportti_hakijat_toinen_aste
     description: |
