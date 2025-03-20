@@ -5,7 +5,7 @@ models:
       - name: henkilo_oid
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: master_oid
         data_type: text
       - name: master
@@ -40,6 +40,10 @@ models:
         data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
+      - name: luotu
+        data_type: timestamp with time zone
+      - name: muokattu
+        data_type: timestamp with time zone
   - name: int_onr_kansalaisuus
     description: |
       Taulu on luotu käsittelemään useampi kansalaisuus. Jos hakijalla on useampia kansalaisuuksia, haetaan tauluun
@@ -49,7 +53,7 @@ models:
       - name: henkilo_oid
         data_type: text
         data_tests:
-        - not_null
+          - not_null
       - name: kansalaisuus
         description: kansalaisuuden tunnus, koodisto maat_ja_valtiot2
         data_type: text

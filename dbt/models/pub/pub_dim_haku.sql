@@ -1,7 +1,3 @@
-{#
-    Todo: koulutuksen alku ja hakukausi + -vuosi puuttuvat vielä. Selvityksessä mistä tämä tieto saadaan
-#}
-
 {{
     config(
         materialized = 'table',

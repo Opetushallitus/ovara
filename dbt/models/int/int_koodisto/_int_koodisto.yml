@@ -12,18 +12,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -48,17 +42,11 @@ models:
       - name: koodiuri
         description: koodiurissa on mukana sekä koodiston uri että koodiarvo
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: koodisssa oleva maakoodi
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: koodiston versio
-        data_tests:
-          - not_null
         data_type: integer
       - name: nimi_fi
         description: Maan suomenkielinen nimi
@@ -83,17 +71,11 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
-        data_tests:
-          - not_null
         data_type: text
       - name: koodiversio
         description: ""
-        data_tests:
-          - not_null
         data_type: integer
       - name: nimi_fi
         description: ""
@@ -118,18 +100,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -153,18 +129,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -188,18 +158,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -223,18 +187,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -258,18 +216,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -293,18 +245,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -328,18 +274,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -363,18 +303,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -398,18 +332,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -430,22 +358,15 @@ models:
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
-          - not_null
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -501,18 +422,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -536,18 +451,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -571,18 +480,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -606,18 +509,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -641,18 +538,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -676,18 +567,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
-      - name: koodiarvo
+        name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -711,18 +596,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -778,18 +657,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -813,18 +686,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -848,18 +715,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -883,18 +744,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -918,18 +773,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -953,18 +802,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -988,18 +831,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -1023,18 +860,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -1058,18 +889,12 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiarvo
         description: ""
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiversio
         description: ""
         data_type: integer
-        data_tests:
-          - not_null
       - name: nimi_fi
         description: ""
         data_type: text
@@ -1090,8 +915,6 @@ models:
       - name: versioitu_koodiuri
         description: '{{ doc("versioitu_koodiuri") }}'
         data_type: text
-        data_tests:
-          - not_null
       - name: koodiuri
         description: ""
         data_type: text
@@ -1154,16 +977,10 @@ models:
           - dbt_constraints.primary_key
       - name: koodiuri
         data_type: text
-        data_tests:
-        - not_null
       - name: koodiarvo
         data_type: text
-        data_tests:
-        - not_null
       - name: koodiversio
         data_type: integer
-        data_tests:
-        - not_null
       - name: nimi_fi
         data_type: text
       - name: nimi_sv
