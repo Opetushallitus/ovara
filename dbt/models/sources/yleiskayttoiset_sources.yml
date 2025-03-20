@@ -21,11 +21,14 @@ sources:
       description: ONR:n yhteystietoja
     - name: organisaatio_ryhma
       description: Hakukohderyhmien perustiedot
-  - name: onr_henkilo
+
+  - name: yleiskayttoiset
     database: ovara
     schema: dw
+    description: viritys jotta voidaan käsitellä onr_henkilo-taulusta ainoastaan muutetut
     tables:
     - name: dw_onr_henkilo
-      description: viritys jotta voidaan käsitellä ontr_henkilo-taulusta ainoastaan muutetut
+    - name: dw_koodisto_koodi
+    - name: dw_koodisto_relaatio
 
 

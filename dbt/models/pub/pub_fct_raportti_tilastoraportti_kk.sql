@@ -26,6 +26,10 @@ hakemus as (
     select * from {{ ref('int_hakutoive_kk') }}
 ),
 
+maksuvelvollisuus as (
+    select * from {{ ref('pub_dim_maksuvelvollisuus') }}
+),
+
 final as (
     select
         hato.hakukohde_oid,
@@ -84,7 +88,7 @@ final as (
         ) as ilm_yht,
         sum(
             case
-                when hake.maksuvelvollisuus = 'obligated' then 1
+                when mave.maksuvelvollisuus = 'obligated' then 1
                 else 0
             end
         ) as maksuvelvollisia,
@@ -99,6 +103,8 @@ final as (
     inner join hakukohde as hako on hato.hakukohde_oid = hako.hakukohde_oid
     left join valintarekisteri as vare on hato.hakukohde_henkilo_id = vare.hakukohde_henkilo_id
     left join hakemus as hake on hato.hakutoive_id = hake.hakutoive_id
+    left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
+
     group by 1, 2, 3, 4, 5
 
 )

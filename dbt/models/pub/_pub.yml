@@ -36,6 +36,9 @@ models:
         description: Tieto hakutavasta koodiurina
         data_type: text
       - name: hakuajat
+        description: |
+          Tämä kenttä sisältää kaikki hakuajat jotka ovat joko haulle määritettynä
+          tai löytyy joltain hakuun liitetyltä hakukohteelta.
         data_type: jsonb
       - name: hakutapa_koodi
         description: Hakutavan koodi
@@ -62,8 +65,12 @@ models:
         data_type: jsonb
         description: kohdejoukon tarkenteiden nimet jsonb-muotoisena
       - name: koulutuksen_alkamiskausi
+        description: |
+          Tämä kenttä sisältää kaikki koulutuksen alkamiskausitiedot jotka löytyvät haulta tai siihen liitetyltä
+          hakukoheelta. Tarkka alkamisaika on muutettu muotoon vuosi+kausi käyttöliittymän valintojen helpottamiseksi. 
         data_type: jsonb
       - name: haun_tyyppi
+        description: Tieto onko haku kk- vai toisen asteen. Tämä tieto on lisätty erilliseen seediin, raw_haunkohdejoukko
         data_type: text
 
   - name: pub_dim_hakukohde
@@ -117,6 +124,7 @@ models:
         description: Jos tässä kentässä on arvo true, niin hakukohteen hakuaikoina käytetään haun hakuaikoja.
         data_type: boolean
       - name: on_valintakoe
+        description: Tämä arvo on true jos on valintakokeita määritettynä tälle hakukohteelle
         data_type: boolean
       - name: tutkinnon_taso_sykli
         data_type: integer
@@ -185,7 +193,7 @@ models:
         description: hakukohderyhmän lokalisoidut nimet
 
   - name: pub_dim_hakukohderyhma_ja_hakukohteet
-    description: Hakukohderyhmien tiedot
+    description: Hakukohderyhmiiin kuliuvat hakukohteet
     config:
       contract:
         enforced: true
@@ -205,7 +213,10 @@ models:
         data_type: text
 
   - name: pub_dim_hakutoive
-    description: Sisältää aktiiviset hakutoiveet
+    description: |
+      Sisältää aktiiviset hakutoiveet. Hakutoive on yhdistelmä hakemusta ja hakukohdetta, 
+      eikä se ole sellaisenaan olemassa opintopolussa.
+
     config:
       contract:
         enforced: true
@@ -216,8 +227,10 @@ models:
         data_tests:
           - dbt_constraints.primary_key
       - name: hakukohde_henkilo_id
+        description: Hashattu yhdistelmä hakukohde_oid ja henkilo_oid
         data_type: text
       - name: henkilo_hakemus_id
+        description: Hashattu yhdistelmä henkilo_oid  ja hakemus_oid
         data_type: text
       - name: hakemus_oid
         description: hakemuksen oid
@@ -270,7 +283,10 @@ models:
         description: Valintatiedon viimeksi päivätty tieto
 
   - name: pub_dim_henkilo
-    description: Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
+    description: | 
+      Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
+      Taulussa tiedot ovat tasolla henkilo-hakemus, eli hakemuskohtaiset tiedot.
+      Kun tämä taulu liitetään muihin tauluihin pitää käyttää avaimena henkilo_hakemus_id
     config:
       contract:
         enforced: true
@@ -304,6 +320,7 @@ models:
         description: kotikunnan koodi tai tekstinä tallennettu tieto
         data_type: text
       - name: kotikunta_nimi
+        description: Kunnan lokalisoidut nimet sikälu kun löytyy kotikunta-tiedon perusteella
         data_type: jsonb
       - name: ulkomainen_kunta
         description: Ulkomaisen kunnan nimi suoraan hakemuksesta
@@ -311,6 +328,7 @@ models:
       - name: asuinmaa
         data_type: text
       - name: asuinmaa_nimi
+        description: Asuinmaan lokalisoitu nimi asuinmaa-koodin perusteella
         data_type: jsonb
       - name: sahkoposti
         data_type: text
@@ -413,8 +431,23 @@ models:
         desription: Jatkotutkinto on tosi jos ensimmäinen koulutuskoodi alkaa merkillä 8
         data_type: boolean
       - name: laakis
+        description: |
+          Lääkis on true jos koulutuksen koodiarvo on joku näistä:
+          - 772100
+          - 772101
+          - 772200
+          - 772201
+          - 772300
+          - 772301
         data_type: boolean
       - name: kk_tutkinnon_taso
+        description: |
+          Tämä arvo on päätelty alempi_kk_aste, ylempi_kk_aste ja jatkotutkinnon yhdistelmänä.
+          - alempi_kk 1
+          - ylempi_kk 2
+          - alempi_kk ja ylempi_kk 3
+          - jatkotutkinto 4
+          - muuten 5
         data_type: integer
 
   - name: pub_dim_koulutustoimija
@@ -457,6 +490,17 @@ models:
       - name: children
         data_type: jsonb
       - name: tila
+        data_type: text
+
+  - name: pub_dim_maksuvelvollisuus
+    description: Sisältää hakutoivetasolla tiedot maksuvelvollisuudesta.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+      - name: maksuvelvollisuus
         data_type: text
 
   - name: pub_dim_oppilaitos
@@ -697,7 +741,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: henkilo_oid
         data_type: text
       - name: hakukelpoisuus
@@ -706,7 +750,7 @@ models:
         data_type: jsonb
       - name: maksuvelvollisuus
         data_type: text
-        description: Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".  
+        description: Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".
 
   - name: pub_fct_raportti_hakijat_toinen_aste
     description: |
@@ -808,9 +852,8 @@ models:
         data_type: bigint
   - name: pub_fct_raportti_tilastoraportti_toinen_aste
     description: |
-      Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
+      Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle.  
       Raportille pitää pelkästään tehdä sum group by ja suodattaa raportin filtteriehtojen mukaan.
-      Huom! Aloituspaikat-tieto on hakukohdekohtainen tieto, joten se pitää hakea raportille käyttäen min
     config:
       contract:
         enforced: true

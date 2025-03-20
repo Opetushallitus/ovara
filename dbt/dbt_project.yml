@@ -30,7 +30,7 @@ models:
         - columns: ['dw_metadata_dbt_copied_at']
         - columns: ['dw_metadata_stg_stored_at']
       +docs:
-        node_color: "#00008b"
+        node_color: "#2c7790"
       +pre-hook:
         - "{{ stg_start() }}"
       +tags: stg
@@ -40,7 +40,7 @@ models:
       +indexes:
         - columns: ['dw_metadata_dw_copied_at']
       +docs:
-        node_color: "#00008b"
+        node_color: "#2c7790"
       +post-hook:
         - "{{ dw_end() }}"
       +tags: dw
@@ -49,7 +49,7 @@ models:
       +schema: int
       +materialized: table
       +docs:
-        node_color: "#ADD8E6"
+        node_color: "#20586a"
     pub:
       +schema: pub
       +materialized: table

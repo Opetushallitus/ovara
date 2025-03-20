@@ -20,7 +20,7 @@ with source as (
 #}
     where
         (data ->> 'updated')::timestamptz > (
-            select coalesce(max(muokattu), '1899-12-31') from {{ source('onr_henkilo', 'dw_onr_henkilo') }}
+            select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_onr_henkilo') }}
         )
 {#
     {% endif %}

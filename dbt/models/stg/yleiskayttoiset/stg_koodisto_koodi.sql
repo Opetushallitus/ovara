@@ -1,6 +1,16 @@
+{{
+  config(
+    materialized = 'table',
+    indexes = [
+        {'columns': ['koodi_id']},
+        {'columns': ['muokattu']}
+    ]
+    )
+}}
+
 with source as (
     select * from {{ source('ovara', 'koodisto_koodi') }}
-
+{#
     {% if is_incremental() %}
 
         where dw_metadata_dbt_copied_at > (
@@ -8,6 +18,13 @@ with source as (
         )
 
     {% endif %}
+
+    #}
+        where
+        (data ->> 'updated')::timestamptz > (
+            select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_koodisto_koodi') }}
+        )
+
 ),
 
 int as (
