@@ -30,7 +30,7 @@ final as (
         (data -> 'muuPohjakoulutusvaatimus')::jsonb as muuPohjakoulutusvaatimus,
         (data ->> 'toinenAsteOnkoKaksoistutkinto')::boolean as toinenAsteOnkoKaksoistutkinto,
         (data ->> 'kaytetaanHaunAikataulua')::boolean as kaytetaanHaunAikataulua,
-        data ->> 'valintaperusteId'::varchar as valintaperusteId,
+        (data ->> 'valintaperusteId')::uuid as valintaperusteId,
         (data ->> 'liitteetOnkoSamaToimitusaika')::boolean as liitteetOnkoSamaToimitusaika,
         (data ->> 'liitteetOnkoSamaToimitusosoite')::boolean as liitteetOnkoSamaToimitusosoite,
         (data ->> 'liitteidenToimitusaika')::timestamptz as liitteidenToimitusaika,

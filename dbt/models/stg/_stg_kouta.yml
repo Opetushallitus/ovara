@@ -75,125 +75,111 @@ models:
     description: Hakokohteiden tietoja
     columns:
       - name: oid
-        description: ""
         data_type: text
       - name: toteutusoid
-        description: ""
         data_type: text
       - name: hakuoid
-        description: ""
         data_type: text
       - name: tila
-        description: ""
         data_type: text
       - name: esikatselu
-        description: ""
         data_type: boolean
       - name: jarjestyspaikkaoid
-        description: ""
         data_type: text
       - name: hakulomakekuvaus
-        description: ""
         data_type: json
       - name: hakulomakelinkki
-        description: ""
         data_type: json
       - name: kaytetaanhaunhakulomaketta
-        description: ""
         data_type: boolean
       - name: pohjakoulutusvaatimuskoodiurit
-        description: ""
         data_type: json
       - name: pohjakoulutusvaatimustarkenne
-        description: ""
         data_type: json
       - name: muupohjakoulutusvaatimus
-        description: ""
         data_type: json
       - name: toinenasteonkokaksoistutkinto
-        description: ""
         data_type: boolean
       - name: kaytetaanhaunaikataulua
-        description: ""
         data_type: boolean
       - name: liitteetonkosamatoimitusaika
-        description: ""
         data_type: boolean
       - name: liitteetonkosamatoimitusosoite
-        description: ""
         data_type: boolean
       - name: liitteet
-        description: ""
         data_type: json
       - name: valintakokeet
-        description: ""
         data_type: json
       - name: hakuajat
-        description: ""
         data_type: json
       - name: valintakokeidenyleiskuvaus
-        description: ""
         data_type: json
       - name: valintaperusteenvalintakokeidenlisatilaisuudet
-        description: ""
         data_type: json
       - name: kynnysehto
-        description: ""
         data_type: json
       - name: kaytetaanhaunalkamiskautta
-        description: ""
         data_type: boolean
       - name: aloituspaikat
-        description: ""
         data_type: integer
       - name: aloituspaikat_kuvaus
-        description: ""
         data_type: text
       - name: uudenopiskelijanurl
-        description: ""
         data_type: json
       - name: ismuokkaajaophvirkailija
-        description: ""
         data_type: boolean
       - name: jarjestaaurheilijanammkoulutusta
-        description: ""
         data_type: boolean
       - name: muokkaaja
-        description: ""
         data_type: text
       - name: organisaatiooid
-        description: ""
         data_type: text
       - name: kielivalinta
-        description: ""
         data_type: json
       - name: muokattu
-        description: ""
         data_type: timestamp with time zone
       - name: nimi_fi
-        description: ""
         data_type: text
       - name: nimi_sv
-        description: ""
         data_type: text
       - name: nimi_en
-        description: ""
         data_type: text
       - name: muokkaajannimi
-        description: ""
         data_type: text
       - name: dw_metadata_source_timestamp_at
-        description: ""
         data_type: timestamp with time zone
       - name: dw_metadata_dbt_copied_at
-        description: ""
         data_type: timestamp with time zone
       - name: dw_metadata_filename
-        description: ""
         data_type: character varying
       - name: dw_metadata_file_row_number
-        description: ""
         data_type: integer
+      - name: externalid
+        data_type: text
+      - name: hakukohdekoodiuri
+        data_type: text
+      - name: hakulomaketyyppi
+        data_type: text
+      - name: hakulomakeataruid
+        data_type: text
+      - name: valintaperusteid
+        data_type: uuid
+      - name: liitteidentoimitusaika
+        data_type: timestamp with time zone
+      - name: liitteidentoimitustapa
+        data_type: text
+      - name: liitteidentoimitusosoite
+        data_type: jsonb
+      - name: koulutuksenalkamiskausi
+        data_type: jsonb
+      - name: aloituspaikat_ensikertalaisille
+        data_type: integer
+      - name: hakukohteenlinja
+        data_type: jsonb
+      - name: painotetutarvosanat
+        data_type: jsonb
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
   - name: stg_kouta_koulutus
     description: ""
     columns:

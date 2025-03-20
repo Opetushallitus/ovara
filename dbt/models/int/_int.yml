@@ -62,6 +62,9 @@ models:
         description: valintaperusteista otetut aloituspaikat yhteensä kun siirretaanSijoitteluun = true
       - name: oppilaitoksen_opetuskieli
         data_type: jsonb
+      - name: valintaperuste_nimi
+        data_type: jsonb
+        description: valintaperusteiden lokalisoitu nimi
 
   - name: int_koulutus_koulutuskoodi
     description: Koulutusten koulutuskoodit purettu auki tauluun
