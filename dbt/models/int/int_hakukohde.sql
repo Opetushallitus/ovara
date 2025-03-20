@@ -45,6 +45,10 @@ opetuskieli as (
     group by hakukohde_oid
 ),
 
+valintaperuste as (
+    select * from {{ ref('int_kouta_valintaperuste') }}
+),
+
 final as (
     select
         hako.hakukohde_oid,
@@ -65,11 +69,13 @@ final as (
         hako.aloituspaikat::bigint as hakukohteen_aloituspaikat,
         poko.pohjakoulutuskoodit,
         alpa.aloituspaikat as valintaperusteiden_aloituspaikat,
-        opki.oppilaitoksen_opetuskieli
+        opki.oppilaitoksen_opetuskieli,
+        vape.valintaperuste_nimi
     from hakukohde as hako
     left join pohjakoulutus as poko on hako.hakukohde_oid = poko.hakukohde_oid
     left join valintaperusteiden_aloituspaikat as alpa on hako.hakukohde_oid = alpa.hakukohde_oid
     left join opetuskieli as opki on hako.hakukohde_oid = opki.hakukohde_oid
+    left join valintaperuste as vape on hako.valintaperuste_id = vape.valintaperuste_id
 )
 
 select * from final

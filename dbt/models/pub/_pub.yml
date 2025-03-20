@@ -178,6 +178,9 @@ models:
         data_type: boolean
       - name: okm_ohjauksen_ala
         data_type: int
+      - name: valintaperuste_nimi
+        data_type: jsonb
+        description: valintaperusteen lokalisoitu nimi
 
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot

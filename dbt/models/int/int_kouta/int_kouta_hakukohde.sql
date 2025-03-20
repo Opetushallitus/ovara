@@ -25,6 +25,7 @@ final as (
             'fi', coalesce(nimi_fi, nimi_sv, nimi_en)
         ) as hakukohde_nimi,
         organisaatiooid as organisaatio_oid,
+        valintaperusteid as valintaperuste_id,
         {{ dbt_utils.star(
             from=ref('dw_kouta_hakukohde'),
             except=[
@@ -34,7 +35,8 @@ final as (
                 'externalid',
                 'nimi_fi',
                 'nimi_sv',
-                'nimi_en']
+                'nimi_en',
+                'valintaperusteid']
             ) }}
     from hakukohde
 )
