@@ -1,7 +1,7 @@
 version: 2
 
 seeds:
-description: github-ajossa ajetaan ainoastaan ne seedit joissa on tagi "seed" merkitty.
+
   - name: raw_taulut
     config:
       schema: raw
@@ -12,6 +12,8 @@ description: github-ajossa ajetaan ainoastaan ne seedit joissa on tagi "seed" me
       1) Lisää taulun nimi seeds/raw_taulut.csv-tiedostoon omalle riville  
       2) aja # dbt seed --target=prod  
       3) aja # dbt run-operation create_raw_tables --target=prod  
+      github-ajossa ajetaan ainoastaan ne seedit joissa on tagi "seed" merkitty.
+  
   - name: raw_haunkohdejoukko
     config:
       schema: raw
