@@ -4,6 +4,8 @@ seeds:
   - name: raw_taulut
     config:
       schema: raw
+      tags: 
+      - seed
     description: |
       Tässä tiedostossa on lista kaikista raw-taulusta joita järjestelmässä on. Lisätääksesi uuden raw-taulun  
       1) Lisää taulun nimi seeds/raw_taulut.csv-tiedostoon omalle riville  
@@ -12,6 +14,8 @@ seeds:
   - name: raw_haunkohdejoukko
     config:
       schema: raw
+      tags: 
+      - seed
       column_types: 
         haunkohdejoukko: text
         haun_tyyppi: text

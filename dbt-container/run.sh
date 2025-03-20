@@ -23,7 +23,7 @@ fi
 echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
-dbt seed -s raw_taulut --target=prod
+dbt seed -s tag:seed --target=prod
 dbt run-operation create_raw_tables --target=prod
 
 is_error="0"
