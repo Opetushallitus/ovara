@@ -6,27 +6,18 @@
     )
 }}
 
-with raw as (
+with toteutus as (
     select distinct on (oid) * from {{ ref('dw_kouta_toteutus') }}
     order by oid asc, muokattu desc
-),
-
-int as (
-    select
-        *,
-        coalesce(nimi_fi, nimi_en, nimi_sv) as nimi_fi_new,
-        coalesce(nimi_sv, nimi_fi, nimi_en) as nimi_sv_new,
-        coalesce(nimi_en, nimi_fi, nimi_sv) as nimi_en_new
-    from raw
 ),
 
 final as (
     select
         oid as toteutus_oid,
         jsonb_build_object(
-            'en', nimi_en_new,
-            'sv', nimi_sv_new,
-            'fi', nimi_fi_new
+            'en', coalesce(nimi_fi, nimi_en, nimi_sv),
+            'sv', coalesce(nimi_sv, nimi_fi, nimi_en),
+            'fi', coalesce(nimi_en, nimi_fi, nimi_sv)
         ) as toteutus_nimi,
         koulutusoid as koulutus_oid,
         organisaatiooid as organisaatio_oid,
@@ -34,7 +25,7 @@ final as (
         {{ dbt_utils.star(from=ref('dw_kouta_toteutus'),
             except=['nimi_fi','nimi_sv','nimi_en','koulutusoid','organisaatiooid','oid']) }}
 
-    from int
+    from toteutus
 )
 
 select * from final

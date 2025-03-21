@@ -1,6 +1,7 @@
 {{
   config(
     materialized = 'incremental',
+    on_schema_change = 'append_new_columns',
     unique_key = ['hakemus_versio_id','muokattu'],
     incremental_strategy = 'merge',
     indexes = [
