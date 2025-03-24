@@ -48,6 +48,7 @@ final as (
         data -> 'keyValues' ->> 'phone'::varchar as puhelin,
         data -> 'keyValues' ->> 'secondary-completed-base-education–country'::varchar
         as pohjakoulutuksen_maa_toinen_aste,
+        (data -> 'applicationPaymentState')::jsonb as hakemusmaksut,
         (data ->> 'modified_time')::timestamptz as muokattu,
         {{ metadata_columns() }}
 

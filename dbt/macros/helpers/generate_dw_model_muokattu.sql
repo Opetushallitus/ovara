@@ -22,7 +22,7 @@
             ],
         indexes = [
             {'columns': key_columns_list},
-            {'columns': ['dw_metadata_dw_stored_at']}
+            {'columns': ['dw_metadata_stg_stored_at']}
         ]
     )
 -}}

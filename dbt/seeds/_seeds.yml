@@ -1,16 +1,19 @@
 version: 2
 
 seeds:
+
   - name: raw_taulut
     config:
       schema: raw
       tags: 
       - seed
     description: |
-      Tässä tiedostossa on lista kaikista raw-taulusta joita järjestelmässä on. Lisätääksesi uuden raw-taulun  
+      Tässä tiedostossa on lista kaikista raw-taulusta joita järjestelmässä on. Lisätääksesi uuden raw-taulun
       1) Lisää taulun nimi seeds/raw_taulut.csv-tiedostoon omalle riville  
       2) aja # dbt seed --target=prod  
       3) aja # dbt run-operation create_raw_tables --target=prod  
+      github-ajossa ajetaan ainoastaan ne seedit joissa on tagi "seed" merkitty.
+  
   - name: raw_haunkohdejoukko
     config:
       schema: raw

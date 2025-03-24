@@ -2,6 +2,7 @@
   config(
     materialized = 'incremental',
     incremental_strategy = 'merge',
+    on_schema_change= 'append_new_columns',
     unique_key = 'hakemus_oid',
     indexes = [
         {'columns' :['tiedot'], 'type': 'gin'}
@@ -27,7 +28,8 @@ final as (
             when tila = 'inactivated'
                 then true::boolean
             else false::boolean
-        end as poistettu
+        end as poistettu,
+        hakemusmaksut ->> 'state' as hakemusmaksun_tila
     from raw
     where henkilo_oid is not null
 )

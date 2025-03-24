@@ -30,7 +30,7 @@ is_error="0"
 
 if [[ -z "$1" ]]; then
   echo "Running DBT without any extra paramaters"
-  if dbt build --target=prod ; then
+  if dbt build --target=prod --exclude "resource_type:seed"; then
   	is_error="0"
   else
     is_error="1"
@@ -38,7 +38,7 @@ if [[ -z "$1" ]]; then
   echo "Finished running DBT"
 else
   echo "Running DBT with extra paramaters: $1"
-  if dbt build --target=prod "$1"; then
+  if dbt build --target=prod --exclude "resource_type:seed" "$1"; then
   	is_error="0"
   else
     is_error="1"
