@@ -366,6 +366,9 @@ models:
         data_type: text
       - name: syntymaaika
         data_type: date
+      - name: hakemusmaksun_tila
+        description: Hakemusmaksun tila Atarusta
+        data_type: text
 
   - name: pub_dim_koulutus
     description: >-

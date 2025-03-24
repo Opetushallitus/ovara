@@ -71,7 +71,8 @@ int as (
         kans.kansalaisuusluokka,
         onr1.turvakielto,
         onr1.hetu,
-        onr1.syntymaaika
+        onr1.syntymaaika,
+        atar.hakemusmaksun_tila
     from ataru as atar
     inner join onr as hmap on atar.henkilo_oid = hmap.henkilo_oid
     inner join onr as onr1 on hmap.master_oid = onr1.henkilo_oid

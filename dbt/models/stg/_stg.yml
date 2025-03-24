@@ -493,3 +493,47 @@ models:
         data_type: character varying
       - name: dw_metadata_file_row_number
         data_type: integer
+  - name: stg_valintarekisteri_jonosija
+    config:
+      post_hook: "create index if not exists stg_valintarekisteri_jonosija_id_muokattu_copy on {{ this }} (id asc,	muokattu desc,dw_metadata_stg_stored_at desc)"
+    columns:
+      - name: id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_oid
+        data_type: text
+      - name: hyvaksytty_harkinnanvaraisesti
+        data_type: boolean
+      - name: jonosija
+        data_type: integer
+      - name: varasijan_numero
+        data_type: integer
+      - name: onko_muuttunut_viime_sijoittelussa
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: pisteet
+        data_type: double precision
+      - name: siirtynyt_toisesta_valintatapajonosta
+        data_type: boolean
+      - name: sijoitteluajo_id
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: tasasija_jonosija
+        data_type: integer
+      - name: tila
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
