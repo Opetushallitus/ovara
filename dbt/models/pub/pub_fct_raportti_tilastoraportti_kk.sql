@@ -34,7 +34,7 @@ final as (
     select
         hato.hakukohde_oid,
         henk.aidinkieliluokka as aidinkieli,
-        coalesce(henk.kansalaisuusluokka, 3) as kansalaisuusryhma,
+        coalesce(henk.kansalaisuusluokka, 3) as kansalaisuusluokka,
         henk.sukupuoli,
         coalesce(henk.kansalaisuus, '999') as kansalaisuus,
         coalesce(hato.ensikertalainen, false) as ensikertalainen,

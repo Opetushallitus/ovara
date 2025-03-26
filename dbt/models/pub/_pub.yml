@@ -811,18 +811,20 @@ models:
       - name: hakukohde_oid
         data_type: text
       - name: aidinkieli
-        description: Äiidnkieli on jaettu kolmeen ryhmään; suomi (fi), ruotsi(sv) tai muu
+        description: Äiidnkieli on jaettu kolmeen luokkaan; suomi (fi), ruotsi(sv) tai muu
         data_type: text
-      - name: kansalaisuusryhma
+      - name: kansalaisuusluokka
         description: |
-          Kansalaisuus on jaettu kolmeen ryhmään; 1=suomi, 2=EU/ETA, 3=muut
+          Kansalaisuus on jaettu kolmeen luokkaan; 1=suomi, 2=EU/ETA, 3=muut
           Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" tässä järjestyksessä
         data_type: integer
       - name: sukupuoli
         description: Sukupuolitieto koodiston mukaan. 1=mies, 2=nainen
         data_type: integer
       - name: kansalaisuus
-        description: Kansalaisuuskoodi joka vastaa koodistoa maat_ja_valtiot2
+        description: |
+          Kansalaisuuskoodi joka vastaa koodistoa maat_ja_valtiot2. 
+          Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" järjestyksessä Suomi, EU/ETA, muu
         data_type: text
       - name: ensikertalainen
         data_type: boolean
