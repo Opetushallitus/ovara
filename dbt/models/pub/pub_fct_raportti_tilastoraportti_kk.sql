@@ -34,8 +34,9 @@ final as (
     select
         hato.hakukohde_oid,
         henk.aidinkieliluokka as aidinkieli,
-        coalesce(henk.kansalaisuusluokka, 3) as kansalaisuus,
+        coalesce(henk.kansalaisuusluokka, 3) as kansalaisuusryhma,
         henk.sukupuoli,
+        coalesce(henk.kansalaisuus, '999') as kansalaisuus,
         coalesce(hato.ensikertalainen, false) as ensikertalainen,
         count(distinct hato.henkilo_oid) as hakijat,
         sum(case when hakutoivenumero = '1' then 1 else 0 end) as ensisijaisia,
@@ -105,7 +106,7 @@ final as (
     left join hakemus as hake on hato.hakutoive_id = hake.hakutoive_id
     left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
 
-    group by 1, 2, 3, 4, 5
+    group by 1, 2, 3, 4, 5, 6
 
 )
 

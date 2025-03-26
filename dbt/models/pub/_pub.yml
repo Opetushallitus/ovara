@@ -813,7 +813,7 @@ models:
       - name: aidinkieli
         description: Äiidnkieli on jaettu kolmeen ryhmään; suomi (fi), ruotsi(sv) tai muu
         data_type: text
-      - name: kansalaisuus
+      - name: kansalaisuusryhma
         description: |
           Kansalaisuus on jaettu kolmeen ryhmään; 1=suomi, 2=EU/ETA, 3=muut
           Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" tässä järjestyksessä
@@ -821,6 +821,9 @@ models:
       - name: sukupuoli
         description: Sukupuolitieto koodiston mukaan. 1=mies, 2=nainen
         data_type: integer
+      - name: kansalaisuus
+        description: Kansalaisuuskoodi joka vastaa koodistoa maat_ja_valtiot2
+        data_type: text
       - name: ensikertalainen
         data_type: boolean
       - name: hakijat
