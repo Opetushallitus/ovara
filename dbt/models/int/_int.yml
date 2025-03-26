@@ -37,6 +37,7 @@ models:
       - name: tila
         data_type: text
       - name: on_valintakoe
+        description: Tämä kenttä on true jos valintakokeet-kenttä ei ole tyhjä
         data_type: boolean
       - name: aloituspaikat_ensikertalaisille
         data_type: integer
