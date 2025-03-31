@@ -52,7 +52,7 @@ step2 as (
                 koulutuksenalkamiskausityyppi = 'tarkka alkamisajankohta'
                 then date_part('year', koulutuksenalkamispaivamaara)::int
         end as koulutuksen_alkamisvuosi,
-        henkilokohtaisensunnitelmanlisatiedot as henkilokohtaisen_sunnitelman_lisatiedot
+        henkilokohtaisensunnitelmanlisatiedot as henkilokohtaisen_suunnitelman_lisatiedot
     from int
 ),
 
@@ -71,7 +71,7 @@ final as (
         koulutuksenalkamiskausityyppi as koulutuksen_alkamiskausi_tyyppi,
         koulutuksen_alkamiskausi_koodiuri,
         koulutuksen_alkamisvuosi,
-        henkilokohtaisen_sunnitelman_lisatiedot
+        henkilokohtaisen_suunnitelman_lisatiedot
     from step2
 )
 
