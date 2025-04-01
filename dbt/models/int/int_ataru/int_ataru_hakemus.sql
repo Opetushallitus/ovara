@@ -1,13 +1,16 @@
 {{
-  config(
-    materialized = 'incremental',
-    incremental_strategy = 'merge',
-    on_schema_change= 'append_new_columns',
-    unique_key = 'hakemus_oid',
-    indexes = [
-        {'columns' :['tiedot'], 'type': 'gin'}
-    ],
-    post_hook = "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))"
+    config(
+        materialized = 'incremental',
+        incremental_strategy = 'merge',
+        on_schema_change= 'append_new_columns',
+        unique_key = 'hakemus_oid',
+        indexes = [
+            {'columns' :['tiedot'], 'type': 'gin'}
+        ],
+        post_hook = [
+            "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))",
+            "create index if not exists ix_int_ataru_hakemus_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)"
+        ]
     )
 }}
 
