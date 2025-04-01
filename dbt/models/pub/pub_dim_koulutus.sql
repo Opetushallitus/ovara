@@ -42,10 +42,11 @@ final as (
         koul.koulutustyyppi,
         koul.tarjoajat,
         koul.kielivalinta,
-        coalesce(
-            koul.opintojenlaajuusnumero::text,
-            koul.opintojenlaajuusnumeromin::text || '-' || koul.opintojenlaajuusnumeromax::text
-        ) as opintojenlaajuus,
+        case
+            when koul.opintojenlaajuusnumero is not null then koul.opintojenlaajuusnumero::text
+            when koul.opintojenlaajuusnumeromin = opintojenlaajuusnumeromax then opintojenlaajuusnumeromin::text
+            else koul.opintojenlaajuusnumeromin::text || '-' || koul.opintojenlaajuusnumeromax::text
+        end as opintojenlaajuus,
         lyks.koodinimi as laajuusyksikko_nimi,
         koul.koulutuksetkoodiuri as koulutus_koodit,
         coalesce(koti.alempi_kk_aste, false) as alempi_kk_aste,

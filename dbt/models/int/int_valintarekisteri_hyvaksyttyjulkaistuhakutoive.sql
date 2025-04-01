@@ -1,6 +1,9 @@
 {{
   config(
-    materialized = 'view',
+    materialized = 'table',
+    indexes = [
+        {'columns':['hakukohde_henkilo_id']}
+    ]
     )
 }}
 

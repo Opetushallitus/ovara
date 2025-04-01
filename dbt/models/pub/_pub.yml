@@ -682,7 +682,7 @@ models:
         data_type: text
       - name: koulutuksen_alkamisvuosi
         data_type: int
-      - name: henkilokohtaisen_sunnitelman_lisatiedot
+      - name: henkilokohtaisen_suunnitelman_lisatiedot
         data_type: text
   - name: pub_dim_valinnantulos
     config:
