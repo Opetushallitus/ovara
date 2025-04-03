@@ -68,6 +68,8 @@ models:
         description: valintaperusteiden lokalisoitu nimi
 
   - name: int_koulutus_koulutuskoodi
+    config:
+      enabled: false
     description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:
       - name: oid

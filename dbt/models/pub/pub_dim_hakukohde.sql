@@ -78,7 +78,7 @@ int as (
             else 6
         end as tutkinnon_taso_sykli,
         coalesce(
-            hako.koulutuksen_alkamiskausi, (coalesce(haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi))
+            hako.koulutuksen_alkamiskausi, haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
         coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,
@@ -147,7 +147,7 @@ final as (
                 and date_part('month', koulutuksen_alkamispaivamaara) <= 6 then 'kausi_k#1'
             when
                 koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
-                and date_part('month', koulutuksen_alkamispaivamaara) >= 6 then 'kausi_s#1'
+                and date_part('month', koulutuksen_alkamispaivamaara) > 6 then 'kausi_s#1'
         end as koulutuksen_alkamiskausi_koodiuri,
         case
             when koulutuksen_alkamiskausi_tyyppi = 'alkamiskausi ja -vuosi' then koulutuksen_alkamisvuosi

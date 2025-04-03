@@ -129,10 +129,16 @@ models:
       - name: tutkinnon_taso_sykli
         data_type: integer
       - name: koulutuksen_alkamiskausi
+        description: |
+          Tähän kenttään on päätelty koulutuksen alkamiskausi. Jos ei se löydy hakukohteelta, 
+          se on haettu haulta tai viime kädessä toteutukselta
         data_type: jsonb
       - name: koulutuksen_alkamiskausi_tyyppi
         data_type: text
       - name: koulutuksen_alkamiskausi_koodiuri
+        description: |
+          Koulutuksen päätellyn alkamiskauden koodi. Jos alkamisaika on tarkka päivämäärä, 
+          on tähän haettu kevät jos päivämäärä on viimeistään 30.6, muuten syksy
         data_type: text
       - name: koulutuksen_alkamisvuosi
         data_type: double precision
@@ -173,9 +179,11 @@ models:
         data_type: jsonb
         description: hakukohteen järjestysorganisaation maakunta lokalistoituna koodistosta haettuna sijaintikunnan perusteella
       - name: alempi_kk_aste
+        description: Päätelty koulutuskoodin perusteella. Jos koulutuskoodin ensimmäinen merkki on 6, on koulutus alempi kk-aste
         data_type: boolean
       - name: ylempi_kk_aste
         data_type: boolean
+        description: Päätelty koulutuskoodin perusteella. Jos koulutuskoodin ensimmäinen merkki on 7, on koulutus ylempi kk-aste
       - name: okm_ohjauksen_ala
         data_type: int
       - name: valintaperuste_nimi
