@@ -13,7 +13,8 @@ with organisaatio as (
 ),
 
 organisaatiotyyppi as (
-    select * from {{ ref('int_koodisto_organisaatiotyyppi') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_organisaatiotyyppi') }}
+    where viimeisin_versio
 ),
 
 organisaatiotyyppirivit as (

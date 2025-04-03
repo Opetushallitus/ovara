@@ -58,7 +58,10 @@ haluttu_kansalaisuus as (
         henkilo_oid,
         kansalaisuus,
         jarjestys as kansalaisuusluokka,
-        row_number() over (partition by henkilo_oid order by jarjestys) as haluttu_kansalaisuus
+        row_number() over (
+            partition by henkilo_oid
+            order by jarjestys
+        ) as haluttu_kansalaisuus
     from kansalaisuus_jarjestys
 ),
 

@@ -40,7 +40,7 @@ final as (
         mave.maksuvelvollisuus
     from hakutoive as hato
     left join hakemus as hake on hato.hakutoive_id = hake.hakutoive_id
-    left join maksuvelvollisuus as mave on mave.hakutoive_id = hake.hakutoive_id
+    left join maksuvelvollisuus as mave on hake.hakutoive_id = mave.hakutoive_id
 
 
 )

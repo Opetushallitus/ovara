@@ -5,7 +5,8 @@
 }}
 
 with hakutoive as (
-    select * from {{ ref('int_ataru_hakutoive') }} where not poistettu
+    select * from {{ ref('int_ataru_hakutoive') }}
+    where not poistettu
 ),
 
 julkaistu as (

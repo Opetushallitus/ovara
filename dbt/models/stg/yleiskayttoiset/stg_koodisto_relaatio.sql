@@ -19,7 +19,7 @@ with source as (
 
     {% endif %}
 #}
-        where
+    where
         (data ->> 'updated')::timestamptz > (
             select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_koodisto_relaatio') }}
         )

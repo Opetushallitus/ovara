@@ -9,11 +9,13 @@
 
 with
 kunta as (
-    select * from {{ ref('int_koodisto_kunta') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_kunta') }}
+    where viimeisin_versio
 ),
 
 maakunta as (
-    select * from {{ ref('int_koodisto_maakunta') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_maakunta') }}
+    where viimeisin_versio
 ),
 
 rel as (
