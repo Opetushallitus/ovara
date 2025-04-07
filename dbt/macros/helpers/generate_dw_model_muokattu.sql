@@ -44,10 +44,12 @@ with _raw as (
     where (dw_metadata_stg_stored_at > coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}),date('1900-01-01'))
             or dw_metadata_stg_stored_at is null)
     {%- endif %}
-    order by {% for column in key_columns_list -%}
+    order by
+    {% for column in key_columns_list -%}
         {{column}}
+    {%- if column == 'muokattu' %} desc{% endif -%}
     ,
-    {%- endfor %}
+    {% endfor -%}
     dw_metadata_dbt_copied_at desc
 ),
 

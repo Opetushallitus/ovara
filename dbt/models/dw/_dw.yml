@@ -558,7 +558,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_sure_opiskeluoikeus
     description: Sisältää Suoritusrekisterin opiskeluoikeus tietoja
-    columns:
+    config:
+      post_hook: "create index if not exists dw_sure_opiskeluoikeus_muokattu on {{ this }} (resourceid asc, muokattu desc)"
+      columns:
       - name: resourceid
         data_type: text
         description: Opiskeluoikeuden yksilöivä tunniste (uuid)
