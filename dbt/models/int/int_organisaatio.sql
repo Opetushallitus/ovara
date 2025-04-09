@@ -23,15 +23,18 @@ ylempi_toimipiste as (
 ),
 
 kunta as (
-    select * from {{ ref('int_koodisto_kunta') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_kunta') }}
+    where viimeisin_versio
 ),
 
 maakunta as (
-    select * from {{ ref('int_koodisto_maakunta') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_maakunta') }}
+    where viimeisin_versio
 ),
 
 kunta_maakunta as (
-    select * from {{ ref('int_koodisto_kunta_maakunta') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_kunta_maakunta') }}
+    where viimeisin_versio
 ),
 
 organisaatiotyyppi as (

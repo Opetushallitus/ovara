@@ -7,7 +7,7 @@
     )
 }}
 
-with hakemus as (
+with hakemus as ( --noqa: PRS
     select * from {{ ref('int_ataru_hakemus') }}
     where kasittelymerkinnat @? '$[*] ? (@.requirement == "payment-obligation")'
 ),

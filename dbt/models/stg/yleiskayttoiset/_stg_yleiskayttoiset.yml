@@ -89,9 +89,6 @@ models:
       - name: dw_metadata_file_row_number
         data_type: integer
   - name: stg_onr_henkilo
-    config:
-      pre_hook: set work_mem='6GB'
-      post_hook: set work_mem='256MB'
     description: Oppijanumerorekisterin henkilötietoja
     columns:
       - name: henkilo_oid

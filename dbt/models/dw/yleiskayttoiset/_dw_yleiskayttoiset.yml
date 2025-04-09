@@ -30,7 +30,7 @@ models:
   - name: dw_onr_henkilo
     config:
       pre_hook: set work_mem='6GB'
-      post_hook: set work_mem='256MB'
+      post_hook: set work_mem='512MB'
     columns:
       - name: henkilo_oid
         data_type: text

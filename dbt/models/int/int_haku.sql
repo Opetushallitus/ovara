@@ -118,6 +118,7 @@ final as (
         haun_tyyppi,
         para.vastaanotto_paattyy,
         para.hakijakohtainen_paikan_vastaanottoaika,
+        para.jarjestetyt_hakutoiveet,
         koal.koulutuksen_alkamiskausi as koulutuksen_alkamiskausi_yhd,
         haku.hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
     from haku

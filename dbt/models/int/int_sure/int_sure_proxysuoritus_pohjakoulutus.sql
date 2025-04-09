@@ -5,11 +5,13 @@
 }}
 
 with raw as (
-    select * from {{ ref('dw_sure_proxysuoritus') }} where keyvalues ? 'POHJAKOULUTUS'
+    select * from {{ ref('dw_sure_proxysuoritus') }}
+    where keyvalues ? 'POHJAKOULUTUS'
 ),
 
 koodisto as (
-    select * from {{ ref('int_koodisto_pohjakoulutustoinenaste') }} where viimeisin_versio
+    select * from {{ ref('int_koodisto_pohjakoulutustoinenaste') }}
+    where viimeisin_versio
 ),
 
 final as (

@@ -18,4 +18,4 @@ ovara:
       port: "{{ env_var('DBT_PORT_PROD') | int }}"
       database: ovara
       schema: pub
-      threads: 8
+      threads: 12

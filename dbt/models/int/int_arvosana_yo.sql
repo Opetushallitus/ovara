@@ -5,7 +5,8 @@
 }}
 
 with arvosana as (
-    select * from {{ ref('int_sure_arvosana') }} where asteikko = 'YO'
+    select * from {{ ref('int_sure_arvosana') }}
+    where asteikko = 'YO'
 ),
 
 suoritus as (

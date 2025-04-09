@@ -1,4 +1,46 @@
 models:
+  - name: int_hakutoive
+    description: Hakujen hakukohteet purettu auki hakutoive-tasolle.
+    columns:
+      - name: hakutoive_id
+        dsecription: yhdistelmä hakemusta ja hakukohdetta, tämä muodostaa yksilöitävän avaimen hakutoiveelle
+        data_type: text
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: henkilo_hakemus_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: hakutoivenumero
+        description: |
+          Jos ohjausparametreissa on määritetty että haussa on hakutoiveet_järjestetty, ne saavat hakutoivenumeron järjestyksen mukaan, 1...n
+          Jos ohjausparametreissa on määritetty että hakukohteilla ei ole järjestystä, saavat kaikki hakemuksen hakutoiveet hakutoivenumeron -1
+        data_type: bigint
+      - name: viimeinen_vastaanottopaiva
+        data_type: timestamp with time zone
+      - name: vastaanottotieto
+        data_type: text
+      - name: ilmoittautumisen_tila
+        data_type: text
+      - name: valintatapajonot
+        data_type: jsonb
+      - name: valintatieto
+        data_type: text
+      - name: ehdollisesti_hyvaksytty
+        data_type: boolean
+      - name: valintatiedon_pvm
+        data_type: date
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+
   - name: int_hakutoive_kk
     columns:
       - name: hakutoive_id
@@ -68,6 +110,8 @@ models:
         description: valintaperusteiden lokalisoitu nimi
 
   - name: int_koulutus_koulutuskoodi
+    config:
+      enabled: false
     description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:
       - name: oid
@@ -223,6 +267,19 @@ models:
         data_type: boolean
       - name: muokattu
         data_type: timestamp with time zone
+  - name: int_ohjausparametrit_parameter
+    description: Sisältää hakujen ohjasparametreja
+    columns:
+      - name: haku_oid
+        data_type: text
+      - name: vastaanotto_paattyy
+        data_type: timestamp with time zone
+      - name: hakijakohtainen_paikan_vastaanottoaika
+        data_type: integer
+      - name: jarjestetyt_hakutoiveet
+        description: Jos järjestetyt_hakutoiveet ei ole asetettu, saa kaikki hakutoiveet hakutoivenumeron -1
+        data_type: boolean
+
   - name: int_organisaatio_ryhma
     description: Hakukohderyhmien perustiedot
     columns:
