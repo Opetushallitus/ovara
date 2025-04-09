@@ -144,10 +144,10 @@ final as (
             when koulutuksen_alkamiskausi_tyyppi = 'alkamiskausi ja -vuosi' then koulutuksen_alkamiskausi_koodiuri
             when
                 koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
-                and date_part('month', koulutuksen_alkamispaivamaara) <= 6 then 'kausi_k#1'
+                and date_part('month', koulutuksen_alkamispaivamaara) <= 7 then 'kausi_k#1'
             when
                 koulutuksen_alkamiskausi_tyyppi = 'tarkka alkamisajankohta'
-                and date_part('month', koulutuksen_alkamispaivamaara) > 6 then 'kausi_s#1'
+                and date_part('month', koulutuksen_alkamispaivamaara) > 7 then 'kausi_s#1'
         end as koulutuksen_alkamiskausi_koodiuri,
         case
             when koulutuksen_alkamiskausi_tyyppi = 'alkamiskausi ja -vuosi' then koulutuksen_alkamisvuosi
