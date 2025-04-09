@@ -252,7 +252,9 @@ models:
       - name: henkilo_oid
         data_type: text
       - name: hakutoivenumero
-        description: Hakutoiveen järjestysnumero
+        description: |
+          Jos ohjausparametreissa on määritetty että haussa on hakutoiveet_järjestetty, ne saavat hakutoivenumeron järjestyksen mukaan, 1...n
+          Jos ohjausparametreissa on määritetty että hakukohteilla ei ole järjestystä, saavat kaikki hakemuksen hakutoiveet hakutoivenumeron -1
         data_type: bigint
       - name: viimeinen_vastaanottopaiva
         data_type: timestamptz

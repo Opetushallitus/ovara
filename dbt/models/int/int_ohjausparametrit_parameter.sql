@@ -1,6 +1,6 @@
 {{
   config(
-    materialized = 'view',
+    materialized = 'table',
     )
 }}
 with raw as (
@@ -12,7 +12,8 @@ final as (
     select
         haku_oid,
         vastaanotto_paattyy,
-        hakijakohtainen_paikan_vastaanottoaika
+        hakijakohtainen_paikan_vastaanottoaika,
+        jarjestetyt_hakutoiveet 
     from raw
 )
 

@@ -16,6 +16,11 @@ final as (
         (data ->> 'lastModified')::timestamptz as muokattu,
         to_timestamp((data -> 'values' -> 'PH_OPVP' ->> 'date')::bigint / 1000)::timestamptz as vastaanotto_paattyy,
         (data -> 'values' -> 'PH_HPVOA' ->> 'value')::int as hakijakohtainen_paikan_vastaanottoaika,
+        (data -> 'values' ->> 'sijoittelu')::bool as sijoittelu, 
+        (data -> 'values' ->> 'useitaHakemuksia')::bool as useita_hakemuksia, 
+        (data -> 'values' ->> 'jarjestetytHakutoiveet')::bool as jarjestetyt_hakutoiveet, 
+        (data -> 'values' ->> 'hakutoiveidenEnimmaismaara')::int as hakutoiveiden_enimmaismaara, 
+        (data -> 'values' ->> 'hakutoiveidenMaaraRajoitettu')::bool as hakutoiveiden_maara_rajoitettu, 
         (data -> 'values')::jsonb as arvot,
         {{ metadata_columns() }}
     from source

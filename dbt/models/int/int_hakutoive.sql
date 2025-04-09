@@ -49,7 +49,10 @@ int as (
         hake.haku_oid,
         hato.henkilo_oid,
         hato.hakukohde_oid,
-        hato.hakutoivenumero,
+        case 
+            when haku.jarjestetyt_hakutoiveet then hato.hakutoivenumero
+            else -1
+        end as hakutoivenumero,
         julk.hyvaksyttyjajulkaistu,
         haku.vastaanotto_paattyy,
         haku.hakijakohtainen_paikan_vastaanottoaika,
