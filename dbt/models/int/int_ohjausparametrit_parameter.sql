@@ -13,7 +13,7 @@ final as (
         haku_oid,
         vastaanotto_paattyy,
         hakijakohtainen_paikan_vastaanottoaika,
-        jarjestetyt_hakutoiveet 
+        jarjestetyt_hakutoiveet
     from raw
 )
 

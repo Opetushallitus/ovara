@@ -49,7 +49,7 @@ int as (
         hake.haku_oid,
         hato.henkilo_oid,
         hato.hakukohde_oid,
-        case 
+        case
             when haku.jarjestetyt_hakutoiveet then hato.hakutoivenumero
             else -1
         end as hakutoivenumero,
