@@ -448,30 +448,6 @@ export class DatabaseStack extends cdk.Stack {
     );
     addActionsToAlarm(databaseCPUUtilizationAlarm);
 
-    const acuThreshold = 90;
-    const databaseACUUtilizationAlarm = new cloudwatch.Alarm(
-      this,
-      `${config.environment}-ovara-aurora-acu-utilization-alarm`,
-      {
-        alarmName: `${config.environment}-ovara-aurora-acu-utilization-alarm`,
-        alarmDescription: `Ovaran Aurora-tietokannan ACUUtilization-arvo on ylittänyt hälytysrajan: ${acuThreshold}%`,
-        metric: new cloudwatch.Metric({
-          metricName: 'ACUUtilization',
-          namespace: 'AWS/RDS',
-          period: cdk.Duration.minutes(15),
-          unit: cloudwatch.Unit.PERCENT,
-          statistic: cloudwatch.Stats.AVERAGE,
-          dimensionsMap: {
-            DBClusterIdentifier: auroraCluster.clusterIdentifier,
-          },
-        }),
-        threshold: acuThreshold,
-        evaluationPeriods: 1,
-        datapointsToAlarm: 1,
-      }
-    );
-    addActionsToAlarm(databaseACUUtilizationAlarm);
-
     this.lampiTiedostoKasiteltyTable = new dynamodb.TableV2(
       this,
       'lampiSiirtotiedostoKasitelty',
