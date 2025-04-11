@@ -69,12 +69,20 @@ export class DatabaseStack extends cdk.Stack {
       value: this.auroraSecurityGroup.securityGroupId,
     });
 
+    const postgresVersion = rds.AuroraPostgresEngineVersion.of(
+      config.aurora.version.full,
+      config.aurora.version.major
+    );
+
     const parameterGroup = new rds.ParameterGroup(this, 'pg', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_15_5,
+        version: postgresVersion,
       }),
       parameters: {
         shared_preload_libraries: 'pg_stat_statements,pg_hint_plan,auto_explain,pg_cron',
+        work_mem: '524288',
+        max_parallel_workers_per_gather: '4',
+        random_page_cost: '2',
       },
     });
 
@@ -83,23 +91,32 @@ export class DatabaseStack extends cdk.Stack {
       `${config.environment}-OpiskelijavalinnanraportointiAuroraCluster`,
       {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_15_5,
+          version: postgresVersion,
         }),
         serverlessV2MinCapacity: config.aurora.minCapacity,
         serverlessV2MaxCapacity: config.aurora.maxCapacity,
         deletionProtection: config.aurora.deletionProtection,
         removalPolicy: cdk.RemovalPolicy.RETAIN,
-        writer: rds.ClusterInstance.serverlessV2('Writer', {
+        writer: rds.ClusterInstance.provisioned('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
           enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+          instanceType: new ec2.InstanceType(config.aurora.writerInstanceType),
         }),
-        readers: [
-          rds.ClusterInstance.serverlessV2('Reader', {
-            caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
-            enablePerformanceInsights: true,
-            scaleWithWriter: config.aurora.scaleReaderWithWriter,
-          }),
-        ],
+        readers: config.aurora.serverlessReader
+          ? [
+              rds.ClusterInstance.serverlessV2('Reader', {
+                caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
+                enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+                scaleWithWriter: config.aurora.scaleReaderWithWriter,
+              }),
+            ]
+          : [
+              rds.ClusterInstance.provisioned('Reader', {
+                caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
+                enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+                instanceType: new ec2.InstanceType(config.aurora.readerInstanceType),
+              }),
+            ],
         vpc: vpc,
         vpcSubnets: {
           subnets: vpc.privateSubnets,

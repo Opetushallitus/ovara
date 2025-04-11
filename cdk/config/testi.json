@@ -7,8 +7,15 @@
     "enablePerformanceInsights": true,
     "iopsStorage": true,
     "maxCapacity": 16,
-    "minCapacity": 2,
-    "scaleReaderWithWriter": false
+    "minCapacity": 0,
+    "scaleReaderWithWriter": false,
+    "writerInstanceType": "r8g.large",
+    "readerInstanceType": "r8g.large",
+    "serverlessReader": true,
+    "version": {
+      "major": "17",
+      "full": "17.4"
+    }
   },
   "environment": "testi",
   "profile": "oph-opiskelijavalinnan-raportointi-qa",
