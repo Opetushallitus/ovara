@@ -6,6 +6,7 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
+import { ContainerInsights } from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import { CfnRule } from 'aws-cdk-lib/aws-events';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -69,7 +70,7 @@ export class EcsStack extends cdk.Stack {
     const ecsClusterName = `${config.environment}-ecs-cluster`;
     const ecsCluster = new ecs.Cluster(this, ecsClusterName, {
       clusterName: ecsClusterName,
-      containerInsights: true,
+      containerInsightsV2: ContainerInsights.ENABLED,
       vpc: props.vpc,
     });
 
