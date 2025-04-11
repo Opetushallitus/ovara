@@ -297,9 +297,49 @@ export class DatabaseStack extends cdk.Stack {
       {
         subscriptionName: `${config.environment}-ovara-aurora-cluster-failover-subscription`,
         snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
-        eventCategories: ['failover', 'failure'],
+        eventCategories: [
+          'failover',
+          'migration',
+          'failure',
+          'notification',
+          'serverless',
+          'creation',
+          'deletion',
+          'maintenance',
+          'configuration change',
+          'global-failover',
+        ],
         sourceIds: [auroraCluster.clusterIdentifier],
         sourceType: 'db-cluster',
+      }
+    );
+
+    new rds.CfnEventSubscription(
+      this,
+      `${config.environment}-ovara-aurora-instances-failover-subscription`,
+      {
+        subscriptionName: `${config.environment}-ovara-aurora-instances-failover-subscription`,
+        snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
+        eventCategories: [
+          'backup',
+          'deletion',
+          'availability',
+          'creation',
+          'low storage',
+          'restoration',
+          'configuration change',
+          'failover',
+          'maintenance',
+          'failure',
+          'notification',
+          'read replica',
+          'recovery',
+          'security',
+          'backtrack',
+          'security patching',
+        ],
+        sourceIds: [...auroraCluster.instanceIdentifiers],
+        sourceType: 'db-instance',
       }
     );
 
