@@ -216,6 +216,42 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
+    const privateLinkReadOnlyNlb = new elbv2.NetworkLoadBalancer(
+      this,
+      `${config.environment}-rdsPrivateLinkReadOnlyNlb`,
+      {
+        loadBalancerName: `${config.environment}-rdsPrivateLinkReadOnlyNlb`,
+        vpc: vpc,
+        internetFacing: false,
+        crossZoneEnabled: true,
+        vpcSubnets: {
+          subnets: vpc.privateSubnets,
+        },
+        securityGroups: [privateLinkNlbSecurityGroup],
+        enforceSecurityGroupInboundRulesOnPrivateLinkTraffic: false,
+      }
+    );
+
+    const privateLinkReadOnlyTargetGroup = new elbv2.NetworkTargetGroup(
+      this,
+      `${config.environment}-rdsPrivateLinkReadOnlyTG`,
+      {
+        targetGroupName: `${config.environment}-rdsPrivateLinkReadOnlyTG`,
+        vpc: vpc,
+        port: auroraCluster.clusterReadEndpoint.port,
+        protocol: elbv2.Protocol.TCP,
+        targetType: elbv2.TargetType.IP,
+        healthCheck: {
+          interval: cdk.Duration.seconds(10),
+          port: auroraCluster.clusterReadEndpoint.port.toString(),
+          protocol: elbv2.Protocol.TCP,
+          healthyThresholdCount: 3,
+          timeout: cdk.Duration.seconds(10),
+        },
+        deregistrationDelay: cdk.Duration.seconds(0),
+      }
+    );
+
     const privateLinkNlbManagementLambdaRole = new iam.Role(
       this,
       `${config.environment}-nlbManagementLambdaRole`,
@@ -256,6 +292,17 @@ export class DatabaseStack extends cdk.Stack {
       defaultAction: elbv2.NetworkListenerAction.forward([privateLinkTargetGroup]),
     });
 
+    privateLinkReadOnlyNlb.addListener(
+      `${config.environment}-rdsPrivateLinkReadOnlyNlbListener`,
+      {
+        port: auroraCluster.clusterReadEndpoint.port,
+        protocol: elbv2.Protocol.TCP,
+        defaultAction: elbv2.NetworkListenerAction.forward([
+          privateLinkReadOnlyTargetGroup,
+        ]),
+      }
+    );
+
     const privateLinkNlbManagementLambda = new lambda.Function(
       this,
       `${config.environment}-privateLinkNlbManagementLambda`,
@@ -265,21 +312,15 @@ export class DatabaseStack extends cdk.Stack {
         handler: 'index.handler',
         runtime: lambda.Runtime.PYTHON_3_12,
         role: privateLinkNlbManagementLambdaRole,
+        environment: {
+          TARGET_GROUP_ARN: privateLinkTargetGroup.targetGroupArn,
+          RDS_ENDPOINT: auroraCluster.clusterEndpoint.hostname,
+          RDS_PORT: auroraCluster.clusterEndpoint.port.toString(),
+          READONLY_TARGET_GROUP_ARN: privateLinkReadOnlyTargetGroup.targetGroupArn,
+          READONLY_RDS_ENDPOINT: auroraCluster.clusterReadEndpoint.hostname,
+          READONLY_RDS_PORT: auroraCluster.clusterReadEndpoint.port.toString(),
+        },
       }
-    );
-
-    privateLinkNlbManagementLambda.addEnvironment(
-      'TARGET_GROUP_ARN',
-      privateLinkTargetGroup.targetGroupArn
-    );
-    privateLinkNlbManagementLambda.addEnvironment(
-      'RDS_ENDPOINT',
-      auroraCluster.clusterEndpoint.hostname
-    );
-
-    privateLinkNlbManagementLambda.addEnvironment(
-      'RDS_PORT',
-      auroraCluster.clusterEndpoint.port.toString()
     );
 
     const auroraClusterFailoverSnsTopic = new sns.Topic(
@@ -371,6 +412,28 @@ export class DatabaseStack extends cdk.Stack {
         endpointService: privateLinkVpcEndpointService,
         publicHostedZone: publicHostedZone,
         domainName: `rds-privatelink.${publicHostedZone.zoneName}`,
+      }
+    );
+
+    const privateLinkReadOnlyVpcEndpointService = new ec2.VpcEndpointService(
+      this,
+      `${config.environment}-rdsPrivateLinkReadOnlyVpcEndpointService`,
+      {
+        vpcEndpointServiceLoadBalancers: [privateLinkReadOnlyNlb],
+        acceptanceRequired: false,
+        allowedPrincipals: [
+          new iam.ArnPrincipal(`arn:aws:iam::${opintopolkuAccountId}:root`),
+        ],
+      }
+    );
+
+    new route53.VpcEndpointServiceDomainName(
+      this,
+      `${config.environment}-privateLinkReadOnlyVpcEndpointServiceDomain`,
+      {
+        endpointService: privateLinkReadOnlyVpcEndpointService,
+        publicHostedZone: publicHostedZone,
+        domainName: `rds-readonly-privatelink.${publicHostedZone.zoneName}`,
       }
     );
 
