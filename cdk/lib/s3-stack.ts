@@ -152,6 +152,8 @@ export class S3Stack extends cdk.Stack {
       {
         enforceSSL: true,
         bucketName: `${config.environment}-ovara-dokumentaatio`,
+        objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
+        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       }
     );
 
