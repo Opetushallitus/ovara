@@ -155,6 +155,17 @@ export class S3Stack extends cdk.Stack {
       }
     );
 
+    const noCachePolicy = new cloudFront.CachePolicy(
+      this,
+      `${config.environment}-dbt-documentation-noCachePolicy`,
+      {
+        cachePolicyName: `${config.environment}-dbt-documentation-noCachePolicy`,
+        defaultTtl: cdk.Duration.minutes(0),
+        minTtl: cdk.Duration.minutes(0),
+        maxTtl: cdk.Duration.minutes(0),
+      }
+    );
+
     const dokumentaatioCloudFrontToS3 = new cloudFront.Distribution(
       this,
       `${config.environment}-dokumentaatio-cloudfront-to-s3`,
@@ -164,6 +175,7 @@ export class S3Stack extends cdk.Stack {
           origin:
             cloudfrontOrigins.S3BucketOrigin.withOriginAccessControl(dokumentaatioBucket),
           viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: noCachePolicy,
         },
         domainNames: [`dokumentaatio.${config.publicHostedZone}`],
         minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
