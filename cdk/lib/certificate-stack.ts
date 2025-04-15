@@ -8,7 +8,6 @@ import { GenericStackProps } from './config';
 export interface CertificateStackProps extends GenericStackProps {}
 
 export class CertificateStack extends cdk.Stack {
-  public readonly ovaraWildcardCertificate;
   constructor(scope: Construct, id: string, props: CertificateStackProps) {
     super(scope, id, props);
 
@@ -30,7 +29,5 @@ export class CertificateStack extends cdk.Stack {
         validation: acm.CertificateValidation.fromDns(ovaraPublicHostedZone),
       }
     );
-
-    this.ovaraWildcardCertificate = ovaraWildcardCertificate;
   }
 }

@@ -48,16 +48,13 @@ const certificateStack = new CertificateStack(
       region: 'us-east-1',
       account: accountId,
     },
-    crossRegionReferences: true,
   }
 );
 
 const networkStack = new NetworkStack(app, `${config.environment}-NetworkStack`, props);
 
 const s3Stack = new S3Stack(app, `${config.environment}-S3Stack`, {
-  ovaraWildcardCertificate: certificateStack.ovaraWildcardCertificate,
   ...props,
-  crossRegionReferences: true,
   slackAlarmIntegrationSnsTopic: monitorStack.slackAlarmIntegrationSnsTopic,
   zone: route53Stack.publicHostedZone,
 });

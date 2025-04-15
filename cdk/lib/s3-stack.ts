@@ -19,7 +19,6 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface S3StackProps extends GenericStackProps {
-  ovaraWildcardCertificate: acm.ICertificate;
   slackAlarmIntegrationSnsTopic: sns.ITopic;
   zone: route53.IHostedZone;
 }
@@ -42,6 +41,16 @@ export class S3Stack extends cdk.Stack {
     };
 
     const config: Config = props.config;
+    const certificateArn = ssm.StringParameter.fromStringParameterName(
+      this,
+      `${config.environment}-certificateArn`,
+      `/${config.environment}/ovara-wildcard-certificate-arn`
+    ).stringValue;
+    const ovaraWildcardCertificate = acm.Certificate.fromCertificateArn(
+      this,
+      `${config.environment}-ovaraWildcardCertificate`,
+      certificateArn
+    );
 
     const siirtotiedostotBucketName = `${config.environment}-siirtotiedostot`;
     const siirtotiedostotKmsKey = new kms.Key(
@@ -158,7 +167,7 @@ export class S3Stack extends cdk.Stack {
         },
         domainNames: [`dokumentaatio.${config.publicHostedZone}`],
         minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
-        certificate: props.ovaraWildcardCertificate,
+        certificate: ovaraWildcardCertificate,
       }
     );
 
