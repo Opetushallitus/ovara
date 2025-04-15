@@ -69,12 +69,20 @@ export class DatabaseStack extends cdk.Stack {
       value: this.auroraSecurityGroup.securityGroupId,
     });
 
+    const postgresVersion = rds.AuroraPostgresEngineVersion.of(
+      config.aurora.version.full,
+      config.aurora.version.major
+    );
+
     const parameterGroup = new rds.ParameterGroup(this, 'pg', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_15_5,
+        version: postgresVersion,
       }),
       parameters: {
         shared_preload_libraries: 'pg_stat_statements,pg_hint_plan,auto_explain,pg_cron',
+        work_mem: '524288',
+        max_parallel_workers_per_gather: '4',
+        random_page_cost: '2',
       },
     });
 
@@ -83,23 +91,32 @@ export class DatabaseStack extends cdk.Stack {
       `${config.environment}-OpiskelijavalinnanraportointiAuroraCluster`,
       {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_15_5,
+          version: postgresVersion,
         }),
         serverlessV2MinCapacity: config.aurora.minCapacity,
         serverlessV2MaxCapacity: config.aurora.maxCapacity,
         deletionProtection: config.aurora.deletionProtection,
         removalPolicy: cdk.RemovalPolicy.RETAIN,
-        writer: rds.ClusterInstance.serverlessV2('Writer', {
+        writer: rds.ClusterInstance.provisioned('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
           enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+          instanceType: new ec2.InstanceType(config.aurora.writerInstanceType),
         }),
-        readers: [
-          rds.ClusterInstance.serverlessV2('Reader', {
-            caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
-            enablePerformanceInsights: true,
-            scaleWithWriter: config.aurora.scaleReaderWithWriter,
-          }),
-        ],
+        readers: config.aurora.serverlessReader
+          ? [
+              rds.ClusterInstance.serverlessV2('Reader', {
+                caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
+                enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+                scaleWithWriter: config.aurora.scaleReaderWithWriter,
+              }),
+            ]
+          : [
+              rds.ClusterInstance.provisioned('Reader', {
+                caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
+                enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+                instanceType: new ec2.InstanceType(config.aurora.readerInstanceType),
+              }),
+            ],
         vpc: vpc,
         vpcSubnets: {
           subnets: vpc.privateSubnets,
@@ -199,6 +216,42 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
+    const privateLinkReadOnlyNlb = new elbv2.NetworkLoadBalancer(
+      this,
+      `${config.environment}-rdsPrivateLinkReadOnlyNlb`,
+      {
+        loadBalancerName: `${config.environment}-rdsPrivateLinkReadOnlyNlb`,
+        vpc: vpc,
+        internetFacing: false,
+        crossZoneEnabled: true,
+        vpcSubnets: {
+          subnets: vpc.privateSubnets,
+        },
+        securityGroups: [privateLinkNlbSecurityGroup],
+        enforceSecurityGroupInboundRulesOnPrivateLinkTraffic: false,
+      }
+    );
+
+    const privateLinkReadOnlyTargetGroup = new elbv2.NetworkTargetGroup(
+      this,
+      `${config.environment}-rdsPrivateLinkReadOnlyTG`,
+      {
+        targetGroupName: `${config.environment}-rdsPrivateLinkReadOnlyTG`,
+        vpc: vpc,
+        port: auroraCluster.clusterReadEndpoint.port,
+        protocol: elbv2.Protocol.TCP,
+        targetType: elbv2.TargetType.IP,
+        healthCheck: {
+          interval: cdk.Duration.seconds(10),
+          port: auroraCluster.clusterReadEndpoint.port.toString(),
+          protocol: elbv2.Protocol.TCP,
+          healthyThresholdCount: 3,
+          timeout: cdk.Duration.seconds(10),
+        },
+        deregistrationDelay: cdk.Duration.seconds(0),
+      }
+    );
+
     const privateLinkNlbManagementLambdaRole = new iam.Role(
       this,
       `${config.environment}-nlbManagementLambdaRole`,
@@ -225,7 +278,10 @@ export class DatabaseStack extends cdk.Stack {
                   'elasticloadbalancing:RegisterTargets',
                   'elasticloadbalancing:DeregisterTargets',
                 ],
-                resources: [privateLinkTargetGroup.targetGroupArn],
+                resources: [
+                  privateLinkTargetGroup.targetGroupArn,
+                  privateLinkReadOnlyTargetGroup.targetGroupArn,
+                ],
               }),
             ],
           }),
@@ -239,6 +295,17 @@ export class DatabaseStack extends cdk.Stack {
       defaultAction: elbv2.NetworkListenerAction.forward([privateLinkTargetGroup]),
     });
 
+    privateLinkReadOnlyNlb.addListener(
+      `${config.environment}-rdsPrivateLinkReadOnlyNlbListener`,
+      {
+        port: auroraCluster.clusterReadEndpoint.port,
+        protocol: elbv2.Protocol.TCP,
+        defaultAction: elbv2.NetworkListenerAction.forward([
+          privateLinkReadOnlyTargetGroup,
+        ]),
+      }
+    );
+
     const privateLinkNlbManagementLambda = new lambda.Function(
       this,
       `${config.environment}-privateLinkNlbManagementLambda`,
@@ -248,21 +315,15 @@ export class DatabaseStack extends cdk.Stack {
         handler: 'index.handler',
         runtime: lambda.Runtime.PYTHON_3_12,
         role: privateLinkNlbManagementLambdaRole,
+        environment: {
+          TARGET_GROUP_ARN: privateLinkTargetGroup.targetGroupArn,
+          RDS_ENDPOINT: auroraCluster.clusterEndpoint.hostname,
+          RDS_PORT: auroraCluster.clusterEndpoint.port.toString(),
+          READONLY_TARGET_GROUP_ARN: privateLinkReadOnlyTargetGroup.targetGroupArn,
+          READONLY_RDS_ENDPOINT: auroraCluster.clusterReadEndpoint.hostname,
+          READONLY_RDS_PORT: auroraCluster.clusterReadEndpoint.port.toString(),
+        },
       }
-    );
-
-    privateLinkNlbManagementLambda.addEnvironment(
-      'TARGET_GROUP_ARN',
-      privateLinkTargetGroup.targetGroupArn
-    );
-    privateLinkNlbManagementLambda.addEnvironment(
-      'RDS_ENDPOINT',
-      auroraCluster.clusterEndpoint.hostname
-    );
-
-    privateLinkNlbManagementLambda.addEnvironment(
-      'RDS_PORT',
-      auroraCluster.clusterEndpoint.port.toString()
     );
 
     const auroraClusterFailoverSnsTopic = new sns.Topic(
@@ -280,9 +341,49 @@ export class DatabaseStack extends cdk.Stack {
       {
         subscriptionName: `${config.environment}-ovara-aurora-cluster-failover-subscription`,
         snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
-        eventCategories: ['failover', 'failure'],
+        eventCategories: [
+          'failover',
+          'migration',
+          'failure',
+          'notification',
+          'serverless',
+          'creation',
+          'deletion',
+          'maintenance',
+          'configuration change',
+          'global-failover',
+        ],
         sourceIds: [auroraCluster.clusterIdentifier],
         sourceType: 'db-cluster',
+      }
+    );
+
+    new rds.CfnEventSubscription(
+      this,
+      `${config.environment}-ovara-aurora-instances-failover-subscription`,
+      {
+        subscriptionName: `${config.environment}-ovara-aurora-instances-failover-subscription`,
+        snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
+        eventCategories: [
+          'backup',
+          'deletion',
+          'availability',
+          'creation',
+          'low storage',
+          'restoration',
+          'configuration change',
+          'failover',
+          'maintenance',
+          'failure',
+          'notification',
+          'read replica',
+          'recovery',
+          'security',
+          'backtrack',
+          'security patching',
+        ],
+        sourceIds: [...auroraCluster.instanceIdentifiers],
+        sourceType: 'db-instance',
       }
     );
 
@@ -314,6 +415,28 @@ export class DatabaseStack extends cdk.Stack {
         endpointService: privateLinkVpcEndpointService,
         publicHostedZone: publicHostedZone,
         domainName: `rds-privatelink.${publicHostedZone.zoneName}`,
+      }
+    );
+
+    const privateLinkReadOnlyVpcEndpointService = new ec2.VpcEndpointService(
+      this,
+      `${config.environment}-rdsPrivateLinkReadOnlyVpcEndpointService`,
+      {
+        vpcEndpointServiceLoadBalancers: [privateLinkReadOnlyNlb],
+        acceptanceRequired: false,
+        allowedPrincipals: [
+          new iam.ArnPrincipal(`arn:aws:iam::${opintopolkuAccountId}:root`),
+        ],
+      }
+    );
+
+    new route53.VpcEndpointServiceDomainName(
+      this,
+      `${config.environment}-privateLinkReadOnlyVpcEndpointServiceDomain`,
+      {
+        endpointService: privateLinkReadOnlyVpcEndpointService,
+        publicHostedZone: publicHostedZone,
+        domainName: `rds-readonly-privatelink.${publicHostedZone.zoneName}`,
       }
     );
 
@@ -390,30 +513,6 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
     addActionsToAlarm(databaseCPUUtilizationAlarm);
-
-    const acuThreshold = 90;
-    const databaseACUUtilizationAlarm = new cloudwatch.Alarm(
-      this,
-      `${config.environment}-ovara-aurora-acu-utilization-alarm`,
-      {
-        alarmName: `${config.environment}-ovara-aurora-acu-utilization-alarm`,
-        alarmDescription: `Ovaran Aurora-tietokannan ACUUtilization-arvo on ylittänyt hälytysrajan: ${acuThreshold}%`,
-        metric: new cloudwatch.Metric({
-          metricName: 'ACUUtilization',
-          namespace: 'AWS/RDS',
-          period: cdk.Duration.minutes(15),
-          unit: cloudwatch.Unit.PERCENT,
-          statistic: cloudwatch.Stats.AVERAGE,
-          dimensionsMap: {
-            DBClusterIdentifier: auroraCluster.clusterIdentifier,
-          },
-        }),
-        threshold: acuThreshold,
-        evaluationPeriods: 1,
-        datapointsToAlarm: 1,
-      }
-    );
-    addActionsToAlarm(databaseACUUtilizationAlarm);
 
     this.lampiTiedostoKasiteltyTable = new dynamodb.TableV2(
       this,

@@ -8,7 +8,14 @@
     "iopsStorage": true,
     "maxCapacity": 16,
     "minCapacity": 2,
-    "scaleReaderWithWriter": true
+    "scaleReaderWithWriter": true,
+    "writerInstanceType": "r8g.xlarge",
+    "readerInstanceType": "r8g.xlarge",
+    "serverlessReader": false,
+    "version": {
+      "major": "17",
+      "full": "17.4"
+    }
   },
   "environment": "tuotanto",
   "profile": "oph-opiskelijavalinnan-raportointi-prod",

@@ -19,7 +19,6 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface S3StackProps extends GenericStackProps {
-  ovaraWildcardCertificate: acm.ICertificate;
   slackAlarmIntegrationSnsTopic: sns.ITopic;
   zone: route53.IHostedZone;
 }
@@ -42,6 +41,16 @@ export class S3Stack extends cdk.Stack {
     };
 
     const config: Config = props.config;
+    const certificateArn = ssm.StringParameter.fromStringParameterName(
+      this,
+      `${config.environment}-certificateArn`,
+      `/${config.environment}/ovara-wildcard-certificate-arn`
+    ).stringValue;
+    const ovaraWildcardCertificate = acm.Certificate.fromCertificateArn(
+      this,
+      `${config.environment}-ovaraWildcardCertificate`,
+      certificateArn
+    );
 
     const siirtotiedostotBucketName = `${config.environment}-siirtotiedostot`;
     const siirtotiedostotKmsKey = new kms.Key(
@@ -146,6 +155,17 @@ export class S3Stack extends cdk.Stack {
       }
     );
 
+    const noCachePolicy = new cloudFront.CachePolicy(
+      this,
+      `${config.environment}-dbt-documentation-noCachePolicy`,
+      {
+        cachePolicyName: `${config.environment}-dbt-documentation-noCachePolicy`,
+        defaultTtl: cdk.Duration.minutes(0),
+        minTtl: cdk.Duration.minutes(0),
+        maxTtl: cdk.Duration.minutes(0),
+      }
+    );
+
     const dokumentaatioCloudFrontToS3 = new cloudFront.Distribution(
       this,
       `${config.environment}-dokumentaatio-cloudfront-to-s3`,
@@ -155,10 +175,11 @@ export class S3Stack extends cdk.Stack {
           origin:
             cloudfrontOrigins.S3BucketOrigin.withOriginAccessControl(dokumentaatioBucket),
           viewerProtocolPolicy: cloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: noCachePolicy,
         },
         domainNames: [`dokumentaatio.${config.publicHostedZone}`],
         minimumProtocolVersion: cloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
-        certificate: props.ovaraWildcardCertificate,
+        certificate: ovaraWildcardCertificate,
       }
     );
 
@@ -204,7 +225,9 @@ export class S3Stack extends cdk.Stack {
       {
         alarmName: `${config.environment}-siirtotiedostoQueueAlarm`,
         alarmDescription: `Alarm for ${siirtotiedostoQueue.queueName}`,
-        metric: siirtotiedostoQueue.metricApproximateNumberOfMessagesVisible(),
+        metric: siirtotiedostoQueue.metricApproximateNumberOfMessagesVisible({
+          period: cdk.Duration.minutes(15),
+        }),
         threshold: 200,
         evaluationPeriods: 1,
         comparisonOperator:

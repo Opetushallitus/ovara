@@ -19,6 +19,13 @@ export interface Config {
     maxCapacity: number;
     minCapacity: number;
     scaleReaderWithWriter: boolean;
+    writerInstanceType: string;
+    readerInstanceType: string;
+    serverlessReader: boolean;
+    version: {
+      major: string;
+      full: string;
+    };
   };
   environment: string;
   lampiFileHandlerActive: string;

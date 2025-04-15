@@ -2,12 +2,7 @@ import os
 import socket
 import boto3
 
-def handler(event, context):
-  rds_endpoint = os.environ.get('RDS_ENDPOINT')
-  nlb_target_group_arn = os.environ.get('TARGET_GROUP_ARN')
-  db_port = os.environ.get('RDS_PORT')
-  client = boto3.client('elbv2')
-
+def update_ips(rds_endpoint, nlb_target_group_arn, db_port, client):
   # DeRegister old IP from NLB
   def deregister_oldip(target_ip, target_port):
     response = client.deregister_targets(
@@ -26,18 +21,20 @@ def handler(event, context):
       TargetGroupArn=nlb_target_group_arn,
       Targets=[
         {
-            'Id': new_rds_ip,
-            'Port': int(db_port)
+          'Id': new_rds_ip,
+          'Port': int(db_port)
         },
       ]
     )
 
+  print('Updating IP addresses for endpoint ', rds_endpoint)
+
   # Get Master Node IP address
-  new_rds_ip = socket.gethostbyname_ex(rds_endpoint)    
+  new_rds_ip = socket.gethostbyname_ex(rds_endpoint)
   rds_ips = new_rds_ip[2]
   print('IP list from DNS: ', rds_ips)
 
-  # Get Registered IP detail from NLB        
+  # Get Registered IP detail from NLB
   target_group_instances = client.describe_target_health(
     TargetGroupArn=nlb_target_group_arn
   )
@@ -54,17 +51,17 @@ def handler(event, context):
 
   deregister_ips = set(ip_list) - set(rds_ips)
   register_ips = set(rds_ips) - set(ip_list)
-  
+
   if deregister_ips:
     print('IP: ', str(deregister_ips), ' will be DeRegistered from NLB Target')
-  
+
   if register_ips:
     print('IP: ', str(register_ips), ' will be registered to NLB Target')
 
   for ip in register_ips:
     print('Registering New IP ', ip, 'Port: ', db_port)
     register_newip(ip, db_port)
-      
+
   for ip in target_group_instances['TargetHealthDescriptions']:
     target_ip = ip.get('Target').get('Id')
     target_port = ip.get('Target').get('Port')
@@ -72,3 +69,18 @@ def handler(event, context):
     if target_ip in deregister_ips:
       print('DeRegister IP: ', target_ip, 'Port; ', target_port)
       deregister_oldip(target_ip, target_port)
+
+def handler(event, context):
+  client = boto3.client('elbv2')
+  update_ips(
+    rds_endpoint=os.environ.get('RDS_ENDPOINT'),
+    nlb_target_group_arn=os.environ.get('TARGET_GROUP_ARN'),
+    db_port=os.environ.get('RDS_PORT'),
+    client=client
+  )
+  update_ips(
+    rds_endpoint=os.environ.get('READONLY_RDS_ENDPOINT'),
+    nlb_target_group_arn=os.environ.get('READONLY_TARGET_GROUP_ARN'),
+    db_port=os.environ.get('READONLY_RDS_PORT'),
+    client=client
+  )
