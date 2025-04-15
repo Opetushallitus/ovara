@@ -278,7 +278,10 @@ export class DatabaseStack extends cdk.Stack {
                   'elasticloadbalancing:RegisterTargets',
                   'elasticloadbalancing:DeregisterTargets',
                 ],
-                resources: [privateLinkTargetGroup.targetGroupArn],
+                resources: [
+                  privateLinkTargetGroup.targetGroupArn,
+                  privateLinkReadOnlyTargetGroup.targetGroupArn,
+                ],
               }),
             ],
           }),
