@@ -183,6 +183,9 @@ export class EcsStack extends cdk.Stack {
         ],
         effect: Effect.ALLOW,
         resources: ['*'],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -217,6 +220,7 @@ export class EcsStack extends cdk.Stack {
           ArnEquals: {
             'ecs:cluster': ecsCluster.clusterArn,
           },
+          StringEquals: { 'aws:SourceAccount': this.account },
         },
         resources: [
           dbtRunnerScheduledFargateTask.taskDefinition.taskDefinitionArn.substring(
@@ -233,6 +237,9 @@ export class EcsStack extends cdk.Stack {
       new iam.PolicyStatement({
         actions: ['ecs:TagResource'],
         resources: [`arn:aws:ecs:${this.region}:*:task/${ecsClusterName}/*`],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -243,6 +250,9 @@ export class EcsStack extends cdk.Stack {
           dbtRunnerScheduledFargateTask.taskDefinition.taskRole.roleArn,
           dbtRunnerScheduledFargateTask.taskDefinition.executionRole!.roleArn,
         ],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -414,6 +424,9 @@ export class EcsStack extends cdk.Stack {
               lampiSiirtajaS3Bucket.bucketArn,
               lampiSiirtajaS3Bucket.arnForObjects('*'),
             ],
+            conditions: {
+              StringEquals: { 'aws:SourceAccount': this.account },
+            },
           }),
         ],
       }
@@ -494,6 +507,9 @@ export class EcsStack extends cdk.Stack {
             `/${config.environment}/lampi-write-role`
           ),
         ],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -520,6 +536,9 @@ export class EcsStack extends cdk.Stack {
         ],
         effect: Effect.ALLOW,
         resources: ['*'],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -545,6 +564,7 @@ export class EcsStack extends cdk.Stack {
           ArnEquals: {
             'ecs:cluster': ecsCluster.clusterArn,
           },
+          StringEquals: { 'aws:SourceAccount': this.account },
         },
         resources: [
           lampiSiirtajaScheduledFargateTask.taskDefinition.taskDefinitionArn.substring(
@@ -561,6 +581,9 @@ export class EcsStack extends cdk.Stack {
       new iam.PolicyStatement({
         actions: ['ecs:TagResource'],
         resources: [`arn:aws:ecs:${this.region}:*:task/${ecsClusterName}/*`],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -571,6 +594,9 @@ export class EcsStack extends cdk.Stack {
           lampiSiirtajaScheduledFargateTask.taskDefinition.taskRole.roleArn,
           lampiSiirtajaScheduledFargateTask.taskDefinition.executionRole!.roleArn,
         ],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
