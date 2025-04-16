@@ -72,6 +72,9 @@ export class LambdaStack extends cdk.Stack {
     const siirtotiedostoBucketStatement = new iam.PolicyStatement();
     siirtotiedostoBucketStatement.addResources(siirtotiedostoBucketArn);
     siirtotiedostoBucketStatement.addActions('s3:ListBucket', 's3:ListBucketVersions');
+    siirtotiedostoBucketStatement.addCondition('StringEquals', {
+      'aws:SourceAccount': this.account,
+    });
 
     const siirtotiedostoBucketContentStatement = new iam.PolicyStatement();
     siirtotiedostoBucketContentStatement.addResources(`${siirtotiedostoBucketArn}/*`);
@@ -83,6 +86,9 @@ export class LambdaStack extends cdk.Stack {
       's3:AbortMultipartUpload',
       's3:PutObjectTagging'
     );
+    siirtotiedostoBucketContentStatement.addCondition('StringEquals', {
+      'aws:SourceAccount': this.account,
+    });
     const siirtotiedostoBucketContentDocument = new iam.PolicyDocument();
     siirtotiedostoBucketContentDocument.addStatements(
       siirtotiedostoBucketStatement,
@@ -98,6 +104,9 @@ export class LambdaStack extends cdk.Stack {
       'kms:GenerateDataKey',
       'kms:DescribeKey'
     );
+    siirtotiedostoKeyStatement.addCondition('StringEquals', {
+      'aws:SourceAccount': this.account,
+    });
     const siirtotiedostoKeyDocument = new iam.PolicyDocument();
     siirtotiedostoKeyDocument.addStatements(siirtotiedostoKeyStatement);
 
@@ -110,6 +119,9 @@ export class LambdaStack extends cdk.Stack {
       `arn:aws:rds-db:${props.env?.region}:${props.env?.account}:dbuser:${auroraClusterResourceId}/insert_raw_user`
     );
     dbConnectStatement.addActions('rds-db:connect');
+    dbConnectStatement.addCondition('StringEquals', {
+      'aws:SourceAccount': this.account,
+    });
     const dbConnectPolicyDocument = new iam.PolicyDocument();
     dbConnectPolicyDocument.addStatements(dbConnectStatement);
 
@@ -153,7 +165,7 @@ export class LambdaStack extends cdk.Stack {
         functionName: siirtotiedostoLambdaName,
         entry: 'lambda/siirtotiedosto/TransferfileToDatabase.ts',
         handler: 'main',
-        runtime: lambda.Runtime.NODEJS_20_X,
+        runtime: lambda.Runtime.NODEJS_22_X,
         architecture: lambda.Architecture.ARM_64,
         timeout: cdk.Duration.seconds(900),
         memorySize: 2048,
@@ -326,7 +338,7 @@ export class LambdaStack extends cdk.Stack {
           functionName: lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName,
           entry: 'lambda/lampi/YleiskayttoisetSiirtotiedostotKopiointi.ts',
           handler: 'main',
-          runtime: lambda.Runtime.NODEJS_20_X,
+          runtime: lambda.Runtime.NODEJS_22_X,
           architecture: lambda.Architecture.ARM_64,
           timeout: cdk.Duration.seconds(900),
           memorySize: 3072,
@@ -373,6 +385,9 @@ export class LambdaStack extends cdk.Stack {
             `/${config.environment}/lampi-role`
           ),
         ],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -381,6 +396,9 @@ export class LambdaStack extends cdk.Stack {
         effect: iam.Effect.ALLOW,
         resources: [lampiSiirtotiedostoQueue.queueArn],
         actions: ['*'],
+        conditions: {
+          StringEquals: { 'aws:SourceAccount': this.account },
+        },
       })
     );
 
@@ -452,7 +470,7 @@ export class LambdaStack extends cdk.Stack {
         functionName: lampiTiedostoMuuttunutLambdaName,
         entry: 'lambda/lampi/LampiFileChangedReceiver.ts',
         handler: 'handler',
-        runtime: lambda.Runtime.NODEJS_20_X,
+        runtime: lambda.Runtime.NODEJS_22_X,
         architecture: lambda.Architecture.ARM_64,
         timeout: cdk.Duration.seconds(60),
         memorySize: 256,
