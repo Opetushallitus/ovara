@@ -22,7 +22,7 @@ final as (
     select
         data ->> 'hakemusOid'::varchar as hakemusOid,
         (data -> 'hakutoiveet')::jsonb as hakutoiveet,
-        (data ->> 'createdAt')::timestamptz as muokattu,
+        regexp_replace(data ->> 'createdAt', '[\x202f]+',' ')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 )
