@@ -5,7 +5,7 @@
     },
     "deletionProtection": false,
     "enablePerformanceInsights": true,
-    "iopsStorage": true,
+    "iopsStorage": false,
     "maxCapacity": 16,
     "minCapacity": 0,
     "scaleReaderWithWriter": false,
