@@ -220,7 +220,7 @@ export class DatabaseStack extends cdk.Stack {
       this,
       `${config.environment}-rdsPrivateLinkReadOnlyNlb`,
       {
-        loadBalancerName: `${config.environment}-rdsPrivateLinkReadOnlyNlb`,
+        loadBalancerName: `${config.environment}-rdsPrivateLinkRONlb`,
         vpc: vpc,
         internetFacing: false,
         crossZoneEnabled: true,
@@ -236,7 +236,7 @@ export class DatabaseStack extends cdk.Stack {
       this,
       `${config.environment}-rdsPrivateLinkReadOnlyTG`,
       {
-        targetGroupName: `${config.environment}-rdsPrivateLinkReadOnlyTG`,
+        targetGroupName: `${config.environment}-rdsPrivateLinkROTG`,
         vpc: vpc,
         port: auroraCluster.clusterReadEndpoint.port,
         protocol: elbv2.Protocol.TCP,
@@ -280,7 +280,7 @@ export class DatabaseStack extends cdk.Stack {
                 ],
                 resources: [
                   privateLinkTargetGroup.targetGroupArn,
-                  privateLinkReadOnlyTargetGroup.targetGroupArn,
+                  //privateLinkReadOnlyTargetGroup.targetGroupArn,
                 ],
               }),
             ],
