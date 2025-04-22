@@ -14,6 +14,7 @@ db=$2
 master_pw=$3
 app_pw=$4
 readonly_pw=$5
+ovara_app_pw=$6
 
 echo "Creating database $db if it does not exists"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname postgres --command "create database $db";
@@ -77,5 +78,13 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant exe
 echo ""
 echo "Creating schema ovara_virkailija for backend"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "CREATE SCHEMA IF NOT EXISTS ovara_virkailija;"
+echo ""
+echo "Creating user ovara_app for backend"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create user ovara_app with password '$ovara_app_pw';"
+GRANT USAGE ON SCHEMA ovara_virkailija TO ovara_app;
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "GRANT USAGE ON SCHEMA ovara_virkailija TO ovara_app;"
+
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ovara_virkailija TO ovara_app;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "ALTER DEFAULT PRIVILEGES IN SCHEMA ovara_virkailija GRANT INSERT, UPDATE, DELETE ON TABLES TO ovara_app;"
 echo ""
 echo "DONE!"
