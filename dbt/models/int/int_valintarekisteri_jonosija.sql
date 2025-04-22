@@ -1,21 +1,26 @@
 {{
   config(
+    materialized = 'incremental',
+    unique_key='id',
+    incremental_strategy='merge',
     indexes = [
-        {'columns': ['hakemus_hakukohde_valintatapa_id']}
+        {'columns': ['id']},
+        {'columns': ['dw_metadata_dw_stored_at']}
     ]
     )
 }}
 
 with raw as (
     select distinct on (id) * from {{ ref('dw_valintarekisteri_jonosija') }}
+    {% if is_incremental() %}
+    where dw_metadata_dw_stored_at > coalesce((select max(t.dw_metadata_dw_stored_at) from {{ this }} as t), '1900-01-01')
+    {% endif %}
     order by id asc, muokattu desc
 ),
 
 final as (
     select
         {{ hakutoive_id() }},
-        {{ dbt_utils.generate_surrogate_key(['hakemus_oid','hakukohde_oid','valintatapajono_oid']) }}
-        as hakemus_hakukohde_valintatapa_id,
         id,
         hakemus_oid,
         hakukohde_oid,
@@ -27,7 +32,8 @@ final as (
         prioriteetti,
         pisteet,
         siirtynyt_toisesta_valintatapajonosta,
-        sijoitteluajo_id
+        sijoitteluajo_id,
+        dw_metadata_dw_stored_at
     from raw
 )
 

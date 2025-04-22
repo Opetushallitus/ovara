@@ -341,3 +341,38 @@ models:
         data_type: text
       - name: maksun_tila
         data_type: text
+  - name: int_valintarekisteri_jonosija
+    config:
+      pre_hook:
+      - set enable_seqscan = off;
+      post_hook:
+      - set enable_seqscan = on
+    columns:
+      - name: hakutoive_id
+        data_type: text
+      - name: id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_oid
+        data_type: text
+      - name: hyvaksytty_harkinnanvaraisesti
+        data_type: boolean
+      - name: jonosija
+        data_type: integer
+      - name: varasijan_numero
+        data_type: integer
+      - name: onko_muuttunut_viime_sijoittelussa
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: pisteet
+        data_type: double precision
+      - name: siirtynyt_toisesta_valintatapajonosta
+        data_type: boolean
+      - name: sijoitteluajo_id
+        data_type: text
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
