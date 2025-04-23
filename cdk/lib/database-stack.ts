@@ -4,7 +4,6 @@ import * as cdk from 'aws-cdk-lib';
 import * as backup from 'aws-cdk-lib/aws-backup';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as events from 'aws-cdk-lib/aws-events';
@@ -29,7 +28,6 @@ export interface DatabaseStackProps extends GenericStackProps {
 
 export class DatabaseStack extends cdk.Stack {
   public readonly auroraSecurityGroup: ec2.ISecurityGroup;
-  public readonly lampiTiedostoKasiteltyTable: dynamodb.ITableV2;
   public readonly auroraCluster: rds.IDatabaseCluster;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
@@ -136,9 +134,10 @@ export class DatabaseStack extends cdk.Stack {
           retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
         },
         enableDataApi: true,
-        storageType: config.aurora.iopsStorage
-          ? rds.DBClusterStorageType.AURORA_IOPT1
-          : rds.DBClusterStorageType.AURORA,
+        // Try again after 2025-05-24T12:26:55.451Z
+        //storageType: config.aurora.iopsStorage
+        //  ? rds.DBClusterStorageType.AURORA_IOPT1
+        //  : rds.DBClusterStorageType.AURORA,
       }
     );
     this.auroraCluster = auroraCluster;
@@ -513,18 +512,6 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
     addActionsToAlarm(databaseCPUUtilizationAlarm);
-
-    this.lampiTiedostoKasiteltyTable = new dynamodb.TableV2(
-      this,
-      'lampiSiirtotiedostoKasitelty',
-      {
-        tableName: 'lampiSiirtotiedostoKasitelty',
-        partitionKey: {
-          name: 'tiedostotyyppi',
-          type: dynamodb.AttributeType.STRING,
-        },
-      }
-    );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-RDS6', reason: 'No need IAM Authentication at the moment.' },

@@ -77,7 +77,6 @@ const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
 });
 
 new LambdaStack(app, `${config.environment}-LambdaStack`, {
-  lampiTiedostoKasiteltyTable: databaseStack.lampiTiedostoKasiteltyTable,
   vpc: networkStack.vpc,
   siirtotiedostoBucket: s3Stack.siirtotiedostoBucket,
   siirtotiedostotKmsKey: s3Stack.siirtotiedostotKmsKey,

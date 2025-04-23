@@ -21,7 +21,6 @@ import { Construct } from 'constructs';
 import { Config, GenericStackProps } from './config';
 
 export interface LambdaStackProps extends GenericStackProps {
-  lampiTiedostoKasiteltyTable: dynamodb.ITableV2;
   vpc: ec2.IVpc;
   siirtotiedostoBucket: s3.IBucket;
   siirtotiedostotKmsKey: kms.IKey;
@@ -153,7 +152,7 @@ export class LambdaStack extends cdk.Stack {
         functionName: siirtotiedostoLambdaName,
         entry: 'lambda/siirtotiedosto/TransferfileToDatabase.ts',
         handler: 'main',
-        runtime: lambda.Runtime.NODEJS_20_X,
+        runtime: lambda.Runtime.NODEJS_22_X,
         architecture: lambda.Architecture.ARM_64,
         timeout: cdk.Duration.seconds(900),
         memorySize: 2048,
@@ -326,7 +325,7 @@ export class LambdaStack extends cdk.Stack {
           functionName: lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName,
           entry: 'lambda/lampi/YleiskayttoisetSiirtotiedostotKopiointi.ts',
           handler: 'main',
-          runtime: lambda.Runtime.NODEJS_20_X,
+          runtime: lambda.Runtime.NODEJS_22_X,
           architecture: lambda.Architecture.ARM_64,
           timeout: cdk.Duration.seconds(900),
           memorySize: 3072,
@@ -452,7 +451,7 @@ export class LambdaStack extends cdk.Stack {
         functionName: lampiTiedostoMuuttunutLambdaName,
         entry: 'lambda/lampi/LampiFileChangedReceiver.ts',
         handler: 'handler',
-        runtime: lambda.Runtime.NODEJS_20_X,
+        runtime: lambda.Runtime.NODEJS_22_X,
         architecture: lambda.Architecture.ARM_64,
         timeout: cdk.Duration.seconds(60),
         memorySize: 256,
@@ -483,7 +482,19 @@ export class LambdaStack extends cdk.Stack {
       })
     );
 
-    props.lampiTiedostoKasiteltyTable.grantReadWriteData(lampiTiedostoMuuttunutLambda);
+    const lampiTiedostoKasiteltyTable = new dynamodb.TableV2(
+      this,
+      'lampiSiirtotiedostoKasitelty',
+      {
+        tableName: 'lampiSiirtotiedostoKasitelty',
+        partitionKey: {
+          name: 'tiedostotyyppi',
+          type: dynamodb.AttributeType.STRING,
+        },
+      }
+    );
+
+    lampiTiedostoKasiteltyTable.grantReadWriteData(lampiTiedostoMuuttunutLambda);
 
     const lampiAuthTokenParam = ssm.StringParameter.fromSecureStringParameterAttributes(
       this,
