@@ -342,11 +342,6 @@ models:
       - name: maksun_tila
         data_type: text
   - name: int_valintarekisteri_jonosija
-    config:
-      pre_hook:
-      - set enable_seqscan = off;
-      post_hook:
-      - set enable_seqscan = on
     columns:
       - name: hakutoive_id
         data_type: text

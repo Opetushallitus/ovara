@@ -1,12 +1,34 @@
 {{
-  config(
-    materialized = 'incremental',
-    unique_key='id',
-    incremental_strategy='merge',
-    indexes = [
-        {'columns': ['id']},
-        {'columns': ['dw_metadata_dw_stored_at']}
-    ]
+    config(
+        materialized = 'incremental',
+        unique_key='id',
+        incremental_strategy='append',
+        indexes = [
+            {'columns': ['id']},
+            {'columns': ['dw_metadata_dw_stored_at']}
+        ],
+        pre_hook = [
+            "set enable_seqscan = off",
+            "
+            /*
+                Tämä poistaa kaikki rivit taulusta joissa valintatapajono_oid on mukana uudessa datassa.
+                sen jälkeen kaikki uusi data lisätään tauluun.
+                Tällä tavalla datassa on aina vaan valintatapajono_oidin viimeisimmät tulokset ilman että koko taulua tarvitsee aina päivittää
+            */
+
+            delete from {{ this }}
+                where valintatapajono_oid in (
+                    select distinct valintatapajono_oid
+                    from {{ ref('dw_valintarekisteri_jonosija') }} where dw_metadata_dw_stored_at >
+                    coalesce(
+                        (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t),
+                        '1900-01-01'
+                    )
+                )"
+        ],
+        post_hook = [
+            "set enable_seqscan = on"
+        ]
     )
 }}
 
