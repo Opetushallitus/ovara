@@ -1182,7 +1182,7 @@ models:
     config:
       post_hook:
       - create index if not exists dw_valintarekisteri_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)
-      - create index if not exists dw_valintarekisteri_jonosija_muokattu on {{ this }} (id, muokattu desc)
+      - create index if not exists dw_valintarekisteri_jonosija_valintatapajono on {{ this }} using btree (valintatapajono_oid asc, muokattu desc, sijoitteluajo_id desc)
     columns:
       - name: id
         data_type: text

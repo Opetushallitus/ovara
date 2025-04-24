@@ -343,6 +343,8 @@ models:
         data_type: text
   - name: int_valintarekisteri_jonosija
     columns:
+      - name: hakemus_hakukohde_valintatapa_id
+        data_type: text
       - name: hakutoive_id
         data_type: text
       - name: id

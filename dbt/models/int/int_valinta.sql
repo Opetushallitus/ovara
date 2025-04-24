@@ -47,7 +47,7 @@ rivit as (
             'siirtynyt_toisesta_valintatapajonosta', josi.siirtynyt_toisesta_valintatapajonosta
         ) as valintatapajonot
     from valinnantulos as vatu
-    left join jonosija as josi on vatu.hakemus_hakukohde_valintatapa_id = josi.id
+    left join jonosija as josi on vatu.hakemus_hakukohde_valintatapa_id = josi.hakemus_hakukohde_valintatapa_id
     left join jono on vatu.valintatapajono_oid = jono.valintatapajono_oid
 ),
 
