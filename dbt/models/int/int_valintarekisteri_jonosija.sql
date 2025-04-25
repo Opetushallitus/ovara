@@ -1,22 +1,22 @@
 {{
   config(
-    indexes = [
-        {'columns': ['hakemus_hakukohde_valintatapa_id']}
+    materialized = 'table',
+    index = [
+        {'columns': ['hakemus_hakukohde_valintatapa_id']},
+        {'columns': ['hakutoive_id']}
     ]
     )
 }}
 
 with raw as (
-    select distinct on (id) * from {{ ref('dw_valintarekisteri_jonosija') }}
-    order by id asc, muokattu desc
+    select * from {{ ref('dw_valintarekisteri_jonosija') }}
 ),
 
 final as (
     select
-        {{ hakutoive_id() }},
         {{ dbt_utils.generate_surrogate_key(['hakemus_oid','hakukohde_oid','valintatapajono_oid']) }}
         as hakemus_hakukohde_valintatapa_id,
-        id,
+        {{ hakutoive_id() }},
         hakemus_oid,
         hakukohde_oid,
         valintatapajono_oid,

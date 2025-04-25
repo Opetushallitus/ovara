@@ -494,11 +494,7 @@ models:
       - name: dw_metadata_file_row_number
         data_type: integer
   - name: stg_valintarekisteri_jonosija
-    config:
-      post_hook: "create index if not exists stg_valintarekisteri_jonosija_id_muokattu_copy on {{ this }} (id asc,	muokattu desc,dw_metadata_stg_stored_at desc)"
     columns:
-      - name: id
-        data_type: text
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid

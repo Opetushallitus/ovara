@@ -38,7 +38,7 @@ models:
       +schema: dw
       # materialized=incremental set in dw macro
       +indexes:
-        - columns: ['dw_metadata_dw_copied_at']
+        - columns: ['dw_metadata_dw_stored_at']
       +docs:
         node_color: "#2c7790"
       +post-hook:
