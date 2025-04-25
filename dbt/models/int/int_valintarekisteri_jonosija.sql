@@ -14,7 +14,7 @@ with raw as (
 
 final as (
     select
-         {{ dbt_utils.generate_surrogate_key(['hakemus_oid','hakukohde_oid','valintatapajono_oid']) }}
+        {{ dbt_utils.generate_surrogate_key(['hakemus_oid','hakukohde_oid','valintatapajono_oid']) }}
         as hakemus_hakukohde_valintatapa_id,
         {{ hakutoive_id() }},
         hakemus_oid,

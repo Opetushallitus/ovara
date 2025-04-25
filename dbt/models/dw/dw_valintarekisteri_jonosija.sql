@@ -29,26 +29,26 @@
 
 with jonot as (
     select distinct jono.valintatapajono_oid
-        from {{ ref('stg_valintarekisteri_jonosija') }} as jono
-        left join {{ ref ('int_sijoitteluajo')}} siaj on jono.valintatapajono_oid = siaj.valintatapajono_oid
-        where jono.muokattu >= siaj.muokattu
+    from {{ ref('stg_valintarekisteri_jonosija') }} as jono
+    left join {{ ref('int_sijoitteluajo') }} as siaj on jono.valintatapajono_oid = siaj.valintatapajono_oid
+    where
+        jono.muokattu >= siaj.muokattu
         {% if is_incremental() %}
-        and jono.dw_metadata_stg_stored_at >
-        coalesce(
-            (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t),
-            '1900-01-01'
-        )
+            and jono.dw_metadata_stg_stored_at > coalesce(
+                (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t),
+                '1900-01-01'
+            )
         {% endif %}
 ),
 
 jonosija as (
     select sija.* from {{ ref('stg_valintarekisteri_jonosija') }} as sija
     {% if is_incremental() %}
-    inner join jonot as jnot on  sija.valintatapajono_oid = jnot.valintatapajono_oid
-    where
-        dw_metadata_stg_stored_at > coalesce(
-            (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t), '1900-01-01'
-        )
+        inner join jonot as jnot on sija.valintatapajono_oid = jnot.valintatapajono_oid
+        where
+            sija.dw_metadata_stg_stored_at > coalesce(
+                (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t), '1900-01-01'
+            )
     {% endif %}
 ),
 

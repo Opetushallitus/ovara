@@ -12,9 +12,9 @@ with jonosija as (
 
 raw as (
     select distinct on (valintatapajono_oid)
-    	valintatapajono_oid,
-    	sijoitteluajo_id,
-    	muokattu,
+        valintatapajono_oid,
+        sijoitteluajo_id,
+        muokattu,
         dw_metadata_stg_stored_at
     from jonosija
     {% if is_incremental() %}

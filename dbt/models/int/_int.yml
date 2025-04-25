@@ -373,3 +373,14 @@ models:
         data_type: text
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
+  - name: int_sijoitteluajo
+    description: Tämä on väliakaistauliu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
+    columns:
+      - name: valintatapajono_oid
+        data_type: text
+      - name: sijoitteluajo_id
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
