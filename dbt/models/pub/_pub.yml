@@ -67,7 +67,7 @@ models:
       - name: koulutuksen_alkamiskausi
         description: |
           Tämä kenttä sisältää kaikki koulutuksen alkamiskausitiedot jotka löytyvät haulta tai siihen liitetyltä
-          hakukoheelta. Tarkka alkamisaika on muutettu muotoon vuosi+kausi käyttöliittymän valintojen helpottamiseksi. 
+          hakukoheelta. Tarkka alkamisaika on muutettu muotoon vuosi+kausi käyttöliittymän valintojen helpottamiseksi.
         data_type: jsonb
       - name: haun_tyyppi
         description: Tieto onko haku kk- vai toisen asteen. Tämä tieto on lisätty erilliseen seediin, raw_haunkohdejoukko
@@ -130,14 +130,14 @@ models:
         data_type: integer
       - name: koulutuksen_alkamiskausi
         description: |
-          Tähän kenttään on päätelty koulutuksen alkamiskausi. Jos ei se löydy hakukohteelta, 
+          Tähän kenttään on päätelty koulutuksen alkamiskausi. Jos ei se löydy hakukohteelta,
           se on haettu haulta tai viime kädessä toteutukselta
         data_type: jsonb
       - name: koulutuksen_alkamiskausi_tyyppi
         data_type: text
       - name: koulutuksen_alkamiskausi_koodiuri
         description: |
-          Koulutuksen päätellyn alkamiskauden koodi. Jos alkamisaika on tarkka päivämäärä, 
+          Koulutuksen päätellyn alkamiskauden koodi. Jos alkamisaika on tarkka päivämäärä,
           on tähän haettu kevät jos päivämäärä on viimeistään 30.6, muuten syksy
         data_type: text
       - name: koulutuksen_alkamisvuosi
@@ -225,7 +225,7 @@ models:
 
   - name: pub_dim_hakutoive
     description: |
-      Sisältää aktiiviset hakutoiveet. Hakutoive on yhdistelmä hakemusta ja hakukohdetta, 
+      Sisältää aktiiviset hakutoiveet. Hakutoive on yhdistelmä hakemusta ja hakukohdetta,
       eikä se ole sellaisenaan olemassa opintopolussa.
 
     config:
@@ -269,7 +269,7 @@ models:
       - name: valintatieto
         data_type: text
         description: |
-          Paras valintatieto kaikista valintatapajonoista. Järjestyksessä 
+          Paras valintatieto kaikista valintatapajonoista. Järjestyksessä
           - HYVAKSYTTY
           - HARKINNANVARAISESTI_HYVAKSYTTY
           - VARASIJALTA_HYVAKSYTTY
@@ -296,7 +296,7 @@ models:
         description: Valintatiedon viimeksi päivätty tieto
 
   - name: pub_dim_henkilo
-    description: | 
+    description: |
       Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
       Taulussa tiedot ovat tasolla henkilo-hakemus, eli hakemuskohtaiset tiedot.
       Kun tämä taulu liitetään muihin tauluihin pitää käyttää avaimena henkilo_hakemus_id
@@ -382,7 +382,7 @@ models:
 
   - name: pub_dim_koulutus
     description: >-
-      Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta. 
+      Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
     config:
       contract:
         enforced: true
@@ -598,6 +598,40 @@ models:
       - name: lakkautuspvm
         data_type: timestamptz
 
+  - name: pub_dim_ovara_henkilo
+    description: Tämä taulu sisältää ONR:n tiedot siltä osin kun henkilöllä in tietoja joko SUREssa tai henkilö on joskus lähettänyt hakemuksen
+    columns:
+      - name: oppija_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: master_oid
+        data_type: text
+      - name: hetu
+        data_type: text
+      - name: sukupuoli
+        data_type: text
+      - name: syntymaaika
+        data_type: date
+      - name: sukunimi
+        data_type: text
+      - name: etunimet
+        data_type: text
+      - name: aidinkieli
+        data_type: text
+      - name: kansalaisuus
+        data_type: text
+      - name: turvakielto
+        data_type: boolean
+      - name: kotikunta
+        data_type: text
+      - name: kotikunta_fi
+        data_type: text
+      - name: kotikunta_sv
+        data_type: text
+      - name: yksiloity
+        data_type: boolean
+
   - name: pub_dim_organisaatio_rakenne
     description: Tämä taulu sisältää kaikki organisaatiot, ja kaikki hierarkiassa niiden alla olevat organisaatiot riippumatta tasosta.
     config:
@@ -770,7 +804,7 @@ models:
 
   - name: pub_fct_raportti_hakijat_toinen_aste
     description: |
-      Raporttikohtaiset tiedot toisen asteen hakijat-raportille. 
+      Raporttikohtaiset tiedot toisen asteen hakijat-raportille.
       Tämän taulu lisäksi raportoiniin tarvitaan myös pub_dim_hakutoive
     config:
       contract:
@@ -803,8 +837,8 @@ models:
         data_type: jsonb
   - name: pub_fct_raportti_tilastoraportti_kk
     description: |
-      Tämä raportti sisältää tarvittavat tiedot korkeakulujen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle. 
-      Raportille pitää joinata pub_dim_hakukohde koska sieltä saa hakukohdekohtaista tietoa. Sen jälkeen riittää 
+      Tämä raportti sisältää tarvittavat tiedot korkeakulujen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle.
+      Raportille pitää joinata pub_dim_hakukohde koska sieltä saa hakukohdekohtaista tietoa. Sen jälkeen riittää
       sum group by ja suodattaus raportin filtteriehtojen mukaan.
     config:
       contract:
@@ -833,7 +867,7 @@ models:
         data_type: integer
       - name: kansalaisuus
         description: |
-          Kansalaisuuskoodi joka vastaa koodistoa maat_ja_valtiot2. 
+          Kansalaisuuskoodi joka vastaa koodistoa maat_ja_valtiot2.
           Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" järjestyksessä Suomi, EU/ETA, muu
         data_type: text
       - name: ensikertalainen
@@ -857,7 +891,7 @@ models:
       - name: maksuvelvollisia
         data_type: bigint
         description: |
-          Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation". 
+          Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".
           Hakija katsotaan maksuvelvolliseksi jos arvo on "obligated"
       - name: toive_1
         data_type: bigint
@@ -873,7 +907,7 @@ models:
         data_type: bigint
   - name: pub_fct_raportti_tilastoraportti_toinen_aste
     description: |
-      Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle.  
+      Tämä raportti sisältää tarvittavat tiedot toisen asteen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle.
       Raportille pitää pelkästään tehdä sum group by ja suodattaa raportin filtteriehtojen mukaan.
     config:
       contract:
