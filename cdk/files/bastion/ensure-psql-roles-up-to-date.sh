@@ -14,6 +14,7 @@ db=$2
 master_pw=$3
 app_pw=$4
 readonly_pw=$5
+ovara_app_pw=$6
 
 echo "Creating database $db if it does not exists"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname postgres --command "create database $db";
@@ -77,5 +78,17 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant exe
 echo ""
 echo "Creating schema ovara_virkailija for backend"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "CREATE SCHEMA IF NOT EXISTS ovara_virkailija;"
+echo ""
+echo "Creating user ovara_app for backend"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create role ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create user ovara_app with password '$ovara_app_pw';"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema ovara_virkailija to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select, insert, update, delete on all tables in schema ovara_virkailija to ovara_app_role;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges in schema ovara_virkailija grant select, insert, update, delete on tables to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema pub to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema pub to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema pub to ovara_app_role;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges in schema pub grant select on tables to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant ovara_app_role to ovara_app;"
 echo ""
 echo "DONE!"
