@@ -167,7 +167,7 @@ export class LambdaStack extends cdk.Stack {
         runtime: lambda.Runtime.NODEJS_22_X,
         architecture: lambda.Architecture.ARM_64,
         timeout: cdk.Duration.seconds(900),
-        memorySize: 2048,
+        memorySize: 4096,
         vpc: props.vpc,
         securityGroups: [lambdaSecurityGroup],
         role: executionRole,
