@@ -279,7 +279,7 @@ export class DatabaseStack extends cdk.Stack {
                 ],
                 resources: [
                   privateLinkTargetGroup.targetGroupArn,
-                  //privateLinkReadOnlyTargetGroup.targetGroupArn,
+                  privateLinkReadOnlyTargetGroup.targetGroupArn,
                 ],
               }),
             ],
