@@ -32,8 +32,7 @@
   "dbtProcessingEnabled": "true",
   "dbtCron": {
     "minute": "30",
-    "hour": "5",
-    "weekDay": "2-6/1"
+    "hour": "0-23/1"
   },
   "lampiSiirtajaEnabled": "true",
   "lampiSiirtajaCron": {
