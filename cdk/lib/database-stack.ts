@@ -269,9 +269,6 @@ export class DatabaseStack extends cdk.Stack {
                 sid: 'DescribeTargetHealth',
                 actions: ['elasticloadbalancing:DescribeTargetHealth'],
                 resources: ['*'],
-                conditions: {
-                  StringEquals: { 'aws:SourceAccount': this.account },
-                },
               }),
               new iam.PolicyStatement({
                 effect: iam.Effect.ALLOW,
@@ -282,11 +279,8 @@ export class DatabaseStack extends cdk.Stack {
                 ],
                 resources: [
                   privateLinkTargetGroup.targetGroupArn,
-                  privateLinkReadOnlyTargetGroup.targetGroupArn,
+                  //privateLinkReadOnlyTargetGroup.targetGroupArn,
                 ],
-                conditions: {
-                  StringEquals: { 'aws:SourceAccount': this.account },
-                },
               }),
             ],
           }),
