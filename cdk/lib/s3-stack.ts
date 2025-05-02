@@ -96,9 +96,6 @@ export class S3Stack extends cdk.Stack {
     const bucketResourceStatement = new iam.PolicyStatement();
     bucketResourceStatement.addResources(siirtotiedostoS3Bucket.bucketArn);
     bucketResourceStatement.addActions('s3:ListBucket', 's3:ListBucketVersions');
-    bucketResourceStatement.addCondition('StringEquals', {
-      'aws:SourceAccount': opintopolkuAccountId,
-    });
     s3CrossAccountRole.addToPolicy(bucketResourceStatement);
 
     const objectResourceStatement = new iam.PolicyStatement();
@@ -111,9 +108,6 @@ export class S3Stack extends cdk.Stack {
       's3:AbortMultipartUpload',
       's3:PutObjectTagging'
     );
-    objectResourceStatement.addCondition('StringEquals', {
-      'aws:SourceAccount': opintopolkuAccountId,
-    });
     s3CrossAccountRole.addToPolicy(objectResourceStatement);
     new cdk.CfnOutput(this, 'SiirtotiedostoBucketArn', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-bucket-arn`,
@@ -129,9 +123,6 @@ export class S3Stack extends cdk.Stack {
       'kms:GenerateDataKey',
       'kms:DescribeKey'
     );
-    kmsResourceStatement.addCondition('StringEquals', {
-      'aws:SourceAccount': opintopolkuAccountId,
-    });
     s3CrossAccountRole.addToPolicy(kmsResourceStatement);
     new cdk.CfnOutput(this, 'SiirtotiedostoKeyArn', {
       exportName: `${config.environment}-opiskelijavalinnanraportointi-siirtotiedosto-key-arn`,
