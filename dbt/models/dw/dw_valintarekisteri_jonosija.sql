@@ -1,29 +1,14 @@
 {{
     config(
         materialized = 'incremental',
-        incremental_strategy='append',
-        pre_hook = [
-            "
-            /*
-                Tämä poistaa kaikki rivit taulusta joissa valintatapajono_oid on mukana uudessa datassa.
-                sen jälkeen kaikki uusi data lisätään tauluun.
-                Tällä tavalla datassa on aina vaan valintatapajono_oidin viimeisimmät tulokset ilman että koko taulua tarvitsee aina päivittää
-            */
-
-            delete from {{ this }}
-                where valintatapajono_oid in (
-                    select distinct jono.valintatapajono_oid
-                    from {{ ref('stg_valintarekisteri_jonosija') }} as jono
-                    left join {{ ref ('int_sijoitteluajo')}} siaj on jono.valintatapajono_oid = siaj.valintatapajono_oid
-                    where jono.dw_metadata_stg_stored_at >
-                        coalesce(
-                            (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t),
-                            '1900-01-01'
-                        )
-                    and jono.muokattu >= siaj.muokattu
-                )"
+        incremental_strategy = 'merge',
+        unique_key = 'valintatapajono_oid',
+        indexes = [
+        {'columns': ['valintatapajono_oid']}
         ],
-
+    incremental_predicates = [
+        "DBT_INTERNAL_SOURCE.muokattu > DBT_INTERNAL_DEST.muokattu"
+        ]
     )
 }}
 

@@ -1,4 +1,29 @@
-{%- set stage_model = ref('stg_valintalaskenta_valintalaskennan_tulos') -%}
-{%- set key_columns_list = ['valinnanvaihe_id','muokattu'] -%}
+{{
+    config(
+        materialized = 'incremental',
+        incremental_strategy = 'merge',
+        unique_key = 'valinnanvaihe_id',
+        indexes = [
+            {'columns': ['valinnanvaihe_id']}
+            ],
+        incremental_predicates = [
+            "DBT_INTERNAL_SOURCE.muokattu > DBT_INTERNAL_DEST.muokattu"
+            ]
+)
+}}
 
-{{ generate_dw_model_muokattu(stage_model, key_columns_list) }}
+with source as (
+    select distinct on (valinnanvaihe_id) *
+    from {{ ref('stg_valintalaskenta_valintalaskennan_tulos') }}
+    {% if is_incremental() -%}
+    {# Only rows which are newer than the rows in dw model table already #}
+    where (dw_metadata_stg_stored_at > coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}),date('1900-01-01'))
+        or dw_metadata_stg_stored_at is null)
+    {%- endif %}
+    order by valinnanvaihe_id asc, muokattu desc
+)
+
+select
+    *,
+    current_timestamp as dw_metadata_dw_stored_at
+from source
