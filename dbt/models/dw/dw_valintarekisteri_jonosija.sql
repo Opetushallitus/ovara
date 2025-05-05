@@ -17,7 +17,7 @@ with jonot as (
     from {{ ref('stg_valintarekisteri_jonosija') }} as jono
     left join {{ ref('int_sijoitteluajo') }} as siaj on jono.valintatapajono_oid = siaj.valintatapajono_oid
     where
-        jono.muokattu >= siaj.muokattu
+        jono.muokattu > siaj.muokattu
         {% if is_incremental() %}
             and jono.dw_metadata_stg_stored_at > coalesce(
                 (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t),
