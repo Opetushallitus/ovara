@@ -17,8 +17,8 @@ final as (
         (data ->> 'jarjestysnumero')::int as jarjestysnumero,
         data ->> 'nimi'::varchar as nimi,
         (data ->> 'valinnanvaihe')::int as valinnanvaihe,
-        (data -> 'valintakokeet')::jsonb as valintakokeet,
-        (data -> 'valintatapajonot')::jsonb as valintatapajonot,
+        (data -> 'valintakokeet')::json as valintakokeet,
+        (data -> 'valintatapajonot')::json as valintatapajonot,
         regexp_replace(data ->> 'createdAt', '[\x202f]+', ' ')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
