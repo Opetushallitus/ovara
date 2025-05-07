@@ -384,3 +384,36 @@ models:
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
         data_type: timestamp with time zone
+  - name: int_kaksoistutkinto_hakukohde
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: kaksoistutkinto_kiinnostaa
+        data_type: boolean
+  - name: int_urheilijatutkinto_hakukohde
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: urheilijatutkinto_kiinnostaa
+        data_type: boolean
+  - name: int_lomake_hakukohde
+    description: Tähän tauluun on haettu kaksois- ja urheilijatutkintokysymyksiin liityvät hakukohderyhmänn kuuluvat hakukohteet
+    columns:
+      - name: lomake_id
+        data_type: uuid
+      - name: kysymys_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text

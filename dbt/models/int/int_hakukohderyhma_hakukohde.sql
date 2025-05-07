@@ -1,3 +1,13 @@
+{{
+  config(
+    materialized = 'table',
+    indexes = [
+        {'columns': ['hakukohderyhma_oid'] }
+    ]
+    )
+}}
+
+
 with source as (
     select distinct on (oid)
         oid as hakukohderyhma_oid,
