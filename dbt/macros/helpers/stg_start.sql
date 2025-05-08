@@ -7,7 +7,11 @@
     with data as (
 	select
 		'{{ this }}' as model,
-		current_timestamp as start_time
+		case
+			when environment = 'test' then date_trunc('day',current_timestamp+interval '1 day')
+			else current_timestamp
+			end as start_time
+	from raw.environment
 )
 
 merge into raw.dbt_runs as t

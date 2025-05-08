@@ -7,6 +7,7 @@
           {'columns': ['id','versio_id','muokattu']},
           {'columns': ['dw_metadata_dw_stored_at']}
       ],
+    post_hook = "create index if not exists dw_lomake_id on {{ this }} ((content ->> 'id'))"
     )
 }}
 

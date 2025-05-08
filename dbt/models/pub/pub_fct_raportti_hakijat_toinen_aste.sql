@@ -29,7 +29,7 @@ toinen_aste as (
 ),
 
 kaksoistutkinto as (
-    select * from {{ ref('int_kaksoistutkinto') }}
+    select * from {{ ref('int_kaksoistutkinto_hakukohde') }}
 ),
 
 urheilijatutkinto as (
@@ -52,16 +52,12 @@ final as (
         hato.hakutoive_id,
         hato.hakemus_oid,
         hato.hakukohde_oid,
-        coalesce(sora.sora_terveys, '0') = '1' as sora_terveys,
-        coalesce(sora.sora_aiempi, '0') = '1' as sora_aiempi,
+        sora.sora_terveys,
+        sora.sora_aiempi,
         hava.harkinnanvaraisuuden_syy,
         ilmo.tila,
-        coalesce(katu.kaksoistutkinto_kiinnostaa, false::boolean) as kaksoistutkinto_kiinnostaa,
-        case
-            when urtu.hakukohde_oid is not null
-                then true::boolean
-            else false::boolean
-        end as urheilijatutkinto_kiinnostaa,
+        katu.kaksoistutkinto_kiinnostaa,
+        urtu.urheilijatutkinto_kiinnostaa,
         poko.pohjakoulutus,
         poko.pohjakoulutus_nimi
     from hakutoive as hato
@@ -69,7 +65,7 @@ final as (
     left join harkinnanvaraisuus as hava on hato.hakutoive_id = hava.hakutoive_id
     left join ilmoittautuminen as ilmo on hato.hakukohde_henkilo_id = ilmo.hakukohde_henkilo_id
     left join kaksoistutkinto as katu on hato.hakutoive_id = katu.hakutoive_id
-    left join urheilijatutkinto as urtu on hato.hakukohde_oid = urtu.hakukohde_oid
+    left join urheilijatutkinto as urtu on hato.hakutoive_id = urtu.hakutoive_id
     left join pohjakoulutus as poko on hato.hakemus_oid = poko.hakemus_oid
 )
 

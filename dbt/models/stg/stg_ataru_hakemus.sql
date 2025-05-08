@@ -44,7 +44,12 @@ final as (
             end
         )::int as sukupuoli,
         (data -> 'keyValues' -> 'nationality')::jsonb as kansalaisuus,
-        (lower((data -> 'keyValues' ->> 'sahkoisen-asioinnin-lupa'::varchar)) = 'kyllä') as sahkoinenviestintalupa,
+        (lower(
+            coalesce(
+                (data -> 'keyValues' ->> 'sahkoisen-asioinnin-lupa'::varchar),
+                (data -> 'keyValues' ->> 'paatos-opiskelijavalinnasta-sahkopostiin'::varchar)
+                )
+            ) = 'kyllä') as sahkoinenviestintalupa,
         (lower((data -> 'keyValues' ->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
         (lower((data -> 'keyValues' ->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä')
         as valintatuloksen_julkaisulupa,

@@ -14,13 +14,21 @@ koodisto as (
     where viimeisin_versio
 ),
 
-final as (
+int as (
     select
         raw1.hakemusoid as hakemus_oid,
-        (raw1.keyvalues ->> 'POHJAKOULUTUS')::int as pohjakoulutus,
-        kood.koodinimi as pohjakoulutus_nimi
+        (raw1.keyvalues ->> 'POHJAKOULUTUS')::int as pohjakoulutus
     from raw as raw1
-    left join koodisto as kood on raw1.pohjakoulutus::int = kood.koodiarvo
+),
+
+
+final as (
+    select
+        int1.hakemus_oid,
+        int1.pohjakoulutus,
+        kood.koodinimi as pohjakoulutus_nimi
+    from int as int1
+    left join koodisto as kood on int1.pohjakoulutus::int = kood.koodiarvo
 )
 
 select * from final
