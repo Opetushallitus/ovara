@@ -7,7 +7,7 @@
     with data as (
 	select
 		'{{ this }}' as model,
-		current_timestamp as start_time
+		date_trunc('day',current_timestamp+interval '1 day')
 )
 
 merge into raw.dbt_runs as t
