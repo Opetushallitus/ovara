@@ -53,6 +53,8 @@ public class SchemaExport {
       processBuilder.redirectErrorStream(true);
       processBuilder.environment().put("PGPASSWORD", config.postgresPassword());
 
+      LOG.info("Command: {}", String.join(" ", processBuilder.command().toArray(new String[0])));
+
       LOG.info("Aloitetaan schema export");
 
       Process process = processBuilder.start();
