@@ -26,7 +26,9 @@ public class App {
             "fulldump/ovara/v1/",
             System.getenv("LAMPI_ROLE_ARN"),
             System.getenv("LAMPI_ROLE_SESSION_NAME"),
-            System.getenv("LAMPI_EXTERNAL_ID"));
+            System.getenv("LAMPI_EXTERNAL_ID"),
+            "ovara.schema",
+            "/tmp/");
 
     LampiSiirtajaService service = new LampiSiirtajaService(config);
     service.run();

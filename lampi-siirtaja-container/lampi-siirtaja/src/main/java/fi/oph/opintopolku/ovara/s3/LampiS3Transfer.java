@@ -4,7 +4,7 @@ import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import fi.oph.opintopolku.ovara.config.Config;
 import fi.oph.opintopolku.ovara.io.MultiInputStream;
-import fi.oph.opintopolku.ovara.s3.manifest.ManifestItem;
+import fi.oph.opintopolku.ovara.s3.manifest.Manifest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -220,10 +220,25 @@ public class LampiS3Transfer {
     return completeMultipartUploadResult.versionId();
   }
 
-  public void uploadManifest(List<ManifestItem> manifestItems) throws Exception {
+  public String uploadSchema(String lampiFileKey, String tmpFilename) throws Exception {
+    File file = new File(tmpFilename);
+    FileInputStream fileInputStream = new FileInputStream(file);
+
+    PutObjectRequest putObjectRequest =
+        PutObjectRequest.builder().bucket(config.lampiS3Bucket()).key(lampiFileKey).build();
+
+    RequestBody requestBody =
+        RequestBody.fromInputStream(fileInputStream, fileInputStream.available());
+
+    PutObjectResponse putObjectResponse = lampiS3Client.putObject(putObjectRequest, requestBody);
+
+    return putObjectResponse.versionId();
+  }
+
+  public void uploadManifest(Manifest mainifest) throws Exception {
     String uploadFilename = config.lampiKeyPrefix() + MANIFEST_FILENAME;
 
-    String json = gson.toJson(manifestItems);
+    String json = gson.toJson(mainifest);
     InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 
     LOG.info("Manifest: {}", json);
