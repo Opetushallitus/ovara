@@ -12,7 +12,8 @@ echo $ARCHITECTURE
 echo "Installing needed software"
 apk --no-cache add \
   aws-cli \
-  jq
+  jq \
+  postgresql
 
 echo "Listing contents of /root folder"
 ls -Al /root
