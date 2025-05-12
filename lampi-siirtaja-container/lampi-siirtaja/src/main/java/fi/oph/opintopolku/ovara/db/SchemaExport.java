@@ -46,9 +46,11 @@ public class SchemaExport {
         commandList.add("--schema");
         commandList.add(schemaName);
       }
-      commandList.add("ovara");
-      commandList.add(">");
+      commandList.add("-f");
       commandList.add(schemaFilename);
+      commandList.add("ovara");
+      // commandList.add(">");
+      // commandList.add(schemaFilename);
       ProcessBuilder processBuilder = new ProcessBuilder(commandList);
       processBuilder.redirectErrorStream(true);
       processBuilder.environment().put("PGPASSWORD", config.postgresPassword());
