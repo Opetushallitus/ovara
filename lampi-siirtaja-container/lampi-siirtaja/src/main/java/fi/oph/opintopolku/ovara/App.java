@@ -31,7 +31,11 @@ public class App {
             "/tmp/");
 
     LampiSiirtajaService service = new LampiSiirtajaService(config);
-    service.run();
+    try {
+      service.run();
+    } catch (Throwable t) {
+      LOG.error("Ovaran tietojen siirto Lampeen epäonnistui", t);
+    }
 
     LOG.info("Ovaran tietojen siirto Lampeen valmistui");
   }
