@@ -21,9 +21,6 @@ public class SchemaExport {
   }
 
   public String exportSchema(List<String> schemaNames) {
-    // String command = "pg_dump -h raportointi.db.ovara.testiopintopolku.fi -p 5432 -U app -W -b
-    // -Fc --section=pre-data --section=post-data --no-comments  --no-privilege --no-owner --schema
-    // pub --schema int ovara > /tmp/ovara.schema";
     try {
       List<String> commandList =
           Stream.of(
@@ -49,25 +46,23 @@ public class SchemaExport {
       commandList.add("-f");
       commandList.add(schemaFilename);
       commandList.add("ovara");
-      // commandList.add(">");
-      // commandList.add(schemaFilename);
       ProcessBuilder processBuilder = new ProcessBuilder(commandList);
       processBuilder.redirectErrorStream(true);
       processBuilder.environment().put("PGPASSWORD", config.postgresPassword());
 
-      LOG.info("Command: {}", String.join(" ", processBuilder.command().toArray(new String[0])));
+      LOG.info(
+          "Schema export command: {}",
+          String.join(" ", processBuilder.command().toArray(new String[0])));
 
       LOG.info("Aloitetaan schema export");
 
       Process process = processBuilder.start();
-      process.info().command().ifPresent(cmd -> LOG.info("Command: {}", cmd));
-
       process.waitFor();
-
       String output = new String(process.getInputStream().readAllBytes());
       LOG.info("Schema export output: {}", output);
+
     } catch (Exception e) {
-      throw new RuntimeException("Error exporting schema", e);
+      throw new RuntimeException("Ovaran scheman export epäonnistui", e);
     }
     return schemaFilename;
   }
