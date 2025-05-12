@@ -1,7 +1,10 @@
 package fi.oph.opintopolku.ovara.db;
 
 import fi.oph.opintopolku.ovara.config.Config;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,21 +26,22 @@ public class SchemaExport {
     // pub --schema int ovara > /tmp/ovara.schema";
     try {
       List<String> commandList =
-          List.of(
-              "pg_dump",
-              "-h",
-              config.postgresHost(),
-              "-p",
-              config.postgresPort().toString(),
-              "-U",
-              config.postgresUser(),
-              "-b",
-              "-Fc",
-              "--section=pre-data",
-              "--section=post-data",
-              "--no-comments",
-              "--no-privilege",
-              "--no-owner");
+          Stream.of(
+                  "pg_dump",
+                  "-h",
+                  config.postgresHost(),
+                  "-p",
+                  config.postgresPort().toString(),
+                  "-U",
+                  config.postgresUser(),
+                  "-b",
+                  "-Fc",
+                  "--section=pre-data",
+                  "--section=post-data",
+                  "--no-comments",
+                  "--no-privilege",
+                  "--no-owner")
+              .collect(Collectors.toCollection(ArrayList::new));
       for (String schemaName : schemaNames) {
         commandList.add("--schema");
         commandList.add(schemaName);
