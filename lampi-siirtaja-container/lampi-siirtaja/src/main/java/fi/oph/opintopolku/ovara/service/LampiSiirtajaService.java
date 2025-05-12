@@ -29,8 +29,8 @@ public class LampiSiirtajaService {
 
     List<TableItem> tableItems = new ArrayList<>();
 
-    // List<String> schemaNames = List.of("pub", "dw");
-    List<String> schemaNames = List.of("pub");
+    List<String> schemaNames = List.of("pub", "dw");
+    // List<String> schemaNames = List.of("pub");
 
     schemaNames.forEach(
         schemaName -> {
