@@ -48,7 +48,7 @@ hakukelpoisuus as (
 pohjakoulutus as (
     select
         hakemus_oid,
-        tiedot -> 'higher-completed-base-education' as pohjakoulutus
+        replace(tiedot ->> 'higher-completed-base-education', 'pohjakoulutus_', '')::jsonb as pohjakoulutus
     from hakemus
 
 ),
