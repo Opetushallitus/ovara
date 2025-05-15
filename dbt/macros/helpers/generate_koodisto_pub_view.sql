@@ -1,7 +1,7 @@
-{%- macro generate_koodisto_pub_view(int_model,type='view') -%}
+{%- macro generate_koodisto_pub_view(int_model,type='table') -%}
 
 {#
-    default is view, but the value 'table' can be used when calling the macro to create a table instead of a view
+    default is table, but the value 'view' can be used when calling the macro to create a view instead of a table
 #}
 
 

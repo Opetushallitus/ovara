@@ -8,7 +8,7 @@
 	select
 		'{{ this }}' as model,
 		case
-			when environment = 'test' then date_trunc('day',current_timestamp+interval '1 day')
+			when environment = 'test' then date_trunc('day',current_timestamp+interval '2 days')
 			else current_timestamp
 			end as start_time
 	from raw.environment
