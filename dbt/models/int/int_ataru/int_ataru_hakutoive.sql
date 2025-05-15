@@ -48,25 +48,21 @@ latest_hakemus as (
 
 hakutoive_raw as (
     select
-        hakemus_oid,
+    hakemus_oid,
         henkilo_oid,
         muokattu,
         tila,
         dw_metadata_dbt_copied_at,
-        jsonb_array_elements_text(hakukohde) as hakukohde_oid
+		value as hakukohde_oid,
+        ordinality as hakutoivenumero
     from latest_hakemus
+    cross join jsonb_array_elements_text(hakukohde) with ordinality
 ),
 
 hakutoivenro as (
     select
         {{ hakutoive_id() }},
-        hakemus_oid,
-        henkilo_oid,
-        hakukohde_oid,
-        muokattu,
-        tila,
-        dw_metadata_dbt_copied_at,
-        row_number() over (partition by hakemus_oid) as hakutoivenumero
+        *
     from hakutoive_raw
 ),
 
