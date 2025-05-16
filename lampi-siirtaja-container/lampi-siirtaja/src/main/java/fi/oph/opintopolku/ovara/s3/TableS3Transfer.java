@@ -1,12 +1,9 @@
 package fi.oph.opintopolku.ovara.s3;
 
 import com.google.common.collect.Iterators;
-import com.google.gson.Gson;
 import fi.oph.opintopolku.ovara.config.Config;
 import fi.oph.opintopolku.ovara.io.MultiInputStream;
-import fi.oph.opintopolku.ovara.s3.manifest.ManifestItem;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -16,69 +13,21 @@ import java.util.stream.IntStream;
 import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
-import software.amazon.awssdk.services.sts.StsClient;
-import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider;
-import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 
-public class LampiS3Transfer {
+public class TableS3Transfer extends AbstractLampiS3Transfer {
 
-  private static final Logger LOG = LoggerFactory.getLogger(LampiS3Transfer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TableS3Transfer.class);
 
   private static final int UPLOAD_PART_SIZE = 99 * 1024 * 1024;
-  private static final String MANIFEST_FILENAME = "manifest.json";
 
-  private final Config config;
-  private final S3Client ovaraS3Client;
-  private final S3Client lampiS3Client;
   private final AtomicInteger uploadPartId = new AtomicInteger(0);
-  private final Gson gson;
-
   private String uploadId;
 
-  public LampiS3Transfer(Config config) {
-    this.config = config;
-    this.gson = new Gson();
-    this.ovaraS3Client =
-        S3Client.builder()
-            .region(config.awsRegion())
-            .credentialsProvider(ContainerCredentialsProvider.create())
-            .build();
-
-    StsClient stsClient =
-        StsClient.builder()
-            .region(config.awsRegion())
-            .credentialsProvider(ContainerCredentialsProvider.create())
-            .build();
-
-    AssumeRoleRequest assumeRoleRequest =
-        AssumeRoleRequest.builder()
-            .roleArn(config.lampiRoleArn())
-            .roleSessionName(config.lampiRoleSessionName())
-            .externalId(config.lampiExternalId())
-            .build();
-
-    this.lampiS3Client =
-        S3Client.builder()
-            .region(config.awsRegion())
-            .credentialsProvider(
-                StsAssumeRoleCredentialsProvider.builder()
-                    .stsClient(stsClient)
-                    .refreshRequest(assumeRoleRequest)
-                    .build())
-            .build();
-
-    /*
-    this.lampiS3Client =
-        S3Client.builder()
-            .region(config.awsRegion())
-            .credentialsProvider(ContainerCredentialsProvider.create())
-            .build();
-     */
+  public TableS3Transfer(Config config) {
+    super(config);
   }
 
   private Supplier<ResponseInputStream<GetObjectResponse>> constructSupplier(
@@ -218,21 +167,5 @@ public class LampiS3Transfer {
     LOG.info("Tiedoston {} lähettäminen Lammen S3-ämpäriin valmistui", filename);
 
     return completeMultipartUploadResult.versionId();
-  }
-
-  public void uploadManifest(List<ManifestItem> manifestItems) throws Exception {
-    String uploadFilename = config.lampiKeyPrefix() + MANIFEST_FILENAME;
-
-    String json = gson.toJson(manifestItems);
-    InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-
-    LOG.info("Manifest: {}", json);
-
-    PutObjectRequest putObjectRequest =
-        PutObjectRequest.builder().bucket(config.lampiS3Bucket()).key(uploadFilename).build();
-
-    RequestBody requestBody = RequestBody.fromInputStream(inputStream, inputStream.available());
-
-    lampiS3Client.putObject(putObjectRequest, requestBody);
   }
 }
