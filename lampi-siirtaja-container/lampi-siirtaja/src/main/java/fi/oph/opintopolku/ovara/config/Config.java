@@ -13,6 +13,4 @@ public record Config(
     String lampiKeyPrefix,
     String lampiRoleArn,
     String lampiRoleSessionName,
-    String lampiExternalId,
-    String schemaFilename,
-    String schemaLocation) {}
+    String lampiExternalId) {}

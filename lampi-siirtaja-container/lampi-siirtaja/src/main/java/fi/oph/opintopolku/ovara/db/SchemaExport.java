@@ -1,6 +1,7 @@
 package fi.oph.opintopolku.ovara.db;
 
 import fi.oph.opintopolku.ovara.config.Config;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,15 +14,14 @@ public class SchemaExport {
   private static final Logger LOG = LoggerFactory.getLogger(SchemaExport.class);
 
   private final Config config;
-  private final String schemaFilename;
 
   public SchemaExport(Config config) {
     this.config = config;
-    this.schemaFilename = config.schemaLocation() + config.schemaFilename();
   }
 
-  public String exportSchema(List<String> schemaNames) {
+  public File exportSchema(List<String> schemaNames) {
     try {
+      File tempFile = File.createTempFile("ovara-", ".schema");
       List<String> commandList =
           Stream.of(
                   "pg_dump",
@@ -44,7 +44,7 @@ public class SchemaExport {
         commandList.add(schemaName);
       }
       commandList.add("-f");
-      commandList.add(schemaFilename);
+      commandList.add(tempFile.getAbsolutePath());
       commandList.add("ovara");
       ProcessBuilder processBuilder = new ProcessBuilder(commandList);
       processBuilder.redirectErrorStream(true);
@@ -60,10 +60,10 @@ public class SchemaExport {
       process.waitFor();
       String output = new String(process.getInputStream().readAllBytes());
       LOG.info("Schema export output: {}", output);
+      return tempFile;
 
     } catch (Exception e) {
       throw new RuntimeException("Ovaran scheman export epäonnistui", e);
     }
-    return schemaFilename;
   }
 }
