@@ -38,6 +38,20 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant sel
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema public to readonlyrole;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema public grant select on tables to readonlyrole;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema public grant select on sequences to readonlyrole;"
+
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema pub to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema pub to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema pub to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema pub grant select on tables to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema pub grant select on sequences to readonlyrole;"
+
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema dw to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema dw to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema dw to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema dw grant select on tables to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema dw grant select on sequences to readonlyrole;"
+
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant readonlyrole to readonly;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create user readonly with password '$readonly_pw';"
 echo ""
 echo "Ensure role 'oph_group' exists; this command fails when it does already exist."
