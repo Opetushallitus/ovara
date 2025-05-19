@@ -1,6 +1,9 @@
 models:
   - name: dw_kouta_haku
     description: Sisältää hakujen tietoja
+    config:
+      tags:
+      - kouta
     columns:
       - name: oid
         description: Haun oid, yksilöivä tunniste
@@ -88,6 +91,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_kouta_koulutus
     description: ""
+    config:
+      tags:
+      - kouta
     columns:
       - name: oid
         description: ""
@@ -686,50 +692,6 @@ models:
         data_type: timestamp with time zone
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
-  - name: int_valintakoe_osallistuminen
-    description: hakemusten valintakokeet purettu riveille
-    columns:
-      - name: osallistuminen_id
-        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen id:stä
-        data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
-      - name: hakemus_oid
-        data_type: text
-        data_tests:
-          - not_null
-      - name: hakukohde_oid
-        data_type: text
-        data_tests:
-          - not_null
-      - name: valinnanvaihe_jarjestysluku
-        data_type: text
-      - name: aktiivinen
-        data_type: boolean
-      - name: lahetetaanko_koekutsut
-        data_type: boolean
-      - name: nimi
-        data_type: text
-      - name: kuvaus_fi
-        data_type: text
-      - name: kuvaus_sv
-        data_type: text
-      - name: kuvaus_en
-        data_type: text
-      - name: laskentatila
-        data_type: text
-      - name: laskenta_tulos
-        data_type: boolean
-      - name: osallistuminen
-        data_type: text
-      - name: valintakoe_id
-        data_type: text
-      - name: valintakoe_tunniste
-        data_type: text
-      - name: muokattu
-        data_type: timestamp with time zone
-      - name: dw_metadata_int_stored_at
-        data_type: timestamp with time zone
   - name: dw_hakukohderyhmapalvelu_ryhma
     columns:
       - name: oid
@@ -1069,6 +1031,8 @@ models:
   - name: dw_kouta_hakukohde
     config:
       post_hook: "create index if not exists dw_kouta_hakukohde_muokattu on {{ this }} (oid, muokattu desc)"
+      tags:
+      - kouta
     columns:
       - name: oid
         data_type: text
@@ -1301,6 +1265,9 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: dw_kouta_toteutus
+    config:
+      tags:
+      - kouta
     columns:
       - name: oid
         data_type: text
