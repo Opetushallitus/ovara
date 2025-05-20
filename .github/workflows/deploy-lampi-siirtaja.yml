@@ -66,7 +66,7 @@ jobs:
       - name: Configure ENV parameters
         if: ${{ inputs.environment == 'tuotanto' }}
         run: |
-          echo "FAMILY_PREFIX=tuotantoEcsStacktestiovaralampisiirtajaScheduledTaskDef" >> $GITHUB_ENV
+          echo "FAMILY_PREFIX=tuotantoEcsStacktuotantoovaralampisiirtajaScheduledTaskDef" >> $GITHUB_ENV
           echo "ECS_CLUSTER_NAME=tuotanto-ecs-cluster" >> $GITHUB_ENV
           echo "SCHEDULED_TASK_RULE_PREFIX=tuotanto-lampiSiirtajaScheduledFargateTaskRule"  >> $GITHUB_ENV
 
