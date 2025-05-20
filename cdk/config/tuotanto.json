@@ -34,7 +34,7 @@
     "minute": "30",
     "hour": "0-23/1"
   },
-  "lampiSiirtajaEnabled": "false",
+  "lampiSiirtajaEnabled": "true",
   "lampiSiirtajaCron": {
     "minute": "0",
     "hour": "0",
