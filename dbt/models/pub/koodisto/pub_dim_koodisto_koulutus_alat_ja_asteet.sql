@@ -1,6 +1,9 @@
 {{
-        config (
-        materialized='view'
+    config (
+        materialized='table',
+        indexes = [
+            {'columns': ['koodiarvo']},
+        ]
     )
 }}
 

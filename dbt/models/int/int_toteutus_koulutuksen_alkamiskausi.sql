@@ -2,22 +2,25 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns':['haku_oid']}
+        {'columns': ['toteutus_oid','haku_oid']}
     ]
     )
 }}
 
-with haku as (
-    select * from {{ ref('int_kouta_haku') }}
+with toteutus as (
+    select * from {{ ref('int_kouta_toteutus') }}
 ),
 
-parameter as (
-    select * from {{ ref('int_ohjausparametrit_parameter') }}
+hakukohde as (
+    select distinct
+        toteutus_oid,
+        haku_oid
+    from {{ ref('int_hakukohde') }}
 ),
 
-koulutuksen_alkamiskausi_rivi as (
+koulutuksen_alkamiskausi_rivit as (
     select
-        haku_oid,
+        toteutus_oid,
         case
             when koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' = 'alkamiskausi ja -vuosi'
                 then (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int
@@ -39,13 +42,13 @@ koulutuksen_alkamiskausi_rivi as (
                         else 'kausi_s#1'
                     end
         end as kausi
-    from haku
+    from toteutus
     where koulutuksen_alkamiskausi is not null
 ),
 
 koulutuksen_alkamiskausi_koodi as (
-    select distinct
-        haku_oid,
+    select
+        toteutus_oid,
         case
             when alkamisvuosi = -1
                 then jsonb_build_object('type', 'henkkoht')
@@ -57,33 +60,24 @@ koulutuksen_alkamiskausi_koodi as (
                 'koulutuksenAlkamiskausiKoodiUri', kausi
             )
         end as koulutuksen_alkamiskausikoodi
-    from koulutuksen_alkamiskausi_rivi
+    from koulutuksen_alkamiskausi_rivit
 ),
 
 final as (
     select
-        haku.haku_oid,
-        haku.haku_nimi,
-        haku.externalid as ulkoinen_tunniste,
-        haku.tila,
-        haku.organisaatiooid as organisaatio_oid,
-        haku.hakutapakoodiuri,
-        haku.hakukohteenliittamisentakaraja,
-        haku.hakukohteenmuokkaamisentakaraja,
-        haku.hakukohteenliittajaorganisaatiot,
-        haku.kohdejoukkokoodiuri,
-        haku.kohdejoukontarkennekoodiuri,
-        haku.koulutuksen_alkamiskausi,
-        koak.koulutuksen_alkamiskausikoodi,
-        haku.hakuajat,
-        haun_tyyppi,
-        para.vastaanotto_paattyy,
-        para.hakijakohtainen_paikan_vastaanottoaika,
-        para.jarjestetyt_hakutoiveet,
-        haku.hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
-    from haku
-    left join parameter as para on haku.haku_oid = para.haku_oid
-    left join koulutuksen_alkamiskausi_koodi as koak on haku.haku_oid = koak.haku_oid
+        {{ dbt_utils.generate_surrogate_key(
+            [
+                'tote.toteutus_oid',
+                'hako.haku_oid',
+            ]
+        ) }} as toteutus_id,
+        tote.toteutus_oid,
+        hako.haku_oid,
+        koak.koulutuksen_alkamiskausikoodi
+    from toteutus as tote
+    left join koulutuksen_alkamiskausi_koodi as koak on tote.toteutus_oid = koak.toteutus_oid
+    left join hakukohde as hako on tote.toteutus_oid = hako.toteutus_oid
+    where koulutuksen_alkamiskausikoodi is not null
 )
 
 select * from final

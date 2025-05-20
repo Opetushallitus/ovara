@@ -78,7 +78,7 @@ int as (
             else 6
         end as tutkinnon_taso_sykli,
         coalesce(
-            hako.koulutuksen_alkamiskausi, haku.koulutuksen_alkamiskausi, tote.koulutuksenalkamiskausi
+            hako.koulutuksen_alkamiskausi, haku.koulutuksen_alkamiskausi, tote.koulutuksen_alkamiskausi
         ) as koulutuksen_alkamiskausi,
         hako.toinenasteonkokaksoistutkinto as toinen_aste_onko_kaksoistutkinto,
         coalesce(hako.jarjestaaurheilijanammkoulutusta, false) as jarjestaa_urheilijan_ammkoulutusta,

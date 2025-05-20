@@ -389,7 +389,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
@@ -401,7 +401,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
@@ -417,3 +417,64 @@ models:
         data_type: text
       - name: hakukohde_oid
         data_type: text
+
+  - name: int_valintakoe_osallistuminen
+    description: hakemusten valintakokeet purettu riveille
+    columns:
+      - name: osallistuminen_id
+        description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen id:stä
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakemus_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: valinnanvaihe_jarjestysluku
+        data_type: text
+      - name: aktiivinen
+        data_type: boolean
+      - name: lahetetaanko_koekutsut
+        data_type: boolean
+      - name: nimi
+        data_type: text
+      - name: kuvaus_fi
+        data_type: text
+      - name: kuvaus_sv
+        data_type: text
+      - name: kuvaus_en
+        data_type: text
+      - name: laskentatila
+        data_type: text
+      - name: laskenta_tulos
+        data_type: boolean
+      - name: osallistuminen
+        data_type: text
+      - name: valintakoe_id
+        data_type: text
+      - name: valintakoe_tunniste
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_int_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_toteutus_koulutuksen_alkamiskausi
+    description: Tämä taulu sisältä toteutusten koulutuksen almkamiskausitietoja. tarkka päivämäärä on muutettu joko kevät- tai syyskaudeksi.
+    columns:
+      - name: toteutus_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: toteutus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: koulutuksen_alkamiskausikoodi
+        data_type: jsonb

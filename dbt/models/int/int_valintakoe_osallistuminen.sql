@@ -3,7 +3,8 @@
     materialized = 'table',
     indexes = [
         {'columns': ['valintakoe_hakemus_id']}
-    ]
+    ],
+    enabled = false
     )
 }}
 

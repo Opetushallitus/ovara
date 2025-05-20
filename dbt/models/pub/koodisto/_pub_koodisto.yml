@@ -184,6 +184,8 @@ models:
     columns:
       - name: versioitu_koodiuri
         data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
       - name: koodiuri
         data_type: text
       - name: koodiarvo
