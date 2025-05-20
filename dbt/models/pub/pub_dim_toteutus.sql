@@ -20,15 +20,15 @@ int as (
         tila,
         organisaatio_oid,
         koulutus_oid,
-        koulutuksenalkamiskausi as koulutuksen_alkamiskausi,
+        koulutuksen_alkamiskausi,
         suunniteltukestovuodet,
         suunniteltukestokuukaudet,
         opetuskielikoodiurit as oppilaitoksen_opetuskieli,
-        koulutuksenalkamiskausi ->> 'alkamiskausityyppi' as koulutuksenalkamiskausityyppi,
-        koulutuksenalkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri' as koulutuksenalkamiskausikoodiuri,
-        (koulutuksenalkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksenalkamisvuosi,
-        (koulutuksenalkamiskausi ->> 'koulutuksenAlkamispaivamaara')::date as koulutuksenalkamispaivamaara,
-        koulutuksenalkamiskausi ->> 'henkilokohtaisenSuunnitelmanLisatiedot' as henkilokohtaisensunnitelmanlisatiedot
+        koulutuksen_alkamiskausi ->> 'alkamiskausityyppi' as koulutuksenalkamiskausityyppi,
+        koulutuksen_alkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri' as koulutuksenalkamiskausikoodiuri,
+        (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksenalkamisvuosi,
+        (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::date as koulutuksenalkamispaivamaara,
+        koulutuksen_alkamiskausi ->> 'henkilokohtaisenSuunnitelmanLisatiedot' as henkilokohtaisensunnitelmanlisatiedot
     from toteutus
 ),
 

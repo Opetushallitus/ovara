@@ -2,6 +2,7 @@
     config(
         materialized = 'table',
         indexes = [
+            {'columns': ['toteutus_oid']}
         ]
     )
 }}
@@ -21,9 +22,21 @@ final as (
         ) as toteutus_nimi,
         koulutusoid as koulutus_oid,
         organisaatiooid as organisaatio_oid,
+        koulutuksenalkamiskausi as koulutuksen_alkamiskausi,
 
-        {{ dbt_utils.star(from=ref('dw_kouta_toteutus'),
-            except=['nimi_fi','nimi_sv','nimi_en','koulutusoid','organisaatiooid','oid']) }}
+        {{
+            dbt_utils.star(from=ref('dw_kouta_toteutus'),
+                except=[
+                    'nimi_fi',
+                    'nimi_sv',
+                    'nimi_en',
+                    'koulutusoid',
+                    'organisaatiooid',
+                    'oid',
+                    'koulutuksenalkamiskausi'
+                ]
+            )
+        }}
 
     from toteutus
 )

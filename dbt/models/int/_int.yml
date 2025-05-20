@@ -389,7 +389,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
@@ -401,7 +401,7 @@ models:
       - name: hakutoive_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
@@ -462,3 +462,19 @@ models:
         data_type: timestamp with time zone
       - name: dw_metadata_int_stored_at
         data_type: timestamp with time zone
+
+  - name: int_toteutus_koulutuksen_alkamiskausi
+    description: Tämä taulu sisältä toteutusten koulutuksen almkamiskausitietoja. tarkka päivämäärä on muutettu joko kevät- tai syyskaudeksi.
+    columns:
+      - name: toteutus_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: toteutus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: koulutuksen_alkamiskausikoodi
+        data_type: jsonb

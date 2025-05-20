@@ -48,8 +48,8 @@ final as (
             coalesce(
                 (data -> 'keyValues' ->> 'sahkoisen-asioinnin-lupa'::varchar),
                 (data -> 'keyValues' ->> 'paatos-opiskelijavalinnasta-sahkopostiin'::varchar)
-                )
-            ) = 'kyllä') as sahkoinenviestintalupa,
+            )
+        ) = 'kyllä') as sahkoinenviestintalupa,
         (lower((data -> 'keyValues' ->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
         (lower((data -> 'keyValues' ->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä')
         as valintatuloksen_julkaisulupa,

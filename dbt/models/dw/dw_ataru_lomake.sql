@@ -14,7 +14,10 @@
 with raw as (
     select distinct on (id, versio_id, muokattu) * from {{ ref('stg_ataru_lomake') }}
     {% if is_incremental() %}
-        where dw_metadata_dbt_copied_at > coalesce((select max(t.dw_metadata_dw_stored_at) from {{ this }} as t), '1900-01-01')
+        where dw_metadata_dbt_copied_at > coalesce(
+            (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t),
+            '1900-01-01'
+        )
     {% endif %}
     order by id asc, versio_id desc, muokattu desc, dw_metadata_dbt_copied_at desc
 ),

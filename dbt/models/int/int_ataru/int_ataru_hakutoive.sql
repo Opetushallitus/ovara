@@ -48,12 +48,12 @@ latest_hakemus as (
 
 hakutoive_raw as (
     select
-    hakemus_oid,
+        hakemus_oid,
         henkilo_oid,
         muokattu,
         tila,
         dw_metadata_dbt_copied_at,
-		value as hakukohde_oid,
+        value as hakukohde_oid,
         ordinality as hakutoivenumero
     from latest_hakemus
     cross join jsonb_array_elements_text(hakukohde) with ordinality
