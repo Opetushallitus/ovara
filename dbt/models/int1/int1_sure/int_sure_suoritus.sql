@@ -3,6 +3,10 @@
         materialized = 'incremental',
         unique_key = ['resourceid'],
         indexes = [
+        ],
+        incremental_strategy = 'merge',
+        incremental_predicates = [
+            "DBT_INTERNAL_SOURCE.muokattu > DBT_INTERNAL_DEST.muokattu"
         ]
     )
 }}
