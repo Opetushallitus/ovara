@@ -30,7 +30,7 @@ public class LampiSiirtajaService {
   public void run() throws Exception {
     DatabaseToS3 db = new DatabaseToS3(config);
 
-    List<String> schemaNames = List.of("pub", "dw");
+    List<String> schemaNames = List.of("pub", "int1");
     // List<String> schemaNames = List.of("pub");
 
     schemaNames.forEach(
