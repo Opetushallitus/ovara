@@ -267,31 +267,6 @@ models:
         data_type: boolean
       - name: muokattu
         data_type: timestamp with time zone
-  - name: int_ohjausparametrit_parameter
-    description: Sisältää hakujen ohjasparametreja
-    columns:
-      - name: haku_oid
-        data_type: text
-      - name: vastaanotto_paattyy
-        data_type: timestamp with time zone
-      - name: hakijakohtainen_paikan_vastaanottoaika
-        data_type: integer
-      - name: jarjestetyt_hakutoiveet
-        description: Jos järjestetyt_hakutoiveet ei ole asetettu, saa kaikki hakutoiveet hakutoivenumeron -1
-        data_type: boolean
-
-  - name: int_organisaatio_ryhma
-    description: Hakukohderyhmien perustiedot
-    columns:
-      - name: hakukohderyhma_oid
-        description: Hakukohderyhmän tunniste
-        data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
-          - not_null
-      - name: hakukohderyhma_nimi
-        description: Hakukohderyhmän nimet
-        data_type: jsonb
   - name: int_valintarekisteri_valinnantulos
     columns:
       - name: valinnantulos_id
@@ -469,7 +444,7 @@ models:
       - name: toteutus_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: toteutus_oid
         data_type: text
       - name: haku_oid
@@ -478,3 +453,14 @@ models:
         data_type: text
       - name: koulutuksen_alkamiskausikoodi
         data_type: jsonb
+
+  - name: int_valintaperusteet_aloituspaikat
+    description: Tämä taulu sisältää valintaperusteista tulevat aloituspaikat
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: aloituspaikat
+        data_type: bigint
+

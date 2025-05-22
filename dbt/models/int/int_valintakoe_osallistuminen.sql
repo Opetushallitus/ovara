@@ -9,11 +9,10 @@
 }}
 
 with source as (
-    select distinct on (hakemusoid)
         hakemusoid as hakemus_oid,
         muokattu,
         hakutoiveet
-    from {{ ref('dw_valintalaskenta_valintakoe_osallistuminen') }}
+    from {{ ref('int_valintalaskenta_valintakoe_osallistuminen') }}
     order by hakemusoid asc, muokattu desc
 ),
 

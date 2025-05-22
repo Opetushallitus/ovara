@@ -1,0 +1,272 @@
+models:
+
+  - name: int_ataru_hakemus
+    description: Tämä malli sisältää viimeisimmän version hakemuksesta.
+    columns:
+      - name: hakemus_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: versio_id
+        data_type: integer
+      - name: lomake_id
+        data_type: uuid
+      - name: lomakeversio_id
+        data_type: integer
+      - name: tiedot
+        data_type: jsonb
+      - name: liitteet
+        data_type: jsonb
+      - name: luotu
+        data_type: timestamp with time zone
+      - name: tila
+        data_type: text
+      - name: jatetty
+        data_type: timestamp with time zone
+      - name: kieli
+        data_type: text
+      - name: kasittelymerkinnat
+        data_type: jsonb
+      - name: haku_oid
+        data_type: text
+      - name: hakukohde
+        data_type: jsonb
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukelpoisuus_asetettu_automaattisesti
+        data_type: jsonb
+      - name: etunimet
+        data_type: text
+      - name: kutsumanimi
+        data_type: text
+      - name: sukunimi
+        data_type: text
+      - name: hetu
+        data_type: text
+      - name: lahiosoite
+        data_type: text
+      - name: postinumero
+        data_type: text
+      - name: postitoimipaikka
+        data_type: text
+      - name: ulk_kunta
+        data_type: text
+      - name: kotikunta
+        data_type: integer
+      - name: asuinmaa
+        data_type: integer
+      - name: sukupuoli
+        data_type: integer
+      - name: kansalaisuus
+        data_type: jsonb
+      - name: sahkoinenviestintalupa
+        data_type: boolean
+      - name: koulutusmarkkinointilupa
+        data_type: boolean
+      - name: valintatuloksen_julkaisulupa
+        data_type: boolean
+      - name: asiointikieli
+        data_type: integer
+      - name: sahkoposti
+        data_type: text
+      - name: puhelin
+        data_type: text
+      - name: pohjakoulutuksen_maa_toinen_aste
+        data_type: text
+      - name: keyvalues
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: hakemus_versio_id
+        data_type: text
+      - name: hakemusmaksut
+        data_type: jsonb
+      - name: poistettu
+        data_type: boolean
+      - name: hakemusmaksun_tila
+        data_type: text
+
+  - name: int_hakukohderyhmapalvelu_ryhma
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakukohde_oid
+        data_type: jsonb
+      - name: rajaava
+        data_type: boolean
+      - name: max_hakukohteet
+        data_type: integer
+      - name: yo_amm_autom_hakukelpoisuus
+        data_type: boolean
+      - name: jos_ylioppilastutkinto_ei_muita_pohjakoulutusliitepyyntoja
+        data_type: boolean
+      - name: priorisoiva
+        data_type: boolean
+      - name: prioriteettijarjestys
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_ohjausparametrit_parameter
+    description: Sisältää hakujen ohjasparametreja
+    columns:
+      - name: haku_oid
+        data_type: text
+      - name: vastaanotto_paattyy
+        data_type: timestamp with time zone
+      - name: hakijakohtainen_paikan_vastaanottoaika
+        data_type: integer
+      - name: jarjestetyt_hakutoiveet
+        description: Jos järjestetyt_hakutoiveet ei ole asetettu, saa kaikki hakutoiveet hakutoivenumeron -1
+        data_type: boolean
+
+  - name: int_organisaatio_ryhma
+    description: Hakukohderyhmien perustiedot
+    columns:
+      - name: hakukohderyhma_oid
+        description: Hakukohderyhmän tunniste
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+          - not_null
+      - name: hakukohderyhma_nimi
+        description: Hakukohderyhmän nimet
+        data_type: jsonb
+
+
+  - name: int_valintalaskenta_valintakoe_osallistuminen
+    columns:
+      - name: hakemusoid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakutoiveet
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_hash
+        data_type: text
+      - name: dw_metadata_key
+        data_type: text
+      - name: dw_metadata_timestamp
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_valintaperusteet_hakukohde
+    description: Tämä taulu sisältää hakukohdekohtaiset tiedot valintaperusteista
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: haku_oid
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: tarjoaja_oid
+        data_type: text
+      - name: hakukohteenvalintaperuste
+        data_type: jsonb
+      - name: valinnanvaiheet
+        data_type: jsonb
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_valintapiste_service_pistetieto
+    columns:
+      - name: valintakoe_hakemus_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: valintakoe_tunniste
+        data_type: text
+      - name: arvo
+        data_type: text
+      - name: osallistuminen
+        data_type: text
+      - name: tallettaja
+        data_type: text
+      - name: poistettu
+        data_type: boolean
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_hash
+        data_type: text
+      - name: dw_metadata_key
+        data_type: text
+      - name: dw_metadata_timestamp
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+
+  - name: int_valintarekisteri_hyvaksyttyjulkaistuhakutoive
+    columns:
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: hyvaksyttyjajulkaistu
+        data_type: timestamp with time zone
+
+
+

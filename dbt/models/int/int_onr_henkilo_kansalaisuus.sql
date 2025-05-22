@@ -12,7 +12,7 @@ with source as (
         henkilo_oid,
         kansalaisuus,
         dw_metadata_stg_stored_at as ladattu
-    from {{ ref('dw_onr_henkilo') }}
+    from {{ ref('int_onr_henkilo') }}
 ),
 
 raw as (

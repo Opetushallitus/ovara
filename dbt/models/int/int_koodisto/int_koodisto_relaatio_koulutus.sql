@@ -15,7 +15,7 @@ with raw as (
         ylakoodiuri,
         ylakoodiversio,
         relaatioversio
-    from {{ ref('dw_koodisto_relaatio') }}
+    from {{ ref('int_koodisto_relaatio') }}
     where
         split_part(ylakoodiuri, '_', 1) = 'koulutus'
         and alakoodiuri like 'kansallinenkoulutusluokitus2016%'

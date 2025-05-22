@@ -7,7 +7,7 @@
     )
 }}
 
-with raw as not materialized (
+with henkilo as not materialized (
     select
         henkilo_oid,
         kansalaisuus
@@ -30,14 +30,6 @@ maat as not materialized (
     where viimeisin_versio
 ),
 
-
-kansalaisuus_riveille as not materialized (
-    select
-        henkilo_oid,
-        (jsonb_array_elements(kansalaisuus) ->> 0) as kansalaisuus --noqa: CV11
-    from raw
-),
-
 kansalaisuus_jarjestys as (
     select
         henkilo_oid,
@@ -50,7 +42,12 @@ kansalaisuus_jarjestys as (
             else 3
         end
         as jarjestys
-    from kansalaisuus_riveille
+    from (
+        select
+            henkilo_oid,
+            (jsonb_array_elements(kansalaisuus) ->> 0) as kansalaisuus --noqa: CV11
+        from henkilo
+    )
 ),
 
 haluttu_kansalaisuus as (

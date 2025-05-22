@@ -46,7 +46,7 @@ koulutuksen_alkamiskausi_rivi as (
 koulutuksen_alkamiskausi_koodi as (
     select distinct
         haku_oid,
-        case
+        jsonb_build_array(case
             when alkamisvuosi = -1
                 then jsonb_build_object('type', 'henkkoht')
             when alkamisvuosi is null
@@ -56,7 +56,7 @@ koulutuksen_alkamiskausi_koodi as (
                 'koulutuksenAlkamisvuosi', alkamisvuosi,
                 'koulutuksenAlkamiskausiKoodiUri', kausi
             )
-        end as koulutuksen_alkamiskausikoodi
+        end) as koulutuksen_alkamiskausikoodi
     from koulutuksen_alkamiskausi_rivi
 ),
 

@@ -50,6 +50,14 @@ models:
       +materialized: table
       +docs:
         node_color: "#20586a"
+
+    int1:
+      +schema: int1
+      +materialized: table
+      +docs:
+        node_color: "#4c7987"
+      +tags: int1
+
     pub:
       +schema: pub
       +materialized: table

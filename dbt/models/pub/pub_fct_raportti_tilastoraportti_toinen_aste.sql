@@ -24,7 +24,7 @@ henkilo as (
 ),
 
 vastaanotto as (
-    select * from {{ ref('int_valintarekisteri_vastaanotto') }}
+    select * from {{ ref('int_vastaanotto') }}
 ),
 
 ilmoittautuminen as (
