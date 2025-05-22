@@ -1,13 +1,24 @@
 {{
     config(
-        materialized = 'table',
+        materialized = 'incremental',
+        unique_key = ['resourceid'],
         indexes = [
         ]
     )
 }}
 
-with raw as (
+with suoritus as (
     select distinct on (resourceid) * from {{ ref('dw_sure_suoritus') }}
+    {% if target.name == 'prod' and is_incremental() %}
+    where dw_metadata_dw_stored_at > (coalesce(
+        (
+            select start_time from {{ source('ovara', 'completed_dbt_runs') }}
+            where raw_table = 'sure_suoritus'
+        ),
+        '1900-01-01'
+        )
+    )
+    {% endif %}
     order by resourceid asc, muokattu desc
 ),
 
@@ -26,7 +37,7 @@ final as (
         source,
         vahvistettu,
         arvot
-    from raw
+    from suoritus
 )
 
 select * from final

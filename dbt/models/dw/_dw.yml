@@ -250,7 +250,7 @@ models:
   - name: dw_sure_suoritus
     description: Sisältää Suoritusrekisterin suoritus tietoja
     config:
-      post_hook: "create index if not exists dw_sure_suoritus_muokattu on {{ this }} (resourceid, muokattu desc)"
+      post_hook: "CREATE INDEX if not exists ix_dw_sure_suoritus_dw_stored_at ON {{ this }} USING btree (dw_metadata_dw_stored_at)"
     columns:
       - name: resourceid
         data_type: text
