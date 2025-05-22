@@ -135,10 +135,9 @@ export class DatabaseStack extends cdk.Stack {
           retention: cdk.Duration.days(config.aurora.backup.deleteAfterDays),
         },
         enableDataApi: true,
-        // Try again after 2025-05-24T12:26:55.451Z
-        //storageType: config.aurora.iopsStorage
-        //  ? rds.DBClusterStorageType.AURORA_IOPT1
-        //  : rds.DBClusterStorageType.AURORA,
+        storageType: config.aurora.iopsStorage
+          ? rds.DBClusterStorageType.AURORA_IOPT1
+          : rds.DBClusterStorageType.AURORA,
       }
     );
     this.auroraCluster = auroraCluster;
