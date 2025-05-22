@@ -9,12 +9,12 @@
 
 
 with source as (
-    select distinct on (oid)
+    select
         oid as hakukohderyhma_oid,
         muokattu,
         hakukohde_oid
-    from {{ ref('dw_hakukohderyhmapalvelu_ryhma') }}
-    order by oid asc, muokattu desc
+    from {{ ref('int_hakukohderyhmapalvelu_ryhma') }}
+
 ),
 
 hakukohde as (

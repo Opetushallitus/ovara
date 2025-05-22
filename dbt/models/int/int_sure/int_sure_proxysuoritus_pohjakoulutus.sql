@@ -5,7 +5,7 @@
 }}
 
 with raw as (
-    select * from {{ ref('dw_sure_proxysuoritus') }}
+    select * from {{ ref('int_sure_proxysuoritus') }}
     where keyvalues ? 'POHJAKOULUTUS'
 ),
 
@@ -28,7 +28,7 @@ final as (
         poko.pohjakoulutus,
         kood.koodinimi as pohjakoulutus_nimi
     from pohjakoulutus as poko
-    left join koodisto as kood on poko.pohjakoulutus::int = kood.koodiarvo
+    left join koodisto as kood on poko.pohjakoulutus = kood.koodiarvo
 )
 
 select * from final

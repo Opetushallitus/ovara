@@ -14,44 +14,33 @@ The default is false meaning the column is created as textS
     )
 }}
 
-with raw as
+with source as
 (
-    select *
-    from {{ ref('dw_koodisto_koodi') }}
+    select
+    *,
+    tila='LUONNOS' as viimeisin_versio
+    from {{ ref('int_koodisto_koodi') }}
     where koodistouri='{{koodistouri}}'
-),
-
-int as (
-    select
-        koodiuri || '#' || koodiversio::varchar as versioitu_koodiuri,
-        koodiuri,
-        {% if is_int -%}
-        koodiarvo::int,
-        {%- else -%}
-        koodiarvo,
-        {% endif -%}
-        koodiversio,
-        coalesce(koodinimi_fi,koodinimi_sv,koodinimi_en) as nimi_fi,
-        coalesce(koodinimi_sv,koodinimi_fi,koodinimi_en) as nimi_sv,
-        coalesce(koodinimi_en,koodinimi_fi,koodinimi_sv) as nimi_en,
-        tila='LUONNOS' as viimeisin_versio,
-        voimassaalkupvm,
-        voimassaloppupvm
-    from raw
-),
-
-final as (
-    select
-        *,
-            jsonb_build_object(
-            'fi',nimi_fi,
-            'sv',nimi_sv,
-            'en',nimi_en
-        )::jsonb as koodinimi
-    from int
 )
 
-select * from final
+
+select
+    versioitu_koodiuri,
+    koodiuri,
+    {% if is_int -%}
+    koodiarvo::int,
+    {%- else -%}
+    koodiarvo,
+    {% endif -%}
+    koodiversio,
+    koodinimi,
+    nimi_fi,
+    nimi_sv,
+    nimi_en,
+    viimeisin_versio,
+    voimassaalkupvm,
+    voimassaloppupvm
+from source
 order by koodiarvo,koodiversio
 
 {% endmacro -%}

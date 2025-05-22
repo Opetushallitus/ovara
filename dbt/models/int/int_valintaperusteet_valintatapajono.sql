@@ -10,12 +10,11 @@
 }}
 
 with raw as (
-    select distinct on (valinnanvaihe_id)
         valinnanvaihe_id,
         hakukohde_oid,
         valintatapajono
         ,
-    from {{ ref('dw_valintaperusteet_hakukohde') }}
+    from {{ ref('int_valintaperusteet_hakukohde') }}
     {% if is_incremental() %}
         where dw_metadata_dw_stored_at > coalesce((select max(muokattu) from {{ this }}), '1900-01-01')
     {% endif %}

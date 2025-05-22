@@ -19,7 +19,7 @@ maakunta as (
 ),
 
 rel as (
-    select * from {{ ref('dw_koodisto_relaatio') }}
+    select * from {{ ref('int_koodisto_relaatio') }}
     where ylakoodiuri like 'kunta_%'
 ),
 
