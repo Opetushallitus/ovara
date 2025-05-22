@@ -8,7 +8,8 @@
             ],
         incremental_predicates = [
             "DBT_INTERNAL_SOURCE.muokattu > DBT_INTERNAL_DEST.muokattu"
-            ]
+            ],
+        enabled = false
 )
 }}
 

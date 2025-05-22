@@ -1,3 +1,8 @@
+{{
+  config(
+    enabled = false
+    )
+}}
 with source as (
     select * from {{ source('ovara', 'valintalaskenta_valintalaskennan_tulos') }}
     {% if is_incremental() %}
