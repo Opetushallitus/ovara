@@ -128,7 +128,7 @@ export class BastionStack extends cdk.Stack {
       'sudo echo "ClientAliveInterval 60" >> /etc/ssh/sshd_config && sudo echo "ClientAliveCountMax 5" >> /etc/ssh/sshd_config && sudo systemctl restart sshd'
     );
     bastionAutoScalingGroup.userData.addCommands(
-      'sudo dnf -y install postgresql15 cronie'
+      'sudo dnf -y install postgresql17 cronie'
     );
     bastionAutoScalingGroup.userData.addCommands(
       `sudo -u ec2-user aws s3 sync s3://${config.environment}-deployment/bastion /home/ec2-user/bastion`

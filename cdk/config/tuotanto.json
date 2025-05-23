@@ -9,8 +9,8 @@
     "maxCapacity": 16,
     "minCapacity": 2,
     "scaleReaderWithWriter": true,
-    "writerInstanceType": "r8g.xlarge",
-    "readerInstanceType": "r8g.xlarge",
+    "writerInstanceType": "r6gd.xlarge",
+    "readerInstanceType": "r6gd.xlarge",
     "serverlessReader": false,
     "version": {
       "major": "17",
@@ -34,7 +34,7 @@
     "minute": "30",
     "hour": "0-23/1"
   },
-  "lampiSiirtajaEnabled": "false",
+  "lampiSiirtajaEnabled": "true",
   "lampiSiirtajaCron": {
     "minute": "0",
     "hour": "0",
