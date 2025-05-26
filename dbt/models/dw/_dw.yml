@@ -183,7 +183,9 @@ models:
         description: ""
         data_type: timestamp with time zone
   - name: dw_valintapiste_service_pistetieto
-    columns:
+    config:
+      post_hook: "create index if not exists ix_dw_valintapiste_service_pistetieto_id_muokattu on {{ this }} (valintakoe_hakemus_id asc, muokattu desc)"
+      columns:
       - name: valintakoe_hakemus_id
         data_type: text
       - name: hakemus_oid
