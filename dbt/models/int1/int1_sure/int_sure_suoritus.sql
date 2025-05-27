@@ -9,10 +9,9 @@
     )
 }}
 
-
 with suoritus as not materialized (
     select * from {{ ref('dw_sure_suoritus') }}
-    {% if target.name == 'prod' and is_incremental() %}
+    {%- if target.name == 'prod' and is_incremental() %}
     where dw_metadata_dw_stored_at > coalesce (
 	    (
     		select  start_time from {{ source('ovara', 'completed_dbt_runs') }}
@@ -44,14 +43,17 @@ final as (
             suo1.resourceid = suo2.resourceid
             and suo1.muokattu < suo2.muokattu
     {% if is_incremental() %}
-    left join {{ this }} as suo3
-        on
-            suo1.resourceid = suo3.resourceid
+        left join {{ this }} as suo3
+            on
+                suo1.resourceid = suo3.resourceid
     {% endif %}
     where
         suo2.resourceid is null
         {% if is_incremental() %}
-        and suo1.muokattu > suo3.muokattu
+            and (
+                suo1.muokattu > suo3.muokattu
+                or suo3 is null
+            )
         {% endif %}
 
 )
