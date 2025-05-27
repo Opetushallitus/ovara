@@ -2,8 +2,6 @@
     config(
         materialized = 'incremental',
         unique_key = ['resourceid'],
-        indexes = [
-        ],
         incremental_strategy = 'merge',
         indexes = [
             {'columns':['resourceid','muokattu']}
@@ -46,9 +44,11 @@ final as (
             suo1.resourceid = suo2.resourceid
             and suo1.muokattu < suo2.muokattu
     left join {{ this }} as suo3
-        on suo1.resourceid = suo3.resourceid
-    where suo2.resourceid is null
-    and suo1.muokattu > suo3.muokattu
+        on
+            suo1.resourceid = suo3.resourceid
+    where
+        suo2.resourceid is null
+        and suo1.muokattu > suo3.muokattu
 )
 
 select * from final
