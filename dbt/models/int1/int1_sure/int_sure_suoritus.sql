@@ -5,43 +5,50 @@
         indexes = [
         ],
         incremental_strategy = 'merge',
-        incremental_predicates = [
-            "DBT_INTERNAL_SOURCE.muokattu > DBT_INTERNAL_DEST.muokattu"
+        indexes = [
+            {'columns':['resourceid','muokattu']}
         ]
     )
 }}
 
-with suoritus as (
-    select distinct on (resourceid) * from {{ ref('dw_sure_suoritus') }}
+
+with suoritus as not materialized (
+    select * from {{ ref('dw_sure_suoritus') }}
     {% if target.name == 'prod' and is_incremental() %}
-    where dw_metadata_dw_stored_at > (coalesce(
-        (
-            select start_time from {{ source('ovara', 'completed_dbt_runs') }}
-            where raw_table = 'sure_suoritus'
-        ),
+    where dw_metadata_dw_stored_at > coalesce (
+	    (
+    		select  start_time from {{ source('ovara', 'completed_dbt_runs') }}
+	      	where raw_table = 'sure_suoritus'
+	    ),
         '1900-01-01'
-        )
     )
     {% endif %}
-    order by resourceid asc, muokattu desc
 ),
 
 final as (
     select
-        resourceid,
-        komo,
-        myontaja,
-        tila,
-        valmistuminen,
-        henkilooid as henkilo_oid,
-        yksilollistaminen,
-        suorituskieli,
-        muokattu,
-        poistettu,
-        source,
-        vahvistettu,
-        arvot
-    from suoritus
+        suo1.resourceid,
+        suo1.komo,
+        suo1.myontaja,
+        suo1.tila,
+        suo1.valmistuminen,
+        suo1.henkilooid as henkilo_oid,
+        suo1.yksilollistaminen,
+        suo1.suorituskieli,
+        suo1.muokattu,
+        suo1.poistettu,
+        suo1.source,
+        suo1.vahvistettu,
+        suo1.arvot
+    from suoritus as suo1
+    left join suoritus as suo2
+        on
+            suo1.resourceid = suo2.resourceid
+            and suo1.muokattu < suo2.muokattu
+    left join {{ this }} as suo3
+        on suo1.resourceid = suo3.resourceid
+    where suo2.resourceid is null
+    and suo1.muokattu > suo3.muokattu
 )
 
 select * from final
