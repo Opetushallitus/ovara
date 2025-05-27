@@ -43,12 +43,17 @@ final as (
         on
             suo1.resourceid = suo2.resourceid
             and suo1.muokattu < suo2.muokattu
+    {% if is_incremental() %}
     left join {{ this }} as suo3
         on
             suo1.resourceid = suo3.resourceid
+    {% endif %}
     where
         suo2.resourceid is null
+        {% if is_incremental() %}
         and suo1.muokattu > suo3.muokattu
+        {% endif %}
+
 )
 
 select * from final
