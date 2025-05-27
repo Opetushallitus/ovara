@@ -50,7 +50,7 @@ final as (
         {%- if is_incremental() %}
             and (
                 osa1.muokattu > osa3.muokattu
-                or osa3 is null
+                or osa3.muokattu is null
             )
         {%- endif %}
 

@@ -1,15 +1,50 @@
 {{
-  config(
-    materialized='table',
-    indexes = [
-        {'columns': ['hakemus_hakukohde_valintatapa_id']}
-    ]
+    config(
+        materialized = 'incremental',
+        unique_key = ['valinnantulos_id'],
+        incremental_strategy = 'merge',
+        indexes = [
+            {'columns':['valinnantulos_id','valintatiedon_pvm']},
+        ]
     )
 }}
 
-with raw as (
-    select distinct on (valinnantulos_id) * from {{ ref('dw_valintarekisteri_valinnantulos') }}
-    order by valinnantulos_id asc, muokattu desc
+with tulos as not materialized (
+    select *
+    from {{ ref('dw_valintarekisteri_valinnantulos') }}
+    {% if target.name == 'prod' and is_incremental() %}
+    where dw_metadata_dw_stored_at > coalesce (
+	    (
+    		select  start_time from {{ source('ovara', 'completed_dbt_runs') }}
+	      	where raw_table = 'valintarekisteri_valinnantulos'
+	    ),
+        '1900-01-01'
+    )
+    {% endif %}
+
+),
+
+int as (
+    select tls1.*
+    from tulos as tls1
+    left join tulos as tls2
+        on
+            tls1.valinnantulos_id = tls2.valinnantulos_id
+            and tls1.muokattu < tls2.muokattu
+    {% if is_incremental() %}
+        left join {{ this }} as tls3
+            on
+                tls1.valinnantulos_id = tls3.valinnantulos_id
+    {% endif %}
+    where
+        tls2.valinnantulos_id is null
+        {%- if is_incremental() %}
+            and (
+                tls1.muokattu > tls3.valintatiedon_pvm
+                or tls3.valintatiedon_pvm is null
+            )
+        {%- endif %}
+
 ),
 
 final as (
@@ -37,7 +72,7 @@ final as (
         julkaistavissa,
         hyvaksyperuuntunut,
         muokattu::date as valintatiedon_pvm
-    from raw
+    from int
 )
 
 select * from final
