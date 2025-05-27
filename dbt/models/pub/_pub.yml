@@ -380,6 +380,20 @@ models:
         description: Hakemusmaksun tila Atarusta
         data_type: text
 
+  - name: pub_dim_kontrolli_haku
+    description: Tämä taulu sisältää haku-valinnan tarvitsemat tiedot. Tänne on haettu kaikki mahdolliset koulutuksen alkamiskaudet hausta, hakukohteesta ja toteutuksesta
+    columns:
+      - name: haku_oid
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: haku_nimi
+        data_type: jsonb
+      - name: koulutuksen_alkamiskausi
+        data_type: jsonb
+      - name: haun_tyyppi
+        data_type: text
+
   - name: pub_dim_koulutus
     description: >-
       Tämä taulu sisältää kaikki koulutuksen tiedot. Jos koulutuksella on useampi koulutuskoodi, on koodiarvot otettu ensimmäisestä koulutuksesta.
