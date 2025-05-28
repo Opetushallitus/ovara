@@ -9,7 +9,7 @@
 }}
 
 with haku as (
-    select * from {{ ref('int_haku') }}
+    select * from {{ ref('int_haku') }} where tila != 'poistettu'
 ),
 
 toteutus as (
