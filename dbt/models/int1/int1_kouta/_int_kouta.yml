@@ -1,4 +1,52 @@
 models:
+  - name: int_kouta_ammattinimike
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - kieli
+            - arvo
+    columns:
+      - name: kieli
+        data_type: text
+      - name: arvo
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_kouta_asiasana
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - kieli
+            - arvo
+    columns:
+      - name: kieli
+        data_type: text
+      - name: arvo
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
   - name: int_kouta_haku
     description: Hakujen viimeisin tieto. Nimi haetaan kaikille kielille, oma kieli jos on määritetty, muuten järjestyksessä Suomi, Englanti, Ruotsi
     columns:
@@ -165,6 +213,199 @@ models:
         data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
+
+  - name: int_kouta_oppilaitoksetjaosat
+    columns:
+      - name: oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: parentoppilaitosoid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: esikatselu
+        data_type: boolean
+      - name: tietoaopiskelusta
+        data_type: jsonb
+      - name: wwwsivu_nimi_fi
+        data_type: text
+      - name: wwwsivu_url_fi
+        data_type: text
+      - name: wwwsivu_nimi_svi
+        data_type: text
+      - name: wwwsivu_url_sv
+        data_type: text
+      - name: wwwsivu_nimi_en
+        data_type: text
+      - name: wwwsivu_url_en
+        data_type: text
+      - name: esittelyvideo
+        data_type: jsonb
+      - name: metadata_some
+        data_type: jsonb
+      - name: hakijapalveluidenyhteystiedot
+        data_type: jsonb
+      - name: esittely_fi
+        data_type: text
+      - name: esittely_sv
+        data_type: text
+      - name: esittely_en
+        data_type: text
+      - name: korkeakouluja
+        data_type: integer
+      - name: tiedekuntia
+        data_type: integer
+      - name: kampuksia
+        data_type: integer
+      - name: yksikoita
+        data_type: integer
+      - name: toimipisteita
+        data_type: integer
+      - name: akatemioita
+        data_type: integer
+      - name: opiskelijoita
+        data_type: integer
+      - name: ismuokkaajaophvirkailija
+        data_type: boolean
+      - name: jarjestaaurheilijanammkoulutusta
+        data_type: boolean
+      - name: kampus
+        data_type: jsonb
+      - name: teemakuva
+        data_type: text
+      - name: logo
+        data_type: text
+      - name: kielivalinta
+        data_type: jsonb
+      - name: organisaatiooid
+        data_type: text
+      - name: muokkaaja
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: muokkaajannimi
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_hash
+        data_type: text
+      - name: dw_metadata_key
+        data_type: text
+      - name: dw_metadata_timestamp
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_kouta_pistehistoria
+    columns:
+      - name: id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: tarjoaja
+        data_type: text
+      - name: hakukohdekoodi
+        data_type: text
+      - name: pisteet
+        data_type: double precision
+      - name: vuosi
+        data_type: integer
+      - name: valintatapajonooid
+        data_type: text
+      - name: hakukohdeoid
+        data_type: text
+      - name: hakuoid
+        data_type: text
+      - name: valintatapajonotyyppi
+        data_type: text
+      - name: aloituspaikat
+        data_type: integer
+      - name: ensisijaisestihakeneet
+        data_type: integer
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: int_kouta_sorakuvaus
+    columns:
+      - name: id
+        data_type: uuid
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: externalid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: koulutustyyppi
+        data_type: text
+      - name: kielivalinta
+        data_type: jsonb
+      - name: kuvaus_fi
+        data_type: text
+      - name: kuvaus_sv
+        data_type: text
+      - name: kuvaus_en
+        data_type: text
+      - name: koulutusalakoodiuri
+        data_type: text
+      - name: koulutuskoodiurit
+        data_type: jsonb
+      - name: ismuokkaajaophvirkailija
+        data_type: boolean
+      - name: organisaatiooid
+        data_type: text
+      - name: muokkaaja
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: muokkaajannimi
+        data_type: text
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_hash
+        data_type: text
+      - name: dw_metadata_key
+        data_type: text
+      - name: dw_metadata_timestamp
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+
   - name: int_kouta_toteutus
     columns:
       - name: toteutus_oid

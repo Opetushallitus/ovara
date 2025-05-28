@@ -31,7 +31,10 @@ with raw as (
         dw_metadata_dbt_copied_at
     from {{ ref('int_ataru_hakemus') }}
     {% if is_incremental() %}
-        where dw_metadata_dbt_copied_at > (select max(dw_metadata_dbt_copied_at) from {{ this }})
+        where dw_metadata_dbt_copied_at > coalesce(
+            (select max(dw_metadata_dbt_copied_at) from {{ this }}),
+            '1900-01-01'
+        )
     {% endif %}
 ),
 
