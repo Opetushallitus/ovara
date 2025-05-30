@@ -25,7 +25,7 @@ toteutus as (
 hakukohde as (
     select
         haku_oid,
-        koulutuksen_alkamiskausikoodi -> 0 as koulutuksen_alkamiskausikoodi
+        koulutuksen_alkamiskausikoodi as koulutuksen_alkamiskausikoodi
     from {{ ref('int_hakukohde') }}
     where
         koulutuksen_alkamiskausi is not null
