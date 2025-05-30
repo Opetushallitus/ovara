@@ -227,7 +227,6 @@ models:
     description: |
       Sisältää aktiiviset hakutoiveet. Hakutoive on yhdistelmä hakemusta ja hakukohdetta,
       eikä se ole sellaisenaan olemassa opintopolussa.
-
     config:
       contract:
         enforced: true
@@ -296,13 +295,13 @@ models:
         description: Valintatiedon viimeksi päivätty tieto
 
   - name: pub_dim_henkilo
+    config:
+      contract:
+        enforced: true
     description: |
       Sisältää raportoinnissa käytettävät henkilötiedot. Tiedot on haettu sekä Atarusta että ONR:stä
       Taulussa tiedot ovat tasolla henkilo-hakemus, eli hakemuskohtaiset tiedot.
       Kun tämä taulu liitetään muihin tauluihin pitää käyttää avaimena henkilo_hakemus_id
-    config:
-      contract:
-        enforced: true
     columns:
       - name: henkilo_hakemus_id
         description: yksilöivä tunniste, hashattu yhdistelmä henkilöoid, ja hakemus_oid
@@ -382,6 +381,9 @@ models:
 
   - name: pub_dim_kontrolli_haku
     description: Tämä taulu sisältää haku-valinnan tarvitsemat tiedot. Tänne on haettu kaikki mahdolliset koulutuksen alkamiskaudet hausta, hakukohteesta ja toteutuksesta
+    config:
+      contract:
+        enforced: true
     columns:
       - name: haku_oid
         data_type: text
