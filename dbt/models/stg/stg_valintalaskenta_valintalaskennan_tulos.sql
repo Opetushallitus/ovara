@@ -1,6 +1,6 @@
 {{
   config(
-    enabled = false
+    enabled = true
     )
 }}
 with source as (
@@ -24,7 +24,7 @@ final as (
         (data ->> 'valinnanvaihe')::int as valinnanvaihe,
         (data -> 'valintakokeet')::json as valintakokeet,
         (data -> 'valintatapajonot')::json as valintatapajonot,
-        regexp_replace(data ->> 'createdAt', '[\x202f]+', ' ')::timestamptz as muokattu,
+        (data ->> 'createdAt')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
 )
