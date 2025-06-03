@@ -4,7 +4,8 @@
         unique_key = ['resourceid'],
         incremental_strategy = 'merge',
         indexes = [
-            {'columns':['resourceid','muokattu']}
+            {'columns':['resourceid','muokattu']},
+            {'columns':['henkilo_oid']}
         ]
     )
 }}
