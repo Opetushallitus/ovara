@@ -8,11 +8,13 @@
 	)
 }}
 
-with source as not materialized (
-    select distinct on (id)
-        content,
-        id as lomake_id
-    from {{ ref('dw_ataru_lomake') }}
+with lomake as  (
+
+    select
+        id as lomake_id,
+        muokattu,
+		content
+    from dw.dw_ataru_lomake
     where
         content @> '[{"id": "1dc3311d-2235-40d6-88d2-de2bd63e087b"}]'
         or content @> '[{"id": "ammatillinen_perustutkinto_urheilijana"}]'
@@ -20,8 +22,20 @@ with source as not materialized (
         or content @> '[{"id": "32b8440f-d6f0-4a8b-8f67-873344cc3488"}]'
         or content @> '[{"id": "lukio_opinnot_ammatillisen_perustutkinnon_ohella"}]'
         or content @> '[{"id": "ammatilliset_opinnot_lukio_opintojen_ohella"}]'
-    order by id asc, versio_id asc, muokattu desc
 ),
+
+rows as (
+    select osa1.*
+    from lomake as osa1
+    left join lomake as osa2
+        on
+            osa1.lomake_id = osa2.lomake_id
+            and osa1.muokattu < osa2.muokattu
+    where
+        osa2.lomake_id is null
+
+),
+
 
 hakukohde as (
     select * from {{ ref('int_hakukohderyhma_hakukohde') }}
@@ -31,7 +45,7 @@ kysymys as (
     select
         lomake_id,
         jsonb_array_elements(content) as tiedot
-    from source
+    from rows
 ),
 
 hakukohderyhma as (

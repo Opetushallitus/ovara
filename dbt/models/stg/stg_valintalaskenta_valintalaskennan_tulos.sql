@@ -22,8 +22,8 @@ final as (
         (data ->> 'jarjestysnumero')::int as jarjestysnumero,
         data ->> 'nimi'::varchar as nimi,
         (data ->> 'valinnanvaihe')::int as valinnanvaihe,
-        (data -> 'valintakokeet')::jsonb as valintakokeet,
-        (data -> 'valintatapajonot')::jsonb as valintatapajonot,
+        (data -> 'valintakokeet')::json as valintakokeet,
+        (data -> 'valintatapajonot')::json as valintatapajonot,
         (data ->> 'createdAt')::timestamptz as muokattu,
         {{ metadata_columns() }}
     from source
