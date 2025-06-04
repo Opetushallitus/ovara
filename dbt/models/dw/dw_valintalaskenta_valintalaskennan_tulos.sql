@@ -45,9 +45,14 @@ int as (
             )
         {%- endif %}
 
+),
+
+final as (
+    select distinct on (valinnanvaihe_id)
+        *,
+        current_timestamp as dw_metadata_dw_stored_at
+    from int
+    order by valinnanvaihe_id, muokattu desc
 )
 
-select
-    *,
-    current_timestamp as dw_metadata_dw_stored_at
-from int
+select * from final
