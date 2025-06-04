@@ -48,17 +48,19 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
-start=$(date +%s)
-dbt run-operation tempdata_cleanup --target=prod
-echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
+if [ $is_error -eq "0" ]; then
+	start=$(date +%s)
+	dbt run-operation tempdata_cleanup --target=prod
+	echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
 
-echo "Generoidaan dokumentaatio"
-dbt docs generate --target=prod
+	echo "Generoidaan dokumentaatio"
+	dbt docs generate --target=prod
 
-echo "Kopioidaan dokumentaatio S3:een"
-aws s3 cp ./target/catalog.json s3://$OVARA_DOC_BUCKET/dbt/catalog.json
-aws s3 cp ./target/index.html s3://$OVARA_DOC_BUCKET/dbt/index.html
-aws s3 cp ./target/manifest.json s3://$OVARA_DOC_BUCKET/dbt/manifest.json
+	echo "Kopioidaan dokumentaatio S3:een"
+	aws s3 cp ./target/catalog.json s3://$OVARA_DOC_BUCKET/dbt/catalog.json
+	aws s3 cp ./target/index.html s3://$OVARA_DOC_BUCKET/dbt/index.html
+	aws s3 cp ./target/manifest.json s3://$OVARA_DOC_BUCKET/dbt/manifest.json
+fi
 
 echo "Kopioidaan lokit S3:een"
 CURRENT_TIME="$(TZ=Europe/Helsinki date +%Y-%m-%d_%H:%M:%S%Z)"
