@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as cloudFront from 'aws-cdk-lib/aws-cloudfront';
 import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -72,6 +73,13 @@ export class S3Stack extends cdk.Stack {
         this,
         `${siirtotiedostotBucketName}-server-access-logs`
       ),
+    });
+
+    siirtotiedostoS3Bucket.addLifecycleRule({
+      abortIncompleteMultipartUploadAfter: Duration.days(1),
+      enabled: true,
+      expiration: Duration.days(7),
+      id: 'rule',
     });
 
     this.siirtotiedostoBucket = siirtotiedostoS3Bucket;
