@@ -20,10 +20,10 @@ with source as (
     {% endif %}
 
     #}
-    where
-        (data ->> 'updated')::timestamptz > (
-            select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_koodisto_koodi') }}
-        )
+--    where
+--        (data ->> 'updated')::timestamptz > (
+--            select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_koodisto_koodi') }}
+--        )
 
 ),
 
