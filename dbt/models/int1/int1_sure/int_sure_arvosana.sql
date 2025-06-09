@@ -6,8 +6,9 @@
     )
 }}
 
-with raw as (
+with raw as not materialized (
     select distinct on (resourceid) * from {{ ref('dw_sure_arvosana') }}
+    where deleted != true
     order by resourceid asc, muokattu desc
 ),
 
