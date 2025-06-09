@@ -1,7 +1,9 @@
 {{
     config(
-        materialized = 'table',
+        materialized = 'incremental',
+        unique_key = 'resourceid',
         indexes = [
+        {"columns": ["suoritus"]}
         ]
     )
 }}
@@ -9,6 +11,15 @@
 with raw as not materialized (
     select distinct on (resourceid) * from {{ ref('dw_sure_arvosana') }}
     where deleted != true
+    {%- if target.name == 'prod' and is_incremental() %}
+    and dw_metadata_dw_stored_at > coalesce (
+	    (
+    		select  start_time from {{ source('ovara', 'completed_dbt_runs') }}
+	      	where raw_table = 'sure_arvosana'
+	    ),
+        '1900-01-01'
+    )
+    {% endif %}
     order by resourceid asc, muokattu desc
 ),
 
