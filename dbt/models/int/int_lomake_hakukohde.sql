@@ -10,8 +10,7 @@
 	)
 }}
 
-with lomake as  (
-
+with lomake as ( --noqa: PRS
     select
         id as lomake_id,
         muokattu,

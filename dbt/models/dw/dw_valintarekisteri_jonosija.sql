@@ -12,13 +12,13 @@
     )
 }}
 
-with jonot as (
+with jonot as ( --noqa: ST03
     select distinct jono.valintatapajono_oid
     from {{ ref('stg_valintarekisteri_jonosija') }} as jono
     left join {{ ref('int_sijoitteluajo') }} as siaj on jono.valintatapajono_oid = siaj.valintatapajono_oid
     where
         jono.muokattu > siaj.muokattu
-        {% if is_incremental() %}
+    {% if is_incremental() %}
             and jono.dw_metadata_stg_stored_at > coalesce(
                 (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t),
                 '1900-01-01'

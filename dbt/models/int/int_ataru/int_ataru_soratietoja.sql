@@ -24,9 +24,9 @@ with raw as (
             'sora-terveys',
             'sora-aiempi'
         ]
-        {% if is_incremental() %}
+    {% if is_incremental() %}
             and dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
-        {% endif %}
+    {% endif %}
 ),
 
 sora_terveys as (

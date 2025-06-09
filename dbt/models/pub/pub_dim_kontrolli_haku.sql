@@ -12,12 +12,13 @@ with haku as (
     select
         haku_oid,
         haku_nimi,
-                case
+        case
             when koulutuksen_alkamiskausikoodi = '{}'::jsonb then null
             else koulutuksen_alkamiskausikoodi
         end as koulutuksen_alkamiskausikoodi,
         haun_tyyppi
-    from {{ ref('int_haku') }} where tila != 'poistettu'
+    from {{ ref('int_haku') }}
+    where tila != 'poistettu'
 ),
 
 toteutus as (
@@ -37,7 +38,7 @@ hakukohde as (
         haku_oid,
         toteutus_oid,
         hakukohde_oid,
-                case
+        case
             when koulutuksen_alkamiskausikoodi = '{}'::jsonb then null
             else koulutuksen_alkamiskausikoodi
         end as koulutuksen_alkamiskausikoodi
@@ -70,34 +71,32 @@ alkamisajankohta_rivit as (
 ),
 
 alkamisajankohta as (
-select distinct
-	haku_oid,
-	coalesce (
-		case
-			when koulutuksen_alkamiskausikoodi_haku is not null then koulutuksen_alkamiskausikoodi_haku
-			when koulutuksen_alkamiskausikoodi_hako is not null then koulutuksen_alkamiskausikoodi_hako
-			when koulutuksen_alkamiskausikoodi_haku2 is null then koulutuksen_alkamiskausikoodi_tote
-	end,
-	'{"type": "eialkamiskautta"}'::jsonb
-	)
-	as koulutuksen_alkamiskausi
+    select distinct
+        haku_oid,
+        coalesce(
+            case
+                when koulutuksen_alkamiskausikoodi_haku is not null then koulutuksen_alkamiskausikoodi_haku
+                when koulutuksen_alkamiskausikoodi_hako is not null then koulutuksen_alkamiskausikoodi_hako
+                when koulutuksen_alkamiskausikoodi_haku2 is null then koulutuksen_alkamiskausikoodi_tote
+            end,
+            '{"type": "eialkamiskautta"}'::jsonb
+        )
+        as koulutuksen_alkamiskausi
     from alkamisajankohta_rivit
-
-
 ),
 
 final as (
-select
-    haku.haku_oid,
-    haku.haku_nimi,
-    jsonb_agg (alko.koulutuksen_alkamiskausi) as koulutuksen_alkamiskausi,
-    haku.haun_tyyppi
-from haku
-left join alkamisajankohta as alko on haku.haku_oid = alko.haku_oid
-group by
-    haku.haku_oid,
-    haku.haku_nimi,
-    haku.haun_tyyppi
+    select
+        haku.haku_oid,
+        haku.haku_nimi,
+        jsonb_agg(alko.koulutuksen_alkamiskausi) as koulutuksen_alkamiskausi,
+        haku.haun_tyyppi
+    from haku
+    left join alkamisajankohta as alko on haku.haku_oid = alko.haku_oid
+    group by
+        haku.haku_oid,
+        haku.haku_nimi,
+        haku.haun_tyyppi
 )
 
 select * from final

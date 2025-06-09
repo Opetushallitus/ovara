@@ -47,7 +47,7 @@ final as (
     {% endif %}
     where
         osa2.hakemusoid is null
-        {%- if is_incremental() %}
+    {%- if is_incremental() %}
             and (
                 osa1.muokattu > osa3.muokattu
                 or osa3.muokattu is null

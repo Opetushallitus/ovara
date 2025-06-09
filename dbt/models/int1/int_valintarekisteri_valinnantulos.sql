@@ -38,12 +38,12 @@ int as (
     {% endif %}
     where
         tls2.valinnantulos_id is null
-        {%- if is_incremental() %}
+    {%- if is_incremental() %}
             and (
                 tls1.muokattu > tls3.valintatiedon_pvm
                 or tls3.valintatiedon_pvm is null
             )
-        {%- endif %}
+    {%- endif %}
 
 ),
 
