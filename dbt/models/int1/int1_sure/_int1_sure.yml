@@ -6,7 +6,6 @@ models:
         data_type: text
         description: ""
         data_tests:
-          - not_null
           - dbt_constraints.primary_key
       - name: suoritus
         description: "Tunniste (resourceId) sille suoritukselle, johon tämä arvosana liittyy"
