@@ -4,7 +4,9 @@
 	indexes = [
 		{'columns': ['lomake_id','kysymys_id']},
 		{'columns': ['hakukohde_oid']}
-	]
+	],
+    pre_hook = "set enable_seqscan = off",
+    post_hook = "set enable_seqscan = on"
 	)
 }}
 
