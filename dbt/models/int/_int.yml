@@ -143,6 +143,8 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
       - name: maksuvelvollisuus
         data_type: text
 

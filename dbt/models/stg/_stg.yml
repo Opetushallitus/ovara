@@ -56,6 +56,9 @@ models:
 
   - name: stg_sure_suoritus
     description: Sisältää Suoritusrekisterin suoritustietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: resourceid
         data_type: text
@@ -98,6 +101,9 @@ models:
         data_type: text
   - name: stg_sure_arvosana
     description: Sisältää Suoritusrekisterin arvosana tietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: resourceid
         data_type: text
@@ -143,6 +149,9 @@ models:
         data_type: text
   - name: stg_sure_opiskelija
     description: Sisältää Suoritusrekisterin opiskelija tietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: resourceid
         data_type: text
@@ -176,6 +185,9 @@ models:
         data_type: text
   - name: stg_sure_opiskeluoikeus
     description: Sisältää Suoritusrekisterin opiskeluoikeus tietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: resourceid
         data_type: text
@@ -206,6 +218,9 @@ models:
         data_type: boolean
   - name: stg_sure_ensikertalainen
     description: Sisältää Suoritusrekisterin ensikertalainen tietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: hakuoid
         data_type: text
@@ -430,6 +445,9 @@ models:
       - name: dw_metadata_file_row_number
         data_type: integer
   - name: stg_sure_harkinnanvaraisuus
+    config:
+      tags:
+        - sure
     columns:
       - name: hakemusoid
         data_type: text
@@ -446,6 +464,9 @@ models:
       - name: dw_metadata_file_row_number
         data_type: integer
   - name: stg_sure_proxysuoritus
+    config:
+      tags:
+        - sure
     columns:
       - name: hakemusoid
         data_type: text

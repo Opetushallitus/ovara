@@ -252,6 +252,8 @@ models:
   - name: dw_sure_suoritus
     description: Sisältää Suoritusrekisterin suoritus tietoja
     config:
+      tags:
+      - sure
       post_hook: "CREATE INDEX if not exists ix_dw_sure_suoritus_dw_stored_at ON {{ this }} USING btree (dw_metadata_dw_stored_at)"
     columns:
       - name: resourceid
@@ -323,6 +325,8 @@ models:
   - name: dw_sure_arvosana
     description: Sisältää Suoritusrekisterin arvosana tietoja
     config:
+      tags:
+        - sure
       post_hook: "create index if not exists dw_sure_arvosana_muokattu on {{ this }} (resourceid, muokattu desc)"
     columns:
       - name: resourceid
@@ -506,6 +510,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_sure_opiskelija
     description: Sisältää Suoritusrekisterin opiskelija tietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: resourceid
         data_type: text
@@ -567,6 +574,8 @@ models:
   - name: dw_sure_opiskeluoikeus
     description: Sisältää Suoritusrekisterin opiskeluoikeus tietoja
     config:
+      tags:
+        - sure
       post_hook: "create index if not exists dw_sure_opiskeluoikeus_muokattu on {{ this }} (resourceid asc, muokattu desc)"
       columns:
         - name: resourceid
@@ -625,6 +634,9 @@ models:
           data_type: timestamp with time zone
   - name: dw_sure_ensikertalainen
     description: Sisältää Suoritusrekisterin ensikertalainen tietoja
+    config:
+      tags:
+        - sure
     columns:
       - name: hakuoid
         data_type: text
@@ -958,6 +970,9 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: dw_sure_harkinnanvaraisuus
+    config:
+      tags:
+        - sure
     columns:
       - name: hakemusoid
         data_type: text
@@ -977,6 +992,8 @@ models:
         data_type: timestamp with time zone
   - name: dw_sure_proxysuoritus
     config:
+      tags:
+        - sure
       post_hook: "create index if not exists dw_sure_proxyxuoritus_keyvalues on {{ this }} USING gin (keyvalues)"
     columns:
       - name: hakemusoid

@@ -224,6 +224,10 @@ models:
       - name: valintakoe_hakemus_id
 #        data_tests:
 #        - dbt_constraints.primary_key
+#   Tämä testi on todella hidas, ~12 min tuotannossa, joten se on kommentoitu pois.
+#   Taulussa on jo primary Key olemassa, joten tämä testaus on oikeasti mukana.
+#   Jos jostain syystä ajetaan full-refresh, niin pitää käsin laittaa pk tauluun.
+#   MR /9.6.25
         data_type: text
       - name: hakemus_oid
         data_type: text

@@ -52,7 +52,12 @@ final as (
         count(distinct hato.henkilo_oid) as hakijat,
         sum(case when hato.hakutoivenumero = 1 then 1 else 0 end) as ensisijaisia,
         sum(case when hato.valintatieto = 'VARALLA' then 1 else 0 end) as varasija,
-        sum(case when hato.valintatieto = 'HYVAKSYTTY' then 1 else 0 end) as hyvaksytyt,
+        sum(case
+	        when hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto != 'PERUUTETTU' then 1
+	        when hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY' and hato.vastaanottotieto != 'PERUUTETTU' then 1
+	        when hato.valintatieto = 'PERUNUT' then 1
+	        else 0
+            end) as hyvaksytyt,
         sum(case when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI') then 1 else 0 end) as vastaanottaneet,
         sum(case
             when
