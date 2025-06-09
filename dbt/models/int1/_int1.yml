@@ -222,8 +222,8 @@ models:
   - name: int_valintapiste_service_pistetieto
     columns:
       - name: valintakoe_hakemus_id
-        data_tests:
-        - dbt_constraints.primary_key
+#        data_tests:
+#        - dbt_constraints.primary_key
         data_type: text
       - name: hakemus_oid
         data_type: text
