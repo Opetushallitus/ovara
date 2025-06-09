@@ -19,7 +19,7 @@ with raw as not materialized (
             '1900-01-01'
         )
 
-        from int1.int_sure_arvosana
+        from {{ this }}
     )
     {% endif %}
     order by resourceid asc, muokattu desc
