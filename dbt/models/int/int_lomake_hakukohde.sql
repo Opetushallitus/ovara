@@ -15,7 +15,7 @@ with lomake as ( --noqa: PRS
         id as lomake_id,
         muokattu,
 		content
-    from dw.dw_ataru_lomake
+    from {{ ref('dw_ataru_lomake') }}
     where
         content @> '[{"id": "1dc3311d-2235-40d6-88d2-de2bd63e087b"}]'
         or content @> '[{"id": "ammatillinen_perustutkinto_urheilijana"}]'
