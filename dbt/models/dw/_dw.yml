@@ -253,7 +253,7 @@ models:
     description: Sisältää Suoritusrekisterin suoritus tietoja
     config:
       tags:
-      - sure
+        - sure
       post_hook: "CREATE INDEX if not exists ix_dw_sure_suoritus_dw_stored_at ON {{ this }} USING btree (dw_metadata_dw_stored_at)"
     columns:
       - name: resourceid
@@ -767,6 +767,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_valintarekisteri_valintatapajono
     description: Valintarekisterin valintatapajonotietoja
+    config:
+      tags:
+        - valintarekisteri
     columns:
       - name: valintatapajono_id
         description: yksilöivä avain, yhdistelmä valintatapajonon oid ja hakukohdeoid
@@ -823,6 +826,8 @@ models:
     description: Valinnan tuloksia
     config:
       post_hook: "create index if not exists dw_valintarekisteri_valinnantulos_muokattu on {{ this }} (valinnantulos_id, muokattu desc)"
+      tags:
+        - valintarekisteri
     columns:
       - name: valinnantulos_id
         description: Yhdistelmäavain, hakukohde_oid, valintatapajono_oid ja hakemus_oid
@@ -873,6 +878,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_valintarekisteri_ilmoittautuminen
     description: Valintarekisterin ilmoittautumistietoja
+    config:
+      tags:
+        - valintarekisteri
     columns:
       - name: ilmoittautuminen_id
         description: Avainsarake, yhdistelmä hakukohde_oid ja henkilö_oid
@@ -903,6 +911,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_valintarekisteri_vastaanotto
     description: Valintarekisterin vastaanottotietoja
+    config:
+      tags:
+        - valintarekisteri
     columns:
       - name: vastaanotto_id
         description: Avainsarake, yhdistelmä hakukohde_oid ja henkilö_oid
@@ -1020,6 +1031,9 @@ models:
         data_type: timestamp with time zone
   - name: dw_ataru_lomake
   - name: dw_valintarekisteri_lukuvuosimaksu
+    config:
+      tags:
+        - valintarekisteri
     columns:
       - name: hakukohde_henkilo_id
         data_type: text
@@ -1166,6 +1180,8 @@ models:
       post_hook:
         - create index if not exists dw_valintarekisteri_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)
         - create index if not exists dw_valintarekisteri_jonosija_valintatapajono on {{ this }} using btree (valintatapajono_oid asc, muokattu desc, sijoitteluajo_id desc)
+      tags:
+        - valintarekisteri
     columns:
       - name: id
         data_type: text
@@ -1455,6 +1471,37 @@ models:
         data_type: json
       - name: valintatapajonot
         data_type: json
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+  - name: dw_valintarekisteri_hyvaksyttyjulkaistuhakutoive
+    config:
+      tags:
+        - valintarekisteri
+    columns:
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: hyvaksyttyjajulkaistu
+        data_type: timestamp with time zone
+      - name: ilmoittaja
+        data_type: text
+      - name: selite
+        data_type: text
       - name: muokattu
         data_type: timestamp with time zone
       - name: dw_metadata_source_timestamp_at

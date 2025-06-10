@@ -2,12 +2,9 @@
     config(
         materialized = 'incremental',
         incremental_strategy = 'merge',
-        unique_key = 'valintatapajono_oid',
+        unique_key = 'jonosija_id',
         indexes = [
-        {'columns': ['valintatapajono_oid']}
-        ],
-    incremental_predicates = [
-        "DBT_INTERNAL_SOURCE.muokattu > DBT_INTERNAL_DEST.muokattu"
+        {'columns': ['jonosija_id']}
         ]
     )
 }}
@@ -27,7 +24,7 @@ with jonot as ( --noqa: ST03
 ),
 
 jonosija as (
-    select sija.* from {{ ref('stg_valintarekisteri_jonosija') }} as sija
+    select distinct on (sija.jonosija_id) sija.* from {{ ref('stg_valintarekisteri_jonosija') }} as sija
     {% if is_incremental() %}
         inner join jonot as jnot on sija.valintatapajono_oid = jnot.valintatapajono_oid
         where
@@ -35,15 +32,17 @@ jonosija as (
                 (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t), '1900-01-01'
             )
     {% endif %}
+        order by jonosija_id asc, muokattu desc
 ),
 
 viimeisin_sijoitteluajo as (
-    select distinct on (valintatapajono_oid)
+    select distinct on (jonosija_id)
+        jonosija_id,
         valintatapajono_oid,
         sijoitteluajo_id,
         muokattu
     from jonosija
-    order by valintatapajono_oid asc, muokattu desc
+    order by jonosija_id asc, muokattu desc
 ),
 
 final as (
@@ -51,7 +50,7 @@ final as (
     from jonosija as josi
     inner join viimeisin_sijoitteluajo as visi
         on
-            josi.valintatapajono_oid = visi.valintatapajono_oid
+            josi.jonosija_id = visi.jonosija_id
             and josi.sijoitteluajo_id = visi.sijoitteluajo_id
 )
 

@@ -2,8 +2,9 @@
   config(
     materialized = 'table',
     index = [
-        {'columns': ['hakemus_hakukohde_valintatapa_id']},
-        {'columns': ['hakutoive_id']}
+        {'columns': ['jonosija_id']},
+        {'columns': ['hakutoive_id']},
+           {'columns': ['hakemus_hakukohde_valintatapa_id']}
     ]
     )
 }}
@@ -14,6 +15,7 @@ with raw as (
 
 final as (
     select
+        jonosija_id,
         {{ dbt_utils.generate_surrogate_key(['hakemus_oid','hakukohde_oid','valintatapajono_oid']) }}
         as hakemus_hakukohde_valintatapa_id,
         {{ hakutoive_id() }},

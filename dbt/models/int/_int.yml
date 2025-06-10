@@ -303,10 +303,12 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
   - name: int_sijoitteluajo
-    description: Tämä on väliakaistauliu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
+    description: Tämä on väliakaistaulu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
     columns:
       - name: valintatapajono_oid
         data_type: text
+        data_tests:
+        - unique
       - name: sijoitteluajo_id
         data_type: text
       - name: muokattu

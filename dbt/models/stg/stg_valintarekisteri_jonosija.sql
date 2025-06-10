@@ -31,4 +31,7 @@ final as (
     from source
 )
 
-select * from final
+select
+    {{ dbt_utils.generate_surrogate_key (['hakemus_oid','valintatapajono_oid']) }} as jonosija_id,
+    *
+from final
