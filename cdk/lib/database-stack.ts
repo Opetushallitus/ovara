@@ -81,7 +81,7 @@ export class DatabaseStack extends cdk.Stack {
         work_mem: '524288',
         max_parallel_workers_per_gather: '4',
         random_page_cost: '1',
-		default_statistics_target = '1000'
+        default_statistics_target: '1000',
       },
     });
 
