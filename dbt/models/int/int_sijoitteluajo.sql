@@ -27,8 +27,8 @@ uudet as (
         josi.*
     from jonosija as josi
     left join {{ this }} as vanh
-        on josi.valintatapajono_oid = vanh.valintatapajono_oid and
-        (josi.muokattu > vanh.muokattu or vanh.muokattu is null)
+        on josi.valintatapajono_oid = vanh.valintatapajono_oid
+    where josi.muokattu > vanh.muokattu or vanh.muokattu is null
 
 )
 
