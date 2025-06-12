@@ -10,7 +10,7 @@
 }}
 
 with source as (
-    select
+    select distinct on (jonosija_id)
         jono.*
     from {{ ref('stg_valintarekisteri_jonosija') }} as jono
     inner join {{ ref('int_sijoitteluajo') }} as siaj
@@ -21,6 +21,9 @@ with source as (
         '1900-01-01'
         )
     {% endif %}
+    order by
+        jonosija_id asc,
+        muokattu desc
 )
 
 select
