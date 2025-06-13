@@ -5,6 +5,7 @@
     },
     "deletionProtection": false,
     "enablePerformanceInsights": true,
+    "enableAdvancedDatabaseInsights": true,
     "iopsStorage": true,
     "maxCapacity": 16,
     "minCapacity": 0,

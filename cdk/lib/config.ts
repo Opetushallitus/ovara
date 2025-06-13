@@ -15,6 +15,7 @@ export interface Config {
     };
     deletionProtection: boolean;
     enablePerformanceInsights: boolean;
+    enableAdvancedDatabaseInsights: boolean;
     iopsStorage: boolean;
     maxCapacity: number;
     minCapacity: number;
