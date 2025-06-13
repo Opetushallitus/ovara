@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import * as appscaling from 'aws-cdk-lib/aws-applicationautoscaling';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
@@ -386,6 +387,13 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
+    lampiSiirtajaTempS3Bucket.addLifecycleRule({
+      abortIncompleteMultipartUploadAfter: Duration.days(1),
+      enabled: true,
+      expiration: Duration.days(2),
+      id: 'rule',
+    });
+
     const lampiSiirtajaS3Bucket = new s3.Bucket(
       this,
       `${config.environment}-lampi-siirtaja-bucket`,
@@ -400,6 +408,13 @@ export class EcsStack extends cdk.Stack {
         versioned: false,
       }
     );
+
+    lampiSiirtajaS3Bucket.addLifecycleRule({
+      abortIncompleteMultipartUploadAfter: Duration.days(1),
+      enabled: true,
+      expiration: Duration.days(14),
+      id: 'rule',
+    });
 
     const rdsExportPolicy = new iam.ManagedPolicy(
       this,

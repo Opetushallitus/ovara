@@ -175,6 +175,12 @@ export class BastionStack extends cdk.Stack {
       '54.72.176.32/32', // Opintopolku AWS VPN
       '194.136.110.100/32', // Knowit (Helsinki)
       '185.93.49.68/32', // Knowit (Tampere + VPN)
+      '185.74.174.0/24', // Valtori (OPH)
+      '31.15.124.0/22', // Valtori (OPH)
+      '185.74.172.0/24', // Valtori (OPH)
+      '46.30.132.0/22', // Valtori (OPH)
+      '109.69.32.0/21', // Valtori (OPH)
+      '46.30.130.0/23', // Valtori (OPH)
     ].forEach((ipAddress) => {
       bastionExternalSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(ipAddress),
