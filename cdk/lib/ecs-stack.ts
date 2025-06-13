@@ -412,7 +412,7 @@ export class EcsStack extends cdk.Stack {
     lampiSiirtajaS3Bucket.addLifecycleRule({
       abortIncompleteMultipartUploadAfter: Duration.days(1),
       enabled: true,
-      expiration: Duration.days(7),
+      expiration: Duration.days(14),
       id: 'rule',
     });
 
