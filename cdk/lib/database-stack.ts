@@ -78,13 +78,17 @@ export class DatabaseStack extends cdk.Stack {
       }),
       parameters: {
         shared_preload_libraries: 'pg_stat_statements,pg_hint_plan,auto_explain,pg_cron',
-        work_mem: '524288',
+        work_mem: '65536',
+        random_read: '65536',
         max_parallel_workers_per_gather: '4',
         random_page_cost: '1',
         default_statistics_target: '1000',
       },
     });
 
+    const performanceInsightRetention = config.aurora.enableAdvancedDatabaseInsights
+      ? rds.PerformanceInsightRetention.MONTHS_15
+      : rds.PerformanceInsightRetention.DEFAULT;
     const auroraCluster = new rds.DatabaseCluster(
       this,
       `${config.environment}-OpiskelijavalinnanraportointiAuroraCluster`,
@@ -96,23 +100,27 @@ export class DatabaseStack extends cdk.Stack {
         serverlessV2MaxCapacity: config.aurora.maxCapacity,
         deletionProtection: config.aurora.deletionProtection,
         removalPolicy: cdk.RemovalPolicy.RETAIN,
+        databaseInsightsMode: config.aurora.enableAdvancedDatabaseInsights
+          ? rds.DatabaseInsightsMode.ADVANCED
+          : rds.DatabaseInsightsMode.STANDARD,
+        performanceInsightRetention: performanceInsightRetention,
         writer: rds.ClusterInstance.provisioned('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
-          enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+          performanceInsightRetention: performanceInsightRetention,
           instanceType: new ec2.InstanceType(config.aurora.writerInstanceType),
         }),
         readers: config.aurora.serverlessReader
           ? [
               rds.ClusterInstance.serverlessV2('Reader', {
                 caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
-                enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+                performanceInsightRetention: performanceInsightRetention,
                 scaleWithWriter: config.aurora.scaleReaderWithWriter,
               }),
             ]
           : [
               rds.ClusterInstance.provisioned('Reader', {
                 caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
-                enablePerformanceInsights: config.aurora.enablePerformanceInsights,
+                performanceInsightRetention: performanceInsightRetention,
                 instanceType: new ec2.InstanceType(config.aurora.readerInstanceType),
               }),
             ],
@@ -140,6 +148,7 @@ export class DatabaseStack extends cdk.Stack {
           : rds.DBClusterStorageType.AURORA,
       }
     );
+
     this.auroraCluster = auroraCluster;
 
     new cdk.CfnOutput(this, 'AuroraClusterResourceId', {
