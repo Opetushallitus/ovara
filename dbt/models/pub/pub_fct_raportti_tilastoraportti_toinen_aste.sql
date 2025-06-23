@@ -60,7 +60,7 @@ final as (
                 else 0
             end
         ) as hyvaksytyt,
-        sum(case when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI') then 1 else 0 end) as vastaanottaneet,
+        sum(case when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') then 1 else 0 end) as vastaanottaneet,
         sum(case
             when
                 hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_s#1'

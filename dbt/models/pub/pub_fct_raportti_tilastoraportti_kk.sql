@@ -51,7 +51,7 @@ final as (
         ) as hyvaksytyt,
         sum(
             case
-                when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI') then 1
+                when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') then 1
                 else 0
             end
         ) as vastaanottaneet,
