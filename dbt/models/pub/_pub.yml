@@ -369,6 +369,12 @@ models:
       - name: kansalaisuusluokka
         description: "Kenttä kansalaisuuden filtteröintiin. Arvot: 1 = Suomi, 2 = EU/ETA, 3 = muut"
         data_type: integer
+      - name: kansalaisuudet
+        description: Henkilön kaikkien eri kansalaisuuksien koodiarvot
+        data_type: jsonb
+      - name: kansalaisuudet_nimi
+        description: Henkilön kaikkien eri kansalaisuuksien lokalisoidut nimet
+        data_type: jsonb
       - name: turvakielto
         data_type: boolean
       - name: hetu

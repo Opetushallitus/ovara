@@ -32,6 +32,21 @@ maa as (
     where viimeisin_versio
 ),
 
+kansalaisuudet as (
+    select
+        henkilo_oid,
+        jsonb_agg(maa2.koodinimi) as kansalaisuudet_nimi
+    from
+    (
+        select
+	        henkilo_oid,
+	        jsonb_array_elements_text(kansalaisuus) as kansalaisuus
+        from onr
+        ) as onr1
+    left join maa as maa2 on onr1.kansalaisuus = maa2.koodiarvo
+    group by henkilo_oid
+),
+
 int as (
     select
         atar.henkilo_oid,
@@ -70,6 +85,8 @@ int as (
         kans.kansalaisuus,
         kans.kansalaisuus_nimi,
         kans.kansalaisuusluokka,
+        onr1.kansalaisuus as kansalaisuudet,
+        knss.kansalaisuudet_nimi,
         onr1.turvakielto,
         onr1.hetu,
         onr1.syntymaaika,
@@ -80,6 +97,7 @@ int as (
     left join kansalaisuus as kans on onr1.henkilo_oid = kans.henkilo_oid
     left join kunta as knta on atar.kotikunta = knta.koodiarvo
     left join maa as maa2 on atar.asuinmaa = maa2.koodiarvo
+    left join kansalaisuudet as knss on hmap.henkilo_oid = knss.henkilo_oid
 
 )
 
