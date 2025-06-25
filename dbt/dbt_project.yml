@@ -33,6 +33,8 @@ models:
         node_color: "#2c7790"
       +pre-hook:
         - "{{ stg_start() }}"
+      +post-hook:
+        - "ALTER TABLE {{ this.schema }}.{{this.name}} set (autovacuum_enabled = off)"
       +tags: stg
     dw:
       +schema: dw
