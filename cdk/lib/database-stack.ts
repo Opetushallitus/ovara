@@ -186,25 +186,12 @@ export class DatabaseStack extends cdk.Stack {
       }
     );
 
-    new events.Rule(this, `${config.environment}-ovara-aurora-cluster-events-rule`, {
-      ruleName: `${config.environment}-ovara-aurora-cluster-events-rule`,
-      description: 'Rule for Ovaran Aurora cluster events',
+    new events.Rule(this, `${config.environment}-ovara-aurora-events-rule`, {
+      ruleName: `${config.environment}-ovara-aurora-events-rule`,
+      description: 'Rule for Ovaran Aurora events',
       eventPattern: {
         source: ['aws.rds'],
-        detailType: ['RDS DB Cluster Event'],
-        detail: {
-          EventID: [{ exists: true }],
-        },
-      },
-      targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
-    });
-
-    new events.Rule(this, `${config.environment}-ovara-aurora-instance-events-rule`, {
-      ruleName: `${config.environment}-ovara-aurora-instance-events-rule`,
-      description: 'Rule for Ovaran Aurora instance events',
-      eventPattern: {
-        source: ['aws.rds'],
-        detailType: ['RDS DB Instance Event'],
+        detailType: ['RDS DB Cluster Event', 'RDS DB Instance Event'],
         detail: {
           EventID: [{ exists: true }],
         },
