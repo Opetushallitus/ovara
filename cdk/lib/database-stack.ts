@@ -7,6 +7,7 @@ import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as events from 'aws-cdk-lib/aws-events';
+import * as eventsTargets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
@@ -47,6 +48,38 @@ export class DatabaseStack extends cdk.Stack {
       );
     };
 
+    const allClusterEventCategories = [
+      'failover',
+      'migration',
+      'failure',
+      'notification',
+      'serverless',
+      'creation',
+      'deletion',
+      'maintenance',
+      'configuration change',
+      'global-failover',
+    ];
+
+    const allInstanceEventCategories = [
+      'backup',
+      'deletion',
+      'availability',
+      'creation',
+      'low storage',
+      'restoration',
+      'configuration change',
+      'failover',
+      'maintenance',
+      'failure',
+      'notification',
+      'read replica',
+      'recovery',
+      'security',
+      'backtrack',
+      'security patching',
+    ];
+
     const vpc = props.vpc;
     const publicHostedZone = props.publicHostedZone;
 
@@ -83,6 +116,9 @@ export class DatabaseStack extends cdk.Stack {
         max_parallel_workers_per_gather: '4',
         random_page_cost: '1',
         default_statistics_target: '1000',
+        log_min_duration_statement: '1000',
+        log_temp_files: '0',
+        max_wal_senders: '20',
       },
     });
 
@@ -104,6 +140,7 @@ export class DatabaseStack extends cdk.Stack {
           ? rds.DatabaseInsightsMode.ADVANCED
           : rds.DatabaseInsightsMode.STANDARD,
         performanceInsightRetention: performanceInsightRetention,
+        cloudwatchLogsExports: ['postgresql'],
         writer: rds.ClusterInstance.provisioned('Writer', {
           caCertificate: rds.CaCertificate.RDS_CA_RSA4096_G1,
           performanceInsightRetention: performanceInsightRetention,
@@ -148,6 +185,32 @@ export class DatabaseStack extends cdk.Stack {
           : rds.DBClusterStorageType.AURORA,
       }
     );
+
+    new events.Rule(this, `${config.environment}-ovara-aurora-cluster-events-rule`, {
+      ruleName: `${config.environment}-ovara-aurora-cluster-events-rule`,
+      description: 'Rule for Ovaran Aurora cluster events',
+      eventPattern: {
+        source: ['aws.rds'],
+        detailType: ['RDS DB Cluster Event'],
+        detail: {
+          EventID: [{ exists: true }],
+        },
+      },
+      targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
+    });
+
+    new events.Rule(this, `${config.environment}-ovara-aurora-instance-events-rule`, {
+      ruleName: `${config.environment}-ovara-aurora-instance-events-rule`,
+      description: 'Rule for Ovaran Aurora instance events',
+      eventPattern: {
+        source: ['aws.rds'],
+        detailType: ['RDS DB Instance Event'],
+        detail: {
+          EventID: [{ exists: true }],
+        },
+      },
+      targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
+    });
 
     this.auroraCluster = auroraCluster;
 
@@ -349,18 +412,7 @@ export class DatabaseStack extends cdk.Stack {
       {
         subscriptionName: `${config.environment}-ovara-aurora-cluster-failover-subscription`,
         snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
-        eventCategories: [
-          'failover',
-          'migration',
-          'failure',
-          'notification',
-          'serverless',
-          'creation',
-          'deletion',
-          'maintenance',
-          'configuration change',
-          'global-failover',
-        ],
+        eventCategories: allClusterEventCategories,
         sourceIds: [auroraCluster.clusterIdentifier],
         sourceType: 'db-cluster',
       }
@@ -372,24 +424,7 @@ export class DatabaseStack extends cdk.Stack {
       {
         subscriptionName: `${config.environment}-ovara-aurora-instances-failover-subscription`,
         snsTopicArn: auroraClusterFailoverSnsTopic.topicArn,
-        eventCategories: [
-          'backup',
-          'deletion',
-          'availability',
-          'creation',
-          'low storage',
-          'restoration',
-          'configuration change',
-          'failover',
-          'maintenance',
-          'failure',
-          'notification',
-          'read replica',
-          'recovery',
-          'security',
-          'backtrack',
-          'security patching',
-        ],
+        eventCategories: allInstanceEventCategories,
         sourceIds: [...auroraCluster.instanceIdentifiers],
         sourceType: 'db-instance',
       }
