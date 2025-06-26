@@ -4,7 +4,7 @@
     index = [
         {'columns': ['jonosija_id']},
         {'columns': ['hakutoive_id']},
-           {'columns': ['hakemus_hakukohde_valintatapa_id']}
+        {'columns': ['hakemus_hakukohde_valintatapa_id']}
     ]
     )
 }}
