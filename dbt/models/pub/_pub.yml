@@ -972,7 +972,6 @@ models:
         data_type: bigint
       - name: ilm_yht
         data_type: bigint
-        data_type: bigint
       - name: toive_1
         data_type: bigint
       - name: toive_2
