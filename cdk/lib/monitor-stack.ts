@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as chatbot from 'aws-cdk-lib/aws-chatbot';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
@@ -41,6 +42,10 @@ export class MonitorStack extends cdk.Stack {
       loggingLevel: chatbot.LoggingLevel.INFO,
       logRetention: logs.RetentionDays.THREE_MONTHS,
     });
+
+    this.slackAlarmIntegrationSnsTopic.grantPublish(
+      new iam.ServicePrincipal('cloudwatch.amazonaws.com')
+    );
 
     cdkNag.NagSuppressions.addStackSuppressions(this, [
       { id: 'AwsSolutions-SNS2', reason: 'Not needed with Alarm sending' },
