@@ -1029,7 +1029,47 @@ models:
         data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
+
   - name: dw_ataru_lomake
+    columns:
+      - name: lomake_id_versioid_id
+        data_type: text
+      - name: id
+        data_type: uuid
+      - name: versio_id
+        data_type: integer
+      - name: poistettu
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: kielivalinta
+        data_type: jsonb
+      - name: organisaatio_oid
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: luoja
+        data_type: text
+      - name: content
+        data_type: jsonb
+      - name: dw_metadata_source_timestamp_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_dbt_copied_at
+        data_type: timestamp with time zone
+      - name: dw_metadata_filename
+        data_type: character varying
+      - name: dw_metadata_file_row_number
+        data_type: integer
+      - name: kaksois_urheilija_tutkinto
+        data_type: boolean
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
   - name: dw_valintarekisteri_lukuvuosimaksu
     config:
       tags:

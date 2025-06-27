@@ -46,12 +46,14 @@ models:
       +post-hook:
         - "{{ dw_end() }}"
       +tags: dw
+      +on_schema_change: append_new_columns
 
     int:
       +schema: int
       +materialized: table
       +docs:
         node_color: "#20586a"
+      +on_schema_change: append_new_columns
 
     int1:
       +schema: int1

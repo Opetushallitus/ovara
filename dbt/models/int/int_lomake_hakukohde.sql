@@ -5,8 +5,6 @@
 		{'columns': ['lomake_id','kysymys_id']},
 		{'columns': ['hakukohde_oid']}
 	],
-    pre_hook = "set enable_seqscan = off",
-    post_hook = "set enable_seqscan = on"
 	)
 }}
 
@@ -16,13 +14,7 @@ with lomake as ( --noqa: PRS
         muokattu,
 		content
     from {{ ref('dw_ataru_lomake') }}
-    where
-        content @> '[{"id": "1dc3311d-2235-40d6-88d2-de2bd63e087b"}]'
-        or content @> '[{"id": "ammatillinen_perustutkinto_urheilijana"}]'
-        or content @> '[{"id": "4fe08958-c0b7-4847-8826-e42503caa662"}]'
-        or content @> '[{"id": "32b8440f-d6f0-4a8b-8f67-873344cc3488"}]'
-        or content @> '[{"id": "lukio_opinnot_ammatillisen_perustutkinnon_ohella"}]'
-        or content @> '[{"id": "ammatilliset_opinnot_lukio_opintojen_ohella"}]'
+    where kaksois_urheilija_tutkinto
 ),
 
 rows as (

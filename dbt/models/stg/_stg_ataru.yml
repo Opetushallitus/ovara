@@ -131,6 +131,8 @@ models:
       pre_hook: set work_mem='6GB'
       post_hook: set work_mem='512MB'
     columns:
+      - name: lomake_id_versioid_id
+        data_type: text
       - name: id
         description: ""
         data_type: uuid
