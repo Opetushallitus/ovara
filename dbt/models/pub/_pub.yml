@@ -311,6 +311,9 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+      - name: master_oid
+        data_type: text
+        description: Henkilön master_oid
       - name: hakemus_oid
         description: hakemuksen tunniste
         data_type: text
@@ -857,6 +860,128 @@ models:
         data_type: int
       - name: pohjakoulutus_nimi
         data_type: jsonb
+
+  - name: pub_fct_raportti_tilastoraportti_2aste_hakutoive
+    description: |
+      Toisen asteen tilastoraportin tietoja hakutoivetasolla. Aggregointi, ryhmittely ja suodatus pitää tehdä käyttöliittymässä mutta tämä
+      taulu mahdollistaa kaikki eri tulostustavat.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: koulutusalataso_1
+        data_type: text
+      - name: koulutusalataso_2
+        data_type: text
+      - name: koulutusalataso_3
+        data_type: text
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: sukupuoli
+        data_type: integer
+      - name: ensisijainen
+        data_type: boolean
+      - name: varasija
+        data_type: boolean
+      - name: hyvaksytty
+        data_type: boolean
+      - name: vastaanottanut
+        data_type: boolean
+      - name: lasna
+        data_type: boolean
+      - name: poissa
+        data_type: boolean
+      - name: ilm_yht
+        data_type: boolean
+      - name: toive_1
+        data_type: boolean
+      - name: toive_2
+        data_type: boolean
+      - name: toive_3
+        data_type: boolean
+      - name: toive_4
+        data_type: boolean
+      - name: toive_5
+        data_type: boolean
+      - name: toive_6
+        data_type: boolean
+      - name: toive_7
+        data_type: boolean
+
+  - name: pub_fct_raportti_tilastoraportti_kk_hakutoive
+    description: |
+      Tämä raportti sisältää tarvittavat tiedot korkeakulujen tilastoraporttia varten. Tieto on hakutoivetasolla, joten raportille
+      pitää aggregoida ja ryhmitellä luvut, mutta se mahdollistaa kaikki eri tulostustavat
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: hakutoive_id
+        data_type: text
+        description: Hakutoiveen tunniste
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: hakukohde_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: aidinkieli
+        description: Äiidnkieli on jaettu kolmeen luokkaan; suomi (fi), ruotsi(sv) tai muu
+        data_type: text
+      - name: kansalaisuusluokka
+        description: |
+          Kansalaisuus on jaettu kolmeen luokkaan; 1=suomi, 2=EU/ETA, 3=muut
+          Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" tässä järjestyksessä
+        data_type: integer
+      - name: sukupuoli
+        description: Sukupuolitieto koodiston mukaan. 1=mies, 2=nainen
+        data_type: integer
+      - name: kansalaisuus
+        description: |
+          Kansalaisuuskoodi joka vastaa koodistoa maat_ja_valtiot2.
+          Jos hakijalalla on useampi kansalaisuus on tähän nostettu "paras" järjestyksessä Suomi, EU/ETA, muu
+        data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+      - name: ensisijainen
+        data_type: boolean
+      - name: hyvaksytty
+        data_type: boolean
+      - name: vastaanottanut
+        data_type: boolean
+      - name: lasna
+        data_type: boolean
+      - name: poissa
+        data_type: boolean
+      - name: ilm_yht
+        data_type: boolean
+      - name: maksuvelvollinen
+        data_type: boolean
+        description: |
+          Tämä tieto tulee hakemusesta käsittelymerkintöjen kentästä "payment-obligation".
+          Hakija katsotaan maksuvelvolliseksi jos arvo on "obligated"
+      - name: toive_1
+        data_type: boolean
+      - name: toive_2
+        data_type: boolean
+      - name: toive_3
+        data_type: boolean
+      - name: toive_4
+        data_type: boolean
+      - name: toive_5
+        data_type: boolean
+      - name: toive_6
+        data_type: boolean
+
+
   - name: pub_fct_raportti_tilastoraportti_kk
     description: |
       Tämä raportti sisältää tarvittavat tiedot korkeakulujen tilastoraporttia varten. Tiedot ovat summattu valintaehtojen tasolle.

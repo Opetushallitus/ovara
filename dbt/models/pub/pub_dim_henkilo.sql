@@ -50,6 +50,7 @@ kansalaisuudet as (
 int as (
     select
         atar.henkilo_oid,
+        onr1.master_oid,
         atar.hakemus_oid,
         case
             when onr1.hetu is not null

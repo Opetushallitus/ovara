@@ -3,3 +3,4 @@ dbt_packages/
 logs/
 .*
 !.gitignore
+dbt_internal_packages/
