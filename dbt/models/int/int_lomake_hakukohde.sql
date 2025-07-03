@@ -12,6 +12,7 @@ with lomake as ( --noqa: PRS
     select
         id as lomake_id,
         muokattu,
+        versio_id,
 		content
     from {{ ref('dw_ataru_lomake') }}
     where kaksois_urheilija_tutkinto
@@ -23,7 +24,7 @@ rows as (
     left join lomake as osa2
         on
             osa1.lomake_id = osa2.lomake_id
-            and osa1.muokattu < osa2.muokattu
+            and osa1.versio_id < osa2.versio_id
     where
         osa2.lomake_id is null
 
