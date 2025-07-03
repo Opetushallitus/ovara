@@ -62,7 +62,7 @@ final as (
         as poissa,
         (vare.ilmoittautumisen_tila is not null
             and vare.ilmoittautumisen_tila not in ('EI_TEHTY', 'EI_ILMOITTAUTUNUT'))
-        as ilm_yht,
+        as ilmoittautunut,
         mave.maksuvelvollisuus = 'obligated' as maksuvelvollinen,
         hakutoivenumero = '1' as toive_1,
         hakutoivenumero = '2' as toive_2,

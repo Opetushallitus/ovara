@@ -74,7 +74,7 @@ final as (
         as poissa,
         vare.ilmoittautumisen_tila is not null
                 and vare.ilmoittautumisen_tila not in ('EI_TEHTY', 'EI_ILMOITTAUTUNUT')
-        as ilm_yht,
+        as ilmoittautunut,
         hato.hakutoivenumero = 1 as toive_1,
         hato.hakutoivenumero = 2 as toive_2,
         hato.hakutoivenumero = 3 as toive_3,

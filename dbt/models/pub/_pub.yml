@@ -899,8 +899,9 @@ models:
         data_type: boolean
       - name: poissa
         data_type: boolean
-      - name: ilm_yht
+      - name: ilmoittautunut
         data_type: boolean
+        description: Hakija on ilmoittanut jotain tähän hakutoiveeseen liittyen
       - name: toive_1
         data_type: boolean
       - name: toive_2
@@ -961,8 +962,9 @@ models:
         data_type: boolean
       - name: poissa
         data_type: boolean
-      - name: ilm_yht
+      - name: ilmoittautunut
         data_type: boolean
+        description: Hakija on ilmoittanut jotain tähän hakutoiveeseen liittyen
       - name: maksuvelvollinen
         data_type: boolean
         description: |
