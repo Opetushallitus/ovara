@@ -41,6 +41,7 @@ rivit as (
             'hyvaksyperuuntunut', vatu.hyvaksyperuuntunut,
             'hyvaksytty_harkinnanvaraisesti', josi.hyvaksytty_harkinnanvaraisesti,
             'jonosija', josi.jonosija,
+            'varasijan_numero', josi.varasijan_numero,
             'onko_muuttunut_viime_sijoittelussa', josi.onko_muuttunut_viime_sijoittelussa,
             'prioriteetti', josi.prioriteetti,
             'pisteet', josi.pisteet,
