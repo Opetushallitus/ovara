@@ -186,6 +186,11 @@ models:
         description: Päätelty koulutuskoodin perusteella. Jos koulutuskoodin ensimmäinen merkki on 7, on koulutus ylempi kk-aste
       - name: okm_ohjauksen_ala
         data_type: int
+      - name: koulutusala
+        description: Koulutusalan taso1 tieto
+        data_type: text
+      - name: koulutusala_nimi
+        data_type: jsonb
       - name: valintaperuste_nimi
         data_type: jsonb
         description: valintaperusteen lokalisoitu nimi
@@ -901,7 +906,7 @@ models:
         data_type: boolean
       - name: ilmoittautunut
         data_type: boolean
-        description: Hakija on ilmoittanut jotain tähän hakutoiveeseen liittyen
+        description: Hakija on ilmoittautunut läsnä- tai poissaolevaksi tähän hakutoiveeseen
       - name: toive_1
         data_type: boolean
       - name: toive_2
@@ -964,7 +969,7 @@ models:
         data_type: boolean
       - name: ilmoittautunut
         data_type: boolean
-        description: Hakija on ilmoittanut jotain tähän hakutoiveeseen liittyen
+        description: Hakija oon ilmoittautunut läsnä- tai poissaolevaksi tähän hakutoiveeseen
       - name: maksuvelvollinen
         data_type: boolean
         description: |

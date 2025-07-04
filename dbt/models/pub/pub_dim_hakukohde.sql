@@ -33,6 +33,10 @@ organisaatio_hakukohteiden_nimet as (
     select * from {{ ref('int_organisaatio_hakukohteiden_nimet') }}
 ),
 
+koulutusala as (
+    select * from {{ ref('pub_dim_koodisto_koulutusalataso1') }}
+),
+
 int as (
     select
         hako.hakukohde_oid,
@@ -86,6 +90,8 @@ int as (
         koul.alempi_kk_aste,
         koul.ylempi_kk_aste,
         koul.okm_ohjauksen_ala,
+        koul.kansallinenkoulutusluokitus2016koulutusalataso1 as koulutusala,
+        kala.koodinimi as koulutusala_nimi,
         hako.valintaperuste_nimi
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
@@ -93,6 +99,7 @@ int as (
     left join koulutus as koul on tote.koulutus_oid = koul.koulutus_oid
     left join organisaatio as orga on hako.jarjestyspaikka_oid = orga.organisaatio_oid
     left join organisaatio_hakukohteiden_nimet as hani on hako.jarjestyspaikka_oid = hani.jarjestyspaikka_oid
+    left join koulutusala as kala on koul.kansallinenkoulutusluokitus2016koulutusalataso1 = kala.koodiarvo
 ),
 
 step2 as (
@@ -161,6 +168,8 @@ final as (
         alempi_kk_aste,
         ylempi_kk_aste,
         okm_ohjauksen_ala,
+        koulutusala,
+        koulutusala_nimi,
         valintaperuste_nimi
     from step2
 )
