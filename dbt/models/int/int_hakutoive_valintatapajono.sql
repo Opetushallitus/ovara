@@ -7,15 +7,15 @@
     )
 }}
 
-with valinnantulos as (
+with valinnantulos as not materialized (
     select * from {{ ref('int_valintarekisteri_valinnantulos') }}
 ),
 
-jonosija as (
+jonosija as not materialized (
     select * from {{ ref('int_valintarekisteri_jonosija') }}
 ),
 
-jono as (
+jono as not materialized (
     select * from {{ ref('int_valintarekisteri_valintatapajono') }}
 ),
 
