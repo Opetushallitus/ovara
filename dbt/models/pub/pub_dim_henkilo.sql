@@ -52,16 +52,8 @@ int as (
         atar.henkilo_oid,
         onr1.master_oid,
         atar.hakemus_oid,
-        case
-            when onr1.hetu is not null
-                then onr1.etunimet
-            else atar.etunimet
-        end as etunimet,
-        case
-            when onr1.hetu is not null
-                then onr1.sukunimi
-            else atar.sukunimi
-        end as sukunimi,
+        onr1.etunimet,
+        onr1.sukunimi,
         atar.lahiosoite,
         atar.postinumero,
         atar.postitoimipaikka,
