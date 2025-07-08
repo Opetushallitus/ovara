@@ -1,13 +1,27 @@
 {{
     config(
-        materialized = 'table',
+        materialized = 'incremental',
+        unique_key = 'resourceid',
         indexes = [
+        {"columns": ["suoritus"]},
+        {"columns": ["dw_metadata_dw_stored_at"]}
         ]
     )
 }}
 
-with raw as (
+with raw as not materialized (
     select distinct on (resourceid) * from {{ ref('dw_sure_arvosana') }}
+    where deleted != true
+    {%- if target.name == 'prod' and is_incremental() %}
+    and dw_metadata_dw_stored_at > (
+        select coalesce (
+            max(dw_metadata_dw_stored_at),
+            '1900-01-01'
+        )
+
+        from {{ this }}
+    )
+    {% endif %}
     order by resourceid asc, muokattu desc
 ),
 
@@ -135,7 +149,8 @@ final as (
                         else 'D_' || lisatieto
                     end
             else 'XXX'
-        end as yo_aine
+        end as yo_aine,
+        dw_metadata_dw_stored_at
     from raw
 )
 

@@ -8,6 +8,14 @@
           {'columns': ['hakemus_versio_id','muokattu','tila']},
           {'columns': ['dw_metadata_dw_stored_at']},
       ],
+    merge_exclude_columns = [
+        'created_atdw_metadata_source_timestamp_at',
+        'dw_metadata_stg_stored_at',
+        'dw_metadata_dbt_copied_at',
+        'dw_metadata_filename',
+        'dw_metadata_file_row_number',
+        'dw_metadata_dw_stored_at'
+        ]
     )
 }}
 

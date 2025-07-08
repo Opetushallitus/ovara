@@ -185,7 +185,7 @@ models:
       - name: versioitu_koodiuri
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
       - name: koodiuri
         data_type: text
       - name: koodiarvo
@@ -514,3 +514,28 @@ models:
         data_type: text
       - name: koodinimi
         data_type: jsonb
+  - name: pub_dim_koodisto_yokokeet
+    description: Yo-kokeiden selkokielisiä nimiä
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+      - name: koodiversio
+        data_type: integer
+      - name: koodinimi
+        data_type: jsonb
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: voimassaalkupvm
+        data_type: timestamp with time zone
+      - name: voimassaloppupvm
+        data_type: timestamp with time zone

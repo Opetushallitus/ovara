@@ -13,7 +13,7 @@ with raw as (
 ),
 
 final as (
-    select
+    select distinct on (versioitu_koodiuri)
         koodistouri,
         koodiuri || '#' || koodiversio::varchar as versioitu_koodiuri,
         koodiuri,
@@ -35,6 +35,7 @@ final as (
         voimassaalkupvm,
         voimassaloppupvm
     from raw
+    order by versioitu_koodiuri asc, muokattu desc
 )
 
 select * from final

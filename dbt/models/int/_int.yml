@@ -143,6 +143,8 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
       - name: maksuvelvollisuus
         data_type: text
 
@@ -268,43 +270,13 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
 
-  - name: int_valintarekisteri_jonosija
-    columns:
-      - name: hakemus_hakukohde_valintatapa_id
-        data_type: text
-      - name: hakutoive_id
-        data_type: text
-      - name: id
-        data_type: text
-      - name: hakemus_oid
-        data_type: text
-      - name: hakukohde_oid
-        data_type: text
-      - name: valintatapajono_oid
-        data_type: text
-      - name: hyvaksytty_harkinnanvaraisesti
-        data_type: boolean
-      - name: jonosija
-        data_type: integer
-      - name: varasijan_numero
-        data_type: integer
-      - name: onko_muuttunut_viime_sijoittelussa
-        data_type: boolean
-      - name: prioriteetti
-        data_type: integer
-      - name: pisteet
-        data_type: double precision
-      - name: siirtynyt_toisesta_valintatapajonosta
-        data_type: boolean
-      - name: sijoitteluajo_id
-        data_type: text
-      - name: dw_metadata_dw_stored_at
-        data_type: timestamp with time zone
   - name: int_sijoitteluajo
-    description: Tämä on väliakaistauliu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
+    description: Tämä on väliakaistaulu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
     columns:
       - name: valintatapajono_oid
         data_type: text
+        data_tests:
+          - unique
       - name: sijoitteluajo_id
         data_type: text
       - name: muokattu
@@ -415,4 +387,3 @@ models:
           - dbt_constraints.primary_key
       - name: aloituspaikat
         data_type: bigint
-

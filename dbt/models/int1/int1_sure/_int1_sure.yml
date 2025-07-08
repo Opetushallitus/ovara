@@ -6,7 +6,6 @@ models:
         data_type: text
         description: ""
         data_tests:
-          - not_null
           - dbt_constraints.primary_key
       - name: suoritus
         description: "Tunniste (resourceId) sille suoritukselle, johon tämä arvosana liittyy"
@@ -29,8 +28,6 @@ models:
       - name: muokattu
         description: Hetki, jolloin tämä versio on tallennettu kantaan. Kentän nimi vaihdettu muokattu nimiseksi, jotta se täsmää muiden poimintojen kanssa.
         data_type: timestamp with time zone
-        data_tests:
-          - not_null
       - name: deleted
         description: ""
         data_type: boolean

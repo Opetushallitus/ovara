@@ -43,13 +43,18 @@ final as (
         sum(case when ensikertalainen then 1 else 0 end) as ensikertalaisia,
         sum(
             case
-                when hato.valintatieto in ('HYVAKSYTTY', 'VARASIJALTA_HYVAKSYTTY') then 1
+                when hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU' then 1
+                when
+                    hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY'
+                    and hato.vastaanottotieto is distinct from 'PERUUTETTU'
+                    then 1
+                when hato.valintatieto = 'PERUNUT' then 1
                 else 0
             end
         ) as hyvaksytyt,
         sum(
             case
-                when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI') then 1
+                when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') then 1
                 else 0
             end
         ) as vastaanottaneet,

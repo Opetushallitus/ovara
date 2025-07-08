@@ -43,8 +43,8 @@ step1 as (
         haku.koulutuksen_alkamiskausikoodi as koulutuksen_alkamiskausi,
         haku.haun_tyyppi
     from haku as haku
-    inner join hakutapakoodi as hata on haku.hakutapakoodiuri = hata.versioitu_koodiuri
-    inner join haunkohdejoukko as hajo on haku.kohdejoukkokoodiuri = hajo.versioitu_koodiuri
+    left join hakutapakoodi as hata on haku.hakutapakoodiuri = hata.versioitu_koodiuri
+    left join haunkohdejoukko as hajo on haku.kohdejoukkokoodiuri = hajo.versioitu_koodiuri
     left join haunkohdejoukontarkenne as hatr on haku.kohdejoukontarkennekoodiuri = hatr.versioitu_koodiuri
 ),
 

@@ -567,7 +567,7 @@ models:
       - name: koodiuri
         description: ""
         data_type: text
-        name: koodiarvo
+      - name: koodiarvo
         description: ""
         data_type: text
       - name: koodiversio

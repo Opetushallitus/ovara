@@ -155,7 +155,7 @@ export class LambdaStack extends cdk.Stack {
         runtime: lambda.Runtime.NODEJS_22_X,
         architecture: lambda.Architecture.ARM_64,
         timeout: cdk.Duration.seconds(900),
-        memorySize: 10240,
+        memorySize: 7000,
         vpc: props.vpc,
         securityGroups: [lambdaSecurityGroup],
         role: executionRole,
@@ -183,7 +183,7 @@ export class LambdaStack extends cdk.Stack {
       {
         batchSize: 1,
         maxBatchingWindow: cdk.Duration.millis(0),
-        maxConcurrency: 2,
+        maxConcurrency: 10,
       }
     );
     siirtotiedostoLambda.addEventSource(siirtotiedostoEventSource);

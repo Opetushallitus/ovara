@@ -19,6 +19,9 @@ raw as (
         data ->> 'action' as operaatio,
         (data ->> 'id')::int as id,
         (data ->> 'timestamp')::timestamptz as muokattu,
+        (data ->> 'deletedAt')::timestamptz as poistettu_aikaleima,
+        data ->> 'deletedBy' as poistaja,
+        data ->> 'deletedSelite' as selite_poisto,
         {{ metadata_columns() }}
     from source
 ),

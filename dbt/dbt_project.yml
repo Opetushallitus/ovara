@@ -33,6 +33,8 @@ models:
         node_color: "#2c7790"
       +pre-hook:
         - "{{ stg_start() }}"
+      +post-hook:
+        - "ALTER TABLE {{ this.schema }}.{{this.name}} set (autovacuum_enabled = off)"
       +tags: stg
     dw:
       +schema: dw
@@ -44,12 +46,14 @@ models:
       +post-hook:
         - "{{ dw_end() }}"
       +tags: dw
+      +on_schema_change: append_new_columns
 
     int:
       +schema: int
       +materialized: table
       +docs:
         node_color: "#20586a"
+      +on_schema_change: append_new_columns
 
     int1:
       +schema: int1

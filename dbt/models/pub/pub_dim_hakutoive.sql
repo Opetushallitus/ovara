@@ -8,6 +8,7 @@
         {'columns':['hakukohde_oid']},
         {'columns':['henkilo_hakemus_id']},
         {'columns':['haku_oid']},
+        {'columns':['henkilo_oid']}
     ]
     )
 }}

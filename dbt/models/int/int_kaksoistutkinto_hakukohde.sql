@@ -32,8 +32,15 @@ rows as (
         hakemus_oid,
         hakukohde,
         lomake_id,
-        split_part(keys, '_', -1) as hakukohde_oid,
-        (regexp_match(keys::text, '.*(?=_)'))[1] as kysymys_id,
+        case
+    	    when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then keys
+	        else split_part(keys, '_', -1)
+	    end as hakukohde_oid,
+		case
+	        when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then null
+       		else (regexp_match(keys::text, '.*(?=_)'))[1]
+       	end as kysymys_id,
+
         tiedot ->> keys as arvo
     from raw
     where

@@ -222,8 +222,12 @@ models:
   - name: int_valintapiste_service_pistetieto
     columns:
       - name: valintakoe_hakemus_id
-        data_tests:
-        - dbt_constraints.primary_key
+#        data_tests:
+#        - dbt_constraints.primary_key
+#   Tämä testi on todella hidas, ~12 min tuotannossa, joten se on kommentoitu pois.
+#   Taulussa on jo primary Key olemassa, joten tämä testaus on oikeasti mukana.
+#   Jos jostain syystä ajetaan full-refresh, niin pitää käsin laittaa pk tauluun.
+#   MR /9.6.25
         data_type: text
       - name: hakemus_oid
         data_type: text
@@ -279,6 +283,41 @@ models:
       - name: henkilo_oid
         data_type: text
       - name: maksun_tila
+        data_type: text
+
+  - name: int_valintarekisteri_jonosija
+    columns:
+      - name: hakemus_hakukohde_valintatapa_id
+        data_type: text
+      - name: hakutoive_id
+        data_type: text
+      - name: id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_oid
+        data_type: text
+      - name: hyvaksytty_harkinnanvaraisesti
+        data_type: boolean
+      - name: jonosija
+        data_type: integer
+      - name: varasijan_numero
+        data_type: integer
+      - name: onko_muuttunut_viime_sijoittelussa
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: pisteet
+        data_type: double precision
+      - name: siirtynyt_toisesta_valintatapajonosta
+        data_type: boolean
+      - name: sijoitteluajo_id
+        data_type: text
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: jonosija_id
         data_type: text
 
   - name: int_valintarekisteri_valinnantulos
