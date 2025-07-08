@@ -23,8 +23,7 @@ with jonosija as (
 ),
 
 uudet as (
-    select
-        josi.*
+    select josi.*
     from jonosija as josi
     left join {{ this }} as vanh
         on josi.valintatapajono_oid = vanh.valintatapajono_oid

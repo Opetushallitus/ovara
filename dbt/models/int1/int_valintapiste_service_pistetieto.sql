@@ -46,12 +46,12 @@ final as (
     {% endif %}
     where
         pte2.valintakoe_hakemus_id is null
-    {%- if is_incremental() %}
-        and (
-            pte1.muokattu > pte3.muokattu
-            or pte3 is null
-        )
-    {%- endif %}
+        {%- if is_incremental() %}
+            and (
+                pte1.muokattu > pte3.muokattu
+                or pte3 is null
+            )
+        {%- endif %}
 )
 
 

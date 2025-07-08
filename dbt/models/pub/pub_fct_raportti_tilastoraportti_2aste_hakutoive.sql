@@ -53,27 +53,35 @@ final as (
         henk.sukupuoli,
         hato.hakutoivenumero = 1 as ensisijainen,
         hato.valintatieto = 'VARALLA' as varasija,
-        (hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU') or
-            (hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU') or
-            (hato.valintatieto = 'PERUNUT')
+        (hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
+        or (hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
+        or (hato.valintatieto = 'PERUNUT')
         as hyvaksytty,
         vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') as vastaanottanut,
-        (hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_s#1'
-                and upper(vare.ilmoittautumisen_tila) in
-                ('LASNA_SYKSY', 'POISSA_KEVAT', 'LASNA', 'LASNA_KOKO_LUKUVUOSI')) or
-            (hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_k#1'
-                and upper(vare.ilmoittautumisen_tila)
-                in ('LASNA_KEVAT', 'POISSA_SYKSY', 'LASNA', 'LASNA_KOKO_LUKUVUOSI')) or
-            upper(vare.ilmoittautumisen_tila) in ('LASNA', 'LASNA_KOKO_LUKUVUOSI')
+        (
+            hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_s#1'
+            and upper(vare.ilmoittautumisen_tila) in
+            ('LASNA_SYKSY', 'POISSA_KEVAT', 'LASNA', 'LASNA_KOKO_LUKUVUOSI')
+        )
+        or (
+            hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_k#1'
+            and upper(vare.ilmoittautumisen_tila) in
+            ('LASNA_KEVAT', 'POISSA_SYKSY', 'LASNA', 'LASNA_KOKO_LUKUVUOSI')
+        )
+        or upper(vare.ilmoittautumisen_tila) in ('LASNA', 'LASNA_KOKO_LUKUVUOSI')
         as lasna,
-        (hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_s#1'
-            and upper(vare.ilmoittautumisen_tila) in ('POISSA_SYKSY', 'POISSA_KOKO_LUKUVUOSI')) or
-            (hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_k#1'
-                and upper(vare.ilmoittautumisen_tila) in ('POISSA_KEVAT', 'POISSA_KOKO_LUKUVUOSI')) or
-            upper(vare.ilmoittautumisen_tila) in ('POISSA', 'POISSA_KOKO_LUKUVUOSI')
+        (
+            hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_s#1'
+            and upper(vare.ilmoittautumisen_tila) in ('POISSA_SYKSY', 'POISSA_KOKO_LUKUVUOSI')
+        )
+        or (
+            hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_k#1'
+            and upper(vare.ilmoittautumisen_tila) in ('POISSA_KEVAT', 'POISSA_KOKO_LUKUVUOSI')
+        )
+        or upper(vare.ilmoittautumisen_tila) in ('POISSA', 'POISSA_KOKO_LUKUVUOSI')
         as poissa,
         vare.ilmoittautumisen_tila is not null
-                and vare.ilmoittautumisen_tila not in ('EI_TEHTY', 'EI_ILMOITTAUTUNUT')
+        and vare.ilmoittautumisen_tila not in ('EI_TEHTY', 'EI_ILMOITTAUTUNUT')
         as ilmoittautunut,
         hato.hakutoivenumero = 1 as toive_1,
         hato.hakutoivenumero = 2 as toive_2,

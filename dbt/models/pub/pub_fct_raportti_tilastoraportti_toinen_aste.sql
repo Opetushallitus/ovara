@@ -55,12 +55,21 @@ final as (
         sum(
             case
                 when hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU' then 1
-                when hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU' then 1
+                when
+                    hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY'
+                    and hato.vastaanottotieto is distinct from 'PERUUTETTU'
+                    then 1
                 when hato.valintatieto = 'PERUNUT' then 1
                 else 0
             end
         ) as hyvaksytyt,
-        sum(case when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') then 1 else 0 end) as vastaanottaneet,
+        sum(
+            case
+                when vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT')
+                    then 1
+                else 0
+            end
+        ) as vastaanottaneet,
         sum(case
             when
                 hako.koulutuksen_alkamiskausi_koodiuri = 'kausi_s#1'

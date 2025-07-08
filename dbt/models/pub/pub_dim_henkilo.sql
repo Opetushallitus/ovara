@@ -37,11 +37,11 @@ kansalaisuudet as (
         henkilo_oid,
         jsonb_agg(maa2.koodinimi) as kansalaisuudet_nimi
     from
-    (
-        select
-	        henkilo_oid,
-	        jsonb_array_elements_text(kansalaisuus) as kansalaisuus
-        from onr
+        (
+            select
+                henkilo_oid,
+                jsonb_array_elements_text(kansalaisuus) as kansalaisuus
+            from onr
         ) as onr1
     left join maa as maa2 on onr1.kansalaisuus = maa2.koodiarvo
     group by henkilo_oid

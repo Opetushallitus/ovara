@@ -38,7 +38,7 @@ int as (
     {% endif %}
     where
         tls2.valinnanvaihe_id is null
-    {%- if is_incremental() %}
+        {%- if is_incremental() %}
             and (
                 tls1.muokattu > tls3.muokattu
                 or tls3.muokattu is null
