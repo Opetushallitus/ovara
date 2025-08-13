@@ -43,7 +43,7 @@ rivit as (
             'jonosija', josi.jonosija,
             'varasijan_numero', josi.varasijan_numero,
             'onko_muuttunut_viime_sijoittelussa', josi.onko_muuttunut_viime_sijoittelussa,
-            'prioriteetti', josi.prioriteetti,
+            'prioriteetti', jono.prioriteetti,
             'pisteet', josi.pisteet,
             'siirtynyt_toisesta_valintatapajonosta', josi.siirtynyt_toisesta_valintatapajonosta
         ) as valintatapajonot

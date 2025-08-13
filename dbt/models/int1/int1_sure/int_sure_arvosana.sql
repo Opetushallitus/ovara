@@ -114,8 +114,8 @@ final as (
             when aine = 'VI2' --suomi/ruotsi toisena kielenä
                 then
                     case
-                        when lisatieto = 'RU' then 'OS'
-                        when lisatieto = 'FI' then 'AS'
+                        when lisatieto = 'RU' then 'O5'
+                        when lisatieto = 'FI' then 'A5'
                         else 'VI2_' || lisatieto
                     end
             when aine = 'PITKA' --pitkä matematiikka
