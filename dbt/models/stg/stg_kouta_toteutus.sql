@@ -72,6 +72,7 @@ final as (
         (data -> 'metadata' -> 'diplomit')::jsonb as diplomit,
         (data -> 'metadata' ->> 'jarjestetaanErityisopetuksena')::boolean as jarjestetaanErityisopetuksena,
         (data -> 'metadata' -> 'taiteenalaKoodiUrit')::jsonb as taiteenalaKoodiUrit,
+        (data -> 'metadata' ->> 'isPieniOsaamiskokonaisuus')::boolean as isPieniOsaamiskokonaisuus,
         data -> 'sorakuvausId'::varchar as sorakuvausId,
         data ->> 'muokkaaja'::varchar as muokkaaja,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,

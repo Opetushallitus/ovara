@@ -41,6 +41,7 @@ final as (
         data -> 'metadata' ->> 'osaamisalaKoodiUri'::varchar as osaamisalaKoodiUri,
         data -> 'metadata' ->> 'erikoistumiskoulutusKoodiUri'::varchar as erikoistumiskoulutusKoodiUri,
         (data -> 'metadata' -> 'linkkiEPerusteisiin')::jsonb as linkkiEPerusteisiin,
+        (data -> 'metadata' -> 'luokittelutermit')::jsonb as luokittelutermit,
         data ->> 'muokkaaja'::varchar as muokkaaja,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         data ->> 'teemakuva'::varchar as teemakuva,
