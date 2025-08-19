@@ -999,12 +999,13 @@ models:
         enforced: true
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - hakukohde_oid
-            - aidinkieli
-            - kansalaisuus
-            - sukupuoli
-            - ensikertalainen
+          arguments:
+            combination_of_columns:
+              - hakukohde_oid
+              - aidinkieli
+              - kansalaisuus
+              - sukupuoli
+              - ensikertalainen
     columns:
       - name: hakukohde_oid
         data_type: text
@@ -1068,13 +1069,14 @@ models:
         enforced: true
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - hakukohde_oid
-            - koulutusalataso_1
-            - koulutusalataso_2
-            - koulutusalataso_3
-            - harkinnanvaraisuuden_syy
-            - sukupuoli
+          arguments:
+            combination_of_columns:
+              - hakukohde_oid
+              - koulutusalataso_1
+              - koulutusalataso_2
+              - koulutusalataso_3
+              - harkinnanvaraisuuden_syy
+              - sukupuoli
     columns:
       - name: hakukohde_oid
         data_type: text

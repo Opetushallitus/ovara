@@ -2,9 +2,10 @@ models:
   - name: int_kouta_ammattinimike
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - kieli
-            - arvo
+          arguments:
+            combination_of_columns:
+              - kieli
+              - arvo
     columns:
       - name: kieli
         data_type: text
@@ -26,9 +27,10 @@ models:
   - name: int_kouta_asiasana
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - kieli
-            - arvo
+          arguments:
+            combination_of_columns:
+              - kieli
+              - arvo
     columns:
       - name: kieli
         data_type: text
