@@ -156,8 +156,9 @@ models:
         data_type: text
         data_tests:
           - dbt_constraints.foreign_key:
-              pk_table_name: ref('int_organisaatio')
-              pk_column_name: organisaatio_oid
+              arguments:
+                pk_table_name: ref('int_organisaatio')
+                pk_column_name: organisaatio_oid
       - name: osoitetyyppi
         data_type: text
       - name: kieli
