@@ -55,6 +55,18 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant sel
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema dw grant select on tables to readonlyrole;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema dw grant select on sequences to readonlyrole;"
 
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema int to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema int to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema int to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema int grant select on tables to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema int grant select on sequences to readonlyrole;"
+
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema int1 to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema int1 to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema int1 to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema int1 grant select on tables to readonlyrole;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "alter default privileges in schema int1 grant select on sequences to readonlyrole;"
+
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant readonlyrole to readonly;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create user readonly with password '$readonly_pw';"
 echo ""
