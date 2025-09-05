@@ -19,3 +19,5 @@ cdk.out
 dbt/package-lock.yml
 
 target
+
+.envrc
