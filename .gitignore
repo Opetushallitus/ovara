@@ -21,3 +21,5 @@ dbt/package-lock.yml
 target
 
 .envrc
+
+*.code-workspace
