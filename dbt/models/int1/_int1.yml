@@ -7,14 +7,23 @@ models:
         data_type: text
         data_tests:
           - dbt_constraints.primary_key
+      - name: hakemus_versio_id
+        data_type: text
+        description: Hashattu arvo yhdistelmästä hakemus_oid ja versio_id, yksilöi hakemuksen versioineen
       - name: versio_id
         data_type: integer
+        description: Hakemuksen versio, samasta hakemuksesta on olemassa useampi versio jos sitä on muutettu
       - name: lomake_id
         data_type: uuid
+        description: Haussa käytetyn lomakkeen tunniste
       - name: lomakeversio_id
         data_type: integer
+        description: Hakemuksessa käytetyn lomakkeen version tunniste
       - name: tiedot
         data_type: jsonb
+        description: |
+          Tämä kenttä sisältää kaikki hakemuksessa annetut tiedot avainpari-muodossa, eli kysymyksen avain ja sen vastaus.
+          Vastausten tulkkaamiseksi tarvitaan yleensä lomakkeen tietoja
       - name: liitteet
         data_type: jsonb
       - name: luotu
@@ -31,6 +40,7 @@ models:
         data_type: text
       - name: hakukohde
         data_type: jsonb
+        description: Hakemukseen merkityt hakutoiveet järjestyksessä
       - name: henkilo_oid
         data_type: text
       - name: hakukelpoisuus_asetettu_automaattisesti
@@ -59,6 +69,7 @@ models:
         data_type: integer
       - name: kansalaisuus
         data_type: jsonb
+        description: Hakijan kaikki kansalaisuudet
       - name: sahkoinenviestintalupa
         data_type: boolean
       - name: koulutusmarkkinointilupa
@@ -73,7 +84,7 @@ models:
         data_type: text
       - name: pohjakoulutuksen_maa_toinen_aste
         data_type: text
-      - name: keyvalues
+      - name: hakemusmaksut
         data_type: jsonb
       - name: muokattu
         data_type: timestamp with time zone
@@ -89,10 +100,6 @@ models:
         data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
-      - name: hakemus_versio_id
-        data_type: text
-      - name: hakemusmaksut
-        data_type: jsonb
       - name: poistettu
         data_type: boolean
       - name: hakemusmaksun_tila
