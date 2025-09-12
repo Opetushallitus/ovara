@@ -2,7 +2,8 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns':['hakukohderyhma_oid','hakukohde_oid']}
+        {'columns':['hakukohderyhma_oid','hakukohde_oid']},
+        {'columns':['hakukohde_oid']}
     ]
   )
 }}
