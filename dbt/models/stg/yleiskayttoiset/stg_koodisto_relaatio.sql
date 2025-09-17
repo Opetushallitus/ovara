@@ -3,26 +3,12 @@
     materialized = 'table',
     indexes = [
         {'columns': ['koodirelaatio_id']},
-        {'columns': ['muokattu']}
     ]
     )
 }}
 
 with source as (
     select * from {{ source('ovara', 'koodisto_relaatio') }}
-{#
-    {% if is_incremental() %}
-
-        where dw_metadata_dbt_copied_at > (
-            select coalesce(max(dw_metadata_dbt_copied_at), '1899-12-31') from {{ this }}
-        )
-
-    {% endif %}
-#}
-    where
-        (data ->> 'updated')::timestamptz > (
-            select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_koodisto_relaatio') }}
-        )
 
 ),
 
