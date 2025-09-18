@@ -1,8 +1,8 @@
 {{
   config(
     indexes=[
-        {'columns':['ylakoodiarvo','ylakoodiversio']},
-        {'columns':['alakoodiarvo','alakoodiversio']},
+        {'columns':['ylakoodiuri','ylakoodiversio']},
+        {'columns':['alakoodiuri','alakoodiversio']},
     ]
     )
 }}
