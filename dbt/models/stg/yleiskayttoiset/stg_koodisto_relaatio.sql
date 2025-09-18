@@ -7,6 +7,10 @@
     )
 }}
 
+{% if is_loading('koodisto_relaatio') %}
+select * from {{ this }}
+{% else %}
+
 with source as (
     select * from {{ source('ovara', 'koodisto_relaatio') }}
 
@@ -40,3 +44,5 @@ final as (
 )
 
 select * from final
+
+{% endif %}
