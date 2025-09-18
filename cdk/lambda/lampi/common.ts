@@ -42,13 +42,13 @@ export const tiedostot: Tiedostot = {
   koodisto_koodi: {
     lampiKey: 'fulldump/koodisto/v2/json/koodi.json',
     ovaraKeyTemplate: 'koodisto/koodisto_koodi__{}__{}_{}.json',
-    batchSize: 250000,
+    batchSize: 300000,
     intervalHours: 6,
   },
   koodisto_relaatio: {
     lampiKey: 'fulldump/koodisto/v2/json/relaatio.json',
     ovaraKeyTemplate: 'koodisto/koodisto_relaatio__{}__{}_{}.json',
-    batchSize: 250000,
+    batchSize: 750000,
     intervalHours: 6,
   },
   onr_henkilo: {

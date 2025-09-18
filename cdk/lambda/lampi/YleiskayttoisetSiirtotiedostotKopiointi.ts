@@ -108,10 +108,14 @@ export const main: lambda.Handler = async (
     await dbClient.query('truncate table raw.onr_henkilo');
     console.log('Siivottu tiedot pois raw.onr_henkilo-taulusta');
   } else if (tiedostotyyppi == 'koodisto_koodi') {
+    console.log('Merkitään että koodisto_koodi on käsittelyssä')
+    await dbClient.query("insert into raw.loading (file) values ('koodisto_koodi'))")
     console.log('Siivotaan tiedot pois raw.koodisto_koodi-taulusta');
     await dbClient.query('truncate table raw.koodisto_koodi');
     console.log('Siivottu tiedot pois raw.koodisto_koodi-taulusta');
   } else if (tiedostotyyppi == 'koodisto_relaatio') {
+    console.log('Merkitään että koodisto_relaatio on käsittelyssä')
+    await dbClient.query("insert into raw.loading (file) values ('koodisto_relaatio')")
     console.log('Siivotaan tiedot pois raw.koodisto_relaatio-taulusta');
     await dbClient.query('truncate table raw.koodisto_relaatio');
     console.log('Siivottu tiedot pois raw.koodisto_relaatio-taulusta');
@@ -228,5 +232,13 @@ export const main: lambda.Handler = async (
   const s3SavePromises: Array<Promise<any>> = await processDataPromise;
   console.log('Odotellaan kaikkien s3-tallennuslupausten valmistumista');
   await Promise.all(s3SavePromises);
-  console.log('Kaikki valmista.');
+
+  if (tiedostotyyppi == 'koodisto_koodi') {
+    console.log('Merkitään että koodisto_koodi on valmis')
+    await dbClient.query("delete from raw.loading where file='koodisto_koodi'")
+  } else if (tiedostotyyppi == 'koodisto_relaatio') {
+    console.log('Merkitään että koodisto_relaatio on valmis')
+    await dbClient.query("delete from raw.loading where file='koodisto_relaatio'")
+  }
+    console.log('Kaikki valmista.');
 };
