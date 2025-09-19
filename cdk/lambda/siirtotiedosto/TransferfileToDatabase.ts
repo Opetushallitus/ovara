@@ -195,9 +195,6 @@ const saveToDb = async (
       return row(json, exportTime, now, filename, rowNumberCounter);
     });
     await Raw.bulkCreate(rows);
-    console.log(
-      `Lisätty tietokantaan ${batch.length} riviä järjestelmästä ${sourceSystem}`
-    );
   }
   return rowNumberCounter;
 };
