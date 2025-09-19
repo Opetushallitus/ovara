@@ -167,6 +167,9 @@ export const main: Handler = async (event: SQSEvent) => {
   }
 
   const duration = Math.round((new Date().getTime() - startTime) / 1000);
+  console.log(
+    `Kirjoitettu kantaan ${nbrOfRows} riviä järjestelmän ${source} tiedostosta ${key}, ajon kesto ${duration} sekuntia`
+  );
   return {
     statusCode: 200,
     body: `Lahde: ${source}, rivien lukumaara: ${nbrOfRows}, ajon kesto: ${duration}`,
