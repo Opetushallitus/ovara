@@ -109,7 +109,7 @@ export const main: lambda.Handler = async (
     console.log('Siivottu tiedot pois raw.onr_henkilo-taulusta');
   } else if (tiedostotyyppi == 'koodisto_koodi') {
     console.log('Merkitään että koodisto_koodi on käsittelyssä')
-    await dbClient.query("insert into raw.loading (file) values ('koodisto_koodi'))")
+    await dbClient.query("insert into raw.loading (file) values ('koodisto_koodi')")
     console.log('Siivotaan tiedot pois raw.koodisto_koodi-taulusta');
     await dbClient.query('truncate table raw.koodisto_koodi');
     console.log('Siivottu tiedot pois raw.koodisto_koodi-taulusta');
