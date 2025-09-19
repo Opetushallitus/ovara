@@ -104,7 +104,7 @@ export const main: Handler = async (event: SQSEvent) => {
   const port = portStr ? Number(portStr) : 5432;
 
   const batchSizeStr = process.env.batch_size || '';
-  const batchSize = batchSizeStr ? Number(batchSizeStr) : 100;
+  const batchSize = batchSizeStr ? Number(batchSizeStr) : 1000;
 
   const rawTableSplit = key.split('__')[0].split('/');
   const rawTable = rawTableSplit[rawTableSplit.length - 1];
@@ -159,8 +159,7 @@ export const main: Handler = async (event: SQSEvent) => {
       partitionedContents,
       exportTime,
       key,
-      source,
-      batchSize
+      source
     );
   } catch (err) {
     console.error(err);
@@ -168,9 +167,6 @@ export const main: Handler = async (event: SQSEvent) => {
   }
 
   const duration = Math.round((new Date().getTime() - startTime) / 1000);
-  console.log(
-    `Kirjoitettu kantaan ${nbrOfRows} riviä järjestelmän ${source} tiedostosta ${key}, ajon kesto ${duration} sekuntia`
-  );
   return {
     statusCode: 200,
     body: `Lahde: ${source}, rivien lukumaara: ${nbrOfRows}, ajon kesto: ${duration}`,
@@ -183,8 +179,7 @@ const saveToDb = async (
   partitionedData: Array<Array<object>>,
   exportTime: Date,
   filename: string,
-  sourceSystem: string,
-  batchSize: number
+  sourceSystem: string
 ) => {
   const dbClient = new Sequelize(config);
   await dbClient.authenticate();

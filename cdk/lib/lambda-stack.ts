@@ -164,7 +164,7 @@ export class LambdaStack extends cdk.Stack {
           database: 'ovara',
           user: 'insert_raw_user',
           port: '5432',
-          batch_size: '100',
+          batch_size: '1000',
         },
         bundling: {
           commandHooks: {
