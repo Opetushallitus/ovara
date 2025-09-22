@@ -29,6 +29,8 @@ const DEFAULT_DB_POOL_PARAMS = {
   acquire: 10000,
 };
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export const main: lambda.Handler = async (
   event: string | SQSEvent,
   context: Context
@@ -108,14 +110,14 @@ export const main: lambda.Handler = async (
     await dbClient.query('truncate table raw.onr_henkilo');
     console.log('Siivottu tiedot pois raw.onr_henkilo-taulusta');
   } else if (tiedostotyyppi == 'koodisto_koodi') {
-    console.log('Merkitään että koodisto_koodi on käsittelyssä')
-    await dbClient.query("insert into raw.loading (file) values ('koodisto_koodi')")
+    console.log('Merkitään että koodisto_koodi on käsittelyssä');
+    await dbClient.query("insert into raw.loading (file) values ('koodisto_koodi')");
     console.log('Siivotaan tiedot pois raw.koodisto_koodi-taulusta');
     await dbClient.query('truncate table raw.koodisto_koodi');
     console.log('Siivottu tiedot pois raw.koodisto_koodi-taulusta');
   } else if (tiedostotyyppi == 'koodisto_relaatio') {
-    console.log('Merkitään että koodisto_relaatio on käsittelyssä')
-    await dbClient.query("insert into raw.loading (file) values ('koodisto_relaatio')")
+    console.log('Merkitään että koodisto_relaatio on käsittelyssä');
+    await dbClient.query("insert into raw.loading (file) values ('koodisto_relaatio')");
     console.log('Siivotaan tiedot pois raw.koodisto_relaatio-taulusta');
     await dbClient.query('truncate table raw.koodisto_relaatio');
     console.log('Siivottu tiedot pois raw.koodisto_relaatio-taulusta');
@@ -234,11 +236,13 @@ export const main: lambda.Handler = async (
   await Promise.all(s3SavePromises);
 
   if (tiedostotyyppi == 'koodisto_koodi') {
-    console.log('Merkitään että koodisto_koodi on valmis')
-    await dbClient.query("delete from raw.loading where file='koodisto_koodi'")
+    console.log('Merkitään että koodisto_koodi on valmis');
+    await sleep(5000);
+    await dbClient.query("delete from raw.loading where file='koodisto_koodi'");
   } else if (tiedostotyyppi == 'koodisto_relaatio') {
-    console.log('Merkitään että koodisto_relaatio on valmis')
-    await dbClient.query("delete from raw.loading where file='koodisto_relaatio'")
+    console.log('Merkitään että koodisto_relaatio on valmis');
+    await sleep(5000);
+    await dbClient.query("delete from raw.loading where file='koodisto_relaatio'");
   }
-    console.log('Kaikki valmista.');
+  console.log('Kaikki valmista.');
 };
