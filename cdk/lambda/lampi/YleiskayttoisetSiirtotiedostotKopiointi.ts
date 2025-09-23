@@ -236,12 +236,12 @@ export const main: lambda.Handler = async (
   await Promise.all(s3SavePromises);
 
   if (tiedostotyyppi == 'koodisto_koodi') {
-    console.log('Merkitään että koodisto_koodi on valmis');
     await sleep(5000);
+    console.log('Merkitään että koodisto_koodi on valmis');
     await dbClient.query("delete from raw.loading where file='koodisto_koodi'");
   } else if (tiedostotyyppi == 'koodisto_relaatio') {
-    console.log('Merkitään että koodisto_relaatio on valmis');
     await sleep(5000);
+    console.log('Merkitään että koodisto_relaatio on valmis');
     await dbClient.query("delete from raw.loading where file='koodisto_relaatio'");
   }
   console.log('Kaikki valmista.');
