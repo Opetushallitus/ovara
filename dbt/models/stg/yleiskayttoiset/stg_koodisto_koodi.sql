@@ -5,8 +5,13 @@
         {'columns': ['koodi_id']},
         {'columns': ['muokattu']}
     ]
+
     )
 }}
+
+{% if is_loading('koodisto_koodi') %}
+select * from {{ this }}
+{% else %}
 
 with source as (
     select * from {{ source('ovara', 'koodisto_koodi') }}
@@ -56,3 +61,5 @@ final as (
 )
 
 select * from final
+
+{% endif %}

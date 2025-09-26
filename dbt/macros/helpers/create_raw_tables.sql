@@ -20,9 +20,13 @@
     CREATE INDEX if not exists ix_'+ table + ' ON raw.' + table+ ' USING btree (dw_metadata_dbt_copied_at);
     ALTER TABLE raw.' + table+ ' set (autovacuum_enabled=off);'
 %}
-        {{ print ( create_statement )}}
+        {{ print (create_statement)}}
         {% do run_query(create_statement) %}
-        {% endfor %}
+    {% endfor %}
+
+    {% set create_statement = 'create table if not exists raw.loading (file text, timestamp timestamptz DEFAULT current_timestamp)'%}
+        {{ print (create_statement) }}
+        {% do run_query(create_statement) %}
 
 {% endif %}
 {%- endmacro %}
