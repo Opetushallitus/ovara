@@ -9,7 +9,7 @@
         ],
         post_hook = [
             "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))",
-            "create index if not exists ix_int_ataru_hakemus_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)"
+            "create index if not exists ix_dw_metadata_dbt_copied_at on {{ this }} (dw_metadata_dbt_copied_at desc)"
         ]
     )
 }}
@@ -17,7 +17,7 @@
 with raw as not materialized (
     select distinct on (oid) * from {{ ref('dw_ataru_hakemus') }}
     {% if is_incremental() %}
-        where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dw_stored_at) from {{ this }} as t)
+        where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dbt_copied_at) from {{ this }} as t)
     {% endif %}
     order by oid asc, versio_id desc, muokattu desc
 
