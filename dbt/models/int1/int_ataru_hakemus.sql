@@ -32,7 +32,37 @@ final as (
                 then true::boolean
             else false::boolean
         end as poistettu,
-        hakemusmaksut ->> 'state' as hakemusmaksun_tila
+        hakemusmaksut ->> 'state' as hakemusmaksun_tila,
+        tiedot ->> '74fb6885-879d-4748-a2bc-aaeb32616ba1' = '0' as kiinnostunut_oppisopimuksesta,
+        tiedot -> 'higher-completed-base-education' as pohjakoulutus_kk,
+        jsonb_strip_nulls(
+            jsonb_build_object(
+                'other-eligibility-year-of-completion', tiedot ->'other-eligibility-year-of-completion'->0->>0,
+                'pohjakoulutus_amp--year-of-completion', tiedot ->'pohjakoulutus_amp--year-of-completion'->0->>0,
+                'pohjakoulutus_amt--year-of-completion', tiedot ->'pohjakoulutus_amt--year-of-completion'->0->>0,
+                'pohjakoulutus_amv--year-of-completion', tiedot ->'pohjakoulutus_amv--year-of-completion'->0->>0,
+                'pohjakoulutus_am--year-of-completion', tiedot ->'pohjakoulutus_am--year-of-completion'->0->>0,
+                'pohjakoulutus_avoin--year-of-completion', tiedot ->'pohjakoulutus_avoin--year-of-completion'->0->>0,
+                'pohjakoulutus_kk_ulk--year-of-completion', tiedot ->'pohjakoulutus_kk_ulk--year-of-completion'->0->>0,
+                'pohjakoulutus_lk--year-of-completion', tiedot ->'pohjakoulutus_lk--year-of-completion'->0->>0,
+                'pohjakoulutus_muu--year-of-completion', tiedot ->'pohjakoulutus_muu--year-of-completion'->0->>0,
+                'pohjakoulutus_ulk--year-of-completion', tiedot ->'pohjakoulutus_ulk--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_ammatillinen--marticulation-year-of-completion', tiedot ->'pohjakoulutus_yo_ammatillinen--marticulation-year-of-completion'->0->>0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--eb--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--eb--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--ib--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--ib--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--rb--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--rb--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--year-of-completion'->0->>0,
+                'pohjakoulutus_yo--no-year-of-completion', tiedot ->'pohjakoulutus_yo--no-year-of-completion'->0->>0,
+                'pohjakoulutus_yo_ulkomainen--eb--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--eb--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_ulkomainen--ib--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--ib--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_ulkomainen--rb--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--rb--year-of-completion'->0->>0,
+                'pohjakoulutus_yo_ulkomainen--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--year-of-completion'->0->>0,
+                'pohjakoulutus_yo--yes-year-of-completion', tiedot ->'pohjakoulutus_yo--yes-year-of-completion'->0->>0,
+                'pohjakoulutus_yo_ammatillinen--vocational-completion-year', tiedot ->'pohjakoulutus_yo_ammatillinen--vocational-completion-year'->0->>0,
+                'pohjakoulutus_kk--completion-date', tiedot ->'pohjakoulutus_kk--completion-date'->0->>0
+            )
+        )
+        as pohjakoulutus_kk_valmistusmisvuosi
     from raw
     where henkilo_oid is not null
 )
