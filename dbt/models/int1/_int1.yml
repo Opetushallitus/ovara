@@ -384,7 +384,7 @@ models:
         description: Hakukohteen oid
         data_type: text
       - name: hakutoivenumero
-        description: Hakukohteen järjestysnumero hakemuksessa
+        description: Hakukohteen järjestysnumero hakemuksessa. Arvo -1 tarkoittaa että haussa ei ole käytössä hakutoiveiden priorisointia
         data_type: bigint
 
 
