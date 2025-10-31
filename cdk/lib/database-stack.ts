@@ -112,7 +112,7 @@ export class DatabaseStack extends cdk.Stack {
       parameters: {
         shared_preload_libraries: 'pg_stat_statements,pg_hint_plan,auto_explain,pg_cron',
         work_mem: '524288',
-        random_read: '65536',
+        //random_read: '65536',
         max_parallel_workers_per_gather: '4',
         random_page_cost: '1',
         default_statistics_target: '1000',
