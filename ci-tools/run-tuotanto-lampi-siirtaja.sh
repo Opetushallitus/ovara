@@ -14,7 +14,15 @@ awsvpcconfiguration=$(jq -c -n --argjson subnets "$subnets" \
                                --arg assignPublicIp "$assignpublicip" \
                                '$ARGS.named')
 networkconfiguration=$(jq -c -n --argjson awsvpcConfiguration "$awsvpcconfiguration" '$ARGS.named')
-command="aws ecs run-task --cluster $ecscluster --task-definition $taskdefinition --launch-type="FARGATE" --network-configuration '$networkconfiguration'"
-echo "$command"
-
-eval "$command"
+if [[ -z "$1" ]]; then
+  echo "Starting DBT without any extra paramaters"
+  command="aws ecs run-task --cluster $ecscluster --task-definition $taskdefinition --launch-type="FARGATE" --network-configuration '$networkconfiguration'"
+  echo "$command"
+  eval "$command"
+else
+  echo "Starting DBT with extra paramaters"
+  overrides="{ \"containerOverrides\": [ { \"command\": [ \"bash\", \"/root/run.sh\", \"'$1'\" ] } ] }"
+  command="aws ecs run-task --cluster $ecscluster --task-definition $taskdefinition --launch-type='FARGATE' --network-configuration '$networkconfiguration' --overrides='$overrides'"
+  echo "$command"
+  echo "Not running command"
+fi
