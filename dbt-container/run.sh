@@ -23,15 +23,16 @@ fi
 echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
-dbt seed -s tag:seed --target=prod
-dbt run-operation create_raw_tables --target=prod
-
 is_error="0"
+run_cleanup_and_generate_documentation="false"
 
 if [[ -z "$1" ]]; then
   echo "Running DBT without any extra paramaters"
+  dbt seed -s tag:seed --target=prod
+  dbt run-operation create_raw_tables --target=prod
   if dbt build --target=prod --exclude "resource_type:seed"; then
   	is_error="0"
+  	run_cleanup_and_generate_documentation="true"
   else
     is_error="1"
   fi
@@ -48,7 +49,7 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
-if [ $is_error -eq "0" ]; then
+if [ $is_error -eq "0" ] && [ $run_cleanup_and_generate_documentation = "true" ]; then
 	start=$(date +%s)
 	dbt run-operation tempdata_cleanup --target=prod
 	echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
