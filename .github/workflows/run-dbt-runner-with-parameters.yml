@@ -1,5 +1,5 @@
 name: Run DBT Runner with parameters
-run-name: Run DBT Runner with parameters in environment ${{ inputs.environment }}
+run-name: Run DBT Runner in environment ${{ inputs.environment }} with parameters ${{ inputs.parameters }}
 
 on:
   workflow_call:
@@ -61,10 +61,10 @@ jobs:
       - name: Run scheduled task (TESTI)
         if: ${{ inputs.environment == 'testi' }}
         run: |
-          ci-tools/run-testi-dbt-runner.sh
+          ci-tools/run-testi-dbt-runner.sh --parameters='${{ inputs.parameters }}'
 
       - name: Run scheduled task (TUOTANTO)
         if: ${{ inputs.environment == 'tuotanto' }}
         run: |
-          ci-tools/run-tuotanto-dbt-runner.sh    
+          ci-tools/run-tuotanto-dbt-runner.sh   
 
