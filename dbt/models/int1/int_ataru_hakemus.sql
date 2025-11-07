@@ -62,7 +62,7 @@ final as (
                 'pohjakoulutus_kk--completion-date', tiedot ->'pohjakoulutus_kk--completion-date'->0->>0
             )
         )
-        as pohjakoulutus_kk_valmistusmisvuosi
+        as pohjakoulutus_kk_valmistumisvuosi
     from raw
     where henkilo_oid is not null
 )
