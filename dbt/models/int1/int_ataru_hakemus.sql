@@ -26,7 +26,13 @@ with raw as not materialized (
 final as (
     select
         oid as hakemus_oid,
-        {{ dbt_utils.star(from=ref('dw_ataru_hakemus'),except = ['oid']) }},
+        {{ dbt_utils.star(from=ref('dw_ataru_hakemus'),except = [
+            'oid',
+            'hakemusmaksun_tila',
+            'kiinnostunut_oppisopimuksesta',
+            'pohjakoulutus_kk',
+            'pohjakoulutus_kk_valmistumisvuosi'
+            ]) }},
         case
             when tila = 'inactivated'
                 then true::boolean
