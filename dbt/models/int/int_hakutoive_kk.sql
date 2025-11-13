@@ -12,11 +12,14 @@ with hakemus as not materialized (
     where
         kasittelymerkinnat @? '$[*] ? (@.requirement == "eligibility-state")'
         and tiedot ? 'higher-completed-base-education'
+        and haku_oid in (select haku_oid from {{ ref('int_kouta_haku') }} where haun_tyyppi = 'korkeakoulu')
 ),
 
 hakutoive as (
     select * from {{ ref('int_hakutoive') }}
 ),
+
+
 
 hakukelpoisuus as (
     select
