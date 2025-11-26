@@ -296,6 +296,10 @@ models:
         data_type: text
       - name: kaksoistutkinto_kiinnostaa
         data_type: boolean
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: poistettu
+        data_type: boolean
   - name: int_urheilijatutkinto_hakukohde
     columns:
       - name: hakutoive_id
