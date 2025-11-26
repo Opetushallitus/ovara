@@ -32,20 +32,25 @@ rows as (
         lomake_id,
         case
     	    when keys in ('ammatillinen_perustutkinto_urheilijana') then keys
-	        else split_part(keys, '_', -1)
+	        else key_hakukohde
         end as hakukohde_oid,
 		case
 	        when keys in ('ammatillinen_perustutkinto_urheilijana') then null
-       		else (regexp_match(keys::text, '.*(?=_)'))[1]
+       		else key_avain
        	end as kysymys_id,
         tiedot ->> keys as arvo
     from raw
+   join lateral (
+   		select (regexp_match(keys, '1\.2\.246\.562.*'))[1]::text as key_hakukohde) as key_hakukohde on true
+   	join lateral (
+   		select (regexp_match(keys, '.*(?=_1\.2\.246)'))[1]::text as key_avain ) as key_avain on true
     where
         (
             keys like '1dc3311d-2235-40d6-88d2-de2bd63e087b%'
             or keys like 'ammatillinen_perustutkinto_urheilijana%'
         )
         and tiedot ->> keys is not null
+
 ),
 
 int as (

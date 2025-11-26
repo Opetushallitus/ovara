@@ -33,16 +33,23 @@ rows as (
         hakukohde,
         lomake_id,
         case
-    	    when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then keys
-	        else split_part(keys, '_', -1)
-	    end as hakukohde_oid,
+	        when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then keys
+	        else key_hakukohde
+		    end
+	    as hakukohde_oid,
 		case
 	        when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then null
-       		else (regexp_match(keys::text, '.*(?=_)'))[1]
+       		else key_avain
        	end as kysymys_id,
-
-        tiedot ->> keys as arvo
+        tiedot ->> keys as arvo,
+        key_avain
     from raw
+   join lateral (
+   		select (regexp_match(keys, '1\.2\.246\.562.*'))[1]::text as key_hakukohde) as key_hakukohde on true
+
+   	join lateral (
+   		select (regexp_match(keys, '.*(?=_1\.2\.246)'))[1]::text as key_avain ) as key_avain on true
+
     where
         (
             keys like '4fe08958-c0b7-4847-8826-e42503caa662%'
@@ -58,9 +65,9 @@ int as (
         rows.hakemus_oid,
         coalesce(rows.kysymys_id, rows.hakukohde_oid) as kysymys_id,
         rows.arvo,
-        hako.hakukohde_oid
+        coalesce(hako.hakukohde_oid, rows.hakukohde_oid) as hakukohde_oid
     from rows
-    inner join hakukohde as hako on
+    left join hakukohde as hako on
     	rows.lomake_id = hako.lomake_id
     	and rows.hakukohde ? hako.hakukohde_oid
     	and (

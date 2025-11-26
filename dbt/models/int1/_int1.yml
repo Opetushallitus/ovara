@@ -104,6 +104,12 @@ models:
         data_type: boolean
       - name: hakemusmaksun_tila
         data_type: text
+      - name: kiinnostunut_oppisopimuksesta
+        data_type: bool
+      - name: pohjakoulutus_kk
+        data_type: jsonb
+      - name: pohjakoulutus_kk_valmistumisvuosi
+        data_type: jsonb
 
   - name: int_hakukohderyhmapalvelu_ryhma
     columns:

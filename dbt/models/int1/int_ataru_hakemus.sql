@@ -26,7 +26,13 @@ with raw as not materialized (
 final as (
     select
         oid as hakemus_oid,
-        {{ dbt_utils.star(from=ref('dw_ataru_hakemus'),except = ['oid']) }},
+        {{ dbt_utils.star(from=ref('dw_ataru_hakemus'),except = [
+            'oid',
+            'hakemusmaksun_tila',
+            'kiinnostunut_oppisopimuksesta',
+            'pohjakoulutus_kk',
+            'pohjakoulutus_kk_valmistumisvuosi'
+            ]) }},
         case
             when tila = 'inactivated'
                 then true::boolean
@@ -62,7 +68,7 @@ final as (
                 'pohjakoulutus_kk--completion-date', tiedot ->'pohjakoulutus_kk--completion-date'->0->>0
             )
         )
-        as pohjakoulutus_kk_valmistusmisvuosi
+        as pohjakoulutus_kk_valmistumisvuosi
     from raw
     where henkilo_oid is not null
 )
