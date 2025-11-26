@@ -1,8 +1,23 @@
 {{
   config(
     indexes = [
-        {'columns': ['hakutoive_id']}
-    ]
+        {'columns': ['hakutoive_id','poistettu']},
+        {'columns':['dw_metadata_dw_stored_at']}
+    ],
+    materialized = 'incremental',
+    unique_key = 'hakutoive_id',
+    incremental_strategy = 'merge',
+    pre_hook = "
+    {% if is_incremental() %}
+    update {{ this }}
+    set poistettu = true
+    where hakemus_oid in (
+        select hakemus_oid
+        from {{ ref('int_ataru_hakemus') }}
+        where dw_metadata_dw_stored_at > (
+            select max(dw_metadata_dw_stored_at) from {{ this }} ))
+    {% endif %}
+"
     )
 }}
 
@@ -12,7 +27,8 @@ with raw as ( --noqa: PRS
         lomake_id,
         hakukohde,
         jsonb_object_keys(tiedot) as keys,
-        tiedot
+        tiedot,
+        dw_metadata_dw_stored_at
     from {{ ref('int_ataru_hakemus') }}
     where
         tiedot ?| array[
@@ -21,6 +37,9 @@ with raw as ( --noqa: PRS
             'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
             'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
         ]
+    {% if is_incremental() %}
+    and dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
+    {% endif %}
 ),
 
 hakukohde as (
@@ -32,6 +51,7 @@ rows as (
         hakemus_oid,
         hakukohde,
         lomake_id,
+        dw_metadata_dw_stored_at,
         case
 	        when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then keys
 	        else key_hakukohde
@@ -65,7 +85,8 @@ int as (
         rows.hakemus_oid,
         coalesce(rows.kysymys_id, rows.hakukohde_oid) as kysymys_id,
         rows.arvo,
-        coalesce(hako.hakukohde_oid, rows.hakukohde_oid) as hakukohde_oid
+        coalesce(hako.hakukohde_oid, rows.hakukohde_oid) as hakukohde_oid,
+        rows.dw_metadata_dw_stored_at
     from rows
     left join hakukohde as hako on
     	rows.lomake_id = hako.lomake_id
@@ -95,11 +116,13 @@ final as (
             when kysymys_id = 'ammatilliset_opinnot_lukio_opintojen_ohella' and arvo = '1' then false
             when kysymys_id = '4fe08958-c0b7-4847-8826-e42503caa662' and arvo = '0' then true
             when kysymys_id = '4fe08958-c0b7-4847-8826-e42503caa662' and arvo = '1' then false
-       end as kaksoistutkinto_kiinnostaa
+       end as kaksoistutkinto_kiinnostaa,
+       dw_metadata_dw_stored_at
     from int
 )
 
 select
     {{ hakutoive_id() }},
-    *
+    *,
+    false as poistettu
 from final
