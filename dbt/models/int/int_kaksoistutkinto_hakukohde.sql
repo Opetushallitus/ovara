@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('int_ataru_hakemus') }}
 {{
   config(
     indexes = [
@@ -23,30 +24,30 @@
     )
 }}
 
-with max_timestamp as (
-	select max(dw_metadata_dw_stored_at) as max_timestamp from {{ this }}
-),
-
-raw as ( --noqa: PRS
+with raw as ( --noqa: PRS
     select
-        hakemus_oid,
-        lomake_id,
-        hakukohde,
-        jsonb_object_keys(tiedot) as keys,
-        tiedot,
-        dw_metadata_dw_stored_at
-    from {{ ref('int_ataru_hakemus') }}
-    cross join max_timestamp
+        *,
+        jsonb_object_keys(tiedot) as keys
+        from (
+            select
+                hakemus_oid,
+                lomake_id,
+                hakukohde,
+                tiedot,
+                dw_metadata_dw_stored_at
+            from "ovara"."int1"."int_ataru_hakemus"
+            {% if is_incremental() %}
+                cross join (select max(dw_metadata_dw_stored_at) as max_timestamp from "ovara"."int"."int_kaksoistutkinto_hakukohde")
+                where dw_metadata_dw_stored_at > max_timestamp
+            {% endif %}
+        ) a
     where
         tiedot ?| array[
-            '4fe08958-c0b7-4847-8826-e42503caa662',
-            '32b8440f-d6f0-4a8b-8f67-873344cc3488',
-            'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
-            'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
+            '4fe08958-c0b7-4847-8826-e42503caa662'::text,
+            '32b8440f-d6f0-4a8b-8f67-873344cc3488'::text,
+            'lukio_opinnot_ammatillisen_perustutkinnon_ohella'::text,
+            'ammatilliset_opinnot_lukio_opintojen_ohella-amm'::text
         ]
-    {% if is_incremental() %}
-    and dw_metadata_dw_stored_at > max_timestamp
-    {% endif %}
 ),
 
 hakukohde as (
