@@ -9,13 +9,15 @@
     incremental_strategy = 'merge',
     pre_hook = "
     {% if is_incremental() %}
-    update {{ this }}
-    set poistettu = true
-    where hakemus_oid in (
-        select hakemus_oid
-        from {{ ref('int_ataru_hakemus') }}
-        where dw_metadata_dw_stored_at > (
-            select max(dw_metadata_dw_stored_at) from {{ this }} ))
+        UPDATE {{ this }} AS h
+        SET poistettu = true
+        FROM {{ ref('int_ataru_hakemus') }} AS a
+        JOIN (
+            SELECT MAX(dw_metadata_dw_stored_at) AS max_dw
+            FROM {{ this }}
+        ) AS m ON true
+        WHERE h.hakemus_oid = a.hakemus_oid
+        AND a.dw_metadata_dw_stored_at > m.max_dw;
     {% endif %}
 "
     )
