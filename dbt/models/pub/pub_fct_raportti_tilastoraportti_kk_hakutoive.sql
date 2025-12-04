@@ -43,6 +43,7 @@ final as (
         hakutoivenumero = '1' as ensisijainen,
         (hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
         or (hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
+        or (hato.valintatieto = 'PERUUNTUNUT' and hato.vastaanottotieto = 'EI_VASTAANOTETTU_MAARA_AIKANA')
         or hato.valintatieto = 'PERUNUT'
         as hyvaksytty,
         vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') as vastaanottanut,
