@@ -5,7 +5,8 @@
         on_schema_change= 'append_new_columns',
         unique_key = 'hakemus_oid',
         indexes = [
-            {'columns' :['tiedot'], 'type': 'gin'}
+            {'columns': ['tiedot'], 'type': 'gin'},
+            {'columns': ['haku_oid']},
         ],
         post_hook = [
             "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))",
@@ -14,13 +15,26 @@
     )
 }}
 
-with raw as not materialized (
-    select distinct on (oid) * from {{ ref('dw_ataru_hakemus') }}
+with max_timestamp as (
+    select max(dw_metadata_dbt_copied_at) as max_copied_at
+    from {{ this }}
+),
+
+raw as not materialized (
+    select
+	    *
+    from (
+        select *,
+        row_number() over (
+            partition by oid
+            order by versio_id desc, muokattu desc
+        ) as rn
+    from {{ ref('dw_ataru_hakemus') }}
+    cross join max_timestamp
     {% if is_incremental() %}
         where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dbt_copied_at) from {{ this }} as t)
     {% endif %}
-    order by oid asc, versio_id desc, muokattu desc
-
+    ) where rn = 1
 ),
 
 final as (
