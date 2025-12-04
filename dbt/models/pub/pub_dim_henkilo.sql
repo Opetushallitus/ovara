@@ -10,15 +10,47 @@
 }}
 
 with onr as not materialized (
-    select * from {{ ref('int_onr_henkilo') }}
+    select
+        henkilo_oid,
+        master_oid,
+        etunimet,
+        sukunimi,
+        aidinkieli,
+        sukupuoli,
+        kansalaisuus,
+        turvakielto,
+        hetu,
+        syntymaaika
+    from {{ ref('int_onr_henkilo') }}
 ),
 
 ataru as not materialized (
-    select * from {{ ref('int_ataru_hakemus') }}
+    select
+        henkilo_oid,
+        hakemus_oid,
+        lahiosoite,
+        postinumero,
+        postitoimipaikka,
+        kotikunta,
+        ulk_kunta,
+        asuinmaa,
+        sahkoposti,
+        puhelin,
+        pohjakoulutuksen_maa_toinen_aste,
+        koulutusmarkkinointilupa,
+        valintatuloksen_julkaisulupa,
+        sahkoinenviestintalupa,
+        hakemusmaksun_tila
+    from {{ ref('int_ataru_hakemus') }}
 ),
 
 kansalaisuus as not materialized (
-    select * from {{ ref('int_onr_kansalaisuus') }}
+    select
+        henkilo_oid,
+        kansalaisuus,
+        kansalaisuus_nimi,
+        kansalaisuusluokka
+    from {{ ref('int_onr_kansalaisuus') }}
     where priorisoitu_kansalaisuus
 ),
 
@@ -33,18 +65,19 @@ maa as (
 ),
 
 kansalaisuudet as (
-    select
-        henkilo_oid,
-        jsonb_agg(maa2.koodinimi) as kansalaisuudet_nimi
-    from
-        (
-            select
-                henkilo_oid,
-                jsonb_array_elements_text(kansalaisuus) as kansalaisuus
-            from onr
-        ) as onr1
-    left join maa as maa2 on onr1.kansalaisuus = maa2.koodiarvo
-    group by henkilo_oid
+    SELECT
+        h.henkilo_oid,
+        jsonb_agg(m.koodinimi) AS kansalaisuudet_nimi
+    FROM
+        onr h
+    LEFT JOIN LATERAL
+        jsonb_array_elements_text(h.kansalaisuus) AS k(kansalaisuus)
+        ON TRUE
+    LEFT JOIN maa m
+        ON k.kansalaisuus = m.koodiarvo
+    AND m.viimeisin_versio
+    GROUP BY
+       h.henkilo_oid
 ),
 
 int as (
