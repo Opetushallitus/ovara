@@ -23,7 +23,11 @@
     )
 }}
 
-with raw as ( --noqa: PRS
+with max_timestamp as (
+	select max(dw_metadata_dw_stored_at) as max_timestamp from {{ this }}
+),
+
+raw as ( --noqa: PRS
     select
         hakemus_oid,
         lomake_id,
@@ -32,6 +36,7 @@ with raw as ( --noqa: PRS
         tiedot,
         dw_metadata_dw_stored_at
     from {{ ref('int_ataru_hakemus') }}
+    cross join max_timestamp
     where
         tiedot ?| array[
             '4fe08958-c0b7-4847-8826-e42503caa662',
@@ -40,7 +45,7 @@ with raw as ( --noqa: PRS
             'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
         ]
     {% if is_incremental() %}
-    and dw_metadata_dw_stored_at > (select max(dw_metadata_dw_stored_at) from {{ this }})
+    and dw_metadata_dw_stored_at > max_timestamp
     {% endif %}
 ),
 
