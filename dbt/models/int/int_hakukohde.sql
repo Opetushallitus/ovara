@@ -16,7 +16,7 @@ pohjakoulutusrivit as (
 pohjakoulutus as (
     select
         hakukohde_oid,
-        jsonb_agg(pohjakoulutuskoodi) as pohjakoulutuskoodit
+        jsonb_agg(pohjakoulutuskoodi order by pohjakoulutuskoodi) as pohjakoulutuskoodit
     from pohjakoulutusrivit
     group by hakukohde_oid
 ),

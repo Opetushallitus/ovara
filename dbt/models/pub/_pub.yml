@@ -72,6 +72,15 @@ models:
       - name: haun_tyyppi
         description: Tieto onko haku kk- vai toisen asteen. Tämä tieto on lisätty erilliseen seediin, raw_haunkohdejoukko
         data_type: text
+      - name: haku_nimi_fi
+        description: Haun suomenkielinen nimi
+        data_type: text
+      - name: haku_nimi_sv
+        description: Haun ruotsinkielinen nimi
+        data_type: text
+      - name: haku_nimi_en
+        description: Haun englanninkielinen nimi
+        data_type: text
 
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
@@ -194,6 +203,18 @@ models:
       - name: valintaperuste_nimi
         data_type: jsonb
         description: valintaperusteen lokalisoitu nimi
+      - name: hakukohde_nimi_fi
+        description: Hakukohteen suomenkielinen nimi
+        data_type: text
+      - name: hakukohde_nimi_sv
+        description: Hakukohteen ruotsinkielinen nimi
+        data_type: text
+      - name: hakukohde_nimi_en
+        description: Hakukohteen englanninkielinen nimi
+        data_type: text
+      - name: pohjakoulutuskoodit
+        description: vaadittava pohjakoulutus
+        data_type: jsonb
 
   - name: pub_dim_hakukohderyhma
     description: Hakukohderyhmien tiedot
@@ -298,6 +319,9 @@ models:
       - name: valintatiedon_pvm
         data_type: date
         description: Valintatiedon viimeksi päivätty tieto
+      - name: osallistui_paasykokeeseen
+        description: Onko hakija osallistunut pääsykokeeseen tähän hakutoiveeseen liittyen
+        data_type: boolean
 
   - name: pub_dim_henkilo
     config:
@@ -812,6 +836,15 @@ models:
       - name: henkilo_oid
         description: Henkilön tunniste
         data_type: text
+      - name: pohjakoulutuksen_maa_toinen_aste
+        description: Toisen asteen pohjakoulutuksen suoritusmaa
+        data_type: text
+      - name: pohjakoulutus
+        description: Toisen asteen haun pohjakoulutustieto
+        data_type: text
+      - name: pohjakoulutus_kk
+        description: Korkeakouluhaun pohjakoulutus
+        data_type: jsonb
 
   - name: pub_fct_raportti_hakijat_kk
     config:

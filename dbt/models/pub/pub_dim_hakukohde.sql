@@ -92,7 +92,8 @@ int as (
         koul.okm_ohjauksen_ala,
         koul.kansallinenkoulutusluokitus2016koulutusalataso1 as koulutusala,
         kala.koodinimi as koulutusala_nimi,
-        hako.valintaperuste_nimi
+        hako.valintaperuste_nimi,
+        hako.pohjakoulutuskoodit
     from hakukohde as hako
     left join toteutus as tote on hako.toteutus_oid = tote.toteutus_oid
     left join haku as haku on hako.haku_oid = haku.haku_oid
@@ -170,7 +171,11 @@ final as (
         okm_ohjauksen_ala,
         koulutusala,
         koulutusala_nimi,
-        valintaperuste_nimi
+        valintaperuste_nimi,
+        hakukohde_nimi->>'fi' as hakukohde_nimi_fi,
+        hakukohde_nimi->>'sv' as hakukohde_nimi_sv,
+        hakukohde_nimi->>'en' as hakukohde_nimi_en,
+        pohjakoulutuskoodit
     from step2
 )
 
