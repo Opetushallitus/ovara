@@ -21,20 +21,20 @@ with max_timestamp as (
 ),
 
 raw as not materialized (
-    select
-	    *
-    from (
-        select *,
-        row_number() over (
-            partition by oid
-            order by versio_id desc, muokattu desc
-        ) as rn
-    from {{ ref('dw_ataru_hakemus') }}
-    cross join max_timestamp
-    {% if is_incremental() %}
-        where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dbt_copied_at) from {{ this }} as t)
-    {% endif %}
-    ) where rn = 1
+    select * from (
+        select
+            *,
+            row_number() over (
+                partition by oid
+                order by versio_id desc, muokattu desc
+            ) as rn
+        from {{ ref('dw_ataru_hakemus') }}
+        cross join max_timestamp
+        {% if is_incremental() %}
+            where dw_metadata_dbt_copied_at > (select max(t.dw_metadata_dbt_copied_at) from {{ this }} as t)
+        {% endif %}
+    )
+    where rn = 1
 ),
 
 final as (
@@ -57,29 +57,52 @@ final as (
         tiedot -> 'higher-completed-base-education' as pohjakoulutus_kk,
         jsonb_strip_nulls(
             jsonb_build_object(
-                'other-eligibility-year-of-completion', tiedot ->'other-eligibility-year-of-completion'->0->>0,
-                'pohjakoulutus_amp--year-of-completion', tiedot ->'pohjakoulutus_amp--year-of-completion'->0->>0,
-                'pohjakoulutus_amt--year-of-completion', tiedot ->'pohjakoulutus_amt--year-of-completion'->0->>0,
-                'pohjakoulutus_amv--year-of-completion', tiedot ->'pohjakoulutus_amv--year-of-completion'->0->>0,
-                'pohjakoulutus_am--year-of-completion', tiedot ->'pohjakoulutus_am--year-of-completion'->0->>0,
-                'pohjakoulutus_avoin--year-of-completion', tiedot ->'pohjakoulutus_avoin--year-of-completion'->0->>0,
-                'pohjakoulutus_kk_ulk--year-of-completion', tiedot ->'pohjakoulutus_kk_ulk--year-of-completion'->0->>0,
-                'pohjakoulutus_lk--year-of-completion', tiedot ->'pohjakoulutus_lk--year-of-completion'->0->>0,
-                'pohjakoulutus_muu--year-of-completion', tiedot ->'pohjakoulutus_muu--year-of-completion'->0->>0,
-                'pohjakoulutus_ulk--year-of-completion', tiedot ->'pohjakoulutus_ulk--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_ammatillinen--marticulation-year-of-completion', tiedot ->'pohjakoulutus_yo_ammatillinen--marticulation-year-of-completion'->0->>0,
-                'pohjakoulutus_yo_kansainvalinen_suomessa--eb--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--eb--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_kansainvalinen_suomessa--ib--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--ib--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_kansainvalinen_suomessa--rb--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--rb--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_kansainvalinen_suomessa--year-of-completion', tiedot ->'pohjakoulutus_yo_kansainvalinen_suomessa--year-of-completion'->0->>0,
-                'pohjakoulutus_yo--no-year-of-completion', tiedot ->'pohjakoulutus_yo--no-year-of-completion'->0->>0,
-                'pohjakoulutus_yo_ulkomainen--eb--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--eb--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_ulkomainen--ib--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--ib--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_ulkomainen--rb--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--rb--year-of-completion'->0->>0,
-                'pohjakoulutus_yo_ulkomainen--year-of-completion', tiedot ->'pohjakoulutus_yo_ulkomainen--year-of-completion'->0->>0,
-                'pohjakoulutus_yo--yes-year-of-completion', tiedot ->'pohjakoulutus_yo--yes-year-of-completion'->0->>0,
-                'pohjakoulutus_yo_ammatillinen--vocational-completion-year', tiedot ->'pohjakoulutus_yo_ammatillinen--vocational-completion-year'->0->>0,
-                'pohjakoulutus_kk--completion-date', tiedot ->'pohjakoulutus_kk--completion-date'->0->>0
+                'other-eligibility-year-of-completion',
+                tiedot -> 'other-eligibility-year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_amp--year-of-completion',
+                tiedot -> 'pohjakoulutus_amp--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_amt--year-of-completion',
+                tiedot -> 'pohjakoulutus_amt--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_amv--year-of-completion',
+                tiedot -> 'pohjakoulutus_amv--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_am--year-of-completion',
+                tiedot -> 'pohjakoulutus_am--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_avoin--year-of-completion',
+                tiedot -> 'pohjakoulutus_avoin--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_kk_ulk--year-of-completion',
+                tiedot -> 'pohjakoulutus_kk_ulk--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_lk--year-of-completion',
+                tiedot -> 'pohjakoulutus_lk--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_muu--year-of-completion',
+                tiedot -> 'pohjakoulutus_muu--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_ulk--year-of-completion',
+                tiedot -> 'pohjakoulutus_ulk--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_ammatillinen--marticulation-year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_ammatillinen--marticulation-year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--eb--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_kansainvalinen_suomessa--eb--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--ib--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_kansainvalinen_suomessa--ib--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--rb--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_kansainvalinen_suomessa--rb--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_kansainvalinen_suomessa--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_kansainvalinen_suomessa--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo--no-year-of-completion',
+                tiedot -> 'pohjakoulutus_yo--no-year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_ulkomainen--eb--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_ulkomainen--eb--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_ulkomainen--ib--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_ulkomainen--ib--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_ulkomainen--rb--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_ulkomainen--rb--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_ulkomainen--year-of-completion',
+                tiedot -> 'pohjakoulutus_yo_ulkomainen--year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo--yes-year-of-completion',
+                tiedot -> 'pohjakoulutus_yo--yes-year-of-completion' -> 0 ->> 0,
+                'pohjakoulutus_yo_ammatillinen--vocational-completion-year',
+                tiedot -> 'pohjakoulutus_yo_ammatillinen--vocational-completion-year' -> 0 ->> 0,
+                'pohjakoulutus_kk--completion-date',
+                tiedot -> 'pohjakoulutus_kk--completion-date' -> 0 ->> 0
             )
         )
         as pohjakoulutus_kk_valmistumisvuosi

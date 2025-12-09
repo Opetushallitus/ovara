@@ -19,8 +19,8 @@ suoritus as (
     select
         hakemusoid as hakemus_oid,
         pohjakoulutus
-        from {{ ref('int_sure_proxysuoritus') }}
-        where pohjakoulutus is not null
+    from {{ ref('int_sure_proxysuoritus') }}
+    where pohjakoulutus is not null
 ),
 
 int as (

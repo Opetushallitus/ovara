@@ -172,9 +172,9 @@ final as (
         koulutusala,
         koulutusala_nimi,
         valintaperuste_nimi,
-        hakukohde_nimi->>'fi' as hakukohde_nimi_fi,
-        hakukohde_nimi->>'sv' as hakukohde_nimi_sv,
-        hakukohde_nimi->>'en' as hakukohde_nimi_en,
+        hakukohde_nimi ->> 'fi' as hakukohde_nimi_fi,
+        hakukohde_nimi ->> 'sv' as hakukohde_nimi_sv,
+        hakukohde_nimi ->> 'en' as hakukohde_nimi_en,
         pohjakoulutuskoodit
     from step2
 )
