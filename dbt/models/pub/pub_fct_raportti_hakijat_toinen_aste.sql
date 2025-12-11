@@ -29,7 +29,8 @@ toinen_aste as (
 ),
 
 kaksoistutkinto as (
-    select * from {{ ref('int_kaksoistutkinto_hakukohde') }} where not poistettu
+    select * from {{ ref('int_kaksoistutkinto_hakukohde') }}
+    where not poistettu
 ),
 
 urheilijatutkinto as (

@@ -65,19 +65,21 @@ maa as (
 ),
 
 kansalaisuudet as (
-    SELECT
+    select
         h.henkilo_oid,
-        jsonb_agg(m.koodinimi) AS kansalaisuudet_nimi
-    FROM
-        onr h
-    LEFT JOIN LATERAL
-        jsonb_array_elements_text(h.kansalaisuus) AS k(kansalaisuus)
-        ON TRUE
-    LEFT JOIN maa m
-        ON k.kansalaisuus = m.koodiarvo
-    AND m.viimeisin_versio
-    GROUP BY
-       h.henkilo_oid
+        jsonb_agg(m.koodinimi) as kansalaisuudet_nimi
+    from
+        onr as h
+    left join
+        lateral
+        jsonb_array_elements_text(h.kansalaisuus) as k (kansalaisuus)
+        on true
+    left join maa as m
+        on
+            k.kansalaisuus = m.koodiarvo
+            and m.viimeisin_versio
+    group by
+        h.henkilo_oid
 ),
 
 int as (

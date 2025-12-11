@@ -50,7 +50,7 @@ int as (
         hato.henkilo_oid,
         hato.hakukohde_oid,
         case
-            when coalesce(haku.jarjestetyt_hakutoiveet,true) then hato.hakutoivenumero
+            when coalesce(haku.jarjestetyt_hakutoiveet, true) then hato.hakutoivenumero
             else -1
         end as hakutoivenumero,
         julk.hyvaksyttyjajulkaistu,
