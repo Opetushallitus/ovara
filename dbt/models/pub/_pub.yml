@@ -81,6 +81,9 @@ models:
       - name: haku_nimi_en
         description: Haun englanninkielinen nimi
         data_type: text
+      - name: hakukohteiden_priorisointi
+        description: Onko hakukohteilla keskinäinen järjetys
+        data_type: boolean
 
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
@@ -319,6 +322,9 @@ models:
       - name: valintatiedon_pvm
         data_type: date
         description: Valintatiedon viimeksi päivätty tieto
+      - name: osallistui_paasykokeeseen
+        description: Onko hakija osallistunut pääsykokeeseen tähän hakutoiveeseen liittyen
+        data_type: boolean
 
   - name: pub_dim_henkilo
     config:

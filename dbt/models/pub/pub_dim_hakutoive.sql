@@ -35,7 +35,8 @@ final as (
         ehdollisesti_hyvaksytty,
         valintatiedon_pvm,
         harkinnanvaraisuuden_syy,
-        ensikertalainen
+        ensikertalainen,
+        null::boolean as osallistui_paasykokeeseen
     from hakutoive
 )
 
