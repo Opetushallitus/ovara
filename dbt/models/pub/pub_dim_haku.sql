@@ -44,7 +44,8 @@ step1 as (
         haku.haun_tyyppi,
         haku.haku_nimi ->> 'fi' as haku_nimi_fi,
         haku.haku_nimi ->> 'sv' as haku_nimi_sv,
-        haku.haku_nimi ->> 'sv' as haku_nimi_en
+        haku.haku_nimi ->> 'sv' as haku_nimi_en,
+        haku.jarjestetyt_hakutoiveet as hakukohteiden_priorisointi
     from haku as haku
     left join hakutapakoodi as hata on haku.hakutapakoodiuri = hata.versioitu_koodiuri
     left join haunkohdejoukko as hajo on haku.kohdejoukkokoodiuri = hajo.versioitu_koodiuri

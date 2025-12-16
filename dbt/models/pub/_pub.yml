@@ -81,6 +81,9 @@ models:
       - name: haku_nimi_en
         description: Haun englanninkielinen nimi
         data_type: text
+      - name: hakukohteiden_priorisointi
+        description: Onko hakukohteilla keskinäinen järjetys
+        data_type: boolean
 
   - name: pub_dim_hakukohde
     description: Tämä taulu sisältää aktiiviset hakukohteet ja niiden tietoja.
