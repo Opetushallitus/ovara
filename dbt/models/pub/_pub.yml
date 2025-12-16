@@ -319,6 +319,9 @@ models:
       - name: valintatiedon_pvm
         data_type: date
         description: Valintatiedon viimeksi päivätty tieto
+      - name: osallistui_paasykokeeseen
+        description: Onko hakija osallistunut pääsykokeeseen tähän hakutoiveeseen liittyen
+        data_type: boolean
 
   - name: pub_dim_henkilo
     config:
