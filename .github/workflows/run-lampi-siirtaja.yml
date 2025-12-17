@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Configure AWS credentials (TESTI)
         if: ${{ inputs.environment == 'testi' }}
@@ -59,4 +59,3 @@ jobs:
         if: ${{ inputs.environment == 'tuotanto' }}
         run: |
           ci-tools/run-tuotanto-lampi-siirtaja.sh    
-
