@@ -27,7 +27,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            Show this help message and exit
-  -d, --dependencies    Clean and install dependencies before deployment (i.e. run npm ci)
+  -d, --dependencies    Clean and install dependencies before deployment (i.e. run pnpm install --frozen-lockfile)
   '''
     exit 0
     ;;
@@ -70,13 +70,13 @@ fi
 
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
-    cd "${git_root}/utility/cdk/" && npm i -g aws-cdk && npm ci
+    cd "${git_root}/utility/cdk/" && pnpm add -g aws-cdk && pnpm install --frozen-lockfile
 fi
 
 if [[ "${build}" == "true" ]]; then
     echo "Building code and synthesizing CDK template"
     cd "${git_root}/utility/cdk/"
-    npm run build
+    pnpm run build
     cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
