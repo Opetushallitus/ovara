@@ -19,9 +19,6 @@
 
 with raw as (
     select * from {{ ref('stg_onr_henkilo') }}
-    {% if is_incremental() %}
-        where muokattu > (select coalesce(max(t.muokattu), date('1900-01-01')) from {{ this }} as t)
-    {% endif %}
 ),
 
 final as (

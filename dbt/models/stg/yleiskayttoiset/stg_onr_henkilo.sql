@@ -15,7 +15,7 @@ with source as (
     -- process only rows where updated is newer than newest timestamp in dw
         where
             (data ->> 'updated')::timestamptz > (
-                select coalesce(max(muokattu), '1899-12-31') from {{ source('yleiskayttoiset', 'dw_onr_henkilo') }}
+                select coalesce(max(muokattu)  - interval '2 days', '1899-12-31') from {{ source('yleiskayttoiset', 'dw_onr_henkilo') }}
             )
     --end of incremental logic #}
     {% endif %}
