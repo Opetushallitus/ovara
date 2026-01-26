@@ -18,7 +18,8 @@
 }}
 
 with raw as (
-    select * from {{ ref('stg_onr_henkilo') }}
+    select distinct on (henkilo_oid) * from {{ ref('stg_onr_henkilo') }}
+    order by henkilo_oid asc, muokattu desc
 ),
 
 final as (
