@@ -18,10 +18,8 @@
 }}
 
 with raw as (
-    select * from {{ ref('stg_onr_henkilo') }}
-    {% if is_incremental() %}
-        where muokattu > (select coalesce(max(t.muokattu), date('1900-01-01')) from {{ this }} as t)
-    {% endif %}
+    select distinct on (henkilo_oid) * from {{ ref('stg_onr_henkilo') }}
+    order by henkilo_oid asc, muokattu desc
 ),
 
 final as (
