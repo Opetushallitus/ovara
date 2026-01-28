@@ -26,7 +26,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            Show this help message and exit
-  -d, --dependencies    Clean and install dependencies before deployment (i.e. run npm ci)
+  -d, --dependencies    Clean and install dependencies before deployment (i.e. run pnpm install --frozen-lockfile)
   -v VERSION, --version VERSION
                           Frontend version to deploy (e.g. -v ci-256)
   '''
@@ -99,14 +99,14 @@ fi
 
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
-    cd "${git_root}/cdk/" && npm i -g aws-cdk && npm ci
+    cd "${git_root}/cdk/" && pnpm add -g aws-cdk && pnpm install --frozen-lockfile
 fi
 
 if [[ "${build}" == "true" ]]; then
     echo "Building code and synthesizing CDK template"
     export ENVIRONMENT=$environment
     cd "${git_root}/cdk/"
-    npm run build
+    pnpm run build
     cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
@@ -114,7 +114,7 @@ if [[ "${diff}" == "true" ]]; then
     echo "Comparing current template to the running environment"
     export ENVIRONMENT=$environment
     cd "${git_root}/cdk/"
-    npm run build
+    pnpm run build
     cdk diff $stack -c "environment=$environment" -c "ecsImageTag=${image}" --region eu-west-1 --profile $aws_profile
 fi
 
