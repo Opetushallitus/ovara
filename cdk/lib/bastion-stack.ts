@@ -13,6 +13,7 @@ import { Config, GenericStackProps } from './config';
 
 export interface BastionStackProps extends GenericStackProps {
   auroraSecurityGroup: ec2.ISecurityGroup;
+  sqlServerSecurityGroup: ec2.ISecurityGroup;
   deploymentS3Bucket: s3.IBucket;
   publicHostedZone: route53.IHostedZone;
   vpc: ec2.IVpc;
@@ -47,6 +48,12 @@ export class BastionStack extends cdk.Stack {
     props.auroraSecurityGroup.addIngressRule(
       bastionInternalSecurityGroup,
       ec2.Port.tcp(5432),
+      'DB sallittu bastionille'
+    );
+
+    props.sqlServerSecurityGroup.addIngressRule(
+      bastionInternalSecurityGroup,
+      ec2.Port.tcp(1433),
       'DB sallittu bastionille'
     );
 
