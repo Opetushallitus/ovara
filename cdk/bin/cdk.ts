@@ -15,6 +15,7 @@ import { MonitorStack } from '../lib/monitor-stack';
 import { NetworkStack } from '../lib/network-stack';
 import { Route53Stack } from '../lib/route53-stack';
 import { S3Stack } from '../lib/s3-stack';
+import { SqlServerStack } from '../lib/sql-server-stack';
 
 const app = new cdk.App();
 const environmentName = app.node.tryGetContext('environment') || process.env.ENVIRONMENT;
@@ -66,6 +67,11 @@ const databaseStack = new DatabaseStack(app, `${config.environment}-DatabaseStac
   ...props,
 });
 
+const sqlServerStack = new SqlServerStack(app, `${config.environment}-SqlServerStack`, {
+  vpc: networkStack.vpc,
+  ...props,
+});
+
 const ecsStack = new EcsStack(app, `${config.environment}-EcsStack`, {
   auroraCluster: databaseStack.auroraCluster,
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
@@ -87,6 +93,7 @@ new LambdaStack(app, `${config.environment}-LambdaStack`, {
 
 new BastionStack(app, `${config.environment}-BastionStack`, {
   auroraSecurityGroup: databaseStack.auroraSecurityGroup,
+  sqlServerSecurityGroup: sqlServerStack.sqlSecurityGroup,
   deploymentS3Bucket: s3Stack.deploymentS3Bucket,
   publicHostedZone: route53Stack.publicHostedZone,
   vpc: networkStack.vpc,
