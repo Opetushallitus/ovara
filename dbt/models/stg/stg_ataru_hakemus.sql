@@ -37,12 +37,12 @@ final as (
         data -> 'keyValues' ->> 'city'::varchar as ulk_kunta,
         (data -> 'keyValues' ->> 'home-town') as kotikunta,
         (data -> 'keyValues' ->> 'country-of-residence')::varchar as asuinmaa,
-        (
-            case
-                when data -> 'keyValues' ->> 'gender' = '' then null
-                else (data -> 'keyValues' ->> 'gender')
-            end
-        )::int as sukupuoli,
+        case
+            when data -> 'keyValues' ->> 'gender' = '' then null::int
+            when lower(data -> 'keyValues' ->> 'gender') in ('mies', 'male', 'man') then 1
+            when lower(data -> 'keyValues' ->> 'gender') in ('nainen', 'female', 'kvinna') then 2
+            else (data -> 'keyValues' ->> 'gender')::int
+        end as sukupuoli,
         (data -> 'keyValues' -> 'nationality')::jsonb as kansalaisuus,
         (lower(
             coalesce(
