@@ -5,29 +5,17 @@
         incremental_strategy = 'merge',
         indexes = [
             {'columns':['valintakoe_hakemus_id','muokattu']},
-            {'columns':['dw_metadata_dw_stored_at']}
-        ],
-        enabled=false
+            {'columns':['dw_metadata_dbt_copied_at']}
+        ]
     )
 }}
 
-
 with pistetieto as not materialized (
-    select * from {{ ref('dw_valintapiste_service_pistetieto') }}
-    {% if target.name == 'prod' and is_incremental() %}
-    where dw_metadata_dw_stored_at > coalesce (
-	    (
-    		select  start_time from {{ source('ovara', 'completed_dbt_runs') }}
-	      	where raw_table = 'valintapiste_service_pistetieto'
-	    ),
-        '1900-01-01'
-    )
-    {% endif %}
-
-    {%- if target.name != 'prod' and is_incremental() %}
-        where dw_metadata_dw_stored_at > coalesce(
+    select * from {{ ref('dw_valintalaskenta_pistetieto') }}
+    {%- if is_incremental() %}
+        where dw_metadata_dbt_copied_at > coalesce(
             (
-                select max(dw_metadata_dw_stored_at) from {{ this }}
+                select max(dw_metadata_dbt_copied_at) from {{ this }}
             ),
             '1900-01-01'
         )

@@ -1,5 +1,5 @@
 models:
-  - name: stg_valintapiste_service_pistetieto
+  - name: stg_valintalaskenta_pistetieto
     description: Tämä taulu sisältää valintakokeiden pisteet. Taulussa on yksi rivi per hakemus ja pääsykoe.
     columns:
       - name: valintakoe_hakemus_id
