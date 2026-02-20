@@ -41,8 +41,8 @@ export class EcrStack extends cdk.Stack {
       roleName: 'ovara-utility-github-actions-deployment-role',
     });
 
-    dbtRunnerRepository.grantPush(githubActionsDeploymentRole);
-    lampiSiirtajaRepository.grantPush(githubActionsDeploymentRole);
+    dbtRunnerRepository.grantPullPush(githubActionsDeploymentRole);
+    lampiSiirtajaRepository.grantPullPush(githubActionsDeploymentRole);
 
     const ovaraTestiAccountId = ssm.StringParameter.valueForStringParameter(
       this,
