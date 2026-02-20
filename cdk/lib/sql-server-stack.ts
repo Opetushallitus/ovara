@@ -1,6 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as rds from 'aws-cdk-lib/aws-rds';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -28,20 +30,66 @@ export class SqlServerStack extends cdk.Stack {
       }
     );
 
+    const backupBucketName =
+      config.environment === 'testi' ? 'test-odw-final-backup-k7m2qx' : '';
+    const backupBucket = s3.Bucket.fromBucketName(
+      this,
+      `${config.environment}-SqlServerBackupBucket`,
+      backupBucketName
+    );
+    /*
+    const backupBucket2 = new s3.Bucket(
+      this,
+      `${config.environment}-SqlServerBackupBucket`,
+      {
+        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+        encryption: s3.BucketEncryption.S3_MANAGED,
+        enforceSSL: true,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+        autoDeleteObjects: true,
+      }
+    );
+    */
+
+    const backupRole = new iam.Role(this, `${config.environment}-SqlServerBackupRole`, {
+      assumedBy: new iam.ServicePrincipal('rds.amazonaws.com'),
+    });
+
+    backupBucket.grantReadWrite(backupRole);
+
+    const engine = rds.DatabaseInstanceEngine.sqlServerSe({
+      version: rds.SqlServerEngineVersion.VER_16,
+    });
+
+    const optionGroup = new rds.OptionGroup(
+      this,
+      `${config.environment}-SqlServerOptionGroup`,
+      {
+        engine,
+        configurations: [
+          {
+            name: 'SQLSERVER_BACKUP_RESTORE',
+            settings: {
+              IAM_ROLE_ARN: backupRole.roleArn,
+            },
+          },
+        ],
+      }
+    );
+
     const sqlServer = new rds.DatabaseInstance(
       this,
       `${config.environment}-SqlServerInstance`,
       {
-        engine: rds.DatabaseInstanceEngine.sqlServerSe({
-          version: rds.SqlServerEngineVersion.VER_16,
-        }),
+        engine,
         licenseModel: rds.LicenseModel.LICENSE_INCLUDED,
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE),
         vpc: props.vpc,
         credentials: rds.Credentials.fromGeneratedSecret('oph'),
         securityGroups: [this.sqlSecurityGroup],
+        optionGroup,
         multiAz: false,
-        allocatedStorage: 20,
+        allocatedStorage: 50,
         maxAllocatedStorage: 100,
         storageType: rds.StorageType.GP2,
         deletionProtection: false,
