@@ -31,7 +31,9 @@ export class SqlServerStack extends cdk.Stack {
     );
 
     const backupBucketName =
-      config.environment === 'testi' ? 'test-odw-final-backup-k7m2qx' : '';
+      config.environment === 'testi'
+        ? 'test-odw-final-backup-k7m2qx'
+        : 'tuotanto-odw-final-backup-k7m2x9q4';
     const backupBucket = s3.Bucket.fromBucketName(
       this,
       `${config.environment}-SqlServerBackupBucket`,
