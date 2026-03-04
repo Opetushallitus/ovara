@@ -7,6 +7,8 @@ sources:
     tables:
     - name: valintapiste_service_pistetieto
       description: Valintojen pistetietoja
+    - name: valintalaskenta_pistetieto
+      description: Valintojen pistetietoja
     - name: valintaperusteet_hakukohde
       description: Valintaperustetiedot per hakukohde
     - name: sure_suoritus

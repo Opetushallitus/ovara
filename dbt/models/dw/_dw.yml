@@ -182,9 +182,11 @@ models:
       - name: dw_metadata_dw_stored_at
         description: ""
         data_type: timestamp with time zone
-  - name: dw_valintapiste_service_pistetieto
+  - name: dw_valintalaskenta_pistetieto
     config:
-      post_hook: "create index if not exists ix_dw_valintapiste_service_pistetieto_id_muokattu on {{ this }} (valintakoe_hakemus_id asc, muokattu desc)"
+      post_hook:
+        - create index if not exists ix_dw_valintalaskenta_pistetieto_id_muokattu on {{ this }} (valintakoe_hakemus_id asc, muokattu desc)
+        - create index if not exists ix_dw_valintalaskenta_dw_metadata_dbt_copied_at on {{ this }} (dw_metadata_dbt_copied_at)
       columns:
         - name: valintakoe_hakemus_id
           data_type: text

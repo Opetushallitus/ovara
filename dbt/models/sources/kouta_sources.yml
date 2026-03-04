@@ -18,9 +18,9 @@ sources:
     - name: kouta_pistehistoria
       description: Hakukohteiden pistehistoriatiedot
     - name: kouta_sorakuvaus
-      description: Hakukohteiden pistehistoriatiedot
+      description: Hakukohteiden soratiedot
     - name: kouta_valintaperuste
-      description: Hakukohteiden pistehistoriatiedot
+      description: Hakukohteiden valintapeusteiden tiedot
     - name: kouta_asiasana
     - name: kouta_ammattinimike
     - name: koutalight_koulutus

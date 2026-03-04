@@ -6,7 +6,8 @@
         {'columns': ['valintakoe_hakemus_id']},
         {'columns': ['hakemus_oid']},
         {'columns': ['valintakoe_tunniste']}
-    ]
+    ],
+    enabled=false
     )
 }}
 

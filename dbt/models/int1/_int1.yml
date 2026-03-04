@@ -232,7 +232,7 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
 
-  - name: int_valintapiste_service_pistetieto
+  - name: int_valintalaskenta_pistetieto
     columns:
       - name: valintakoe_hakemus_id
 #        data_tests:
