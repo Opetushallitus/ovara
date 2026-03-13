@@ -17,10 +17,10 @@ with hakemus as not materialized (
 
 suoritus as (
     select
-        hakemusoid as hakemus_oid,
-        pohjakoulutus
-    from {{ ref('int_sure_proxysuoritus') }}
-    where pohjakoulutus is not null
+        hakemus_oid,
+        pohjakoulutus::text
+    from {{ ref('int_sure_proxysuoritus_pohjakoulutus') }}
+
 ),
 
 int as (
