@@ -15,12 +15,12 @@ with henkilo as not materialized (
 ),
 
 maa_valtioryhma as (
-    select distinct maa_koodiarvo
+    select maa_koodiarvo
     from {{ ref('int_koodisto_maa_valtioryhma') }}
     where valtioryhma_koodiarvo in ('EU', 'ETA')
 ),
 
-maat as not materialized (
+maat as (
     select
         koodiarvo,
         nimi_fi,
@@ -30,6 +30,39 @@ maat as not materialized (
     where viimeisin_versio
 ),
 
+kansalaisuudet as materialized (
+    select
+        henk.henkilo_oid,
+        elem.value ->> 0 as kansalaisuus
+    from henkilo as henk
+    cross join lateral jsonb_array_elements(henk.kansalaisuus) as elem(value)
+),
+
+jarjestys as (
+    select
+        kans.henkilo_oid,
+        kans.kansalaisuus,
+        case
+            when kans.kansalaisuus = '246' then 1
+            when maav.maa_koodiarvo is not null then 2
+            else 3
+        end as kansalaisuusluokka,
+        row_number() over (
+            partition by kans.henkilo_oid
+            order by
+                case
+                    when kans.kansalaisuus = '246' then 1
+                    when maav.maa_koodiarvo is not null then 2
+                    else 3
+                end,
+                kans.kansalaisuus
+        ) as haluttu_kansalaisuus
+    from kansalaisuudet as kans
+    left join maa_valtioryhma as maav
+        on maav.maa_koodiarvo = kans.kansalaisuus
+),
+
+/*
 kansalaisuus_jarjestys as (
     select
         henkilo_oid,
@@ -61,20 +94,21 @@ haluttu_kansalaisuus as (
         ) as haluttu_kansalaisuus
     from kansalaisuus_jarjestys
 ),
+*/
 
 final as (
     select
-        henkilo_oid,
-        kansalaisuus,
+        jarj.henkilo_oid,
+        jarj.kansalaisuus,
         jsonb_build_object(
             'en', maat.nimi_en,
             'sv', maat.nimi_sv,
             'fi', maat.nimi_fi
         ) as kansalaisuus_nimi,
-        kansalaisuusluokka,
-        haluttu_kansalaisuus = 1 as priorisoitu_kansalaisuus
-    from haluttu_kansalaisuus as kans
-    left join maat on kans.kansalaisuus = maat.koodiarvo
+        jarj.kansalaisuusluokka,
+        jarj.haluttu_kansalaisuus = 1 as priorisoitu_kansalaisuus
+    from jarjestys as jarj
+    left join maat on jarj.kansalaisuus = maat.koodiarvo
 )
 
 select * from final
