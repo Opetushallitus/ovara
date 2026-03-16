@@ -15,7 +15,7 @@ with henkilo as not materialized (
 ),
 
 maa_valtioryhma as (
-    select maa_koodiarvo
+    select distinct maa_koodiarvo
     from {{ ref('int_koodisto_maa_valtioryhma') }}
     where valtioryhma_koodiarvo in ('EU', 'ETA')
 ),
