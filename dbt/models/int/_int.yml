@@ -196,22 +196,7 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
-  - name: int_onr_kansalaisuus
-    description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä henkilöllä voi olla useampi kansalaisuus
-    columns:
-      - name: henkilo_oid
-        data_type: text
-      - name: kansalaisuus
-        data_type: text
-      - name: kansalaisuus_nimi
-        data_type: jsonb
-        description: kansalaisuuden nimet eri kielillä
-      - name: kansalaisuusluokka
-        data_type: int
-        description: 1 - Suomi, 2 - EU/ETA, 3 - muu maailma
-      - name: priorisoitu_kansalaisuus
-        data_type: boolean
-        description: Paras kansalaisuus jos hakijalla on useampi kansalaisuus
+
   - name: int_valintaperusteet_valintatapajono
     description: >
       ### Valintaperusteiden valintatapajonoja
