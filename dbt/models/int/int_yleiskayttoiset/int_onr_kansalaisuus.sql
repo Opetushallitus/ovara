@@ -35,7 +35,7 @@ kansalaisuudet as materialized (
         henk.henkilo_oid,
         elem.value ->> 0 as kansalaisuus
     from henkilo as henk
-    cross join lateral jsonb_array_elements(henk.kansalaisuus) as elem(value)
+    cross join lateral jsonb_array_elements(henk.kansalaisuus) as elem (value)
 ),
 
 jarjestys as (
@@ -59,7 +59,7 @@ jarjestys as (
         ) as haluttu_kansalaisuus
     from kansalaisuudet as kans
     left join maa_valtioryhma as maav
-        on maav.maa_koodiarvo = kans.kansalaisuus
+        on kans.kansalaisuus = maav.maa_koodiarvo
 ),
 
 /*
