@@ -196,21 +196,22 @@ models:
         data_type: jsonb
       - name: organisaatiotyypit
         data_type: jsonb
-  - name: int_onr_henkilo_kansalaisuus
+  - name: int_onr_kansalaisuus
     description: Tähän tauluun on purettu kansalaisuudet ONR_henkilöille. Yhdellä henkilöllä voi olla useampi kansalaisuus
     columns:
-      - name: kansalaisuus_id
-        data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: henkilo_oid
         data_type: text
-        data_tests:
-          - not_null
       - name: kansalaisuus
         data_type: text
-      - name: ladattu
-        data_type: timestamp with time zone
+      - name: kansalaisuus_nimi
+        data_type: jsonb
+        description: kansalaisuuden nimet eri kielillä
+      - name: kansalaisuusluokka
+        data_type: int
+        description: 1 - Suomi, 2 - EU/ETA, 3 - muu maailma
+      - name: priorisoitu_kansalaisuus
+        data_type: boolean
+        description: Paras kansalaisuus jos hakijalla on useampi kansalaisuus
   - name: int_valintaperusteet_valintatapajono
     description: >
       ### Valintaperusteiden valintatapajonoja
