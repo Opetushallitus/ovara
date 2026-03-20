@@ -69,8 +69,8 @@ models:
         relation: true
         columns: true
       +tags: pub
-      +post-hook:
-        - "{{ disable_autovacuum_if_not_incremental() }}"
+#      +post-hook:
+#        - "{{ disable_autovacuum_if_not_incremental() }}"
       koodisto:
         +tags: koodisto
 
