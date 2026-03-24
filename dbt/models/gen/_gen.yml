@@ -1,0 +1,47 @@
+models:
+  - name: gen_koodi
+    description: Koodiston tiedot
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodistouri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: voimassaalkupvm
+        data_type: timestamp with time zone
+      - name: voimassaloppupvm
+        data_type: timestamp with time zone
+
+  - name: gen_koodirelaatio
+    description: Koodiston relaation tietoja
+    columns:
+      - name: versioitu_alakoodiuri
+        data_type: text
+      - name: versioitu_ylakoodiuri
+        data_type: text
+      - name: relaatiotyyppi
+        data_type: text
+      - name: relaatioversio
+        data_type: integer
+      - name: alakoodiuri
+        data_type: text
+      - name: alakoodiversio
+        data_type: integer
+      - name: ylakoodiuri
+        data_type: text
+      - name: ylakoodiversio
+        data_type: integer
+
