@@ -62,6 +62,11 @@ models:
         node_color: "#4c7987"
       +tags: int1
 
+    gen:
+      +schema: gen
+      +materialized: table
+      +tags: gen
+
     pub:
       +schema: pub
       +materialized: table
