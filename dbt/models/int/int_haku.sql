@@ -80,10 +80,26 @@ final as (
         para.vastaanotto_paattyy,
         para.hakijakohtainen_paikan_vastaanottoaika,
         para.jarjestetyt_hakutoiveet,
-        haku.hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku
+        haku.hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku,
+        case
+            when extract(month from coalesce(haaj.paattyy, haaj.alkaa)) between 1 and 7
+                then 'kausi_k#1'
+            when extract(month from coalesce(haaj.paattyy, haaj.alkaa)) between 8 and 12
+                then 'kausi_s#1'
+            else ''
+        end as haku_kausi,
+        extract(year from coalesce(haaj.paattyy, haaj.alkaa))::text as haku_vuosi
     from haku
     left join parameter as para on haku.haku_oid = para.haku_oid
     left join koulutuksen_alkamiskausi_koodi as koak on haku.haku_oid = koak.haku_oid
+    left join lateral (
+        select
+            (elem.value ->> 'alkaa')::timestamp as alkaa,
+            (elem.value ->> 'paattyy')::timestamp as paattyy
+        from jsonb_array_elements(haku.hakuajat) as elem (value)
+        order by alkaa
+        limit 1
+    ) as haaj on true
 )
 
 select * from final

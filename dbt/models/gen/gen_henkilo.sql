@@ -1,0 +1,42 @@
+with henk as (
+    select * from {{ ref('pub_dim_henkilo') }}
+)
+
+select
+    henkilo_oid,
+    master_oid,
+    hakemus_oid,
+    etunimet,
+    sukunimi,
+    hetu,
+    syntymaaika,
+    lahiosoite,
+    postinumero,
+    postitoimipaikka,
+    kotikunta,
+    kotikunta_nimi ->> 'fi' as kotikunta_nimi_fi,
+    kotikunta_nimi ->> 'sv' as kotikunta_nimi_sv,
+    kotikunta_nimi ->> 'en' as kotikunta_nimi_en,
+    ulkomainen_kunta,
+    asuinmaa,
+    asuinmaa_nimi ->> 'fi' as asuinmaa_nimi_fi,
+    asuinmaa_nimi ->> 'sv' as asuinmaa_nimi_sv,
+    asuinmaa_nimi ->> 'en' as asuinmaa_nimi_en,
+    sahkoposti,
+    puhelin,
+    pohjakoulutuksen_maa_toinen_aste,
+    aidinkieli,
+    aidinkieliluokka,
+    sukupuoli,
+    koulutusmarkkinointilupa,
+    valintatuloksen_julkaisulupa,
+    sahkoinenviestintalupa,
+    kansalaisuus,
+    kansalaisuus_nimi ->> 'fi' as kansalaisuus_nimi_fi,
+    kansalaisuus_nimi ->> 'sv' as kansalaisuus_nimi_sv,
+    kansalaisuus_nimi ->> 'en' as kansalaisuus_nimi_en,
+    kansalaisuudet,
+    kansalaisuudet_nimi,
+    turvakielto,
+    hakemusmaksun_tila
+from henk
