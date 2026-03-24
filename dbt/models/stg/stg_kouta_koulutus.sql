@@ -24,7 +24,7 @@ final as (
         (data -> 'kielivalinta')::jsonb as kielivalinta,
         data ->> 'sorakuvausId'::varchar as sorakuvausId,
         data -> 'metadata' ->> 'tyyppi'::varchar as tyyppi,
-        (data -> 'medadata' -> 'kuvaus')::jsonb as kuvaus,
+        (data -> 'metadata' -> 'kuvaus')::jsonb as kuvaus,
         (data -> 'metadata' -> 'lisatiedot')::jsonb as lisatiedot,
         (data -> 'metadata' -> 'tutkinnonOsat')::jsonb as tutkinnonOsat,
         (data -> 'metadata' -> 'koulutusalaKoodiUrit')::jsonb as koulutusalaKoodiUrit,

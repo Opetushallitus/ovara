@@ -20,7 +20,7 @@ maa_valtioryhma as (
     where valtioryhma_koodiarvo in ('EU', 'ETA')
 ),
 
-maat as not materialized (
+maat as (
     select
         koodiarvo,
         nimi_fi,
@@ -30,51 +30,51 @@ maat as not materialized (
     where viimeisin_versio
 ),
 
-kansalaisuus_jarjestys as (
+kansalaisuudet as materialized (
     select
-        henkilo_oid,
-        kansalaisuus,
-        case
-            when kansalaisuus = '246' then 1
-            when kansalaisuus in (
-                select maa_koodiarvo from maa_valtioryhma
-            ) then 2
-            else 3
-        end
-        as jarjestys
-    from (
-        select
-            henkilo_oid,
-            (jsonb_array_elements(kansalaisuus) ->> 0) as kansalaisuus --noqa: CV11
-        from henkilo
-    )
+        henk.henkilo_oid,
+        elem.value ->> 0 as kansalaisuus
+    from henkilo as henk
+    cross join lateral jsonb_array_elements(henk.kansalaisuus) as elem (value)
 ),
 
-haluttu_kansalaisuus as (
+jarjestys as (
     select
-        henkilo_oid,
-        kansalaisuus,
-        jarjestys as kansalaisuusluokka,
+        kans.henkilo_oid,
+        kans.kansalaisuus,
+        case
+            when kans.kansalaisuus = '246' then 1
+            when maav.maa_koodiarvo is not null then 2
+            else 3
+        end as kansalaisuusluokka,
         row_number() over (
-            partition by henkilo_oid
-            order by jarjestys
+            partition by kans.henkilo_oid
+            order by
+                case
+                    when kans.kansalaisuus = '246' then 1
+                    when maav.maa_koodiarvo is not null then 2
+                    else 3
+                end,
+                kans.kansalaisuus
         ) as haluttu_kansalaisuus
-    from kansalaisuus_jarjestys
+    from kansalaisuudet as kans
+    left join maa_valtioryhma as maav
+        on kans.kansalaisuus = maav.maa_koodiarvo
 ),
 
 final as (
     select
-        henkilo_oid,
-        kansalaisuus,
+        jarj.henkilo_oid,
+        jarj.kansalaisuus,
         jsonb_build_object(
             'en', maat.nimi_en,
             'sv', maat.nimi_sv,
             'fi', maat.nimi_fi
         ) as kansalaisuus_nimi,
-        kansalaisuusluokka,
-        haluttu_kansalaisuus = 1 as priorisoitu_kansalaisuus
-    from haluttu_kansalaisuus as kans
-    left join maat on kans.kansalaisuus = maat.koodiarvo
+        jarj.kansalaisuusluokka,
+        jarj.haluttu_kansalaisuus = 1 as priorisoitu_kansalaisuus
+    from jarjestys as jarj
+    left join maat on jarj.kansalaisuus = maat.koodiarvo
 )
 
 select * from final

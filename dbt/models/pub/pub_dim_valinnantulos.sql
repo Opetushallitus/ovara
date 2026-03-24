@@ -3,7 +3,8 @@
     materialized = 'table',
     indexes = [
         {'columns': ['hakukohde_oid']}
-    ]
+    ],
+    post_hook = "{{ disable_autovacuum_if_not_incremental() }}"
     )
 }}
 
