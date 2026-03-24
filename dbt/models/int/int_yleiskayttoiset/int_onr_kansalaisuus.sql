@@ -62,40 +62,6 @@ jarjestys as (
         on kans.kansalaisuus = maav.maa_koodiarvo
 ),
 
-/*
-kansalaisuus_jarjestys as (
-    select
-        henkilo_oid,
-        kansalaisuus,
-        case
-            when kansalaisuus = '246' then 1
-            when kansalaisuus in (
-                select maa_koodiarvo from maa_valtioryhma
-            ) then 2
-            else 3
-        end
-        as jarjestys
-    from (
-        select
-            henkilo_oid,
-            (jsonb_array_elements(kansalaisuus) ->> 0) as kansalaisuus --noqa: CV11
-        from henkilo
-    )
-),
-
-haluttu_kansalaisuus as (
-    select
-        henkilo_oid,
-        kansalaisuus,
-        jarjestys as kansalaisuusluokka,
-        row_number() over (
-            partition by henkilo_oid
-            order by jarjestys
-        ) as haluttu_kansalaisuus
-    from kansalaisuus_jarjestys
-),
-*/
-
 final as (
     select
         jarj.henkilo_oid,
