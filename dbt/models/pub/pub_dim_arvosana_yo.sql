@@ -6,7 +6,6 @@
 
 with arvosana as (
     select * from {{ ref('int_arvosana_yo') }}
-    where not poistettu
 )
 
 select * from arvosana
