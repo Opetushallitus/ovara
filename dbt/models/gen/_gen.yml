@@ -45,3 +45,31 @@ models:
       - name: ylakoodiversio
         data_type: integer
 
+  - name: gen_ohjausparameter
+    description: Hakujen ohjausparametreja
+    columns:
+      - name: hakuoid_avain_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: haku_oid
+        description: Haun tunniste
+        data_type: text
+      - name: avain
+        description: parametrin avain
+        data_type: text
+      - name: alkuperainen_arvo
+        description: Parametrin alkuperäinen arvo, tämä voi olla myös nested JSON jollon data on alemmalla tasolla
+        data_type: jsonb
+      - name: aikaleima
+        description: jos sisäinen arvo on tyyppiä "date" sisältää tämä sarake tämän tiedon. Alkuperäinen aikaleima on epoch-muodossa mutta tähän se on käännetty aikaleimaksi
+        data_type: timestamp with time zone
+      - name: arvo
+        description: Jos sisäinen arvo on tyyppiä "value", niin tässä sarakkeessa on sen avaimen arvo
+        data_type: text
+      - name: aikaleima_alkaa
+        description: jos sisäisessä arvossa on startdate ja enddate, niin tässä sarakkeessa on startdate aikaleimana
+        data_type: timestamp with time zone
+      - name: aikaleima_paattyy
+        description: jos sisäisessä arvossa on startdate ja enddate, niin tässä sarakkeessa on enddate aikaleimana
+        data_type: timestamp with time zone
