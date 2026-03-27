@@ -11,6 +11,7 @@ with arvosana as (
 
 suoritus as (
     select * from {{ ref('int_sure_suoritus') }}
+    where not poistettu
 ),
 
 rivi as (
