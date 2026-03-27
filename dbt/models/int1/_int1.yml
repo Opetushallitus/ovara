@@ -202,6 +202,54 @@ models:
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
 
+  - name: int_valintaperusteet_valintatapajono
+    description: >
+      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset valintatapajonot jokaiselta valinnanvaiheelta.
+      Tieto saadaan unnestaamalla int_valintaperusteet_hakukohde-taulun valinnanvaiheet-JSON-sarake.
+    columns:
+      - name: jono_id
+        data_type: text
+      - name: valinnanvaihe_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: nimi
+        data_type: text
+      - name: kuvaus
+        data_type: text
+      - name: aloituspaikat
+        data_type: integer
+      - name: tyyppi_uri
+        data_type: text
+      - name: prioriteetti
+        data_type: integer
+      - name: siirretaan_sijoitteluun
+        data_type: boolean
+      - name: tasasijasaanto
+        data_type: text
+      - name: ei_lasketa_paivamaaran_jalkeen
+        data_type: timestamp with time zone
+      - name: ei_varasijatayttoa
+        data_type: boolean
+      - name: merkitse_myoh_auto
+        data_type: boolean
+      - name: poissa_oleva_taytto
+        data_type: boolean
+      - name: kaikki_ehdon_tayttavat_hyvaksytaan
+        data_type: boolean
+      - name: kaytetaan_valintalaskentaa
+        data_type: boolean
+      - name: valmis_sijoiteltavaksi
+        data_type: boolean
+      - name: valisijoittelu
+        data_type: boolean
+      - name: poistetaanko_hylatyt
+        data_type: boolean
+      - name: jarjestyskriteerit
+        data_type: jsonb
+
   - name: int_valintaperusteet_hakukohde
     description: Tämä taulu sisältää hakukohdekohtaiset tiedot valintaperusteista
     columns:
