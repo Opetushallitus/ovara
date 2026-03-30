@@ -1,6 +1,7 @@
 {{
   config(
     materialized = 'table',
+    unlogged = true,
     indexes = [
         {'columns': ['henkilo_oid','priorisoitu_kansalaisuus']}
     ]
