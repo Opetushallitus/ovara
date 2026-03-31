@@ -9,12 +9,13 @@
 }}
 
 with hakukohde as (
-    select * from {{ ref('int_valintaperusteet_hakukohde') }}
+    select * from {{ ref('dw_valintaperusteet_hakukohde') }}
 ),
 
 valintatapajonoja as (
     select
         hakukohde_oid,
+        muokattu,
         vaihe ->> 'id' as valinnanvaihe_id,
         jsonb_array_elements(vaihe -> 'valintatapajono') as data
     from hakukohde,
@@ -26,6 +27,7 @@ rivit as (
         data ->> 'oid' as jono_id,
         valinnanvaihe_id,
         hakukohde_oid,
+        muokattu,
         data ->> 'nimi' as nimi,
         data ->> 'kuvaus' as kuvaus,
         (data ->> 'aloituspaikat')::int as aloituspaikat,

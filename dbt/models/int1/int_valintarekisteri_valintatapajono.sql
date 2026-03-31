@@ -8,18 +8,21 @@
 }}
 
 with raw as (
-    select * from {{ ref('dw_valintarekisteri_valintatapajono') }}
+    select distinct on (valintatapajono_oid) *
+    from {{ ref('int_valintarekisteri_valintatapajono') }}
+    order by valintatapajono_oid, dw_metadata_dw_stored_at desc
 ),
 
 vp as (
-    select jono_id, tyyppi_uri
+    select distinct on (jono_id) jono_id, tyyppi_uri
     from {{ ref('int_valintaperusteet_valintatapajono') }}
+    order by jono_id, muokattu desc
 ),
 
 final as (
     select
-        raw.oid as valintatapajono_oid,
-        raw.nimi as valintatapajono_nimi,
+        raw.valintatapajono_oid,
+        raw.valintatapajono_nimi,
         raw.hakukohde_oid,
         raw.alinhyvaksyttypistemaara,
         raw.alkuperaisetaloituspaikat,
@@ -37,7 +40,7 @@ final as (
         raw.varasijojakaytetaanasti,
         vp.tyyppi_uri
     from raw
-    left join vp on raw.oid = vp.jono_id
+    left join vp on raw.valintatapajono_oid = vp.jono_id
 )
 
 select * from final

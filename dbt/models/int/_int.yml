@@ -309,6 +309,100 @@ models:
       - name: koulutuksen_alkamiskausikoodi
         data_type: jsonb
 
+  - name: int_valintaperusteet_valintatapajono
+    description: >
+      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset valintatapajonot jokaiselta valinnanvaiheelta,
+      kaikki historialliset rivit mukaan lukien. Tieto saadaan unnestaamalla dw_valintaperusteet_hakukohde-taulun
+      valinnanvaiheet-JSON-sarake. Int1-skeemassa julkaistaan kullekin jono_id:lle viimeisimmän muokattu-aikaleiman mukainen rivi.
+    columns:
+      - name: jono_id
+        data_type: text
+      - name: valinnanvaihe_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - not_null
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: nimi
+        data_type: text
+      - name: kuvaus
+        data_type: text
+      - name: aloituspaikat
+        data_type: integer
+      - name: tyyppi_uri
+        data_type: text
+      - name: prioriteetti
+        data_type: integer
+      - name: siirretaan_sijoitteluun
+        data_type: boolean
+      - name: tasasijasaanto
+        data_type: text
+      - name: ei_lasketa_paivamaaran_jalkeen
+        data_type: timestamp with time zone
+      - name: ei_varasijatayttoa
+        data_type: boolean
+      - name: merkitse_myoh_auto
+        data_type: boolean
+      - name: poissa_oleva_taytto
+        data_type: boolean
+      - name: kaikki_ehdon_tayttavat_hyvaksytaan
+        data_type: boolean
+      - name: kaytetaan_valintalaskentaa
+        data_type: boolean
+      - name: valmis_sijoiteltavaksi
+        data_type: boolean
+      - name: valisijoittelu
+        data_type: boolean
+      - name: poistetaanko_hylatyt
+        data_type: boolean
+      - name: jarjestyskriteerit
+        data_type: jsonb
+
+  - name: int_valintarekisteri_valintatapajono
+    description: >
+      Tähän tauluun on kerätty valintarekisterin valintatapajonot dw-skeemasta.
+      Int1-skeemassa julkaistaan kullekin valintatapajono_oid:lle viimeisimmän aikaleiman mukainen rivi,
+      täydennettynä valintaperusteiden tyyppi_uri-kentällä.
+    columns:
+      - name: valintatapajono_oid
+        data_type: text
+      - name: valintatapajono_nimi
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: alinhyvaksyttypistemaara
+        data_type: double precision
+      - name: alkuperaisetaloituspaikat
+        data_type: integer
+      - name: aloituspaikat
+        data_type: integer
+      - name: eivarasijatayttoa
+        data_type: boolean
+      - name: hakeneet
+        data_type: integer
+      - name: kaikkiehdontayttavathyvaksytaan
+        data_type: boolean
+      - name: poissaolevataytto
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: sijoiteltuilmanvarasijasaantojaniidenollessavoimassa
+        data_type: boolean
+      - name: tasasijasaanto
+        data_type: text
+      - name: valintaesityshyvaksytty
+        data_type: boolean
+      - name: varasijantayttopaivat
+        data_type: integer
+      - name: varasijat
+        data_type: integer
+      - name: varasijojakaytetaanasti
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
   - name: int_valintaperusteet_aloituspaikat
     description: Tämä taulu sisältää valintaperusteista tulevat aloituspaikat
     columns:
