@@ -1,33 +1,25 @@
 {{
   config(
-    enabled=false,
-    materialized='incremental',
-    unique_key ='valinnanvaihe_id',
+    materialized = 'table',
     indexes = [
+        {'columns': ['jono_id']},
         {'columns': ['hakukohde_oid']}
     ]
-)
+  )
 }}
 
-with raw as (
-        valinnanvaihe_id,
-        hakukohde_oid,
-        valintatapajono
-        ,
-    from {{ ref('int_valintaperusteet_hakukohde') }}
-    {% if is_incremental() %}
-        where dw_metadata_dw_stored_at > coalesce((select max(muokattu) from {{ this }}), '1900-01-01')
-    {% endif %}
-    order by valinnanvaihe_id, muokattu desc
-
+with hakukohde as (
+    select * from {{ ref('dw_valintaperusteet_hakukohde') }}
 ),
 
 valintatapajonoja as (
     select
-        valinnanvaihe_id,
         hakukohde_oid,
-        jsonb_array_elements(valintatapajono) as data
-    from raw
+        muokattu,
+        vaihe ->> 'id' as valinnanvaihe_id,
+        jsonb_array_elements(vaihe -> 'valintatapajono') as data
+    from hakukohde,
+        lateral jsonb_array_elements(valinnanvaiheet) as vaihe
 ),
 
 rivit as (
@@ -35,6 +27,7 @@ rivit as (
         data ->> 'oid' as jono_id,
         valinnanvaihe_id,
         hakukohde_oid,
+        muokattu,
         data ->> 'nimi' as nimi,
         data ->> 'kuvaus' as kuvaus,
         (data ->> 'aloituspaikat')::int as aloituspaikat,
@@ -53,62 +46,7 @@ rivit as (
         (data ->> 'poistetaankoHylatyt')::boolean as poistetaanko_hylatyt,
         data -> 'jarjestyskriteerit' as jarjestyskriteerit
     from valintatapajonoja
-),
-
-existing_rows as (
-    {% if is_incremental() %}
-        select * from {{ this }}
-        where hakukohde_oid in (select hakukohde_oid from valintatapajonoja)
-    {% else %}
-        select
-            null as jono_id,
-            null as valinnanvaihe_id,
-            null as hakukohde_oid,
-            null as nimi,
-            null as kuvaus,
-            null::int as aloituspaikat,
-            null as tyyppi_uri,
-            null::int as prioriteetti,
-            null::boolean as siirretaan_sijoitteluun,
-            null as tasasijasaanto,
-            null::timestamptz as ei_lasketa_paivamaaran_jalkeen,
-            null::boolean as ei_varasijatayttoa,
-            null::boolean as merkitse_myoh_auto,
-            null::boolean as poissa_oleva_taytto,
-            null::boolean as kaikki_ehdon_tayttavat_hyvaksytaan,
-            null::boolean as kaytetaan_valintalaskentaa,
-            null::boolean as valmis_sijoiteltavaksi,
-            null::boolean as valisijoittelu,
-            null::boolean as poistetaanko_hylatyt,
-            null::jsonb as jarjestyskriteerit
-    {% endif %}
+    where data ->> 'oid' is not null
 )
 
-select
-    coalesce(uusi.jono_id, vanh.jono_id) as jono_id,
-    coalesce(uusi.valinnanvaihe_id, vanh.valinnanvaihe_id) as valinnanvaihe_id,
-    coalesce(uusi.hakukohde_oid, vanh.hakukohde_oid) as hakukohde_oid,
-    coalesce(uusi.kuvaus, vanh.kuvaus) as kuvaus,
-    coalesce(uusi.aloituspaikat, vanh.aloituspaikat) as aloituspaikat,
-    coalesce(uusi.tyyppi_uri, vanh.tyyppi_uri) as tyyppi_uri,
-    coalesce(uusi.prioriteetti, vanh.prioriteetti) as prioriteetti,
-    coalesce(uusi.siirretaan_sijoitteluun, vanh.siirretaan_sijoitteluun) as siirretaan_sijoitteluun,
-    coalesce(uusi.tasasijasaanto, vanh.tasasijasaanto) as tasasijasaanto,
-    coalesce(uusi.ei_lasketa_paivamaaran_jalkeen, vanh.ei_lasketa_paivamaaran_jalkeen)
-    as ei_lasketa_paivamaaran_jalkeen,
-    coalesce(uusi.ei_varasijatayttoa, vanh.ei_varasijatayttoa) as ei_varasijatayttoa,
-    coalesce(uusi.merkitse_myoh_auto, vanh.merkitse_myoh_auto) as merkitse_myoh_auto,
-    coalesce(uusi.poissa_oleva_taytto, vanh.poissa_oleva_taytto) as poissa_oleva_taytto,
-    coalesce(uusi.kaikki_ehdon_tayttavat_hyvaksytaan, vanh.kaikki_ehdon_tayttavat_hyvaksytaan)
-    as kaikki_ehdon_tayttavat_hyvaksytaan,
-    coalesce(uusi.kaytetaan_valintalaskentaa, vanh.kaytetaan_valintalaskentaa) as kaytetaan_valintalaskentaa,
-    coalesce(uusi.valmis_sijoiteltavaksi, vanh.valmis_sijoiteltavaksi) as valmis_sijoiteltavaksi,
-    coalesce(uusi.valisijoittelu, vanh.valisijoittelu) as valisijoittelu,
-    coalesce(uusi.poistetaanko_hylatyt, vanh.poistetaanko_hylatyt) as poistetaanko_hylatyt,
-    coalesce(uusi.jarjestyskriteerit, vanh.jarjestyskriteerit) as jarjestyskriteerit,
-    case when uusi.valinnanvaihe_id is null then 1::boolean else 0::boolean end as poistettu,
-    current_timestamp::timestamptz as muokattu
-from
-    existing_rows as vanh
-full outer join rivit as uusi on vanh.hakukohde_oid = uusi.hakukohde_oid and vanh.jono_id = uusi.jono_id
-where coalesce(uusi.jono_id, vanh.jono_id) is not null
+select * from rivit
