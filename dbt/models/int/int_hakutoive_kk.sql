@@ -44,7 +44,7 @@ final as (
         replace(h.tiedot ->> 'higher-completed-base-education', 'pohjakoulutus_', '')::jsonb as pohjakoulutus
     from
         hakemus as h
-    left join hakutoive as hato on h.hakemus_oid = hato.hakemus_oid
+    join hakutoive as hato on h.hakemus_oid = hato.hakemus_oid
     left join lateral (
         select elem.value from jsonb_array_elements(h.kasittelymerkinnat) as elem
         where
