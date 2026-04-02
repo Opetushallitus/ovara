@@ -7,57 +7,32 @@
     )
 }}
 
-with hakemus as not materialized (
-    select * from {{ ref('int_ataru_hakemus') }}
-    where
-        kasittelymerkinnat @? '$[*] ? (@.requirement == "eligibility-state")'
-        and tiedot ? 'higher-completed-base-education'
-        and haku_oid in (
-            select haku_oid
-            from {{ ref('int_kouta_haku') }}
-            where haun_tyyppi = 'korkeakoulu'
-        )
+with haku as (
+    select haku_oid from {{ ref('int_kouta_haku') }}
+    where haun_tyyppi = 'korkeakoulu'
+),
+
+hakemus as (
+    select
+        hakemus_oid,
+        haku_oid,
+        kasittelymerkinnat,
+        tiedot
+    from {{ ref('int_ataru_hakemus') }} as hake
+    where exists (
+        select 1 from haku
+        where hake.haku_oid = haku.haku_oid
+    )
+    and kasittelymerkinnat @> '[{"requirement": "eligibility-state"}]'
+    and tiedot ? 'higher-completed-base-education'
 ),
 
 hakutoive as (
-    select * from {{ ref('int_hakutoive') }}
-),
-
-
-
-hakukelpoisuus as (
     select
-        {{ hakutoive_id() }},
+        hakutoive_id,
         hakemus_oid,
-        hakukohde_oid,
-        hakukelpoinen
-    from
-        (
-            select
-                hakemus_oid,
-                (
-                    jsonb_path_query(
-                        kasittelymerkinnat,
-                        '$[*] ? (@.requirement == "eligibility-state")'
-                    ) ->> 'hakukohde'
-                ) as hakukohde_oid,
-                (
-                    jsonb_path_query(
-                        kasittelymerkinnat,
-                        '$[*] ? (@.requirement == "eligibility-state")'
-                    ) ->> 'state'
-                ) as hakukelpoinen
-            from hakemus
-        ) as hakukelpoisuus
-
-),
-
-pohjakoulutus as (
-    select
-        hakemus_oid,
-        replace(tiedot ->> 'higher-completed-base-education', 'pohjakoulutus_', '')::jsonb as pohjakoulutus
-    from hakemus
-
+        hakukohde_oid
+    from {{ ref('int_hakutoive') }}
 ),
 
 final as (
@@ -65,12 +40,17 @@ final as (
         hato.hakutoive_id,
         hato.hakemus_oid,
         hato.hakukohde_oid,
-        hake.hakukelpoinen as hakukelpoisuus,
-        poko.pohjakoulutus
-    from hakutoive as hato
-    left join hakukelpoisuus as hake on hato.hakutoive_id = hake.hakutoive_id
-    left join pohjakoulutus as poko on hato.hakemus_oid = poko.hakemus_oid
-
+        elem.value ->> 'state' as hakukelpoisuus,
+        replace(h.tiedot ->> 'higher-completed-base-education', 'pohjakoulutus_', '')::jsonb as pohjakoulutus
+    from
+        hakemus as h
+    left join hakutoive as hato on h.hakemus_oid = hato.hakemus_oid
+    left join lateral (
+        select elem.value from jsonb_array_elements(h.kasittelymerkinnat) as elem
+        where
+            elem.value ->> 'requirement' = 'eligibility-state' and elem.value ->> 'hakukohde' = hato.hakukohde_oid
+        limit 1
+    ) as elem on true
 )
 
 select * from final
