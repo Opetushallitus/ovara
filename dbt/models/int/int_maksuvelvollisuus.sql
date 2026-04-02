@@ -1,7 +1,6 @@
 {{
   config(
     materialized = 'table',
-    unlogged = true,
     indexes = [
         {'columns':['hakutoive_id']}
     ]
