@@ -127,7 +127,7 @@ models:
       - name: hakutoive_id
         data_tytpe: text
         data_tests:
-          - dbt_constraint.primary_key
+          - dbt_constraints.primary_key
         data_type: text
       - name: hakukohde_henkilo_id
         data_type: text
