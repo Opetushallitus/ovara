@@ -1,3 +1,16 @@
+{{
+  config(
+    materialized = 'table',
+    indexes = [
+        {'columns':['oppijanumero']}
+    ],
+    pre_hook=[
+        "set maintenance_work_mem = '1GB';",
+        "set max_parallel_maintenance_workers = 4;",
+    ]
+    )
+}}
+
 with onr as (
     select * from {{ ref('int_onr_henkilo') }}
 ),

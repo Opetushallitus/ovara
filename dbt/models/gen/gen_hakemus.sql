@@ -26,6 +26,9 @@ with
 source as (
     select
         hakemus_oid,
+        versio_id,
+        lomake_id,
+        lomakeversio_id,
         luotu,
         tila,
         jatetty,

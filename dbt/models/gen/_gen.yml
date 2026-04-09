@@ -1,4 +1,6 @@
 models:
+  - name: gen_hakemus
+
   - name: gen_koodi
     description: Koodiston tiedot
     columns:
@@ -24,6 +26,12 @@ models:
         data_type: timestamp with time zone
       - name: voimassaloppupvm
         data_type: timestamp with time zone
+
+  - name: gen_henkilo
+    columns:
+      - name: henkilo_oid
+        data_tests:
+        - dbt_constraints.primary_key
 
   - name: gen_koodirelaatio
     description: Koodiston relaation tietoja
@@ -162,7 +170,7 @@ models:
       - name: ensikertalainen
         data_type: boolean
 
-  - name: gen_ohjausparameter
+  - name: gen_ohjausparametri
     description: Hakujen ohjausparametreja
     columns:
       - name: hakuoid_avain_id

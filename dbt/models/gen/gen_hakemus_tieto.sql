@@ -3,6 +3,11 @@
     materialized = 'table',
     indexes = [
         {'columns' : ['hakemus_oid'] }
+    ],
+    pre_hook=[
+        "set work_mem = '2GB';"
+        "set maintenance_work_mem = '1GB';",
+        "set max_parallel_maintenance_workers = 4;",
     ]
     )
 }}
