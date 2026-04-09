@@ -45,6 +45,123 @@ models:
       - name: ylakoodiversio
         data_type: integer
 
+  - name: gen_hakemus
+    columns:
+      - name: hakemus_oid
+        data_tests:
+          - dbt_constraints.primary_key
+        data_type: text
+      - name: luotu
+        data_type: timestamp with time zone
+      - name: tila
+        data_type: text
+      - name: jatetty
+        data_type: timestamp with time zone
+      - name: kieli
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: hakukohde
+        data_type: jsonb
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukelpoisuus_asetettu_automaattisesti
+        data_type: jsonb
+      - name: etunimet
+        data_type: text
+      - name: kutsumanimi
+        data_type: text
+      - name: sukunimi
+        data_type: text
+      - name: hetu
+        data_type: text
+      - name: lahiosoite
+        data_type: text
+      - name: postinumero
+        data_type: text
+      - name: postitoimipaikka
+        data_type: text
+      - name: ulk_kunta
+        data_type: text
+      - name: kotikunta
+        data_type: text
+      - name: asuinmaa
+        data_type: character varying
+      - name: sukupuoli
+        data_type: integer
+      - name: kansalaisuus
+        data_type: jsonb
+      - name: sahkoinenviestintalupa
+        data_type: boolean
+      - name: koulutusmarkkinointilupa
+        data_type: boolean
+      - name: valintatuloksen_julkaisulupa
+        data_type: boolean
+      - name: asiointikieli
+        data_type: integer
+      - name: sahkoposti
+        data_type: text
+      - name: puhelin
+        data_type: text
+      - name: pohjakoulutuksen_maa_toinen_aste
+        data_type: text
+      - name: hakemusmaksut
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: poistettu
+        data_type: boolean
+      - name: hakemusmaksun_tila
+        data_type: text
+      - name: kiinnostunut_oppisopimuksesta
+        data_type: boolean
+      - name: pohjakoulutus_kk
+        data_type: jsonb
+      - name: pohjakoulutus_kk_valmistumisvuosi
+        data_type: jsonb
+
+  - name: gen_hakutoive
+    columns:
+      - name: hakutoive_id
+        data_tytpe: text
+        data_tests:
+          - dbt_constraint.primary_key
+        data_type: text
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: henkilo_hakemus_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: hakutoivenumero
+        data_type: bigint
+      - name: viimeinen_vastaanottopaiva
+        data_type: timestamp with time zone
+      - name: vastaanottotieto
+        data_type: text
+      - name: ilmoittautumisen_tila
+        data_type: text
+      - name: valintatapajonot
+        data_type: jsonb
+      - name: valintatieto
+        data_type: text
+      - name: ehdollisesti_hyvaksytty
+        data_type: boolean
+      - name: valintatiedon_pvm
+        data_type: date
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+
   - name: gen_ohjausparameter
     description: Hakujen ohjausparametreja
     columns:

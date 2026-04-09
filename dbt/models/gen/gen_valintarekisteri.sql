@@ -9,8 +9,8 @@
 }}
 
 with valinnantulos as not materialized (
-	select
-    	hakukohde_oid,
+    select
+        hakukohde_oid,
         valintatapajono_oid,
         hakemus_oid,
         henkilo_oid,
@@ -25,8 +25,8 @@ with valinnantulos as not materialized (
 ),
 
 jonosija as not materialized (
-	select
-    	hakemus_oid,
+    select
+        hakemus_oid,
         hakukohde_oid,
         valintatapajono_oid,
         hyvaksytty_harkinnanvaraisesti,
@@ -41,7 +41,7 @@ jonosija as not materialized (
 ),
 
 hyvaksytty as not materialized (
-	select
+    select
         hakukohde_oid,
         henkilo_oid,
         hyvaksyttyjajulkaistu
@@ -49,15 +49,15 @@ hyvaksytty as not materialized (
 ),
 
 lukuvuosimaksu as not materialized (
-	select
-    	hakukohde_oid,
+    select
+        hakukohde_oid,
         henkilo_oid,
         maksun_tila
     from {{ ref('int_valintarekisteri_lukuvuosimaksu') }}
 ),
 
 ilmoittautuminen as not materialized (
-	select
+    select
         hakukohde_oid,
         henkilo_oid,
         ilmoittaja,
@@ -67,7 +67,7 @@ ilmoittautuminen as not materialized (
 ),
 
 vastaanotto as not materialized (
-	select
+    select
         hakukohde_oid,
         henkilo_oid,
         ilmoittaja,
@@ -110,11 +110,16 @@ final as (
         vaot.selite as vastaanotto_selite,
         vaot.operaatio as vastaanotto_tila
     from valinnantulos as vatu
-    left join jonosija as josi on vatu.hakemus_oid=josi.hakemus_oid and vatu.valintatapajono_oid=josi.valintatapajono_oid
-    left join hyvaksytty as hysa on vatu.henkilo_oid=hysa.henkilo_oid and vatu.hakukohde_oid=hysa.hakukohde_oid
-    left join lukuvuosimaksu as lvma on vatu.henkilo_oid=lvma.henkilo_oid and vatu.hakukohde_oid=lvma.hakukohde_oid
-    left join ilmoittautuminen as ilmo on vatu.henkilo_oid=ilmo.henkilo_oid and vatu.hakukohde_oid=ilmo.hakukohde_oid
-    left join vastaanotto as vaot on vatu.henkilo_oid=vaot.henkilo_oid and vatu.hakukohde_oid=vaot.hakukohde_oid
+    left join jonosija as josi
+        on vatu.hakemus_oid = josi.hakemus_oid and vatu.valintatapajono_oid = josi.valintatapajono_oid
+    left join hyvaksytty as hysa
+        on vatu.henkilo_oid = hysa.henkilo_oid and vatu.hakukohde_oid = hysa.hakukohde_oid
+    left join lukuvuosimaksu as lvma
+        on vatu.henkilo_oid = lvma.henkilo_oid and vatu.hakukohde_oid = lvma.hakukohde_oid
+    left join ilmoittautuminen as ilmo
+        on vatu.henkilo_oid = ilmo.henkilo_oid and vatu.hakukohde_oid = ilmo.hakukohde_oid
+    left join vastaanotto as vaot
+        on vatu.henkilo_oid = vaot.henkilo_oid and vatu.hakukohde_oid = vaot.hakukohde_oid
 )
 
 select * from final

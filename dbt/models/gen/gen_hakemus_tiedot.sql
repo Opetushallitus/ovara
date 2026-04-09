@@ -6,7 +6,7 @@
     ]
     )
 }}
-with source as not materialized(
+with source as not materialized (
     select * from {{ ref('int_hakemus_tiedot') }}
 )
 

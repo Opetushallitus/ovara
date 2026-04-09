@@ -3,7 +3,8 @@ with onr as (
 ),
 
 kansalaisuus as (
-    select * from {{ ref('int_onr_kansalaisuus') }} where priorisoitu_kansalaisuus
+    select * from {{ ref('int_onr_kansalaisuus') }}
+    where priorisoitu_kansalaisuus
 ),
 
 final as (
