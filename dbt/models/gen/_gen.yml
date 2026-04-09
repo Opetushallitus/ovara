@@ -1,6 +1,4 @@
 models:
-  - name: gen_hakemus
-
   - name: gen_koodi
     description: Koodiston tiedot
     columns:
