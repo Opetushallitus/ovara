@@ -1,8 +1,11 @@
 {{
   config(
-    materialized = 'table',
+materialized = 'incremental',
+    incremental_strategy= 'delete+insert',
+    unique_key = 'hakemus_oid',
     indexes = [
-        {'columns':['hakutoive_id']}
+        {'columns':['hakemus_oid']},
+        {'columns':['dw_metadata_dw_stored_at']}
     ]
     )
 }}
@@ -17,12 +20,20 @@ hakemus as (
         hakemus_oid,
         haku_oid,
         kasittelymerkinnat,
-        tiedot
+        tiedot,
+        dw_metadata_dw_stored_at,
+        tila
     from {{ ref('int_ataru_hakemus') }} as hake
     where exists (
         select 1 from haku
         where hake.haku_oid = haku.haku_oid
     )
+    {% if is_incremental() %}
+        and dw_metadata_dw_stored_at >= coalesce(
+                (select max(dw_metadata_dw_stored_at) from {{ this }}),
+                '1900-01-01'::timestamptz
+        )
+    {% endif %}
     and kasittelymerkinnat @> '[{"requirement": "eligibility-state"}]'
     and tiedot ? 'higher-completed-base-education'
 ),
@@ -41,16 +52,18 @@ final as (
         hato.hakemus_oid,
         hato.hakukohde_oid,
         elem.value ->> 'state' as hakukelpoisuus,
-        replace(h.tiedot ->> 'higher-completed-base-education', 'pohjakoulutus_', '')::jsonb as pohjakoulutus
+        replace(hake.tiedot ->> 'higher-completed-base-education', 'pohjakoulutus_', '')::jsonb as pohjakoulutus,
+        hake.dw_metadata_dw_stored_at
     from
-        hakemus as h
-    join hakutoive as hato on h.hakemus_oid = hato.hakemus_oid
+        hakemus as hake
+    join hakutoive as hato on hake.hakemus_oid = hato.hakemus_oid
     left join lateral (
-        select elem.value from jsonb_array_elements(h.kasittelymerkinnat) as elem
+        select elem.value from jsonb_array_elements(hake.kasittelymerkinnat) as elem
         where
             elem.value ->> 'requirement' = 'eligibility-state' and elem.value ->> 'hakukohde' = hato.hakukohde_oid
         limit 1
     ) as elem on true
+    where hake.tila <> 'inactivated'
 )
 
 select * from final
