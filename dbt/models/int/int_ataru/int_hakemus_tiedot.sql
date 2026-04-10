@@ -1,7 +1,10 @@
 {{
   config(
     materialized = 'table',
-    unlogged=true
+    unlogged=true,
+    post_hook=[
+        "{{ disable_autovacuum_if_not_incremental() }}"
+    ]
     )
 }}
 with source as not materialized (

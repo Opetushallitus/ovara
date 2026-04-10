@@ -4,10 +4,8 @@
     indexes = [
         {'columns' : ['hakemus_oid'] }
     ],
-    pre_hook=[
-        "set work_mem = '1GB';"
-        "set maintenance_work_mem = '1GB';",
-        "set max_parallel_maintenance_workers = 4;",
+    post_hook=[
+        "{{ disable_autovacuum_if_not_incremental() }}"
     ]
     )
 }}
