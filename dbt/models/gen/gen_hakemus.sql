@@ -17,13 +17,13 @@ with
 {% if is_incremental() %}
     max_timestamp as materialized (
         select coalesce(
-            (select max(dw_metadata_dw_stored_at) from {{ this }}),
+            (select max(dw_metadata_dw_stored_at) - interval '5 seconds' from {{ this }}),
             '1900-01-01'::timestamp
-        ) - interval '5 seconds' as max_dw_metadata_dw_stored_at
+        ) as max_dw_metadata_dw_stored_at
     ),
 {% endif %}
 
-source as (
+hakemus as (
     select
         hakemus_oid,
         versio_id,
@@ -69,6 +69,62 @@ source as (
         cross join max_timestamp
         where dw_metadata_dw_stored_at >= max_dw_metadata_dw_stored_at
     {% endif %}
+),
+
+kansalaisuus as (
+    select
+        hakemus_oid,
+        jsonb_agg(kansalaisuus_puhd) as kansalaisuus
+    from hakemus as hake
+    cross join lateral jsonb_array_elements(hake.kansalaisuus) as kansalaisuudet
+    cross join lateral jsonb_array_elements(kansalaisuudet) as kansalaisuus_puhd
+    group by 1
+
+),
+
+final as (
+    select
+        hake.hakemus_oid,
+        hake.versio_id,
+        hake.lomake_id,
+        hake.lomakeversio_id,
+        hake.luotu,
+        hake.tila,
+        hake.jatetty,
+        hake.kieli,
+        hake.haku_oid,
+        hake.hakukohde,
+        hake.henkilo_oid,
+        hake.hakukelpoisuus_asetettu_automaattisesti,
+        hake.etunimet,
+        hake.kutsumanimi,
+        hake.sukunimi,
+        hake.hetu,
+        hake.lahiosoite,
+        hake.postinumero,
+        hake.postitoimipaikka,
+        hake.ulk_kunta,
+        hake.kotikunta,
+        hake.asuinmaa,
+        hake.sukupuoli,
+        kans.kansalaisuus,
+        hake.sahkoinenviestintalupa,
+        hake.koulutusmarkkinointilupa,
+        hake.valintatuloksen_julkaisulupa,
+        hake.asiointikieli,
+        hake.sahkoposti,
+        hake.puhelin,
+        hake.pohjakoulutuksen_maa_toinen_aste,
+        hake.hakemusmaksut,
+        hake.muokattu,
+        hake.poistettu,
+        hake.hakemusmaksun_tila,
+        hake.kiinnostunut_oppisopimuksesta,
+        hake.pohjakoulutus_kk,
+        hake.pohjakoulutus_kk_valmistumisvuosi,
+        hake.dw_metadata_dw_stored_at
+    from hakemus as hake
+    join kansalaisuus as kans on hake.hakemus_oid = kans.hakemus_oid
 )
 
-select * from source
+select * from final
