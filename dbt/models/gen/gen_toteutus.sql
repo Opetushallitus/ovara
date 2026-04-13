@@ -2,7 +2,8 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns': ['toteutus_oid']}
+        {'columns': ['koulutus_oid']},
+        {'columns': ['organisaatio_oid']}
     ]
     )
 }}

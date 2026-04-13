@@ -199,7 +199,7 @@ models:
 
   - name: int_valintaperusteet_valintatapajono
     columns:
-      - name: valintatapajono_oid
+      - name: valintatapajono_id
         data_type: text
         data_tests:
           - dbt_constraints.primary_key

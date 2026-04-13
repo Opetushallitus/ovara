@@ -124,7 +124,7 @@ final as (
         hake.pohjakoulutus_kk_valmistumisvuosi,
         hake.dw_metadata_dw_stored_at
     from hakemus as hake
-    join kansalaisuus as kans on hake.hakemus_oid = kans.hakemus_oid
+    inner join kansalaisuus as kans on hake.hakemus_oid = kans.hakemus_oid
 )
 
 select * from final

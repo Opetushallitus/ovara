@@ -3,7 +3,6 @@
     materialized = 'table',
     unlogged = true,
     indexes = [
-        {'columns' : ['valintatapajono_oid']}
     ]
     )
 }}
@@ -17,7 +16,7 @@ with valinnanvaiheet as (
 
 final as (
     select
-        vajo.oid as valintatapajono_oid,
+        vajo.oid as valintatapajono_id,
         vajo.nimi as valintatapajono_nimi,
         vajo.tyyppi as valintatapajono_tyyppi,
         vv->>'valinnanVaiheOid' as valinnanvaihe_id,

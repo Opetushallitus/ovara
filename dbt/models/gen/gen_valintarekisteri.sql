@@ -2,7 +2,10 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns':['hakukohde_oid','hakemus_oid']}
+        {'columns':['hakukohde_oid','hakemus_oid']},
+        {'columns':['hakemus_oid']},
+        {'columns':['henkilo_oid']},
+        {'columns':['valintatapajono_id']}
     ],
     pre_hook='set enable_mergejoin = off;'
     )
@@ -79,7 +82,7 @@ vastaanotto as not materialized (
 final as (
     select
         vatu.hakukohde_oid,
-        vatu.valintatapajono_oid,
+        vatu.valintatapajono_oid as valintatapajono_id,
         vatu.hakemus_oid,
         vatu.henkilo_oid,
         vatu.valinnan_tila,
