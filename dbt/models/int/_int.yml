@@ -357,3 +357,10 @@ models:
           - dbt_constraints.primary_key
       - name: aloituspaikat
         data_type: bigint
+
+  - name: int_valintaperusteet_valintakoe
+    columns:
+      - name: valintakoe_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key

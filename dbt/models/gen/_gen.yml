@@ -196,3 +196,17 @@ models:
       - name: aikaleima_paattyy
         description: jos sisäisessä arvossa on startdate ja enddate, niin tässä sarakkeessa on enddate aikaleimana
         data_type: timestamp with time zone
+
+  - name: gen_valinnanvaihe
+    columns:
+      - name: valinnanvaihe_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+
+  - name: gen_valintakoe
+    coliumns:
+      - name: valintakoe_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key
