@@ -1,6 +1,7 @@
 {{
   config(
     materialized = 'table',
+    unlogged = true,
     indexes = [
         {'columns' : ['valintatapajono_oid']}
     ]
@@ -8,7 +9,10 @@
 }}
 
 with valinnanvaiheet as (
-    select valinnanvaiheet from {{ ref('int_valintaperusteet_hakukohde') }}
+    select
+        hakukohde_oid,
+        valinnanvaiheet
+    from {{ ref('int_valintaperusteet_hakukohde') }}
 ),
 
 final as (
@@ -16,6 +20,8 @@ final as (
         vajo.oid as valintatapajono_oid,
         vajo.nimi as valintatapajono_nimi,
         vajo.tyyppi as valintatapajono_tyyppi,
+        vv->>'valinnanVaiheOid' as valinnanvaihe_id,
+        vava.hakukohde_oid,
         vajo."lastModified" as muokattu,
         vajo.prioriteetti,
         vajo.aloituspaikat,
