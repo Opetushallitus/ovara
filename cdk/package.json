@@ -6,7 +6,7 @@
   },
   "scripts": {
     "prepare": "cd ../ && husky",
-    "lint": "eslint ./bin ./lib --max-warnings 0",
+    "lint": "eslint ./bin ./lib --ignore-pattern \"**/*.js\" --ignore-pattern \"**/*.d.ts\" --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "build": "npm run lint && tsc",
     "watch": "tsc -w",
