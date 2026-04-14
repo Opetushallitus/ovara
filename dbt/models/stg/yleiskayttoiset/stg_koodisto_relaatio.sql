@@ -18,15 +18,23 @@ select * from {{ this }}
 
     int as (
         select
-            data ->> 'alakoodiuri'::varchar as alakoodiuri,
-            (data ->> 'alakoodiversio')::int as alakoodiversio,
-            data ->> 'relaatiotyyppi'::varchar as relaatiotyyppi,
-            (data ->> 'relaatioversio')::int as relaatioversio,
-            data ->> 'ylakoodiuri'::varchar as ylakoodiuri,
-            (data ->> 'ylakoodiversio')::int as ylakoodiversio,
-            dw_metadata_source_timestamp_at as muokattu,
+            data.alakoodiuri,
+            data.alakoodiversio,
+            data.relaatiotyyppi,
+            data.relaatioversio,
+            data.ylakoodiuri,
+            data.ylakoodiversio,
+            sorc.dw_metadata_source_timestamp_at as muokattu,
             {{ metadata_columns() }}
-        from source
+        from source as sorc
+        cross join lateral json_to_record(data) as data (
+            alakoodiuri text,
+            alakoodiversio int,
+            relaatiotyyppi text,
+            relaatioversio int,
+            ylakoodiuri text,
+            ylakoodiversio int
+        )
     ),
 
     final as (
@@ -37,7 +45,7 @@ select * from {{ this }}
             'relaatiotyyppi',
             'relaatioversio',
             'ylakoodiuri',
-            'ylakoodiuri'
+            'ylakoodiversio'
             ]) }} as koodirelaatio_id,
             *
         from int
