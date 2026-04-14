@@ -45,7 +45,7 @@ final as (
         data.created as luotu,
         data.updated as  muokattu
     from source
-    cross join lateral jsonb_to_record(data) as data (
+    cross join lateral json_to_record(data) as data (
     	henkilo_oid text,
     	master_oid text,
     	etunimet text,
