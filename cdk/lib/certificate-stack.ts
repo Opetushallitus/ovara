@@ -5,10 +5,8 @@ import { Construct } from 'constructs';
 
 import { GenericStackProps } from './config';
 
-export interface CertificateStackProps extends GenericStackProps {}
-
 export class CertificateStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props: CertificateStackProps) {
+  constructor(scope: Construct, id: string, props: GenericStackProps) {
     super(scope, id, props);
 
     const config = props.config;
