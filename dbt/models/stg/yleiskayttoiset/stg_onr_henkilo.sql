@@ -5,6 +5,9 @@
     indexes = [
         {'columns': ['henkilo_oid']},
         {'columns': ['muokattu']}
+    ],
+    pre_hook = [
+        "create index if not exists idx_onr_updated_expr on {{ source('ovara', 'onr_henkilo') }} ((data ->> 'updated'));"
     ]
     )
 }}
@@ -13,10 +16,12 @@ with source as (
     select * from {{ source('ovara', 'onr_henkilo') }}
     {% if is_incremental() %}
     -- process only rows where updated is newer than newest timestamp in dw
-        where
-            (data ->> 'updated')::timestamptz > (
-                select coalesce(max(muokattu) - interval '7 days', '1899-12-31')
-                from {{ source('yleiskayttoiset', 'dw_onr_henkilo') }}
+        where data ->> 'updated'> (
+            select coalesce(
+                to_char(max(muokattu) - interval '7 days','YYYY-MM-DD"T"HH24:MI:SS"Z"'),
+                '1899-12-31T00:00:00Z'
+                )
+            from {{ source('yleiskayttoiset', 'dw_onr_henkilo') }}
             )
     --end of incremental logic #}
     {% endif %}
@@ -24,23 +29,38 @@ with source as (
 ),
 
 final as (
-    select
-        data ->> 'henkilo_oid'::varchar as henkilo_oid,
-        data ->> 'master_oid'::varchar as master_oid,
-        data ->> 'etunimet'::varchar as etunimet,
-        data ->> 'sukunimi'::varchar as sukunimi,
-        data ->> 'hetu'::varchar as hetu,
-        data ->> 'kotikunta'::varchar as kotikunta,
-        (data ->> 'syntymaaika')::date as syntymaaika,
-        data ->> 'aidinkieli' as aidinkieli,
-        array_to_json(string_to_array((data ->> 'kansalaisuus')::varchar, ','))::jsonb as kansalaisuus,
-        (data ->> 'sukupuoli')::int as sukupuoli,
-        (data ->> 'turvakielto')::boolean = 't' as turvakielto,
-        (data ->> 'yksiloityvtj')::boolean = 't' as yksiloityvtj,
-        (data ->> 'created')::timestamptz as luotu,
-        (data ->> 'updated')::timestamptz as muokattu,
-        {{ metadata_columns() }}
+  select
+        data.henkilo_oid,
+        data.master_oid,
+        data.etunimet,
+        data.sukunimi,
+        data.hetu,
+        data.kotikunta,
+        data.syntymaaika,
+        data.aidinkieli,
+        array_to_json(string_to_array((data.kansalaisuus), ','))::jsonb as kansalaisuus,
+        data.sukupuoli,
+        data.turvakielto,
+        data.yksiloityvtj,
+        data.created as luotu,
+        data.updated as  muokattu
     from source
+    cross join lateral jsonb_to_record(data) as data (
+    	henkilo_oid text,
+    	master_oid text,
+    	etunimet text,
+    	sukunimi text,
+    	hetu text,
+    	kotikunta text,
+    	syntymaaika date,
+    	aidinkieli text,
+    	sukupuoli int,
+    	turvakielto boolean,
+    	yksiloityvtj boolean,
+    	created timestamptz,
+    	updated timestamptz,
+    	kansalaisuus text
+    )
 )
 
 select * from final
