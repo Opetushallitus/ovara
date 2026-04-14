@@ -1,6 +1,7 @@
 {{
   config(
     materialized = 'table',
+    unlogged=true,
     indexes = [
         {'columns': ['koodi_id']},
         {'columns': ['muokattu']}
@@ -33,7 +34,7 @@ select * from {{ this }}
             data.koodiversioupdated_at as muokattu,
             data.tila,
             data.voimassaalkupvm,
-            data.voimassaloppuvpm,
+            data.voimassaloppuvpm as voimassaloppupvm,
             {{ metadata_columns() }}
         from source
         cross join lateral json_to_record(data) as data (
