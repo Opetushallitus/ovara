@@ -16,5 +16,7 @@
   "hosted-zone:account=471112673652:domainName=ovara.opintopolku.fi:region=us-east-1": {
     "Id": "/hostedzone/Z07057731ZAAJWGHEVE7H",
     "Name": "ovara.opintopolku.fi."
-  }
+  },
+  "cli-telemetry": false,
+  "acknowledged-issue-numbers": [34892]
 }
