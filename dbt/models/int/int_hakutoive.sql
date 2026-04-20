@@ -15,7 +15,11 @@ julkaistu as (
 ),
 
 hakemus as (
-    select * from {{ ref('int_ataru_hakemus') }}
+    select
+        hakemus_oid,
+        haku_oid,
+        henkilo_oid
+    from {{ ref('int_ataru_hakemus') }}
 ),
 
 haku as (
@@ -73,7 +77,8 @@ int as (
         vali.ehdollisesti_hyvaksytty,
         vali.valintatiedon_pvm,
         hava.harkinnanvaraisuuden_syy,
-        enke.isensikertalainen as ensikertalainen
+        enke.isensikertalainen as ensikertalainen,
+        hato.hakukelpoisuus_asetettu_automaattisesti
     from hakutoive as hato
     left join julkaistu as julk on hato.hakukohde_henkilo_id = julk.hakukohde_henkilo_id
     left join hakemus as hake on hato.hakemus_oid = hake.hakemus_oid
@@ -113,7 +118,8 @@ final as (
         ehdollisesti_hyvaksytty,
         valintatiedon_pvm,
         harkinnanvaraisuuden_syy,
-        ensikertalainen
+        ensikertalainen,
+        hakukelpoisuus_asetettu_automaattisesti
     from int
 )
 

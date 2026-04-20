@@ -28,6 +28,7 @@ with raw as (
         hakukohde,
         muokattu,
         tila,
+        hakukelpoisuus_asetettu_automaattisesti,
         dw_metadata_dbt_copied_at
     from {{ ref('int_ataru_hakemus') }}
     {% if is_incremental() %}
@@ -38,27 +39,17 @@ with raw as (
     {% endif %}
 ),
 
-latest_hakemus as (
-    select
-        hakemus_oid,
-        henkilo_oid,
-        hakukohde,
-        muokattu,
-        tila,
-        dw_metadata_dbt_copied_at
-    from raw
-),
-
 hakutoive_raw as (
     select
         hakemus_oid,
         henkilo_oid,
         muokattu,
         tila,
+        hakukelpoisuus_asetettu_automaattisesti,
         dw_metadata_dbt_copied_at,
         value as hakukohde_oid,
         ordinality as hakutoivenumero
-    from latest_hakemus
+    from raw
     cross join jsonb_array_elements_text(hakukohde) with ordinality
 ),
 
@@ -80,6 +71,7 @@ final as (
         henkilo_oid,
         hakukohde_oid,
         hakutoivenumero,
+        hakukelpoisuus_asetettu_automaattisesti ? hakukohde_oid as hakukelpoisuus_asetettu_automaattisesti,
         case
             when tila = 'inactivated'
                 then cast(true as boolean)

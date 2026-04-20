@@ -17,6 +17,12 @@ models:
         data_tests:
           - dbt_constraints.primary_key
         data_type: text
+      - name: versio_id
+        data_type: integer
+      - name: lomake_id
+        data_type: uuid
+      - name: lomakeversio_id
+        data_type: integer
       - name: luotu
         data_type: timestamp with time zone
       - name: tila
@@ -31,8 +37,6 @@ models:
         data_type: jsonb
       - name: henkilo_oid
         data_type: text
-      - name: hakukelpoisuus_asetettu_automaattisesti
-        data_type: jsonb
       - name: etunimet
         data_type: text
       - name: kutsumanimi
@@ -482,7 +486,7 @@ models:
       - name: luokittelutermit
         data_type: jsonb
 
-  - name: gen_ohjausparametri
+  - name: gen_ohjausparametri_haku
     description: Hakujen ohjausparametreja
     columns:
       - name: hakuoid_avain_id
@@ -621,11 +625,11 @@ models:
       - name: maksun_maara
         data_type: double precision
       - name: toteutus_lisatiedot_fi
-        data_type: jsonb
+        data_type: text
       - name: toteutus_lisatiedot_sv
-        data_type: jsonb
+        data_type: text
       - name: toteutus_lisatiedot_en
-        data_type: jsonb
+        data_type: text
       - name: onko_apuraha
         data_type: boolean
       - name: suunniteltu_kesto_vuodet
@@ -812,33 +816,33 @@ models:
         data_type: text
       - name: hakukohde_oid
         data_type: text
-      - name: alinhyvaksyttypistemaara
+      - name: alin_hyvaksytty_pistemaara
         data_type: double precision
-      - name: alkuperaisetaloituspaikat
+      - name: alkuperaiset_aloituspaikat
         data_type: integer
       - name: aloituspaikat
         data_type: integer
-      - name: eivarasijatayttoa
+      - name: ei_varasijatayttoa
         data_type: boolean
       - name: hakeneet
         data_type: integer
-      - name: kaikkiehdontayttavathyvaksytaan
+      - name: kaikki_ehdon_tayttavat_hyvaksytaan
         data_type: boolean
-      - name: poissaolevataytto
+      - name: poissaoleva_taytto
         data_type: boolean
       - name: prioriteetti
         data_type: integer
-      - name: sijoiteltuilmanvarasijasaantojaniidenollessavoimassa
+      - name: sijoiteltu_ilman_varasijasaanto_ja_niidenollessa_voimassa
         data_type: boolean
       - name: tasasijasaanto
         data_type: text
-      - name: valintaesityshyvaksytty
+      - name: valintaesitys_hyvaksytty
         data_type: boolean
-      - name: varasijantayttopaivat
+      - name: varasijan_tayttopaivat
         data_type: integer
       - name: varasijat
         data_type: integer
-      - name: varasijojakaytetaanasti
+      - name: varasijoja_kaytetaan_asti
         data_type: timestamp with time zone
 
   - name: gen_valintarekisteri

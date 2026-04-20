@@ -9,7 +9,17 @@
 }}
 
 with source as (
-    select * from {{ ref('int_hakutoive') }}
+    select
+        {{ dbt_utils.star(
+        from=ref('int_hakutoive'),
+        except=[
+            'hakukohde_henkilo_id',
+            'henkilo_hakemus_id',
+            'valintatapajonot'
+            ]
+        )
+    }}
+    from {{ ref('int_hakutoive') }}
 )
 
 select * from source
