@@ -1,9 +1,12 @@
 {{
   config(
-    materialized = 'table',
-    unlogged = true,
-    indexes = [
-        {'columns': ['henkilo_oid','priorisoitu_kansalaisuus']}
+    materialized = 'incremental',
+    unique_key = 'henkilo_oid',
+    incremental_strategy= 'delete+insert',
+     indexes = [
+        {'columns': ['henkilo_oid','priorisoitu_kansalaisuus']},
+        {'columns': ['muokattu']}
+
     ],
     post_hook = [
         "create index if not exists ix_kansalaisuus_priorisoitu on {{ this }} (henkilo_oid) where priorisoitu_kansalaisuus = true;"
@@ -14,8 +17,12 @@
 with henkilo as not materialized (
     select
         henkilo_oid,
-        kansalaisuus
+        kansalaisuus,
+        muokattu
     from {{ ref('int_onr_henkilo') }}
+    {% if is_incremental() %}
+      where muokattu >= coalesce((select max(muokattu) from {{ this }}), '1900-01-01')
+    {% endif %}
 ),
 
 maa_valtioryhma as (
@@ -37,6 +44,7 @@ maat as (
 kansalaisuudet as materialized (
     select
         henk.henkilo_oid,
+        henk.muokattu,
         elem.value ->> 0 as kansalaisuus
     from henkilo as henk
     cross join lateral jsonb_array_elements(henk.kansalaisuus) as elem (value)
@@ -46,6 +54,7 @@ jarjestys as (
     select
         kans.henkilo_oid,
         kans.kansalaisuus,
+        kans.muokattu,
         case
             when kans.kansalaisuus = '246' then 1
             when maav.maa_koodiarvo is not null then 2
@@ -70,6 +79,7 @@ final as (
     select
         jarj.henkilo_oid,
         jarj.kansalaisuus,
+        jarj.muokattu,
         jsonb_build_object(
             'en', maat.nimi_en,
             'sv', maat.nimi_sv,
