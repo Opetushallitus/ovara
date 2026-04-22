@@ -4,8 +4,11 @@
     unlogged = true,
     indexes = [
         {'columns': ['henkilo_oid','priorisoitu_kansalaisuus']}
+    ],
+    post_hook = [
+        "create index if not exists ix_kansalaisuus_priorisoitu on {{ this }} (henkilo_oid) where priorisoitu_kansalaisuus = true;"
     ]
-    )
+  )
 }}
 
 with henkilo as not materialized (

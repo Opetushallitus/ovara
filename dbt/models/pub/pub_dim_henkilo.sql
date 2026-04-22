@@ -66,20 +66,9 @@ maa as (
 
 kansalaisuudet as (
     select
-        h.henkilo_oid,
-        jsonb_agg(m.koodinimi) as kansalaisuudet_nimi
-    from
-        onr as h
-    left join
-        lateral
-        jsonb_array_elements_text(h.kansalaisuus) as k (kansalaisuus)
-        on true
-    left join maa as m
-        on
-            k.kansalaisuus = m.koodiarvo
-            and m.viimeisin_versio
-    group by
-        h.henkilo_oid
+        henkilo_oid,
+        kansalaisuudet_nimi
+    from {{ ref('int_onr_kansalaisuus_nimi') }}
 ),
 
 int as (

@@ -7,6 +7,7 @@
         indexes = [
             {'columns': ['tiedot'], 'type': 'gin'},
             {'columns': ['haku_oid']},
+            {'columns': ['henkilo_oid']}
         ],
         post_hook = [
             "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))",
