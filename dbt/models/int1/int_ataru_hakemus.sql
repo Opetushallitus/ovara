@@ -12,6 +12,7 @@
         post_hook = [
             "create index if not exists ataru_hakemus_tiedot on {{ this}} ((tiedot->>'higher-completed-base-education'))",
             "create index if not exists ix_dw_metadata_dbt_copied_at on {{ this }} (dw_metadata_dbt_copied_at desc)",
+            "create index if not exists ix_dw_metadata_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)",
             "create index if not exists idx_hakemus_filtered on {{ this }} (haku_oid) where kasittelymerkinnat @> '[{\"requirement\": \"eligibility-state\"}]' and tiedot ? 'higher-completed-base-education'"
         ]
     )

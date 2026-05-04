@@ -16,10 +16,9 @@
 	dw_metadata_dbt_copied_at timestamptz NULL,
 	dw_metadata_filename varchar NULL,
 	dw_metadata_file_row_number int4 NULL
-    );
-    CREATE INDEX if not exists ix_'+ table + ' ON raw.' + table+ ' USING btree (dw_metadata_dbt_copied_at);
-    ALTER TABLE raw.' + table+ ' set (autovacuum_enabled=off);'
-%}
+    ) with (autovacuum_enabled = false);
+    CREATE INDEX if not exists ix_'+ table + ' ON raw.' + table+ ' USING btree (dw_metadata_dbt_copied_at);'
+    %}
         {{ print (create_statement)}}
         {% do run_query(create_statement) %}
     {% endfor %}

@@ -33,6 +33,9 @@ final as (
         from arvosana
         group by suoritus
     ) as rivi on suor.resourceid = rivi.suoritus
+    group by
+        suor.henkilo_oid,
+        rivi.arvosanat
 )
 
 select * from final
