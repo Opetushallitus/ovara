@@ -4,7 +4,8 @@
         unique_key = 'resourceid',
         indexes = [
         {"columns": ["suoritus"]},
-        {"columns": ["dw_metadata_dw_stored_at"]}
+        {"columns": ["dw_metadata_dw_stored_at"]},
+        {"columns": ["asteikko","suoritus"]}
         ]
     )
 }}
