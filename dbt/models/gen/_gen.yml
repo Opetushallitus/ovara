@@ -1,0 +1,911 @@
+models:
+
+  - name: gen_hakemus_tieto
+    columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: kysymys
+        data_type: text
+      - name: vastaus
+        data_type: jsonb
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+  - name: gen_hakemus
+    columns:
+      - name: hakemus_oid
+        data_tests:
+          - dbt_constraints.primary_key
+        data_type: text
+      - name: versio_id
+        data_type: integer
+      - name: lomake_id
+        data_type: uuid
+      - name: lomakeversio_id
+        data_type: integer
+      - name: luotu
+        data_type: timestamp with time zone
+      - name: tila
+        data_type: text
+      - name: jatetty
+        data_type: timestamp with time zone
+      - name: kieli
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: hakukohde
+        data_type: jsonb
+      - name: henkilo_oid
+        data_type: text
+      - name: etunimet
+        data_type: text
+      - name: kutsumanimi
+        data_type: text
+      - name: sukunimi
+        data_type: text
+      - name: hetu
+        data_type: text
+      - name: lahiosoite
+        data_type: text
+      - name: postinumero
+        data_type: text
+      - name: postitoimipaikka
+        data_type: text
+      - name: ulk_kunta
+        data_type: text
+      - name: kotikunta
+        data_type: text
+      - name: asuinmaa
+        data_type: character varying
+      - name: sukupuoli
+        data_type: integer
+      - name: kansalaisuus
+        data_type: jsonb
+      - name: sahkoinenviestintalupa
+        data_type: boolean
+      - name: koulutusmarkkinointilupa
+        data_type: boolean
+      - name: valintatuloksen_julkaisulupa
+        data_type: boolean
+      - name: asiointikieli
+        data_type: integer
+      - name: sahkoposti
+        data_type: text
+      - name: puhelin
+        data_type: text
+      - name: pohjakoulutuksen_maa_toinen_aste
+        data_type: text
+      - name: hakemusmaksut
+        data_type: jsonb
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: poistettu
+        data_type: boolean
+      - name: hakemusmaksun_tila
+        data_type: text
+      - name: kiinnostunut_oppisopimuksesta
+        data_type: boolean
+      - name: pohjakoulutus_kk
+        data_type: jsonb
+      - name: pohjakoulutus_kk_valmistumisvuosi
+        data_type: jsonb
+
+  - name: gen_haku
+    columns:
+      - name: haku_oid
+        data_type: text
+      - name: haku_nimi_fi
+        data_type: text
+      - name: haku_nimi_sv
+        data_type: text
+      - name: haku_nimi_en
+        data_type: text
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: koulutuksen_tarkka_alkamisaika
+        data_type: timestamp with time zone
+      - name: koulutuksen_tarkka_paattymispaiva
+        data_type: timestamp with time zone
+      - name: koulutuksen_alkamisvuosi
+        data_type: integer
+      - name: koulutuksen_alkamiskausiuri
+        data_type: text
+      - name: henkilokohtaisen_suunnitelman_lisatiedot_fi
+        data_type: text
+      - name: henkilokohtaisen_suunnitelman_lisatiedot_sv
+        data_type: text
+      - name: henkilokohtaisen_suunnitelman_lisatiedot_en
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: hakutapakoodiuri
+        data_type: text
+      - name: hakukohteen_liittamisen_takaraja
+        data_type: timestamp with time zone
+      - name: hakukohteen_muokkaamisen_takaraja
+        data_type: timestamp with time zone
+      - name: hakukohteen_liittaja_organisaatiot
+        data_type: jsonb
+      - name: ajastettu_julkaisu
+        data_type: timestamp with time zone
+      - name: ajastettu_haun_ja_hakukohteiden_arkistointi
+        data_type: timestamp with time zone
+      - name: ajastettu_haun_ja_hakukohteiden_arkistointi_ajettu
+        data_type: timestamp with time zone
+      - name: kohdejoukko_koodiuri
+        data_type: text
+      - name: kohdejoukon_tarkenne_koodiuri
+        data_type: text
+      - name: hakulomake_tyyppi
+        data_type: text
+      - name: hakulomake_ataru_id
+        data_type: text
+      - name: hakulomake_kuvaus_fi
+        data_type: text
+      - name: hakulomake_kuvaus_sv
+        data_type: text
+      - name: hakulomake_kuvaus_en
+        data_type: text
+      - name: hakulomake_linkki_fi
+        data_type: text
+      - name: hakulomake_linkki_sv
+        data_type: text
+      - name: hakulomake_linkki_en
+        data_type: text
+      - name: tulevaisuudenaikataulu
+        data_type: jsonb
+      - name: organisaatio_oid
+        data_type: text
+      - name: haku_vuosi
+        data_type: text
+      - name: haku_kausi
+        data_type: text
+
+  - name: gen_hakukohde
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: toteutus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: jarjestyspaikka_oid
+        data_type: text
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: hakukohde_nimi_fi
+        data_type: text
+      - name: hakukohde_nimi_sv
+        data_type: text
+      - name: hakukohde_nimi_en
+        data_type: text
+      - name: organisaatio_oid
+        data_type: text
+      - name: valintaperuste_id
+        data_type: uuid
+      - name: tila
+        data_type: text
+      - name: esikatselu
+        data_type: boolean
+      - name: hakukohde_koodiuri
+        data_type: text
+      - name: hakulomake_tyyppi
+        data_type: text
+      - name: hakulomake_ataru_id
+        data_type: text
+      - name: hakulomake_kuvaus_fi
+        data_type: text
+      - name: hakulomake_kuvaus_sv
+        data_type: text
+      - name: hakulomake_kuvaus_en
+        data_type: text
+      - name: hakulomake_linkki_fi
+        data_type: text
+      - name: hakulomake_linkki_sv
+        data_type: text
+      - name: hakulomake_linkki_en
+        data_type: text
+      - name: kaytetaan_haun_hakulomaketta
+        data_type: boolean
+      - name: pohjakoulutusvaatimus_koodiurit
+        data_type: jsonb
+      - name: pohjakoulutusvaatimus_tarkenne_fi
+        data_type: text
+      - name: pohjakoulutusvaatimus_tarkenne_sv
+        data_type: text
+      - name: pohjakoulutusvaatimus_tarkenne_en
+        data_type: text
+      - name: muu_pohjakoulutusvaatimus
+        data_type: jsonb
+      - name: toinen_aste_onko_kaksoistutkinto
+        data_type: boolean
+      - name: kaytetaan_haun_aikataulua
+        data_type: boolean
+      - name: liitteet_onko_sama_toimitusaika
+        data_type: boolean
+      - name: liitteet_onko_sama_toimitusosoite
+        data_type: boolean
+      - name: liitteiden_toimitusaika
+        data_type: timestamp with time zone
+      - name: liitteiden_toimitustapa
+        data_type: text
+      - name: liitteiden_toimitusosoite
+        data_type: jsonb
+      - name: liitteet
+        data_type: jsonb
+      - name: valintakokeet
+        data_type: jsonb
+      - name: hakuajat
+        data_type: jsonb
+      - name: valintakokeiden_yleiskuvaus_fi
+        data_type: text
+      - name: valintakokeiden_yleiskuvaus_sv
+        data_type: text
+      - name: valintakokeiden_yleiskuvaus_en
+        data_type: text
+      - name: valintaperusteen_valintakokeiden_lisatilaisuudet
+        data_type: jsonb
+      - name: kynnysehto_fi
+        data_type: text
+      - name: kynnysehto_sv
+        data_type: text
+      - name: kynnysehto_en
+        data_type: text
+      - name: kaytetaan_haun_alkamiskautta
+        data_type: boolean
+      - name: koulutuksen_alkamispaivamaara
+        data_type: timestamp with time zone
+      - name: koulutuksen_alkamisvuosi
+        data_type: integer
+      - name: koulutuksen_alkamiskausiuri
+        data_type: text
+      - name: aloituspaikat
+        data_type: integer
+      - name: aloituspaikat_ensikertalaisille
+        data_type: integer
+      - name: aloituspaikat_kuvaus_fi
+        data_type: text
+      - name: aloituspaikat_kuvaus_sv
+        data_type: text
+      - name: aloituspaikat_kuvaus_en
+        data_type: text
+      - name: hakukohteen_linja
+        data_type: jsonb
+      - name: painotetut_arvosanat
+        data_type: jsonb
+      - name: uuden_opiskelijan_url_fi
+        data_type: text
+      - name: uuden_opiskelijan_url_sv
+        data_type: text
+      - name: uuden_opiskelijan_url_en
+        data_type: text
+      - name: jarjestaa_urheilijan_ammkoulutusta
+        data_type: boolean
+      - name: kielivalinta
+        data_type: jsonb
+
+  - name: gen_hakutoive
+    columns:
+      - name: hakutoive_id
+        data_tytpe: text
+        data_tests:
+          - dbt_constraints.primary_key
+        data_type: text
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: henkilo_hakemus_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: hakutoivenumero
+        data_type: bigint
+      - name: viimeinen_vastaanottopaiva
+        data_type: timestamp with time zone
+      - name: vastaanottotieto
+        data_type: text
+      - name: ilmoittautumisen_tila
+        data_type: text
+      - name: valintatapajonot
+        data_type: jsonb
+      - name: valintatieto
+        data_type: text
+      - name: ehdollisesti_hyvaksytty
+        data_type: boolean
+      - name: valintatiedon_pvm
+        data_type: date
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+
+  - name: gen_henkilo
+    columns:
+      - name: henkilo_oid
+        data_tests:
+          - dbt_constraints.primary_key
+        data_type: text
+      - name: oppijanumero
+        data_type: text
+      - name: on_master
+        data_type: boolean
+      - name: etunimet
+        data_type: text
+      - name: sukunimi
+        data_type: text
+      - name: hetu
+        data_type: text
+      - name: kotikunta
+        data_type: text
+      - name: syntymaaika
+        data_type: date
+      - name: aidinkieli
+        data_type: text
+      - name: kaikki_kansalaisuudet
+        data_type: jsonb
+      - name: kansalaisuus
+        data_type: text
+      - name: sukupuoli
+        data_type: integer
+      - name: turvakielto
+        data_type: boolean
+      - name: yksiloityvtj
+        data_type: boolean
+
+  - name: gen_koodi
+    description: Koodiston tiedot
+    columns:
+      - name: versioitu_koodiuri
+        data_type: text
+      - name: koodistouri
+        data_type: text
+      - name: koodiuri
+        data_type: text
+      - name: koodiarvo
+        data_type: text
+      - name: koodiversio
+        data_type: integer
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: voimassaalkupvm
+        data_type: timestamp with time zone
+      - name: voimassaloppupvm
+        data_type: timestamp with time zone
+
+  - name: gen_koodirelaatio
+    description: Koodiston relaation tietoja
+    columns:
+      - name: versioitu_alakoodiuri
+        data_type: text
+      - name: versioitu_ylakoodiuri
+        data_type: text
+      - name: relaatiotyyppi
+        data_type: text
+      - name: relaatioversio
+        data_type: integer
+      - name: alakoodiuri
+        data_type: text
+      - name: alakoodiversio
+        data_type: integer
+      - name: ylakoodiuri
+        data_type: text
+      - name: ylakoodiversio
+        data_type: integer
+
+  - name: gen_koulutus
+    columns:
+      - name: koulutus_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: koulutus_nimi_fi
+        data_type: text
+      - name: koulutus_nimi_sv
+        data_type: text
+      - name: koulutus_nimi_en
+        data_type: text
+      - name: organisaatio_oid
+        data_type: text
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: johtaa_tutkintoon
+        data_type: boolean
+      - name: koulutustyyppi
+        data_type: text
+      - name: koulutukset_koodiuri
+        data_type: jsonb
+      - name: tila
+        data_type: text
+      - name: esikatselu
+        data_type: boolean
+      - name: tarjoajat
+        data_type: jsonb
+      - name: julkinen
+        data_type: boolean
+      - name: kielivalinta
+        data_type: jsonb
+      - name: sorakuvausid
+        data_type: text
+      - name: tyyppi
+        data_type: text
+      - name: koulutus_kuvaus_fi
+        data_type: text
+      - name: koulutus_kuvaus_sv
+        data_type: text
+      - name: koulutus_kuvaus_en
+        data_type: text
+      - name: lisatiedot
+        data_type: jsonb
+      - name: tutkinnonosat
+        data_type: jsonb
+      - name: koulutusala_koodiurit
+        data_type: jsonb
+      - name: tutkintonimike_koodiurit
+        data_type: jsonb
+      - name: opintojen_laajuus_yksikko_koodiuri
+        data_type: text
+      - name: opintojen_laajuus_numero
+        data_type: double precision
+      - name: opintojen_laajuus_numero_min
+        data_type: double precision
+      - name: opintojen_laajuus_numero_max
+        data_type: double precision
+      - name: onko_avoin_korkeakoulutus
+        data_type: boolean
+      - name: tunniste
+        data_type: text
+      - name: opinnon_tyyppi_koodiuri
+        data_type: text
+      - name: korkeakoulutus_tyypit
+        data_type: jsonb
+      - name: osaamisala_koodiuri
+        data_type: text
+      - name: erikoistumiskoulutus_koodiuri
+        data_type: text
+      - name: linkki_eperusteisiin
+        data_type: jsonb
+      - name: teemakuva
+        data_type: text
+      - name: eperusteid
+        data_type: integer
+      - name: luokittelutermit
+        data_type: jsonb
+
+  - name: gen_ohjausparametri_haku
+    description: Hakujen ohjausparametreja
+    columns:
+      - name: hakuoid_avain_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: haku_oid
+        description: Haun tunniste
+        data_type: text
+      - name: avain
+        description: parametrin avain
+        data_type: text
+      - name: alkuperainen_arvo
+        description: Parametrin alkuperäinen arvo, tämä voi olla myös nested JSON jollon data on alemmalla tasolla
+        data_type: jsonb
+      - name: aikaleima
+        description: jos sisäinen arvo on tyyppiä "date" sisältää tämä sarake tämän tiedon. Alkuperäinen aikaleima on epoch-muodossa mutta tähän se on käännetty aikaleimaksi
+        data_type: timestamp with time zone
+      - name: arvo
+        description: Jos sisäinen arvo on tyyppiä "value", niin tässä sarakkeessa on sen avaimen arvo
+        data_type: text
+      - name: aikaleima_alkaa
+        description: jos sisäisessä arvossa on startdate ja enddate, niin tässä sarakkeessa on startdate aikaleimana
+        data_type: timestamp with time zone
+      - name: aikaleima_paattyy
+        description: jos sisäisessä arvossa on startdate ja enddate, niin tässä sarakkeessa on enddate aikaleimana
+        data_type: timestamp with time zone
+
+  - name: gen_organisaatio
+    columns:
+      - name: organisaatio_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: alkupvm
+        data_type: timestamp with time zone
+      - name: lakkautuspvm
+        data_type: timestamp with time zone
+      - name: tila
+        data_type: text
+      - name: ylempi_organisaatio
+        data_type: text
+      - name: ylin_organisaatio
+        data_type: text
+      - name: organisaatiotyypit
+        data_type: jsonb
+      - name: sijaintikunta
+        data_type: text
+      - name: opetuskielet
+        data_type: jsonb
+      - name: oppilaitostyyppi
+        data_type: text
+      - name: oppilaitosnumero
+        data_type: text
+
+  - name: gen_toteutus
+    columns:
+      - name: toteutus_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: toteutus_nimi_fi
+        data_type: text
+      - name: toteutus_nimi_sv
+        data_type: text
+      - name: toteutus_nimi_en
+        data_type: text
+      - name: koulutus_oid
+        data_type: text
+      - name: organisaatio_oid
+        data_type: text
+      - name: koulutuksen_tarkka_alkamisaika
+        data_type: timestamp with time zone
+      - name: koulutuksen_tarkka_paattymispaiva
+        data_type: timestamp with time zone
+      - name: koulutuksen_alkamisvuosi
+        data_type: integer
+      - name: koulutuksen_alkamiskausiuri
+        data_type: text
+      - name: henkilokohtaisen_suunnitelman_lisatiedot_fi
+        data_type: text
+      - name: henkilokohtaisen_suunnitelman_lisatiedot_sv
+        data_type: text
+      - name: henkilokohtaisen_suunnitelman_lisatiedot_en
+        data_type: text
+      - name: ulkoinen_tunniste
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: esikatselu
+        data_type: boolean
+      - name: tarjoajat
+        data_type: jsonb
+      - name: tyyppi
+        data_type: text
+      - name: toteutus_kuvaus_fi
+        data_type: text
+      - name: toteutus_kuvaus_sv
+        data_type: text
+      - name: toteutus_kuvaus_en
+        data_type: text
+      - name: osaamisalat
+        data_type: jsonb
+      - name: opetuskieli_koodiurit
+        data_type: jsonb
+      - name: opetuskielet_kuvaus_fi
+        data_type: text
+      - name: opetuskielet_kuvaus_sv
+        data_type: text
+      - name: opetuskielet_kuvaus_en
+        data_type: text
+      - name: opetusaika_koodiurit
+        data_type: jsonb
+      - name: opetusaika_kuvaus_fi
+        data_type: text
+      - name: opetusaika_kuvaus_sv
+        data_type: text
+      - name: opetusaika_kuvaus_en
+        data_type: text
+      - name: opetustapa_koodiurit
+        data_type: jsonb
+      - name: opetustapa_kuvaus
+        data_type: jsonb
+      - name: maksullisuus_tyyppi
+        data_type: text
+      - name: maksullisuus_kuvaus_fi
+        data_type: text
+      - name: maksullisuus_kuvaus_sv
+        data_type: text
+      - name: maksullisuus_kuvaus_en
+        data_type: text
+      - name: maksun_maara
+        data_type: double precision
+      - name: toteutus_lisatiedot_fi
+        data_type: text
+      - name: toteutus_lisatiedot_sv
+        data_type: text
+      - name: toteutus_lisatiedot_en
+        data_type: text
+      - name: onko_apuraha
+        data_type: boolean
+      - name: suunniteltu_kesto_vuodet
+        data_type: integer
+      - name: suunniteltu_kesto_kuukaudet
+        data_type: integer
+      - name: suunniteltu_kesto_kuvaus_fi
+        data_type: text
+      - name: suunniteltu_kesto_kuvaus_sv
+        data_type: text
+      - name: suunniteltu_kesto_kuvaus_en
+        data_type: text
+      - name: asiasanat
+        data_type: jsonb
+      - name: ammattinimikkeet
+        data_type: jsonb
+      - name: onko_hakukohteet_kaytossa
+        data_type: boolean
+      - name: hakutermi
+        data_type: text
+      - name: hakulomake_tyyppi
+        data_type: text
+      - name: hakulomake_linkki
+        data_type: jsonb
+      - name: lisatietoa_hakeutumisesta_fi
+        data_type: text
+      - name: lisatietoa_hakeutumisesta_sv
+        data_type: text
+      - name: lisatietoa_hakeutumisesta_en
+        data_type: text
+      - name: lisatietoa_valintaperusteista_fi
+        data_type: text
+      - name: lisatietoa_valintaperusteista_sv
+        data_type: text
+      - name: lisatietoa_valintaperusteista_en
+        data_type: text
+      - name: hakuaika
+        data_type: jsonb
+      - name: aloituspaikat
+        data_type: integer
+      - name: aloituspaikka_kuvaus_fi
+        data_type: text
+      - name: aloituspaikka_kuvaus_sv
+        data_type: text
+      - name: aloituspaikka_kuvaus_en
+        data_type: text
+      - name: onko_avoin_korkeakoulutus
+        data_type: boolean
+      - name: tunniste
+        data_type: text
+      - name: opinnon_tyyppi_koodiuri
+        data_type: text
+      - name: liitetyt_opintojaksot
+        data_type: jsonb
+      - name: ammatillinen_perustutkinto_erityisopetuksena
+        data_type: boolean
+      - name: opintojen_laajuus_yksikko_koodiuri
+        data_type: text
+      - name: opintojen_laajuus_numero
+        data_type: double precision
+      - name: on_jotpa_rahoitus
+        data_type: boolean
+      - name: onko_taydennyskoulutus
+        data_type: boolean
+      - name: onko_tyovoimakoulutus
+        data_type: boolean
+      - name: kielivalikoima
+        data_type: jsonb
+      - name: yleislinja
+        data_type: boolean
+      - name: painotukset
+        data_type: jsonb
+      - name: erityiset_koulutustehtavat
+        data_type: jsonb
+      - name: diplomit
+        data_type: jsonb
+      - name: jarjestetaan_erityisopetuksena
+        data_type: boolean
+      - name: taiteenala_koodiurit
+        data_type: jsonb
+      - name: sorakuvaus_id
+        data_type: json
+      - name: kielivalinta
+        data_type: jsonb
+      - name: teemakuva
+        data_type: jsonb
+      - name: onko_pieni_osaamiskokonaisuus
+        data_type: boolean
+
+  - name: gen_valinnanvaihe
+    columns:
+      - name: valinnanvaihe_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakukohde_oid
+        data_type: text
+      - name: valinnanvaihe_nimi
+        data_type: text
+      - name: valinnanvaihe_jarjestysluku
+        data_type: integer
+      - name: valinnanvaihe_aktiivinen
+        data_type: boolean
+      - name: valinnanvaihe_tyyppi
+        data_type: text
+
+  - name: gen_valintakoe
+    columns:
+      - name: valintakoe_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintakoe_nimi
+        data_type: text
+      - name: valintakoe_kuvaus
+        data_type: text
+      - name: valintakoe_peritty
+        data_type: boolean
+      - name: valintakoe_tunniste
+        data_type: text
+      - name: valintakoe_aktiivinen
+        data_type: boolean
+      - name: valintakoe_kutsun_kohde
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone
+      - name: valintakoe_kutsutaanko_kaikki
+        data_type: boolean
+      - name: valintakoe_lahetetaanko_koekutsut
+        data_type: boolean
+
+  - name: gen_valintaperuste_valintatapajono
+    columns:
+      - name: valintatapajono_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: valintatapajono_nimi
+        data_type: text
+      - name: valintatapajono_tyyppi
+        data_type: text
+      - name: valinnanvaihe_id
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: muokattu
+        data_type: timestamp without time zone
+      - name: prioriteetti
+        data_type: integer
+      - name: aloituspaikat
+        data_type: integer
+      - name: tasasijasaanto
+        data_type: text
+      - name: valisijoittelu
+        data_type: boolean
+      - name: merkitse_myoh_auto
+        data_type: boolean
+      - name: ei_varasijatayttoa
+        data_type: boolean
+      - name: poissaoleva_taytto
+        data_type: boolean
+      - name: jarjestyskriteerit
+        data_type: jsonb
+      - name: poistetaanko_hylatyt
+        data_type: boolean
+      - name: valmis_sijoiteltavaksi
+        data_type: boolean
+      - name: siirretaan_sijoitteluun
+        data_type: boolean
+      - name: kaytetaan_valintalaskentaa
+        data_type: boolean
+      - name: kaikki_ehdon_tayttyvat_hyvaksytaan
+        data_type: boolean
+
+  - name: gen_valintarekisteri_valintatapajono
+    columns:
+      - name: valintatapajono_id
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: valintatapajono_nimi
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: alin_hyvaksytty_pistemaara
+        data_type: double precision
+      - name: alkuperaiset_aloituspaikat
+        data_type: integer
+      - name: aloituspaikat
+        data_type: integer
+      - name: ei_varasijatayttoa
+        data_type: boolean
+      - name: hakeneet
+        data_type: integer
+      - name: kaikki_ehdon_tayttavat_hyvaksytaan
+        data_type: boolean
+      - name: poissaoleva_taytto
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: sijoiteltu_ilman_varasijasaanto_ja_niidenollessa_voimassa
+        data_type: boolean
+      - name: tasasijasaanto
+        data_type: text
+      - name: valintaesitys_hyvaksytty
+        data_type: boolean
+      - name: varasijan_tayttopaivat
+        data_type: integer
+      - name: varasijat
+        data_type: integer
+      - name: varasijoja_kaytetaan_asti
+        data_type: timestamp with time zone
+
+  - name: gen_valintarekisteri
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+      - name: valintatapajono_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: valinnan_tila
+        data_type: text
+      - name: ehdollisesti_hyvaksyttavissa
+        data_type: boolean
+      - name: ehdollisen_hyvaksymisen_ehto_fi
+        data_type: text
+      - name: ehdollisen_hyvaksymisen_ehto_sv
+        data_type: text
+      - name: ehdollisen_hyvaksymisen_ehto_en
+        data_type: text
+      - name: valinnantila_kuvaus_fi
+        data_type: text
+      - name: valinnantila_kuvaus_sv
+        data_type: text
+      - name: valinnantila_kuvaus_en
+        data_type: text
+      - name: julkaistavissa
+        data_type: boolean
+      - name: hyvaksyperuuntunut
+        data_type: boolean
+      - name: valintatiedon_pvm
+        data_type: date
+      - name: hyvaksytty_harkinnanvaraisesti
+        data_type: boolean
+      - name: jonosija
+        data_type: integer
+      - name: varasijan_numero
+        data_type: integer
+      - name: onko_muuttunut_viime_sijoittelussa
+        data_type: boolean
+      - name: prioriteetti
+        data_type: integer
+      - name: pisteet
+        data_type: double precision
+      - name: siirtynyt_toisesta_valintatapajonosta
+        data_type: boolean
+      - name: sijoitteluajo_id
+        data_type: text
+      - name: hyvaksyttyjajulkaistu
+        data_type: timestamp with time zone
+      - name: maksun_tila
+        data_type: text
+      - name: ilmoitus_ilmoittaja
+        data_type: text
+      - name: selite
+        data_type: text
+      - name: ilmoituksen_tila
+        data_type: text
+      - name: vastaanotto_ilmoittaja
+        data_type: text
+      - name: vastaanotto_selite
+        data_type: text
+      - name: vastaanotto_tila
+        data_type: text

@@ -9,7 +9,7 @@ ovara:
       port: "{{ env_var('DBT_PORT_TEST') | int }}"
       database: ovara
       schema: "{{ env_var('POSTGRES_SCHEMA_TEST') }}"
-      threads: 8
+      threads: 4
     prod:
       type: postgres
       host: "{{ env_var('POSTGRES_HOST_PROD') }}"
