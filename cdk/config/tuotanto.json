@@ -11,7 +11,7 @@
     "minCapacity": 2,
     "scaleReaderWithWriter": true,
     "writerInstanceType": "r6gd.2xlarge",
-    "readerInstanceType": "r6gd.xlarge",
+    "readerInstanceType": "r6gd.2xlarge",
     "serverlessReader": false,
     "version": {
       "major": "17",
