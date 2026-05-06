@@ -23,3 +23,6 @@ target
 .envrc
 
 *.code-workspace
+
+ ## Claude Code
+.claude
