@@ -88,11 +88,11 @@ jobs:
           image: ${{ secrets.AWS_OVARA_UTILITY_ECR_LAMPI_SIIRTAJA_REPO }}:${{ inputs.image-tag }}
 
       - name: Deploy to Amazon ECS Scheduled Tasks
-        uses: airfordable/ecs-deploy-task-definition-to-scheduled-task@v2.1.0
+        uses: ./.github/actions/deploy-scheduled-task
         with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           cluster: ${{ env.ECS_CLUSTER_NAME }}
           rule-prefix: ${{ env.SCHEDULED_TASK_RULE_PREFIX }}
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
 
       - name: Update container image version to AWS Parameter store
         run: |
