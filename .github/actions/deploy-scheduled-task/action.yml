@@ -1,0 +1,40 @@
+name: 'Deploy ECS Scheduled Task'
+description: 'Registers a new ECS task definition and updates EventBridge scheduled task rules to use it'
+
+inputs:
+  task-definition:
+    description: 'Path to the task definition JSON file'
+    required: true
+  cluster:
+    description: 'ECS cluster name'
+    required: true
+  rule-prefix:
+    description: 'EventBridge rule name prefix'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Register task definition and update scheduled tasks
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+          --cli-input-json file://${{ inputs.task-definition }} \
+          --query 'taskDefinition.taskDefinitionArn' --output text)
+        echo "Registered task definition: $NEW_TASK_DEF_ARN"
+
+        RULE_NAMES=$(aws events list-rules \
+          --name-prefix "${{ inputs.rule-prefix }}" \
+          --query 'Rules[*].Name' --output text)
+
+        for RULE in $RULE_NAMES; do
+          echo "Updating rule: $RULE"
+          TARGETS=$(aws events list-targets-by-rule --rule "$RULE" --output json)
+          UPDATED_TARGETS=$(echo "$TARGETS" | jq -c \
+            --arg arn "$NEW_TASK_DEF_ARN" \
+            --arg cluster "${{ inputs.cluster }}" \
+            '[.Targets[] | if (.Arn | contains($cluster)) and .EcsParameters then .EcsParameters.TaskDefinitionArn = $arn else . end]')
+          aws events put-targets --rule "$RULE" --targets "$UPDATED_TARGETS"
+        done
