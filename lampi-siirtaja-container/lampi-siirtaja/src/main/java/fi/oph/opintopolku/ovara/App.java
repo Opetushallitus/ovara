@@ -12,6 +12,7 @@ public class App {
 
   public static void main(String[] args) throws Exception {
 
+    LOG.info("DEPLOY TESTI");
     LOG.info("Aloitetaan Ovaran tietojen siirto Lampeen");
 
     Config config =
