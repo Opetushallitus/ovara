@@ -72,9 +72,12 @@ public class SchemaExport {
         String.join(" ", processBuilder.command().toArray(new String[0])));
 
     Process process = processBuilder.start();
-    process.waitFor();
+    int exitCode = process.waitFor();
     String output = new String(process.getInputStream().readAllBytes());
     LOG.info("Schema export output: {}", output);
+    if (exitCode != 0) {
+      throw new RuntimeException("pg_dump epäonnistui exit codella " + exitCode + ": " + output);
+    }
     return tempFile;
   }
 }
