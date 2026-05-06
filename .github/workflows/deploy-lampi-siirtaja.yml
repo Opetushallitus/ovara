@@ -35,14 +35,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Configure AWS credentials
         if: ${{ inputs.environment == 'testi' }}
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_OVARA_TESTI_ROLE_ARN }}
           role-session-name: testi-lampi-siirtaja-deploy
@@ -50,7 +45,7 @@ jobs:
 
       - name: Configure AWS credentials
         if: ${{ inputs.environment == 'tuotanto' }}
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_OVARA_TUOTANTO_ROLE_ARN }}
           role-session-name: tuotanto-lampi-siirtaja-deploy
@@ -86,7 +81,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1.5.2
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: ScheduledContainer
