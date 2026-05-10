@@ -10,6 +10,20 @@ echo "Running Ovara DBT script..."
 
 start=$(date +%s)
 
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --parameters*|-p*)
+      if [[ "$1" != *=* ]]; then shift; fi # Value is next arg if no `=`
+      parameters="${1#*=}"
+      ;;
+    *)
+      >&2 printf "Error: Invalid argument\n"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
 cd dbt
 . venv/bin/activate
 
@@ -23,22 +37,25 @@ fi
 echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
-dbt seed -s tag:seed --target=prod
-dbt run-operation create_raw_tables --target=prod
-
 is_error="0"
+run_cleanup_and_generate_documentation="false"
 
-if [[ -z "$1" ]]; then
+if [[ -z "$parameters" ]]; then
   echo "Running DBT without any extra paramaters"
+  dbt seed -s tag:seed --target=prod
+  dbt run-operation create_raw_tables --target=prod
   if dbt build --target=prod --exclude "resource_type:seed"; then
   	is_error="0"
+  	run_cleanup_and_generate_documentation="true"
   else
     is_error="1"
   fi
   echo "Finished running DBT"
 else
-  echo "Running DBT with extra paramaters: $1"
-  if dbt build --target=prod --exclude "resource_type:seed" "$1"; then
+  echo "Running DBT with extra paramaters: $parameters"
+  command="dbt build --target=prod --exclude \"resource_type:seed\" $parameters"
+  echo "$command"
+  if eval "$command"; then
   	is_error="0"
   else
     is_error="1"
@@ -48,7 +65,7 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
-if [ $is_error -eq "0" ]; then
+if [ $is_error -eq "0" ] && [ $run_cleanup_and_generate_documentation = "true" ]; then
 	start=$(date +%s)
 	dbt run-operation tempdata_cleanup --target=prod
 	echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
