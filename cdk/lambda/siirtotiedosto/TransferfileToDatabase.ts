@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { Readable } from 'stream';
 
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Signer } from '@aws-sdk/rds-signer';
@@ -139,13 +140,22 @@ export const main: Handler = async (event: SQSEvent) => {
     Key: key,
   });
 
+  const parseJsonStream = async (
+    body: Readable,
+    jsonBatchSize: number
+  ): Promise<Array<Array<object>>> => {
+    const chunks: Array<object> = [];
+    for await (const chunk of body) {
+      const parsedChunk = JSON.parse(chunk.toString());
+      chunks.push(...parsedChunk);
+    }
+    return partition(chunks, jsonBatchSize);
+  };
+
   let partitionedContents = new Array<Array<object>>();
   try {
     const response = await client.send(command);
-    partitionedContents = partition(
-      JSON.parse((await response.Body?.transformToString()) || ''),
-      batchSize
-    );
+    partitionedContents = await parseJsonStream(response.Body as Readable, batchSize);
   } catch (err) {
     console.error(err);
     return { statusCode: 500, body: 'Siirtotiedoston luku epaonnistui' };
