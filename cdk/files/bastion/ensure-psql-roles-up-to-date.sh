@@ -55,6 +55,12 @@ PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema dw grant select on tables to readonlyrole;"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema dw grant usage, select on sequences to readonlyrole;"
 
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant usage on schema gen to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select on all tables in schema gen to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select on all sequences in schema gen to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema gen grant select on tables to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema gen grant usage, select on sequences to readonlyrole;"
+
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant usage on schema int to readonlyrole;"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select on all tables in schema int to readonlyrole;"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select on all sequences in schema int to readonlyrole;"
@@ -119,6 +125,10 @@ PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usa
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema pub to ovara_app_role;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema pub to ovara_app_role;"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges in schema pub grant select on tables to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant usage on schema gen to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all tables in schema gen to ovara_app_role;"
+PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant select on all sequences in schema gen to ovara_app_role;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges in schema gen grant select on tables to ovara_app_role;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant ovara_app_role to ovara_app;"
 echo ""
 echo "DONE!"
