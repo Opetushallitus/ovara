@@ -198,64 +198,43 @@ models:
         data_type: jsonb
 
   - name: int_valintaperusteet_valintatapajono
-    description: >
-      ### Valintaperusteiden valintatapajonoja
-
-
-      Tähän tauluun on kerätty kaikkien valintaperusteiden yksittäiset valintatapajonot jokaiselta vaiheelta.
-
-      Tälle datalle ei ole erikseen muutosaikaleimaa, joten "muokattu"-kenttä sisältää tiedon koska se on viimeksi tallennettu.
-
-      Joka latauksessa katsotaan kaikki latauksessa mukana olevat hakukohteet, ja jos kannassa on valintatapajono joka ei uudesta datasta löydetä,
-
-      se merkitään poistetuksi. Uudet rivit lisätään, ja hakukohteen kaikki rivit saavat uuden muokattu-aikaleiman riippumatta siitä onko rivi muuttunut vai ei
     columns:
-      - name: jono_id
-        data_type: text
-      - name: valinnanvaihe_id
+      - name: valintatapajono_id
         data_type: text
         data_tests:
-          - not_null
-      - name: hakukohde_oid
+          - dbt_constraints.primary_key
+      - name: valintatapajono_nimi
         data_type: text
-        data_tests:
-          - not_null
-      - name: kuvaus
+      - name: valintatapajono_tyyppi
         data_type: text
-      - name: aloituspaikat
-        data_type: integer
-      - name: tyyppi_uri
-        data_type: text
+      - name: muokattu
+        data_type: timestamp without time zone
       - name: prioriteetti
         data_type: integer
-      - name: siirretaan_sijoitteluun
-        data_type: boolean
+      - name: aloituspaikat
+        data_type: integer
       - name: tasasijasaanto
         data_type: text
-      - name: ei_lasketa_paivamaaran_jalkeen
-        data_type: timestamp with time zone
-      - name: ei_varasijatayttoa
+      - name: valisijoittelu
         data_type: boolean
       - name: merkitse_myoh_auto
         data_type: boolean
-      - name: poissa_oleva_taytto
+      - name: ei_varasijatayttoa
         data_type: boolean
-      - name: kaikki_ehdon_tayttavat_hyvaksytaan
-        data_type: boolean
-      - name: kaytetaan_valintalaskentaa
-        data_type: boolean
-      - name: valmis_sijoiteltavaksi
-        data_type: boolean
-      - name: valisijoittelu
-        data_type: boolean
-      - name: poistetaanko_hylatyt
+      - name: poissaoleva_taytto
         data_type: boolean
       - name: jarjestyskriteerit
         data_type: jsonb
-      - name: poistettu
+      - name: poistetaanko_hylatyt
         data_type: boolean
-      - name: muokattu
-        data_type: timestamp with time zone
+      - name: valmis_sijoiteltavaksi
+        data_type: boolean
+      - name: siirretaan_sijoitteluun
+        data_type: boolean
+      - name: kaytetaan_valintalaskentaa
+        data_type: boolean
+      - name: kaikki_ehdon_tayttyvat_hyvaksytaan
+        data_type: boolean
 
   - name: int_sijoitteluajo
     description: Tämä on väliakaistaulu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
@@ -378,3 +357,10 @@ models:
           - dbt_constraints.primary_key
       - name: aloituspaikat
         data_type: bigint
+
+  - name: int_valintaperusteet_valintakoe
+    columns:
+      - name: valintakoe_id
+        data_type: text
+        data_tests:
+        - dbt_constraints.primary_key

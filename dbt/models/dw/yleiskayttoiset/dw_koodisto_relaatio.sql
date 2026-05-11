@@ -1,6 +1,7 @@
 {{
   config(
     materialized = 'table',
+    unlogged = true,
     indexes = [
         {'columns': ['koodirelaatio_id']},
     ]

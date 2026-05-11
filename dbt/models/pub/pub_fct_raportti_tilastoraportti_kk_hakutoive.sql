@@ -2,12 +2,22 @@
     config(
         indexes = [
             {'columns': ['hakukohde_oid']}
-        ]
+        ],
+        pre_hook = 'set enable_mergejoin = off; set enable_nestloop = off;'
     )
 }}
 
 with hakutoive as (
-    select * from {{ ref('pub_dim_hakutoive') }}
+    select
+        hakutoive_id,
+        hakukohde_oid,
+        henkilo_hakemus_id,
+        hakukohde_henkilo_id,
+        ensikertalainen,
+        valintatieto,
+        vastaanottotieto,
+        hakutoivenumero
+    from {{ ref('pub_dim_hakutoive') }}
 ),
 
 hakukohde as (
@@ -15,7 +25,14 @@ hakukohde as (
 ),
 
 henkilo as (
-    select * from {{ ref('pub_dim_henkilo') }}
+    select
+        henkilo_hakemus_id,
+        master_oid,
+        aidinkieliluokka,
+        kansalaisuusluokka,
+        sukupuoli,
+        kansalaisuus
+    from {{ ref('pub_dim_henkilo') }}
 ),
 
 valintarekisteri as (
@@ -27,7 +44,10 @@ hakemus as (
 ),
 
 maksuvelvollisuus as (
-    select * from {{ ref('pub_dim_maksuvelvollisuus') }}
+    select
+        hakutoive_id,
+        maksuvelvollisuus
+    from {{ ref('pub_dim_maksuvelvollisuus') }}
 ),
 
 final as (

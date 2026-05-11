@@ -748,6 +748,8 @@ models:
         data_type: timestamp with time zone
   - name: dw_ohjausparametrit_parameter
     description: Ohjausparametrien tietoja
+    config:
+      post_hook: 'create index if not exists ix_dw_ohjausparameter_hakuoid_muokattu ON {{ this }} USING btree (haku_oid, muokattu desc) include (arvot)'
     columns:
       - name: hakukohde_henkilo_id
         data_type: text

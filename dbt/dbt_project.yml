@@ -10,6 +10,7 @@ test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
+docs-paths: ["docs"]
 
 flags:
   send_anonymous_usage_stats: false
@@ -61,6 +62,13 @@ models:
       +docs:
         node_color: "#4c7987"
       +tags: int1
+
+    gen:
+      +schema: gen
+      +materialized: table
+      +docs:
+        node_color: "#c71585"
+      +tags: gen
 
     pub:
       +schema: pub

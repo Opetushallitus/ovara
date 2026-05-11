@@ -6,6 +6,9 @@
         indexes = [
             {'columns':['resourceid','muokattu']},
             {'columns':['henkilo_oid']}
+        ],
+        post_hook = [
+                "create index if not exists idx_suoritus_active_resourceid__henkilo_oid on {{ this }} (resourceid, henkilo_oid ) where not poistettu;"
         ]
     )
 }}
