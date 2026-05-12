@@ -1,7 +1,18 @@
 models:
-  - name: int_hakutoive
-    description: Hakujen hakukohteet purettu auki hakutoive-tasolle.
-    columns:
+    - name: int_hakemus_tiedot
+      columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: kysymys
+        data_type: text
+      - name: vastaus
+        data_type: jsonb
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+    - name: int_hakutoive
+      description: Hakujen hakukohteet purettu auki hakutoive-tasolle.
+      columns:
       - name: hakutoive_id
         dsecription: yhdistelmä hakemusta ja hakukohdetta, tämä muodostaa yksilöitävän avaimen hakutoiveelle
         data_type: text
@@ -41,8 +52,8 @@ models:
       - name: ensikertalainen
         data_type: boolean
 
-  - name: int_hakutoive_kk
-    columns:
+    - name: int_hakutoive_kk
+      columns:
       - name: hakutoive_id
         data_type: text
         data_tests:
@@ -58,9 +69,9 @@ models:
       - name: pohjakoulutus
         data_type: jsonb
 
-  - name: int_hakukohde
-    description: Hakukohteiden viimeisin tieto.
-    columns:
+    - name: int_hakukohde
+      description: Hakukohteiden viimeisin tieto.
+      columns:
       - name: hakukohde_oid
         data_type: text
         data_tests:
@@ -109,20 +120,21 @@ models:
         data_type: jsonb
         description: valintaperusteiden lokalisoitu nimi
 
-  - name: int_koulutus_koulutuskoodi
-    config:
-      enabled: false
-    description: Koulutusten koulutuskoodit purettu auki tauluun
-    columns:
+    - name: int_koulutus_koulutuskoodi
+      config:
+        enabled: false
+      description: Koulutusten koulutuskoodit purettu auki tauluun
+      columns:
       - name: oid
         description: Koulutuksen oid
         data_type: text
       - name: koulutuskoodiuri
         description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla useampi koulutuskoodi
         data_type: text
-  - name: int_hakukohderyhma_hakukohde
-    description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
-    columns:
+
+    - name: int_hakukohderyhma_hakukohde
+      description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
+      columns:
       - name: hakukohderyhma_id
         data_type: text
         description: Avainsarake, yhdistelmä hakukohderyhmäoid ja hakukohdeoid
@@ -139,8 +151,8 @@ models:
       - name: muokattu
         data_type: timestamptz
 
-  - name: int_maksuvelvollisuus
-    columns:
+    - name: int_maksuvelvollisuus
+      columns:
       - name: hakutoive_id
         data_type: text
         data_tests:
@@ -148,9 +160,9 @@ models:
       - name: maksuvelvollisuus
         data_type: text
 
-  - name: int_organisaatio_osoite
-    description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne löytyvät eri taulusta.
-    columns:
+    - name: int_organisaatio_osoite
+      description: Sisältää organisaatioiden osoitetietoja. Yhdellä organisaatiolla voi olla useampi osoite tai osoite sekä suomeksi että ruotsiksi joten ne löytyvät eri taulusta.
+      columns:
       - name: organisaatio_oid
         description: Organisaation OID
         data_type: text
@@ -172,12 +184,12 @@ models:
         data_type: text
       - name: ladattu
         data_type: timestamptz
-  - name: int_organisaatio
-    description: >
-      Sisältää organisaatiopalvelun organisaatiot.
+    - name: int_organisaatio
+      description: >
+        Sisältää organisaatiopalvelun organisaatiot.
 
-      Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista: koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
-    columns:
+        Datassa on mukana vaan ne organisaatiot joissa tyypissä on vähintään yksi näistä arvoista: koulutustoimija, oppilaitos, toimipiste ja oppisopimustoimipiste
+      columns:
       - name: organisaatio_oid
         data_type: text
         description: Organisaation OID
@@ -197,8 +209,8 @@ models:
       - name: organisaatiotyypit
         data_type: jsonb
 
-  - name: int_valintaperusteet_valintatapajono
-    columns:
+    - name: int_valintaperusteet_valintatapajono
+      columns:
       - name: valintatapajono_id
         data_type: text
         data_tests:
@@ -236,9 +248,9 @@ models:
       - name: kaikki_ehdon_tayttyvat_hyvaksytaan
         data_type: boolean
 
-  - name: int_sijoitteluajo
-    description: Tämä on väliakaistaulu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
-    columns:
+    - name: int_sijoitteluajo
+      description: Tämä on väliakaistaulu jota tarvitaan jonosijojen käsittelyyn. Taulu sisältää tietoja jokaisen valintatapajonon viimeisestä sijoitteluajosta. Taulua käytetään jonosijojen käsittelyyn.
+      columns:
       - name: valintatapajono_oid
         data_type: text
         data_tests:
@@ -249,8 +261,9 @@ models:
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
         data_type: timestamp with time zone
-  - name: int_kaksoistutkinto_hakukohde
-    columns:
+
+    - name: int_kaksoistutkinto_hakukohde
+      columns:
       - name: hakutoive_id
         data_type: text
         data_tests:
@@ -265,8 +278,9 @@ models:
         data_type: timestamp with time zone
       - name: poistettu
         data_type: boolean
-  - name: int_urheilijatutkinto_hakukohde
-    columns:
+
+    - name: int_urheilijatutkinto_hakukohde
+      columns:
       - name: hakutoive_id
         data_type: text
         data_tests:
@@ -277,9 +291,10 @@ models:
         data_type: text
       - name: urheilijatutkinto_kiinnostaa
         data_type: boolean
-  - name: int_lomake_hakukohde
-    description: Tähän tauluun on haettu kaksois- ja urheilijatutkintokysymyksiin liityvät hakukohderyhmänn kuuluvat hakukohteet
-    columns:
+
+    - name: int_lomake_hakukohde
+      description: Tähän tauluun on haettu kaksois- ja urheilijatutkintokysymyksiin liityvät hakukohderyhmänn kuuluvat hakukohteet
+      columns:
       - name: lomake_id
         data_type: uuid
       - name: kysymys_id
@@ -287,9 +302,20 @@ models:
       - name: hakukohde_oid
         data_type: text
 
-  - name: int_valintakoe_osallistuminen
-    description: hakemusten valintakokeet purettu riveille
-    columns:
+    - name: int_supa_tieto
+      columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: avain
+        data_type: text
+      - name: arvo
+        data_type: jsonb
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+
+    - name: int_valintakoe_osallistuminen
+      description: hakemusten valintakokeet purettu riveille
+      columns:
       - name: osallistuminen_id
         description: osallistumisen uniikki id, koostuu hakemuksesta, hausta ja kokeen id:stä
         data_type: text
@@ -332,9 +358,9 @@ models:
       - name: dw_metadata_int_stored_at
         data_type: timestamp with time zone
 
-  - name: int_toteutus_koulutuksen_alkamiskausi
-    description: Tämä taulu sisältä toteutusten koulutuksen almkamiskausitietoja. tarkka päivämäärä on muutettu joko kevät- tai syyskaudeksi.
-    columns:
+    - name: int_toteutus_koulutuksen_alkamiskausi
+      description: Tämä taulu sisältä toteutusten koulutuksen almkamiskausitietoja. tarkka päivämäärä on muutettu joko kevät- tai syyskaudeksi.
+      columns:
       - name: toteutus_id
         data_type: text
         data_tests:
@@ -348,9 +374,9 @@ models:
       - name: koulutuksen_alkamiskausikoodi
         data_type: jsonb
 
-  - name: int_valintaperusteet_aloituspaikat
-    description: Tämä taulu sisältää valintaperusteista tulevat aloituspaikat
-    columns:
+    - name: int_valintaperusteet_aloituspaikat
+      description: Tämä taulu sisältää valintaperusteista tulevat aloituspaikat
+      columns:
       - name: hakukohde_oid
         data_type: text
         data_tests:
@@ -358,9 +384,9 @@ models:
       - name: aloituspaikat
         data_type: bigint
 
-  - name: int_valintaperusteet_valintakoe
-    columns:
+    - name: int_valintaperusteet_valintakoe
+      columns:
       - name: valintakoe_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key
