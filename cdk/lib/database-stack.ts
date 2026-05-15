@@ -421,6 +421,13 @@ export class DatabaseStack extends cdk.Stack {
       new snsSubscriptions.LambdaSubscription(privateLinkNlbManagementLambda)
     );
 
+    new events.Rule(this, `${config.environment}-nlbUpdateScheduleRule`, {
+      ruleName: `${config.environment}-nlbUpdateScheduleRule`,
+      description: 'Scheduled rule to update NLB target group IPs periodically',
+      schedule: events.Schedule.rate(cdk.Duration.minutes(1)),
+      targets: [new eventsTargets.LambdaFunction(privateLinkNlbManagementLambda)],
+    });
+
     const opintopolkuAccountId = ssm.StringParameter.valueForStringParameter(
       this,
       `/${config.environment}/opintopolku-account-id`
