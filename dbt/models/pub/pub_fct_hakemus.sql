@@ -5,7 +5,6 @@
         {'columns':['haku_oid']},
         {'columns':['henkilo_oid']},
         {'columns':['hakemus_oid']}
-
     ]
     )
 }}
@@ -19,7 +18,7 @@ suoritus as (
     select
         hakemus_oid,
         pohjakoulutus::text
-    from {{ ref('int_sure_proxysuoritus_pohjakoulutus') }}
+    from {{ ref('int_pohjakoulutus') }}
 
 ),
 

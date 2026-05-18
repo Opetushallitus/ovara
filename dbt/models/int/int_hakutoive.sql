@@ -1,7 +1,10 @@
 {{
   config(
     materialized = 'table',
-    unlogged=true
+    unlogged=true,
+    indexes = [
+        {"columns":["haku_oid"]}
+    ]
     )
 }}
 
@@ -35,7 +38,7 @@ valinnat as (
 ),
 
 harkinnanvaraisuus as (
-    select * from {{ ref('int_sure_harkinnanvaraisuus') }}
+    select * from {{ ref('int_harkinnanvaraisuus') }}
 ),
 
 ilmoittautuminen as (
@@ -43,7 +46,11 @@ ilmoittautuminen as (
 ),
 
 ensikertalainen as (
-    select * from {{ ref('int_sure_ensikertalainen') }}
+    select
+        henkilo_oid,
+        haku_oid,
+        isensikertalainen
+    from {{ ref('int_ensikertalainen') }}
 ),
 
 int as (

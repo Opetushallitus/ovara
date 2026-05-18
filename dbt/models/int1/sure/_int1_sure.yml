@@ -188,13 +188,9 @@ models:
       - name: haku_oid
         data_type: text
         description: Sen haun oid, jolle tämä ensikertalaisuustieto on päätelty.
-        data_tests:
-          - not_null
       - name: henkilo_oid
         description: Sen henkilön oid, jolle ensikertalaisuustieto kuuluu
         data_type: text
-        data_tests:
-          - not_null
       - name: isensikertalainen
         description: Onko hakija ensikertalainen. Jos false, syy löytyy kentästä menettämisenPeruste.
         data_type: boolean

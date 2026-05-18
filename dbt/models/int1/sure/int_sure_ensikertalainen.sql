@@ -2,6 +2,7 @@
     config(
         materialized = 'table',
         indexes = [
+            {"columns":["haku_oid"]}
         ]
     )
 }}
