@@ -41,6 +41,7 @@ models:
         +tags: ataru
       supa:
         +tags: supa
+        +enabled: false
       kouta:
         +tags: kouta
 
@@ -62,6 +63,7 @@ models:
         +tags: kouta
       supa:
         +tags: supa
+        +enabled: false
 
     int:
       +schema: int
