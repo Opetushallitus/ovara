@@ -10,7 +10,7 @@
     "maxCapacity": 16,
     "minCapacity": 0,
     "scaleReaderWithWriter": false,
-    "writerInstanceType": "r8g.large",
+    "writerInstanceType": "r6gd.xlarge",
     "readerInstanceType": "r8g.large",
     "serverlessReader": true,
     "version": {
