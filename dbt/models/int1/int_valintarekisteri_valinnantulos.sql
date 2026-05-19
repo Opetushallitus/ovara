@@ -5,6 +5,9 @@
         incremental_strategy = 'merge',
         indexes = [
             {'columns':['valinnantulos_id','valintatiedon_pvm']},
+        ],
+        post_hook = [
+            " {{ create_pk ('valinnantulos_id') }}"
         ]
     )
 }}

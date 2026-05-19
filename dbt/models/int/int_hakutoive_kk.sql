@@ -1,11 +1,14 @@
 {{
   config(
-materialized = 'incremental',
+    materialized = 'incremental',
     incremental_strategy= 'delete+insert',
     unique_key = 'hakemus_oid',
     indexes = [
         {'columns':['hakemus_oid']},
         {'columns':['dw_metadata_dw_stored_at']}
+    ],
+    post_hook = [
+        "{{ create_pk('hakutoive_id') }}"
     ]
     )
 }}
