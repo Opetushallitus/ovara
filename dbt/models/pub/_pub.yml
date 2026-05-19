@@ -658,8 +658,6 @@ models:
     columns:
       - name: oppija_oid
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: master_oid
         data_type: text
       - name: hetu
@@ -817,6 +815,7 @@ models:
         data_type: boolean
       - name: valintatiedon_pvm
         data_type: date
+
   - name: pub_fct_hakemus
     description: Hakemusten tietoja
     config:

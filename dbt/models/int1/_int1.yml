@@ -5,8 +5,6 @@ models:
     columns:
       - name: hakemus_oid
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: hakemus_versio_id
         data_type: text
         description: Hashattu arvo yhdistelmästä hakemus_oid ja versio_id, yksilöi hakemuksen versioineen
@@ -337,8 +335,6 @@ models:
     columns:
       - name: valinnantulos_id
         data_type: text
-        data_tests:
-        - dbt_constraints.primary_key
       - name: hakukohde_oid
         data_type: text
       - name: valintatapajono_oid

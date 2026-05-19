@@ -7,6 +7,9 @@
         {'columns': ['henkilo_oid','master_oid']},
         {'columns':['henkilo_oid','kansalaisuus']},
         {'columns':['muokattu']}
+    ],
+    post_hook = [
+        "{{ create_pk('henkilo_oid') }}"
     ]
     )
 }}

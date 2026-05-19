@@ -1,3 +1,11 @@
+{{
+  config(
+    materialized = 'table',
+    post_hook = [
+        "{{ create_pk('oppija_oid') }}"
+    ]
+    )
+}}
 with onr_henkilo as (
     select * from {{ ref('int_onr_henkilo') }}
 ),

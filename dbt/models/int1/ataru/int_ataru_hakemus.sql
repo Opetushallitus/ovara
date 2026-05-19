@@ -14,7 +14,8 @@
             "create index if not exists ix_dw_metadata_dbt_copied_at on {{ this }} (dw_metadata_dbt_copied_at desc);",
             "create index if not exists ix_dw_metadata_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc);",
             "create index if not exists idx_hakemus_filtered on {{ this }} (haku_oid) where kasittelymerkinnat @> '[{\"requirement\": \"eligibility-state\"}]' and tiedot ? 'higher-completed-base-education';"
-            "create index if not exists idx_ataru_hakemus_oid_not_active on {{ this }} (hakemus_oid) where tila <> 'active';"
+            "create index if not exists idx_ataru_hakemus_oid_not_active on {{ this }} (hakemus_oid) where tila <> 'active';",
+            "{{ create_pk('hakemus_oid') }}"
         ]
     )
 }}

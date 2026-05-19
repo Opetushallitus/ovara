@@ -122,8 +122,6 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
       - name: hakukohde_oid
