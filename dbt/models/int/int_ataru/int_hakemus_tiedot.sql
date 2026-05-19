@@ -9,7 +9,10 @@
         {'columns':['dw_metadata_dw_stored_at']}
     ],
     pre_hook = "set enable_seqscan = off;",
-    post_hook = "set enable_seqscan = on;"
+    post_hook = [
+        "set enable_seqscan = on;",
+        "create unique index if not exists int_hakemus_tiedot_hakemus_oid_kysymys_pk on {{ this }} (hakemus_oid, kysymys);"
+    ]
     )
 }}
 with source as (

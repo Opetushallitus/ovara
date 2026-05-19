@@ -9,6 +9,12 @@
         {'columns':['henkilo_hakemus_id']},
         {'columns':['haku_oid']},
         {'columns':['henkilo_oid']}
+    ],
+    pre_hook = [
+        "set max_parallel_maintenance_workers=6;"
+    ],
+    post_hook = [
+        "{{ create_pk('hakutoive_id') }};"
     ]
     )
 }}

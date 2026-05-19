@@ -3,6 +3,9 @@
     materialized = 'table',
     indexes = [
       {'columns':['hakukohde_oid']},
+    ],
+    post_hook = [
+        "{{ create_pk('hakutoive_id') }}"
     ]
     )
 }}

@@ -2,8 +2,10 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns':['hakutoive_id']},
         {'columns':['henkilo_oid']}
+    ],
+    post_hook = [
+        "{{ create_pk('hakutoive_id') }}"
     ]
     )
 }}
