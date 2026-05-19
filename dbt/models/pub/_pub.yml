@@ -263,8 +263,6 @@ models:
       - name: hakutoive_id
         description: Hakutoiveen tunniste joka on hashattu yhdistelmä hakemus_oid ja hakukohde_oid
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: hakukohde_henkilo_id
         description: Hashattu yhdistelmä hakukohde_oid ja henkilo_oid
         data_type: text
@@ -828,8 +826,6 @@ models:
       - name: hakemus_oid
         description: Hakemuksen tunniste
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: haku_oid
         description: Haun tunniste
         data_type: text
@@ -856,8 +852,6 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: henkilo_oid
         data_type: text
       - name: hakukelpoisuus
@@ -912,8 +906,6 @@ models:
     columns:
       - name: hakutoive_id
         data_type: text
-        data_tests:
-        - dbt_constraints.primary_key
       - name: henkilo_oid
         data_type: text
       - name: hakukohde_oid

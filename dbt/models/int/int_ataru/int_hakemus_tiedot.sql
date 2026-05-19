@@ -11,7 +11,7 @@
     pre_hook = "set enable_seqscan = off;",
     post_hook = [
         "set enable_seqscan = on;",
-        "CREATE UNIQUE INDEX IF NOT EXISTS int_hakemus_tiedot_hakemus_oid_kysymys_pk ON {{ this }} (hakemus_oid, kysymys);"
+        "create unique index if not exists int_hakemus_tiedot_hakemus_oid_kysymys_pk on {{ this }} (hakemus_oid, kysymys);"
     ]
     )
 }}

@@ -4,6 +4,9 @@
     indexes = [
         {'columns':['hakemus_oid']},
         {'columns':['henkilo_oid, hakukohde_oid']}
+    ],
+    post_hook = [
+        "{{ create_pk('hakutoive_id') }}"
     ]
   )
 }}
