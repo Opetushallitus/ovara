@@ -14,8 +14,6 @@ models:
   - name: gen_hakemus
     columns:
       - name: hakemus_oid
-        data_tests:
-          - dbt_constraints.primary_key
         data_type: text
       - name: versio_id
         data_type: integer

@@ -8,7 +8,8 @@
         {'columns':['henkilo_oid']}
     ],
     post_hook = [
-            "create index if not exists ix_dw_metadata_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)"
+            "create index if not exists ix_dw_metadata_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)",
+            "{{ create_pk('hakemus_oid') }}"
     ]
     )
 }}
