@@ -2,23 +2,29 @@
   config(
     materialized = 'incremental',
     incremental_strategy = 'append',
+    indexes = [
+        {'columns': ['henkilo_oid']}
+    ],
     pre_hook = [
         """{% if is_incremental() %}
-            delete from {{ this }} as t
-            using
-            (
-                select henkilo_oid
-                from {{ ref('dw_supa_opiskeluoikeus') }}
-                where dw_metadata_stg_stored_at > (select max (dw_metadata_stg_stored_at) from {{ this }})
+            with changed as materialized (
+                select distinct henkilo_oid
+                from {{ref('dw_supa_opiskeluoikeus') }}
+                where dw_metadata_stg_stored_at >
+                (
+                    select max(dw_metadata_stg_stored_at)
+                    from {{ this }}
+                )
             )
-            as s where t.henkilo_oid=s.henkilo_oid;
+            delete from {{ this }} t
+            using changed s
+            where t.henkilo_oid = s.henkilo_oid;
             {% endif %}
         """
         ],
-    indexes = [
-        {'columns': ['henkilo_oid']}
-    ]
-
+    post_hook = [
+        "{{ create_pk('henkilo_oid') }}"
+        ]
     )
 }}
 
