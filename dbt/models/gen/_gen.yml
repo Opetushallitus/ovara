@@ -328,8 +328,6 @@ models:
   - name: gen_henkilo
     columns:
       - name: henkilo_oid
-        data_tests:
-          - dbt_constraints.primary_key
         data_type: text
       - name: oppijanumero
         data_type: text

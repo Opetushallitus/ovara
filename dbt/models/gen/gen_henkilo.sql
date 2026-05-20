@@ -7,6 +7,9 @@
     pre_hook=[
         "set maintenance_work_mem = '1GB';",
         "set max_parallel_maintenance_workers = 4;",
+    ],
+    post_hook = [
+        "{{ create_pk('henkilo_oid') }}"
     ]
     )
 }}
