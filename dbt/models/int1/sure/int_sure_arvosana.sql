@@ -6,6 +6,9 @@
         {"columns": ["suoritus"]},
         {"columns": ["dw_metadata_dw_stored_at"]},
         {"columns": ["asteikko","suoritus"]}
+        ],
+        post_hook = [
+            "{{ create_pk('resourceid') }}"
         ]
     )
 }}
