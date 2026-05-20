@@ -2,7 +2,8 @@
     config(
         indexes = [
             {'columns': ['hakukohde_oid']}
-        ]
+        ],
+        enabled = false
     )
 }}
 

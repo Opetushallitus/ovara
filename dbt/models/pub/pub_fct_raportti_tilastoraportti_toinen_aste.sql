@@ -20,8 +20,11 @@ koulutus as (
     select * from {{ ref('pub_dim_koulutus') }}
 ),
 
-henkilo as (
-    select * from {{ ref('pub_dim_henkilo') }}
+henkilo as materialized (
+    select
+        henkilo_hakemus_id,
+        sukupuoli
+    from {{ ref('pub_dim_henkilo') }}
 ),
 
 vastaanotto as (
@@ -32,7 +35,7 @@ ilmoittautuminen as (
     select * from {{ ref('int_valintarekisteri_ilmoittautuminen') }}
 ),
 
-valintarekisteri as (
+valintarekisteri as materialized (
     select
         coalesce(vast.hakukohde_henkilo_id, ilmo.hakukohde_henkilo_id) as hakukohde_henkilo_id,
         vast.vastaanottotieto,
