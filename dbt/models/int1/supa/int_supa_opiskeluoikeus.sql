@@ -23,7 +23,8 @@
         """
         ],
     post_hook = [
-        "{{ create_pk('henkilo_oid') }}"
+        "{{ create_pk('henkilo_oid') }}",
+        "create index if not exists ix_supa_opiskeluoikeus_yo on {{ this }} (henkilo_oid) where jsonb_array_length(data -> 'yoOpiskeluoikeudet') > 0;"
         ]
     )
 }}
@@ -38,5 +39,6 @@ with source as (
 )
 
 select
-    *
+    {{ dbt_utils.star(from=ref('dw_supa_opiskeluoikeus'), except=['data']) }},
+    data::jsonb
 from source

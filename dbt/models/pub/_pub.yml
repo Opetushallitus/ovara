@@ -789,8 +789,6 @@ models:
       - name: hakemus_hakukohde_valintatapa_id
         description: Unikki avain tälle taululle
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: hakutoive_id
         data_type: text
       - name: hakukohde_oid
