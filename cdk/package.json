@@ -1,9 +1,6 @@
 {
   "name": "opiskelijavalinnan-raportointi",
   "version": "0.1.0",
-  "bin": {
-    "cdk": "bin/cdk.js"
-  },
   "scripts": {
     "prepare": "cd ../ && husky",
     "lint": "npm i -D eslint && eslint ./bin ./lib --ignore-pattern \"**/*.js\" --ignore-pattern \"**/*.d.ts\" --max-warnings 0",
