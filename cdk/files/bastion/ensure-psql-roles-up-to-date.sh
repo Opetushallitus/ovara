@@ -67,6 +67,12 @@ PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema int1 grant select on tables to readonlyrole;"
 PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema int1 grant usage, select on sequences to readonlyrole;"
 
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant usage on schema gen to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select on all tables in schema gen to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "grant select on all sequences in schema gen to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema gen grant select on tables to readonlyrole;"
+PGPASSWORD=$app_pw psql -h $host --user app --dbname $db --command "alter default privileges for role app in schema gen grant usage, select on sequences to readonlyrole;"
+
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "grant readonlyrole to readonly;"
 PGPASSWORD=$master_pw psql -h $host --user oph --dbname $db --command "create user readonly with password '$readonly_pw';"
 echo ""
