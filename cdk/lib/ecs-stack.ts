@@ -71,7 +71,7 @@ export class EcsStack extends cdk.Stack {
     const ecsClusterName = `${config.environment}-ecs-cluster`;
     const ecsCluster = new ecs.Cluster(this, ecsClusterName, {
       clusterName: ecsClusterName,
-      containerInsightsV2: ContainerInsights.ENABLED,
+      containerInsightsV2: ContainerInsights.ENHANCED,
       vpc: props.vpc,
     });
 
