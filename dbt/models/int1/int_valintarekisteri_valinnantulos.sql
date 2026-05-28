@@ -13,18 +13,18 @@
 }}
 
 with tulos as not materialized (
-    select *
+    select distinct on (valinnantulos_id) *
     from {{ ref('dw_valintarekisteri_valinnantulos') }}
     {% if target.name == 'prod' and is_incremental() %}
     where dw_metadata_dw_stored_at > coalesce (
 	    (
-    		select  start_time from {{ source('ovara', 'completed_dbt_runs') }}
+    		select start_time from {{ source('ovara', 'completed_dbt_runs') }}
 	      	where raw_table = 'valintarekisteri_valinnantulos'
 	    ),
         '1900-01-01'
     )
     {% endif %}
-
+    order by valinnantulos_id asc, muokattu desc
 ),
 
 int as (
