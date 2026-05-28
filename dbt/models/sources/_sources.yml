@@ -46,3 +46,4 @@ sources:
     - name: valintarekisteri_hyvaksyttyjulkaistuhakutoive
     - name: valintarekisteri_jonosija
     - name: valintarekisteri_lukuvuosimaksu
+    - name: valintaperusteet_avain

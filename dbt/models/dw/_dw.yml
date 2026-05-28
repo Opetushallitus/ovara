@@ -1529,6 +1529,12 @@ models:
         data_type: integer
       - name: dw_metadata_dw_stored_at
         data_type: timestamp with time zone
+
+  - name: dw_valintaperusteet_avain
+    config:
+      post_hook:
+        - "create index if not exists idx_dw_valintaperusteet_avain_latest ON {{ this }} (hakukohde_oid, muokattu DESC);"
+
   - name: dw_valintarekisteri_hyvaksyttyjulkaistuhakutoive
     config:
       tags:
