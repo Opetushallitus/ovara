@@ -958,8 +958,6 @@ models:
       - name: hakutoive_id
         data_type: text
         description: Hakutoiveen tunniste
-        data_tests:
-        - dbt_constraints.primary_key
       - name: hakukohde_oid
         data_type: text
       - name: henkilo_oid

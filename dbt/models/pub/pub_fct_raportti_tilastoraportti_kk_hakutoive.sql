@@ -3,7 +3,12 @@
         indexes = [
             {'columns': ['hakukohde_oid']}
         ],
-        pre_hook = 'set enable_mergejoin = off; set enable_nestloop = off;'
+        pre_hook = [
+            "set enable_mergejoin = off; set enable_nestloop = off;"
+        ],
+        post_hook = [
+            "{{ create_pk('hakutoive_id') }}"
+        ]
     )
 }}
 
