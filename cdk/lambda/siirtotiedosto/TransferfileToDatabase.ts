@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { Readable } from 'stream';
 
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Signer } from '@aws-sdk/rds-signer';
@@ -7,7 +8,9 @@ import { S3Event, SQSEvent, SQSRecord } from 'aws-lambda';
 import { S3EventRecord } from 'aws-lambda/trigger/s3';
 import { parse } from 'date-fns';
 import * as pg from 'pg';
-import { Sequelize, DataTypes, Model } from 'sequelize';
+import { Sequelize, DataTypes, Model, Dialect } from 'sequelize';
+import { parser } from 'stream-json';
+import { streamArray } from 'stream-json/streamers/StreamArray';
 
 const client = new S3Client({});
 
@@ -123,7 +126,7 @@ export const main: Handler = async (event: SQSEvent) => {
     username,
     password: token,
     dialectModule: pg,
-    dialect: 'postgres',
+    dialect: 'postgres' as Dialect,
     dialectOptions: {
       ssl: {
         //enableTrace: true,
@@ -134,36 +137,43 @@ export const main: Handler = async (event: SQSEvent) => {
     logging: false,
   };
 
+  const dbClient = new Sequelize(config);
+  try {
+    await dbClient.authenticate();
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, body: 'Tietokantayhteyden muodostaminen epäonnistui' };
+  }
+  initRaw(dbClient, rawTable);
+
   const command = new GetObjectCommand({
     Bucket: bucket,
     Key: key,
   });
 
-  let partitionedContents = new Array<Array<object>>();
-  try {
-    const response = await client.send(command);
-    partitionedContents = partition(
-      JSON.parse((await response.Body?.transformToString()) || ''),
-      batchSize
-    );
-  } catch (err) {
-    console.error(err);
-    return { statusCode: 500, body: 'Siirtotiedoston luku epaonnistui' };
-  }
-
   let nbrOfRows = 0;
   try {
-    nbrOfRows = await saveToDb(
-      config,
-      rawTable,
-      partitionedContents,
-      exportTime,
-      key,
-      source
-    );
+    const response = await client.send(command);
+    if (!response.Body) {
+      throw new Error('S3 response body on tyhjä');
+    }
+    const now = new Date();
+    if (source === 'valintalaskenta') {
+      nbrOfRows = await streamJsonArrayToDb(
+        response.Body as Readable,
+        exportTime,
+        now,
+        key
+      );
+    } else {
+      const contents: Array<object> = JSON.parse(
+        (await response.Body.transformToString()) || '[]'
+      );
+      nbrOfRows = await saveToDb(contents, batchSize, exportTime, now, key);
+    }
   } catch (err) {
     console.error(err);
-    return { statusCode: 500, body: 'Tietokantaan kirjoittaminen epaonnistui' };
+    return { statusCode: 500, body: 'Käsittely epäonnistui' };
   }
 
   const duration = Math.round((new Date().getTime() - startTime) / 1000);
@@ -176,26 +186,68 @@ export const main: Handler = async (event: SQSEvent) => {
   };
 };
 
-const saveToDb = async (
-  config: object,
-  rawTableName: string,
-  partitionedData: Array<Array<object>>,
+const streamJsonArrayToDb = (
+  body: Readable,
   exportTime: Date,
-  filename: string,
-  sourceSystem: string
-) => {
-  const dbClient = new Sequelize(config);
-  await dbClient.authenticate();
+  copyTime: Date,
+  filename: string
+): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    let rowCounter = 0;
+    let failed = false;
+    let pendingWrite: Promise<void> = Promise.resolve();
 
-  initRaw(dbClient, rawTableName);
+    const handleError = (err: unknown) => {
+      if (!failed) {
+        failed = true;
+        reject(err);
+      }
+    };
 
-  const now = new Date();
+    const stream = body.pipe(parser()).pipe(streamArray());
+
+    stream.on('data', ({ value }: { value: object }) => {
+      if (failed) return;
+      stream.pause();
+      pendingWrite = pendingWrite
+        .then(async () => {
+          if (failed) return;
+          rowCounter += 1;
+          console.log(
+            `Kirjoitetaan rivi kerrallaan rivi ${rowCounter} tiedostosta ${filename}`
+          );
+          await Raw.bulkCreate([row(value, exportTime, copyTime, filename, rowCounter)]);
+          stream.resume();
+        })
+        .catch(handleError);
+    });
+
+    stream.on('end', () => {
+      pendingWrite
+        .then(() => {
+          if (!failed) resolve(rowCounter);
+        })
+        .catch(handleError);
+    });
+
+    stream.on('error', handleError);
+  });
+};
+
+const saveToDb = async (
+  data: Array<object>,
+  batchSize: number,
+  exportTime: Date,
+  copyTime: Date,
+  filename: string
+): Promise<number> => {
+  const partitionedData = partition(data, batchSize);
   let rowNumberCounter = 0;
   for (let idx = 0; idx < partitionedData.length; idx++) {
     const batch = partitionedData[idx];
     const rows = batch.map((json) => {
       rowNumberCounter += 1;
-      return row(json, exportTime, now, filename, rowNumberCounter);
+      return row(json, exportTime, copyTime, filename, rowNumberCounter);
     });
     await Raw.bulkCreate(rows);
   }
