@@ -28,7 +28,7 @@ raw as (
         data."hyvaksyttyVarasijalta" as hyvaksyttyVarasijalta,
         data."hyvaksyPeruuntunut" as hyvaksyPeruuntunut,
         data."valinnantilanViimeisinMuutos" as valinnantilanViimeisinMuutos,
-        data."valinnantilanViimeisinMuutos" as muokattu,
+        data."muokattu" as muokattu,
         {{ metadata_columns() }}  --noqa: LXR,PRS, LT02
     from source
     cross join lateral json_to_record(data) as data (
