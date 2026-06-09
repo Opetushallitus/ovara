@@ -3,7 +3,8 @@
     materialized = 'incremental',
     incremental_strategy = 'append',
     indexes = [
-        {'columns': ['henkilo_oid']}
+        {'columns': ['henkilo_oid']},
+        {'columns': ['dw_metadata_dw_stored_at']}
     ],
     pre_hook = [
         """{% if is_incremental() %}
@@ -24,7 +25,8 @@
         ],
     post_hook = [
         "{{ create_pk('henkilo_oid') }}",
-        "create index if not exists ix_supa_opiskeluoikeus_yo on {{ this }} (henkilo_oid) where jsonb_array_length(data -> 'yoOpiskeluoikeudet') > 0;"
+        "create index if not exists ix_supa_opiskeluoikeus_yo on {{ this }} (henkilo_oid) where jsonb_array_length(data -> 'yoOpiskeluoikeudet') > 0;",
+        "create index if not exists ix_supa_opiskeluoikeus_kk on {{ this }} (henkilo_oid) where jsonb_array_length(data -> 'kkOpiskeluoikeudet') > 0;"
         ]
     )
 }}

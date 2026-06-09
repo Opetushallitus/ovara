@@ -285,6 +285,8 @@ models:
         data_type: boolean
       - name: kielivalinta
         data_type: jsonb
+      - name: alin_hyvaksytty_keskiarvo
+        data_type: jsonb
 
   - name: gen_hakutoive
     columns:
@@ -507,6 +509,60 @@ models:
       - name: aikaleima_paattyy
         description: jos sisäisessä arvossa on startdate ja enddate, niin tässä sarakkeessa on enddate aikaleimana
         data_type: timestamp with time zone
+
+  - name: gen_opiskeluoikeus_kk
+    columns:
+      - name: tunniste
+        data_type: uuid
+      - name: henkilo_oid
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: kieli
+        data_type: text
+      - name: alku_pvm
+        data_type: date
+      - name: lpppu_pvm
+        data_type: date
+      - name: myontaja
+        data_type: text
+      - name: supa_tila
+        data_type: text
+      - name: tyyppi_koodi
+        data_type: text
+      - name: koulutus_koodi
+        data_type: text
+      - name: rahoitus_lahde
+        data_type: text
+      - name: virta_tunniste
+        data_type: text
+      - name: entiteetin_tyyppi
+        data_type: text
+      - name: is_tutkintoon_johtava
+        data_type: boolean
+      - name: luokittelu
+        data_type: text
+      - name: virta_tila_arvo
+        data_type: text
+      - name: virta_tila_koodisto
+        data_type: text
+      - name: lahdejarjestelma
+        data_type: text
+      - name: lahde_tunniste
+        data_type: text
+      - name: parser_versio
+        data_type: text
+      - name: parserointi_hetki
+        data_type: timestamp with time zone
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
+      - name: organisaatio_oid
+        data_type: text
+
 
   - name: gen_organisaatio
     columns:
