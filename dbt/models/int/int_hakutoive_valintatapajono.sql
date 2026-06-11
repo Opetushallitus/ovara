@@ -26,11 +26,12 @@ rivit as (
         jsonb_build_object(
             'valintatapajono_oid', vatu.valintatapajono_oid,
             'valintatapajono_nimi', coalesce(jono.valintatapajono_nimi, 'Valintatapajono'),
-            'valinnan_tila', case
+            'valinnan_tila',
+            case
                 when
                     vatu.valinnan_tila in ('HYVAKSYTTY', 'HYVAKSYTTY_VARASIJALTA')
                     and josi.hyvaksytty_harkinnanvaraisesti
-                    then 'HARKINNANVARAISESTI_HYVÄKSYTTY'
+                    then 'HARKINNANVARAISESTI_HYVAKSYTTY'
                 else vatu.valinnan_tila
             end,
             'valintatiedon_pvm', vatu.valintatiedon_pvm,
