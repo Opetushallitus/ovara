@@ -13,7 +13,7 @@ with source as (
 final as (
     select
         data ->> 'henkiloOid' as henkilo_oid,
-        (data -> 'metadata' ->> 'parserointiHetki')::timestamptz as aikaleima,
+        (data -> 'metadata' ->> 'viimeisinMuutos')::timestamptz as aikaleima,
         data,
         {{ metadata_columns() }}
     from source
