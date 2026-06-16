@@ -56,7 +56,7 @@ rows as (
 	    kkoo."nimi"->>'en' as nimi_en,
 	    kkoo."kieli",
 	    kkoo."alkuPvm" as alku_pvm,
-	    kkoo."loppuPvm" as lpppu_pvm,
+	    kkoo."loppuPvm" as loppu_pvm,
 	    kkoo."myontaja",
 	    kkoo."supaTila" as supa_tila,
 	    kkoo."tyyppiKoodi" as tyyppi_koodi,
