@@ -445,7 +445,7 @@ models:
         data_type: text
       - name: alku_pvm
         data_type: date
-      - name: lpppu_pvm
+      - name: loppu_pvm
         data_type: date
       - name: myontaja
         data_type: text
@@ -464,6 +464,8 @@ models:
       - name: is_tutkintoon_johtava
         data_type: boolean
       - name: luokittelu
+        data_type: text
+      - name: liittyva_opiskeluoikeus_avain
         data_type: text
       - name: virta_tila_arvo
         data_type: text

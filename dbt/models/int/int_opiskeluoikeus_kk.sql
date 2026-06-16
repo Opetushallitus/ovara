@@ -66,12 +66,13 @@ rows as (
 	    kkoo."entiteetinTyyppi" as entiteetin_tyyppi,
 	    kkoo."isTutkintoonJohtava" as is_tutkintoon_johtava,
 	    kkoo."luokittelu",
-	    kkoo."virtaTila"->>'arvo' as virta_tila_arvo,
-	    kkoo."virtaTila"->>'koodisto' as virta_tila_koodisto,
-	    kkoo."metadata"->>'lahdejarjestelma' as lahdejarjestelma,
-	    kkoo."metadata"->>'lahdeTunniste' as lahde_tunniste,
-	    kkoo."metadata"->>'parserVersio' as parser_versio,
-	    (kkoo."metadata"->>'parserointiHetki')::timestamptz as parserointi_hetki,
+        kkoo."liittyvaOpiskeluoikeusAvain" as liittyva_opiskeluoikeus_avain,
+	    kkoo."virtaTila" ->> 'arvo' as virta_tila_arvo,
+	    kkoo."virtaTila" ->> 'koodisto' as virta_tila_koodisto,
+	    kkoo."metadata" ->> 'lahdejarjestelma' as lahdejarjestelma,
+	    kkoo."metadata" ->> 'lahdeTunniste' as lahde_tunniste,
+	    kkoo."metadata" ->> 'parserVersio' as parser_versio,
+	    (kkoo."metadata" ->> 'parserointiHetki')::timestamptz as parserointi_hetki,
 	    dw_metadata_dw_stored_at
 	from opiskeluoikeudet as opoi
 
@@ -92,7 +93,8 @@ rows as (
 	    "rahoitusLahde"         text,
 	    "virtaTunniste"         text,
 	    "entiteetinTyyppi"      text,
-	    "isTutkintoonJohtava"   boolean
+	    "isTutkintoonJohtava"   boolean,
+        "liittyvaOpiskeluoikeusAvain" text
 	) on true
 ),
 
