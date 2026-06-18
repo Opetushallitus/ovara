@@ -563,7 +563,6 @@ models:
       - name: organisaatio_oid
         data_type: text
 
-
   - name: gen_organisaatio
     columns:
       - name: organisaatio_oid
@@ -958,3 +957,5 @@ models:
         data_type: text
       - name: vastaanotto_tila
         data_type: text
+      - name: vastaanotto_aikaleima
+        data_type: timestamp with time zone
