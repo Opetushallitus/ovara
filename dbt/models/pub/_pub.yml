@@ -1,16 +1,19 @@
 models:
   - name: pub_dim_arvosana_yo
-    description: YO-arvosanat json-muotoisena. Tässä on SUREn arvosanat käännetty takaisin yo-arvosanoiksi
+    description: |
+      YO-arvosanat json-muotoisena. Tässä on SUREn arvosanat käännetty takaisin yo-arvosanoiksi ja SUPAN arvosanat.
+      Jos henkilöllä on tietoja SUPAssa käytetään niitä, muuten käytetään SUREn tietoja
     config:
       contract:
         enforced: true
     columns:
       - name: henkilo_oid
         data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: arvosanat
         data_type: jsonb
+      - name: lahde
+        data_type: text
+        description: Onko tieto peräisin SUPAsta vai SUREsta
 
   - name: pub_dim_haku
     description: Hakujen tietoja
