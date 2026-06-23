@@ -4,7 +4,10 @@
     indexes = [
         {'columns': ['hakukohde_oid']}
     ],
-    post_hook = "{{ disable_autovacuum_if_not_incremental() }}"
+    post_hook = [
+        "{{ disable_autovacuum_if_not_incremental() }};",
+        "{{ create_pk('hakemus_hakukohde_valintatapa_id') }};"
+    ]
     )
 }}
 

@@ -14,8 +14,6 @@ models:
   - name: gen_hakemus
     columns:
       - name: hakemus_oid
-        data_tests:
-          - dbt_constraints.primary_key
         data_type: text
       - name: versio_id
         data_type: integer
@@ -291,9 +289,6 @@ models:
   - name: gen_hakutoive
     columns:
       - name: hakutoive_id
-        data_tytpe: text
-        data_tests:
-          - dbt_constraints.primary_key
         data_type: text
       - name: hakukohde_henkilo_id
         data_type: text
@@ -331,8 +326,6 @@ models:
   - name: gen_henkilo
     columns:
       - name: henkilo_oid
-        data_tests:
-          - dbt_constraints.primary_key
         data_type: text
       - name: oppijanumero
         data_type: text

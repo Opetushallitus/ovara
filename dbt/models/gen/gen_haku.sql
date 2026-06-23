@@ -59,7 +59,8 @@ final as (
         haku.tulevaisuudenaikataulu,
         haku.organisaatiooid as organisaatio_oid,
         hak2.haku_vuosi,
-        hak2.haku_kausi
+        hak2.haku_kausi,
+        haku.hakuajat
     from haku
     left join hak2 on haku.haku_oid = hak2.haku_oid
 )

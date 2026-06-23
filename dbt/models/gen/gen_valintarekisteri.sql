@@ -2,7 +2,7 @@
   config(
     materialized = 'table',
     indexes = [
-        {'columns':['hakukohde_oid','hakemus_oid']},
+        {'columns':['hakemus_oid','hakukohde_oid']},
         {'columns':['hakemus_oid']},
         {'columns':['henkilo_oid']},
         {'columns':['valintatapajono_id']}

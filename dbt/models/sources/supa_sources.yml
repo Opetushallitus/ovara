@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: ovara
+    database: ovara
+    schema: raw
+    tables:
+    - name: supa_valintadata
+      description: SUPAn valintadatatietoa
+    - name: supa_harkinnanvaraisuus
+    - name: supa_ensikertalainen
+    - name: supa_opiskeluoikeus

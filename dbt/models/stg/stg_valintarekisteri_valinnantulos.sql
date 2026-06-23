@@ -27,7 +27,8 @@ raw as (
         data.julkaistavissa,
         data."hyvaksyttyVarasijalta" as hyvaksyttyVarasijalta,
         data."hyvaksyPeruuntunut" as hyvaksyPeruuntunut,
-        data."valinnantilanViimeisinMuutos" as muokattu,
+        data."valinnantilanViimeisinMuutos" as valinnantilanViimeisinMuutos,
+        data."muokattu" as muokattu,
         {{ metadata_columns() }}  --noqa: LXR,PRS, LT02
     from source
     cross join lateral json_to_record(data) as data (
@@ -46,7 +47,8 @@ raw as (
         "julkaistavissa" boolean,
         "hyvaksyttyVarasijalta" text,
         "hyvaksyPeruuntunut" boolean,
-        "valinnantilanViimeisinMuutos" timestamptz
+        "valinnantilanViimeisinMuutos" timestamptz,
+        "muokattu" timestamptz
     )
 ),
 

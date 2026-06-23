@@ -1,62 +1,29 @@
 models:
-  - name: int_hakutoive
-    description: Hakujen hakukohteet purettu auki hakutoive-tasolle.
+
+  - name: int_ensikertalainen
+    description: Tähän tauluun on yhdistetty sekä sure että supan tietoja
     columns:
-      - name: hakutoive_id
-        dsecription: yhdistelmä hakemusta ja hakukohdetta, tämä muodostaa yksilöitävän avaimen hakutoiveelle
-        data_type: text
-      - name: hakukohde_henkilo_id
-        data_type: text
-      - name: henkilo_hakemus_id
-        data_type: text
-      - name: hakemus_oid
+      - name: henkilo_oid
         data_type: text
       - name: haku_oid
         data_type: text
-      - name: henkilo_oid
+      - name: isensikertalainen
+        data_type: boolean
+      - name: menettamisenperuste
         data_type: text
-      - name: hakukohde_oid
-        data_type: text
-      - name: hakutoivenumero
-        description: |
-          Jos ohjausparametreissa on määritetty että haussa on hakutoiveet_järjestetty, ne saavat hakutoivenumeron järjestyksen mukaan, 1...n
-          Jos ohjausparametreissa on määritetty että hakukohteilla ei ole järjestystä, saavat kaikki hakemuksen hakutoiveet hakutoivenumeron -1
-        data_type: bigint
-      - name: viimeinen_vastaanottopaiva
+      - name: menettamisenpaivamaara
         data_type: timestamp with time zone
-      - name: vastaanottotieto
-        data_type: text
-      - name: ilmoittautumisen_tila
-        data_type: text
-      - name: valintatapajonot
-        data_type: jsonb
-      - name: valintatieto
-        data_type: text
-      - name: ehdollisesti_hyvaksytty
-        data_type: boolean
-      - name: valintatiedon_pvm
-        data_type: date
-      - name: harkinnanvaraisuuden_syy
-        data_type: text
-      - name: ensikertalainen
-        data_type: boolean
 
-  - name: int_hakutoive_kk
+  - name: int_hakemus_tiedot
     columns:
-      - name: hakutoive_id
-        data_type: text
-        data_tests:
-          - dbt_constraints.primary_key
       - name: hakemus_oid
         data_type: text
-      - name: hakukohde_oid
+      - name: kysymys
         data_type: text
-      - name: maksuvelvollisuus
-        data_type: text
-      - name: hakukelpoisuus
-        data_type: text
-      - name: pohjakoulutus
+      - name: vastaus
         data_type: jsonb
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
 
   - name: int_hakukohde
     description: Hakukohteiden viimeisin tieto.
@@ -109,6 +76,77 @@ models:
         data_type: jsonb
         description: valintaperusteiden lokalisoitu nimi
 
+  - name: int_hakutoive
+    description: Hakujen hakukohteet purettu auki hakutoive-tasolle.
+    columns:
+      - name: hakutoive_id
+        dsecription: yhdistelmä hakemusta ja hakukohdetta, tämä muodostaa yksilöitävän avaimen hakutoiveelle
+        data_type: text
+      - name: hakukohde_henkilo_id
+        data_type: text
+      - name: henkilo_hakemus_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: haku_oid
+        data_type: text
+      - name: henkilo_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: hakutoivenumero
+        description: |
+          Jos ohjausparametreissa on määritetty että haussa on hakutoiveet_järjestetty, ne saavat hakutoivenumeron järjestyksen mukaan, 1...n
+          Jos ohjausparametreissa on määritetty että hakukohteilla ei ole järjestystä, saavat kaikki hakemuksen hakutoiveet hakutoivenumeron -1
+        data_type: bigint
+      - name: viimeinen_vastaanottopaiva
+        data_type: timestamp with time zone
+      - name: vastaanottotieto
+        data_type: text
+      - name: ilmoittautumisen_tila
+        data_type: text
+      - name: valintatapajonot
+        data_type: jsonb
+      - name: valintatieto
+        data_type: text
+      - name: ehdollisesti_hyvaksytty
+        data_type: boolean
+      - name: valintatiedon_pvm
+        data_type: date
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+      - name: ensikertalainen
+        data_type: boolean
+
+  - name: int_hakutoive_kk
+    columns:
+      - name: hakutoive_id
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: maksuvelvollisuus
+        data_type: text
+      - name: hakukelpoisuus
+        data_type: text
+      - name: pohjakoulutus
+        data_type: jsonb
+
+  - name: int_harkinnanvaraisuus
+    description: Tähän tauluun on yhdistetty sekä suren että supan harkinnanvaraisuustietoja
+    columns:
+      - name: hakutoive_id
+        data_tests:
+          - dbt_constraints.primary_key
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: harkinnanvaraisuuden_syy
+        data_type: text
+
   - name: int_koulutus_koulutuskoodi
     config:
       enabled: false
@@ -120,6 +158,7 @@ models:
       - name: koulutuskoodiuri
         description: koulutuksen koodiuri, yksi per rivi, yhdellä koulutuksella voi olla useampi koulutuskoodi
         data_type: text
+
   - name: int_hakukohderyhma_hakukohde
     description: Hakukohderyhmään kuuluvat hakukohteet purettu auki riveille
     columns:
@@ -197,6 +236,18 @@ models:
       - name: organisaatiotyypit
         data_type: jsonb
 
+  - name: int_pohjakoulutus
+    description: Tämä taulu sisältää pohjakoulutustiedot sekä suresta että supasta
+    columns:
+      - name: hakemus_oid
+        data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: pohjakoulutus
+        data_type: text
+      - name: pohjakoulutus_nimi
+        data_type: jsonb
+
   - name: int_valintaperusteet_valintatapajono
     columns:
       - name: valintatapajono_id
@@ -249,6 +300,7 @@ models:
         data_type: timestamp with time zone
       - name: dw_metadata_stg_stored_at
         data_type: timestamp with time zone
+
   - name: int_kaksoistutkinto_hakukohde
     columns:
       - name: hakutoive_id
@@ -265,6 +317,7 @@ models:
         data_type: timestamp with time zone
       - name: poistettu
         data_type: boolean
+
   - name: int_urheilijatutkinto_hakukohde
     columns:
       - name: hakutoive_id
@@ -277,6 +330,7 @@ models:
         data_type: text
       - name: urheilijatutkinto_kiinnostaa
         data_type: boolean
+
   - name: int_lomake_hakukohde
     description: Tähän tauluun on haettu kaksois- ja urheilijatutkintokysymyksiin liityvät hakukohderyhmänn kuuluvat hakukohteet
     columns:
@@ -286,6 +340,17 @@ models:
         data_type: text
       - name: hakukohde_oid
         data_type: text
+
+  - name: int_supa_tieto
+    columns:
+      - name: hakemus_oid
+        data_type: text
+      - name: avain
+        data_type: text
+      - name: arvo
+        data_type: jsonb
+      - name: dw_metadata_dw_stored_at
+        data_type: timestamp with time zone
 
   - name: int_valintakoe_osallistuminen
     description: hakemusten valintakokeet purettu riveille
@@ -363,4 +428,4 @@ models:
       - name: valintakoe_id
         data_type: text
         data_tests:
-        - dbt_constraints.primary_key
+          - dbt_constraints.primary_key

@@ -37,6 +37,14 @@ models:
       +post-hook:
         - "ALTER TABLE {{ this.schema }}.{{this.name}} set (autovacuum_enabled = off)"
       +tags: stg
+      ataru:
+        +tags: ataru
+      supa:
+        +tags: supa
+      kouta:
+        +tags: kouta
+
+
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
@@ -48,6 +56,12 @@ models:
         - "{{ dw_end() }}"
       +tags: dw
       +on_schema_change: append_new_columns
+      ataru:
+        +tags: ataru
+      kouta:
+        +tags: kouta
+      supa:
+        +tags: supa
 
     int:
       +schema: int
@@ -62,6 +76,12 @@ models:
       +docs:
         node_color: "#4c7987"
       +tags: int1
+      ataru:
+        +tags: ataru
+      kouta:
+        +tags: kouta
+      supa:
+        +tags: supa
 
     gen:
       +schema: gen

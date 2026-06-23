@@ -5,22 +5,33 @@ seeds:
   - name: raw_taulut
     config:
       schema: raw
-      tags: 
+      tags:
       - seed
     description: |
       Tässä tiedostossa on lista kaikista raw-taulusta joita järjestelmässä on. Lisätääksesi uuden raw-taulun
-      1) Lisää taulun nimi seeds/raw_taulut.csv-tiedostoon omalle riville  
-      2) aja # dbt seed --target=prod  
-      3) aja # dbt run-operation create_raw_tables --target=prod  
+      1) Lisää taulun nimi seeds/raw_taulut.csv-tiedostoon omalle riville
+      2) aja # dbt seed --target=prod
+      3) aja # dbt run-operation create_raw_tables --target=prod
       github-ajossa ajetaan ainoastaan ne seedit joissa on tagi "seed" merkitty.
-  
+
   - name: raw_haunkohdejoukko
     config:
       schema: raw
-      tags: 
+      tags:
       - seed
-      column_types: 
+      column_types:
         haunkohdejoukko: text
         haun_tyyppi: text
     description: Tässä taulussa löytyy haunkohdejoukot ja tieto siitä onko haku toisen asteen vai korkeakoulu
+
+  - name: int_sure_haut
+    config:
+      schema: int
+      tags:
+      - seed
+      post_hook:
+      - "create index if not exists idx_sure_haku on {{ this }} (haku_oid)"
+      column_types:
+        haku_oid: text
+    description: Tässä taulussa löytyy ne haut joiden tietoja pitää hakea Suresta. Muut kun täällä löytyvät haetaan Supasta.
 
