@@ -1,6 +1,9 @@
 {{
     config(
         materialized = 'table',
+        post_hook= [
+            " {{ create_pk('henkilo_oid') }}"
+        ]
     )
 }}
 

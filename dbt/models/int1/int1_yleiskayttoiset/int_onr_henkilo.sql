@@ -4,9 +4,10 @@
     unique_key = 'henkilo_oid',
     incremental_strategy = 'merge',
     indexes = [
-        {'columns': ['henkilo_oid','master_oid']},
+        {'columns':['henkilo_oid','master_oid']},
         {'columns':['henkilo_oid','kansalaisuus']},
-        {'columns':['muokattu']}
+        {'columns':['muokattu']},
+        {'columns':['master_oid']}
     ],
     post_hook = [
         "{{ create_pk('henkilo_oid') }}"
