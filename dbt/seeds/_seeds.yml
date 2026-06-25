@@ -35,3 +35,14 @@ seeds:
         haku_oid: text
     description: Tässä taulussa löytyy ne haut joiden tietoja pitää hakea Suresta. Muut kun täällä löytyvät haetaan Supasta.
 
+  - name: int_yos_poikkeukset
+    config:
+      schema: int
+      tags:
+        - seed
+      post_hook:
+        - "{{ create_pk('organisaatio_oid') }}"
+      columns_types:
+        organisaatio_oid: text
+        nimi: text
+

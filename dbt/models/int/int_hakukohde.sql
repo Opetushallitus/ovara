@@ -1,3 +1,11 @@
+{{
+  config(
+    materialized = 'table',
+    post_hook= [
+        "{{ create_pk('hakukohde_oid') }}"
+    ]
+    )
+}}
 with hakukohde as (
     select * from {{ ref('int_kouta_hakukohde') }}
 ),
