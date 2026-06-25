@@ -48,6 +48,7 @@ models:
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
+      +full_refresh: false
       +indexes:
         - columns: ['dw_metadata_dw_stored_at']
       +docs:
