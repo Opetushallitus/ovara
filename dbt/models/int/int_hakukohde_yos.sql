@@ -92,7 +92,7 @@ select
 	koulutustasot,
 	koulutustasot ?| ARRAY['62', '63', '71', '72']
 		and johtaatutkintoon
-		and coalesce(kohdejoukontarkennekoodiuri in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1'), false)
+		and coalesce(kohdejoukontarkennekoodiuri not in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1'), true)
 		and coalesce (kohdejoukkokoodiuri = 'haunkohdejoukko_12#1',false)
 		and not exists (
 			select 1 from ei_yos_hakukohteet e
