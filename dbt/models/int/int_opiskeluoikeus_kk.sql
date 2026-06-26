@@ -47,6 +47,56 @@ organisaatio as materialized (
 	where oppilaitosnumero is not null
 ),
 
+virtaluokittelu as (
+    select
+        koodiarvo,
+        nimi_fi,
+        nimi_sv,
+        nimi_en
+    from {{ ref('int_koodisto_virtaopiskeluoikeudenluokittelu') }}
+    where viimeisin_versio
+),
+
+virtatila as (
+    select
+        koodiarvo,
+        nimi_fi,
+        nimi_sv,
+        nimi_en
+    from {{ ref('int_koodisto_virtaopiskeluoikeudentila') }}
+    where viimeisin_versio
+),
+
+virtatyyppi as (
+    select
+        koodiarvo,
+        nimi_fi,
+        nimi_sv,
+        nimi_en
+    from {{ ref('int_koodisto_virtaopiskeluoikeudentyyppi') }}
+    where viimeisin_versio
+),
+
+virtarahoitus as (
+    select
+        koodiarvo,
+        nimi_fi,
+        nimi_sv,
+        nimi_en
+    from {{ ref('int_koodisto_virtarahoituslahde') }}
+    where viimeisin_versio
+),
+
+koulutuskoodit as (
+    select distinct on (split_part(versioitu_koodiuri, '#', 1))
+    	koodiarvo,
+    	kansallinenkoulutusluokitus2016koulutusastetaso2 as koulutusaste
+    from {{ ref('int_koodisto_koulutus_alat_ja_asteet') }}
+    order by
+        split_part(versioitu_koodiuri, '#', 1),
+        split_part(versioitu_koodiuri, '#', 2)::int desc
+),
+
 rows as (
 	select
 	    kkoo."tunniste",
@@ -59,16 +109,15 @@ rows as (
 	    kkoo."loppuPvm" as loppu_pvm,
 	    kkoo."myontaja",
 	    kkoo."supaTila" as supa_tila,
-	    kkoo."tyyppiKoodi" as tyyppi_koodi,
 	    kkoo."koulutusKoodi" as koulutus_koodi,
-	    kkoo."rahoitusLahde" as rahoitus_lahde,
+	    kkoo."rahoitusLahde" as virta_rahoituslahde,
 	    kkoo."virtaTunniste" as virta_tunniste,
 	    kkoo."entiteetinTyyppi" as entiteetin_tyyppi,
 	    kkoo."isTutkintoonJohtava" as is_tutkintoon_johtava,
-	    kkoo."luokittelu",
-        kkoo."liittyvaOpiskeluoikeusAvain" as liittyva_opiskeluoikeus_avain,
-	    kkoo."virtaTila" ->> 'arvo' as virta_tila_arvo,
-	    kkoo."virtaTila" ->> 'koodisto' as virta_tila_koodisto,
+	    kkoo."luokittelu" as virta_opiskeluoikeuden_luokittelu,
+        kkoo."virtaTila" ->> 'arvo' as virta_opiskeluoikeuden_tila,
+	    kkoo."tyyppiKoodi" as virta_opiskeluoikeuden_tyyppi,
+	    kkoo."liittyvaOpiskeluoikeusAvain" as liittyva_opiskeluoikeus_avain,
 	    kkoo."metadata" ->> 'lahdejarjestelma' as lahdejarjestelma,
 	    kkoo."metadata" ->> 'lahdeTunniste' as lahde_tunniste,
 	    kkoo."metadata" ->> 'parserVersio' as parser_versio,
@@ -101,9 +150,32 @@ rows as (
 final as (
     select
         rows.*,
-        orga.organisaatio_oid
+        orga.organisaatio_oid,
+        luok.nimi_fi as virta_luokittelu_nimi_fi,
+        luok.nimi_sv as virta_luokittelu_nimi_sv,
+        luok.nimi_en as virta_luokittelu_nimi_en,
+        tila.nimi_fi as virta_tila_nimi_fi,
+        tila.nimi_sv as virta_tila_nimi_sv,
+        tila.nimi_en as virta_tila_nimi_en,
+        tyyp.nimi_fi as virta_tyyppi_nimi_fi,
+        tyyp.nimi_sv as virta_tyyppi_nimi_sv,
+        tyyp.nimi_en as virta_tyyppi_nimi_en,
+        vira.nimi_fi as virta_rahoituslahde_nimi_fi,
+        vira.nimi_sv as virta_rahoituslahde_nimi_sv,
+        vira.nimi_en as virta_rahoituslahde_nimi_en,
+        koko.koulutusaste,
+        virta_opiskeluoikeuden_tila in ('1','2','4') and
+	        virta_rahoituslahde not in ('4') and
+	        virta_opiskeluoikeuden_tyyppi in ('1','2','3','4') and
+	        coalesce(virta_opiskeluoikeuden_luokittelu,'0') not in ('6','7')
+        as yos
     from rows as rows
     left join organisaatio as orga on rows.myontaja = orga.oppilaitosnumero
+    left join virtaluokittelu as luok on rows.virta_opiskeluoikeuden_luokittelu= luok.koodiarvo
+    left join virtatila as tila on rows.virta_opiskeluoikeuden_tila = tila.koodiarvo
+    left join virtatyyppi as tyyp on rows.virta_opiskeluoikeuden_tyyppi = tyyp.koodiarvo
+    left join koulutuskoodit as koko on rows.koulutus_koodi = koko.koodiarvo
+    left join virtarahoitus as vira on rows.virta_rahoituslahde = vira.koodiarvo
 )
 
 select * from final
