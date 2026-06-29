@@ -3,7 +3,7 @@
     "backup": {
       "deleteAfterDays": 14
     },
-    "deletionProtection": false,
+    "deletionProtection": true,
     "enablePerformanceInsights": true,
     "enableAdvancedDatabaseInsights": true,
     "iopsStorage": true,
@@ -15,7 +15,7 @@
     "serverlessReader": true,
     "version": {
       "major": "17",
-      "full": "17.7"
+      "full": "17.9"
     }
   },
   "environment": "testi",
