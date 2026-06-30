@@ -23,7 +23,11 @@ select
         vapa.lahde,
         vapa.funktiotyyppi,
         vapa."onPakollinen" as on_pakollinen,
-        vapa.tilastoidaan
+        vapa.tilastoidaan,
+        vapa."vaatiiOsallistumisen" as vaatii_osallistumisen,
+        vapa."syotettavissaKaikille" as syotettavissa_kaikille,
+        vapa."osallistuminenTunniste" as osallistuminen_tunniste,
+        vapa."syötettavanArvonTyyppi" ->> 'uri' as tyyppi
     from source
     cross join lateral jsonb_to_recordset(data-> 'valintaperusteDTO') as vapa(
         tunniste text,
@@ -33,7 +37,11 @@ select
         lahde text,
         funktiotyyppi text,
         "onPakollinen" boolean,
-        "tilastoidaan" boolean
+        "tilastoidaan" boolean,
+        "vaatiiOsallistumisen" boolean,
+        "syotettavissaKaikille" boolean,
+        "osallistuminenTunniste" text,
+        "syötettavanArvonTyyppi" jsonb
     )
 
 )

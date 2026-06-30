@@ -3,8 +3,9 @@
     materialized = 'table',
     indexes = [
         {'columns': ['hakutoive_id']}
-    ]
-     )
+    ],
+    enabled=false
+    )
 }}
 
 with source as (

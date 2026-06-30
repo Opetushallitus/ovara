@@ -324,6 +324,14 @@ models:
         data_type: text
       - name: ensikertalainen
         data_type: boolean
+      - name: hakukelpoisuus_asetettu_automaattisesti
+        data_type: boolean
+      - name: osallistui_paasykoe
+        data_type: boolean
+      - name: osallistui_lisanaytto
+        data_type: boolean
+      - name: jarjestelma
+        data_type: text
 
   - name: gen_henkilo
     columns:
