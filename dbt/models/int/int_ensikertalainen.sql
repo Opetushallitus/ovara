@@ -25,7 +25,7 @@ raw as (
 
     union all
 
-    select
+    select distinct
         henkilo_oid,
         haku_oid,
         isensikertalainen,
