@@ -7,10 +7,10 @@
     )
 }}
 
-with haut as (
+with /*haut as (
     select haku_oid from {{ ref('int_sure_haut') }}
 ),
-
+*/
 raw as (
     select
         henkilo_oid,
@@ -18,7 +18,7 @@ raw as (
         isensikertalainen,
         menettamisenperuste,
         menettamisenpaivamaara
-    from {{ ref('int_sure_ensikertalainen') }} a
+    from {{ ref('int_sure_ensikertalainen') }} a /*
     where exists(
         select 1 from haut b where a.haku_oid = b.haku_oid
         )
@@ -35,6 +35,7 @@ raw as (
     where not exists(
         select 1 from haut b where a.haku_oid = b.haku_oid
         )
+*/
 )
 
 select * from raw

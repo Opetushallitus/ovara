@@ -9,7 +9,7 @@ with koulutus as (
         hakemusoid as hakemus_oid,
         (keyvalues ->> 'POHJAKOULUTUS')::int as pohjakoulutus
     from {{ ref('int_sure_proxysuoritus') }} a
-        where keyvalues ? 'POHJAKOULUTUS'
+        where keyvalues ? 'POHJAKOULUTUS' /*
         and exists (select 1 from {{ ref('int_sure_haut') }} b where a.hakuoid = b.haku_oid)
 
     union all
@@ -20,7 +20,7 @@ with koulutus as (
     from {{ ref('int_supa_valintadata') }} a
         where keyvalues ? 'POHJAKOULUTUS'
         and not exists (select 1 from {{ ref('int_sure_haut') }} b where a.haku_oid = b.haku_oid)
-),
+*/),
 
 koodisto as (
     select
