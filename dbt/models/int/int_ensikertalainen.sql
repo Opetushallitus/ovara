@@ -27,7 +27,7 @@ raw as (
 
     select
         henkilo_oid,
-        hakemus_oid,
+        haku_oid,
         isensikertalainen,
         menettamisen_peruste,
         menettamisen_paivamaara
