@@ -6,7 +6,7 @@
     )
 }}
 
-with haut as (
+with /* haut as (
     select haku_oid from {{ ref('int_sure_haut') }}
 ),
 
@@ -15,14 +15,14 @@ matching_hakemukset AS (
     from {{ ref('int_ataru_hakemus') }} b
     join haut h
       on h.haku_oid = b.haku_oid
-),
+),*/
 raw as (
     select
         a.hakutoive_id,
         a.hakemus_oid,
         a.hakukohde_oid,
         a.harkinnanvaraisuuden_syy
-    from {{ ref('int_sure_harkinnanvaraisuus') }} a
+    from {{ ref('int_sure_harkinnanvaraisuus') }} a /*
     join matching_hakemukset b on a.hakemus_oid=b.hakemus_oid
 
     union all
@@ -34,7 +34,7 @@ raw as (
     from {{ ref('int_supa_harkinnanvaraisuus') }} a
     where not exists (
         select 1 from matching_hakemukset b where a.hakemus_oid=b.hakemus_oid
-    )
+    ) */
 )
 
 
