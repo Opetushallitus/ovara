@@ -58,7 +58,7 @@ yos as (
 koulutusaste as (
     select
         koulutus_oid,
-        jsonb_agg(distinct b.kansallinenkoulutusluokitus2016koulutusastetaso2) as koulutustasot
+        jsonb_agg(distinct b.kansallinenkoulutusluokitus2016koulutusastetaso2) as koulutusasteet
     from koulutus a
     cross join lateral jsonb_array_elements_text(a.koulutuksetkoodiuri) as j(koodi)
     join int.int_koodisto_koulutus_alat_ja_asteet b on j.koodi = b.versioitu_koodiuri
@@ -72,7 +72,7 @@ rows as (
 	d.kohdejoukkokoodiuri,
 	d.kohdejoukontarkennekoodiuri,
 	c.johtaatutkintoon,
-	e.koulutustasot
+	e.koulutusasteet
 	from hakukohde a
 	join toteutus b on a.toteutus_oid =b.toteutus_oid
 	join koulutus c on b.koulutus_oid =c.koulutus_oid
@@ -89,8 +89,8 @@ ei_yos_hakukohteet as materialized (
 final as (
 select
 	hakukohde_oid,
-	koulutustasot,
-	koulutustasot ?| ARRAY['62', '63', '71', '72']
+	koulutusasteet,
+	koulutusasteet ?| ARRAY['62', '63', '71', '72']
 		and johtaatutkintoon
 		and coalesce(kohdejoukontarkennekoodiuri not in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1'), true)
 		and coalesce (kohdejoukkokoodiuri = 'haunkohdejoukko_12#1',false)

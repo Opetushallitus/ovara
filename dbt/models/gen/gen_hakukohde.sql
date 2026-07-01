@@ -79,7 +79,7 @@ final as (
         jarjestaaurheilijanammkoulutusta as jarjestaa_urheilijan_ammkoulutusta,
         kielivalinta,
         hakukohteenlinja -> 'alinHyvaksyttyKeskiarvo' as alin_hyvaksytty_keskiarvo,
-        yos1.koulutustasot,
+        yos1.koulutusasteet,
         yos1.yos
     from hakukohde as hako
     left join yos as yos1 on hako.hakukohde_oid = yos1.hakukohde_oid
