@@ -572,6 +572,8 @@ models:
         data_type: text
 
   - name: gen_organisaatio
+    description: |
+      Yhteiskäyttöisiltä ei tule englanninkielistä nimeä. Tähän on luotu sarake tätä varten jotta ei jatkossa tarvita koodimuutoksia
     columns:
       - name: organisaatio_oid
         data_type: text
@@ -580,6 +582,8 @@ models:
       - name: nimi_fi
         data_type: text
       - name: nimi_sv
+        data_type: text
+      - name: nimi_en
         data_type: text
       - name: alkupvm
         data_type: timestamp with time zone
