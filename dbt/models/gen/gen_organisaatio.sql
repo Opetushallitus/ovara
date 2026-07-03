@@ -15,6 +15,7 @@ select
     organisaatio_oid,
     nimi_fi,
     nimi_sv,
+    coalesce(nimi_fi, nimi_sv) as nimi_en,
     alkupvm,
     lakkautuspvm,
     tila,
