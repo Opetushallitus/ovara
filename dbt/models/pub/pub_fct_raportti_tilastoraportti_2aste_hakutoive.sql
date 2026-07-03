@@ -58,6 +58,7 @@ final as (
         hato.valintatieto = 'VARALLA' as varasija,
         (hato.valintatieto = 'HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
         or (hato.valintatieto = 'VARASIJALTA_HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
+        or (hato.valintatieto = 'HARKINNANVARAISESTI_HYVAKSYTTY' and hato.vastaanottotieto is distinct from 'PERUUTETTU')
         or (hato.valintatieto = 'PERUNUT')
         as hyvaksytty,
         vare.vastaanottotieto in ('VASTAANOTTANUT_SITOVASTI', 'EHDOLLISESTI_VASTAANOTTANUT') as vastaanottanut,
