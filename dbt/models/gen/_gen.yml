@@ -364,6 +364,29 @@ models:
       - name: yksiloityvtj
         data_type: boolean
 
+  - name: gen_henkilo_lahtokoulu
+    columns:
+      - name: henkilo_oid
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: luokka
+        data_type: text
+      - name: oppilaitos_oid
+        data_type: text
+      - name: suoritus_tyyppi
+        data_type: text
+      - name: arvosana_puuttuu
+        data_type: boolean
+      - name: suorituksen_alku
+        data_type: date
+      - name: suorituksen_loppu
+        data_type: date
+      - name: valmistumisvuosi
+        data_type: integer
+    description: |-
+
+
   - name: gen_koodi
     description: Koodiston tiedot
     columns:
