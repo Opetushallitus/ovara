@@ -72,7 +72,8 @@ final as (
         uudenopiskelijanurl ->> 'sv' as uuden_opiskelijan_url_sv,
         uudenopiskelijanurl ->> 'en' as uuden_opiskelijan_url_en,
         jarjestaaurheilijanammkoulutusta as jarjestaa_urheilijan_ammkoulutusta,
-        kielivalinta
+        kielivalinta,
+        hakukohteenlinja -> 'alinHyvaksyttyKeskiarvo' as alin_hyvaksytty_keskiarvo
     from hakukohde
 )
 
