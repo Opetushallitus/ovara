@@ -1,41 +1,34 @@
 {{
   config(
     materialized = 'table',
+    post_hook = [
+        "{{ create_pk('henkilo_oid') }}"
+    ]
     )
 }}
-
-with arvosana as (
-    select
-        suoritus,
-        yo_aine,
-        arvosana
-    from {{ ref('int_sure_arvosana') }}
-    where asteikko = 'YO'
+with supa as (
+    select * from {{ ref('int_arvosana_yo_supa') }}
 ),
 
-suoritus as (
-    select
-        resourceid,
-        henkilo_oid
-    from {{ ref('int_sure_suoritus') }}
-    where not poistettu
+sure as (
+    select * from {{ ref('int_arvosana_yo_sure') }}
 ),
 
 final as (
     select
-        suor.henkilo_oid,
-        rivi.arvosanat
-    from suoritus as suor
-    inner join (
-        select
-            suoritus,
-            jsonb_object_agg(yo_aine, arvosana) as arvosanat
-        from arvosana
-        group by suoritus
-    ) as rivi on suor.resourceid = rivi.suoritus
-    group by
-        suor.henkilo_oid,
-        rivi.arvosanat
+        *,
+        'supa' as lahde
+    from supa
+
+    union all
+
+    select
+        *,
+        'sure' from
+    sure b
+    where not exists (
+        select 1 from supa a where a.henkilo_oid=b.henkilo_oid
+    )
 )
 
 select * from final

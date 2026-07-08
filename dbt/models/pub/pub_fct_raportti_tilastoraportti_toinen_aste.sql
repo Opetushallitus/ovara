@@ -4,7 +4,11 @@
     indexes = [
       {'columns':['hakukohde_oid']},
     ],
-    pre_hook = 'set enable_mergejoin = off; set enable_nestloop = off; set enable_sort = off;'
+    pre_hook =
+    [
+        'set enable_mergejoin = off; set enable_nestloop = off; set enable_sort = off;'
+        ],
+    enabled = false
     )
 }}
 

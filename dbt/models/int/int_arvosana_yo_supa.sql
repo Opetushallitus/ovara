@@ -35,12 +35,25 @@ arvosanat as (
     group by henkilo_oid
 ),
 
-final as (
+arvosanat_master as (
 	select
 		b.master_oid,
-		a.*
+		a.arvosanat
 	from arvosanat a
 	join onr b on a.henkilo_oid=b.henkilo_oid
+),
+
+final as (
+    select
+        onr1.henkilo_oid,
+        arma.arvosanat
+    from arvosanat_master arma
+    join lateral (
+		select
+			onr.henkilo_oid
+		from onr
+		where onr.master_oid = arma.master_oid
+	) onr1 on true
 )
 
 select * from final

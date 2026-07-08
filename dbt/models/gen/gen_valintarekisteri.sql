@@ -75,7 +75,8 @@ vastaanotto as not materialized (
         henkilo_oid,
         ilmoittaja,
         selite,
-        operaatio
+        operaatio,
+        muokattu
     from {{ ref('int_valintarekisteri_vastaanotto') }}
 ),
 
@@ -106,12 +107,13 @@ final as (
         josi.sijoitteluajo_id,
         hysa.hyvaksyttyjajulkaistu,
         lvma.maksun_tila,
-        ilmo.ilmoittaja as ilmoitus_ilmoittaja,
+        ilmo.ilmoittaja as ilmoittautuminen_ilmoittaja,
         ilmo.selite,
-        ilmo.tila as ilmoituksen_tila,
+        ilmo.tila as ilmoittautuminen_tila,
         vaot.ilmoittaja as vastaanotto_ilmoittaja,
         vaot.selite as vastaanotto_selite,
-        vaot.operaatio as vastaanotto_tila
+        vaot.operaatio as vastaanotto_tila,
+        vaot.muokattu as vastaanotto_aikaleima
     from valinnantulos as vatu
     left join jonosija as josi
         on vatu.hakemus_oid = josi.hakemus_oid and vatu.valintatapajono_oid = josi.valintatapajono_oid
