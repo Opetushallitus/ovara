@@ -19,8 +19,7 @@ raw as (
         menettamisenperuste,
         menettamisenpaivamaara
     from {{ ref('int_sure_ensikertalainen') }} a
-  /*
-    where exists(
+      where exists(
         select 1 from haut b where a.haku_oid = b.haku_oid
         )
 
@@ -36,7 +35,6 @@ raw as (
     where not exists(
         select 1 from haut b where a.haku_oid = b.haku_oid
         )
-*/
 )
 
 select * from raw
