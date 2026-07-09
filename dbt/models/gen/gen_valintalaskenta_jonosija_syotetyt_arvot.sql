@@ -12,7 +12,9 @@ with jonosijat as (
     select
         valinnanvaihe_id,
         valintatapajono_nimi,
+        valintatapajono_oid,
         hakemus_oid,
+        hakukohde_oid,
         hakija_oid,
         syotetyt_arvot
     from {{ ref('int_valintalaskenta_jonosijat') }}
@@ -21,8 +23,10 @@ with jonosijat as (
 final as (
     select
         josi.valinnanvaihe_id,
+        josi.valintatapajono_oid,
         josi.valintatapajono_nimi,
         josi.hakemus_oid,
+        josi.hakukohde_oid,
         josi.hakija_oid,
         syar.obj ->> 'arvo' as arvo,
         syar.obj ->> 'tunniste' as tunniste,

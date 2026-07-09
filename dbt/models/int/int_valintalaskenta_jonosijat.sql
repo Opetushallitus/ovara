@@ -1,14 +1,18 @@
 with valintatapajonot as (
     select
+        valintatapajono_oid,
         valinnanvaihe_id,
         valintatapajono_nimi,
-        valintatapajonot
+        valintatapajonot,
+        hakukohde_oid
     from {{ ref('int_valintalaskenta_valintatapajonot') }}
 )
 
 select
-	vajo.valinnanvaihe_id,
+	vajo.valintatapajono_oid,
+    vajo.valinnanvaihe_id,
 	vajo.valintatapajono_nimi,
+    vajo.hakukohde_oid,
     josi.obj ->> 'hakemusOid' as hakemus_oid ,
     josi.obj ->> 'hakijaOid' as hakija_oid,
     (josi.obj ->> 'muokattu')::boolean as onko_muokattu,

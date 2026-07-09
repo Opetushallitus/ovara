@@ -20,6 +20,8 @@ with tulos as (
 final as (
     select
         a.valinnanvaihe_id,
+        a.haku_oid,
+        a.hakukohde_oid,
         vajo.obj ->> 'nimi' as valintatapajono_nimi,
         vajo.obj ->> 'aktiivinen' as aktiivinen,
         (vajo.obj ->> 'lastModified')::date as muokattu,

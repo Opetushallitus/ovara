@@ -11,7 +11,9 @@
 with jonosijat as (
     select
         valinnanvaihe_id,
+        valintatapajono_oid,
         valintatapajono_nimi,
+        hakukohde_oid,
         hakemus_oid,
         hakija_oid,
         funktiotulokset
@@ -21,8 +23,10 @@ with jonosijat as (
 final as (
     select
         josi.valinnanvaihe_id,
+        josi.valintatapajono_oid,
         josi.valintatapajono_nimi,
         josi.hakemus_oid,
+        josi.hakukohde_oid,
         josi.hakija_oid,
         futo.obj ->> 'arvo' as arvo,
         futo.obj ->> 'tunniste' as tunniste,
