@@ -1005,3 +1005,71 @@ models:
         data_type: boolean
       - name: valmistumis_vuosi
         data_type: integer
+  - name: gen_valintalaskenta_jonosija_funktiotulokset
+    description: Valintalaskennan funktiotuloksia
+    columns:
+      - name: valinnanvaihe_id
+        data_type: text
+      - name: valintatapajono_nimi
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakija_oid
+        data_type: text
+      - name: arvo
+        data_type: text
+      - name: tunniste
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: omaopintopolku
+        data_type: boolean
+  - name: gen_valintalaskenta_jonosija_jarjestyskriteerit
+    columns:
+      - name: valinnanvaihe_id
+        data_type: text
+      - name: valintatapajono_nimi
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakija_oid
+        data_type: text
+      - name: arvo
+        data_type: text
+      - name: nimi
+        data_type: text
+      - name: tila
+        data_type: jsonb
+      - name: kuvaus_fi
+        data_type: text
+      - name: kuvaus_sv
+        data_type: text
+      - name: kuvaus_en
+        data_type: text
+      - name: prioriteetti
+        data_type: jsonb
+  - name: gen_valintalaskenta_jonosija_syotetyt_arvot
+    description: Valintalaskennan syötettyjä arvoja
+    columns:
+      - name: valinnanvaihe_id
+        data_type: text
+      - name: valintatapajono_nimi
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakija_oid
+        data_type: text
+      - name: arvo
+        data_type: text
+      - name: tunniste
+        data_type: text
+      - name: tilastoidaan
+        data_type: boolean
+      - name: osallistuminen
+        data_type: text
+      - name: laskennallinen_arvo
+        data_type: text
