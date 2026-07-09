@@ -384,7 +384,7 @@ models:
         data_type: date
       - name: valmistumisvuosi
         data_type: integer
-    description: |-
+    description: |
 
 
   - name: gen_koodi
@@ -994,3 +994,14 @@ models:
         data_type: text
       - name: vastaanotto_aikaleima
         data_type: timestamp with time zone
+  - name: gen_ylioppilas
+    description: |-
+      Tämä malli sisältää SUPAsta tietoa jos hakija on ylioppilas. Ehtona on yoOpiskeluoikeus jonka SupaTila on "VALMIS", ja jos valmistumisvuosia on useampi näytetään tässä ensimmäinen.
+      Data on haettu ONRn master_oid in kautta niin että kaikilla henkilo_oid:lla yhden master_oid:n alla on samat tiedot
+    columns:
+      - name: henkilo_oid
+        data_type: text
+      - name: on_ylioppilas
+        data_type: boolean
+      - name: valmistumis_vuosi
+        data_type: integer
