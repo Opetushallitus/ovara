@@ -1,10 +1,6 @@
-{{
-  config(
-    enabled = true
-    )
-}}
 with source as (
-    select * from {{ source('ovara', 'valintalaskenta_valintalaskennan_tulos') }}
+    select * from {{ source('ovara', 'valintarekisteri_yhdenopiskeluoikeudensaados') }}
+
     {% if is_incremental() %}
 
         where dw_metadata_dbt_copied_at > (
@@ -12,16 +8,20 @@ with source as (
         )
 
     {% endif %}
-
 ),
 
 final as (
     select
-        data ->> 'valinnanvaiheoid'::varchar as valinnanvaihe_id,
-         (data ->> 'lastModified')::timestamptz as muokattu,
+        data ->> 'hakemusOid' as hakemus_oid,
+        data ->> 'hakukohdeOid' as hakukohde_oid,
+        (data ->> 'systemTime')::timestamptz as muokattu,
         data,
         {{ metadata_columns() }}
     from source
 )
 
-select * from final
+select
+    {{ hakutoive_id() }},
+    *
+from final
+

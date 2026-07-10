@@ -1,25 +1,13 @@
 {{
   config(
     materialized = 'incremental',
-    incremental_strategy= 'append',
+    incremental_strategy= 'insert+delete',
     unlogged=true,
     indexes = [
         {'columns':['hakemus_oid']},
         {'columns':['dw_metadata_dw_stored_at']}
     ],
-    pre_hook = ["set enable_seqscan = off;",
-                """{% if is_incremental() %}
-            delete from {{ this }} as t
-            using
-            (
-                select distinct hakemus_oid
-                from {{ ref('int_supa_valintadata') }}
-                where dw_metadata_dw_stored_at > (select max (dw_metadata_dw_stored_at) from {{ this }})
-            )
-            as s where t.hakemus_oid=s.hakemus_oid;
-            {% endif %}
-            """
-        ],
+    pre_hook = "set enable_seqscan = off;",
     post_hook = "set enable_seqscan = on;"
     )
 }}
@@ -30,7 +18,7 @@ with source as (
         dw_metadata_dw_stored_at
     from {{ ref('int_supa_valintadata') }}
     {% if is_incremental() %}
-        where dw_metadata_dw_stored_at >= (
+        where dw_metadata_dw_stored_at > (
             select
                 coalesce(
                     max(dw_metadata_dw_stored_at),
