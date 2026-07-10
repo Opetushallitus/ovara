@@ -23,29 +23,26 @@ MR/10.7.2026
 
         {% if unique_keys %}
 
-            delete from {{ target }} as DBT_INTERNAL_DEST
-            using (
+        delete from {{ target }} as DBT_INTERNAL_DEST
+        using (
             select distinct
-            {% for key in unique_keys %}
-                {{ key }}{% if not loop.last %},{% endif %}
+            {% for key in unique_keys -%}
+                {{ key }}{% if not loop.last %},{% endif -%}
             {% endfor %}
             from {{ source }}
     ) as DBT_INTERNAL_SOURCE
             where
-                {% for key in unique_keys %}
-                    DBT_INTERNAL_DEST.{{ key }}
-                    =
-                    DBT_INTERNAL_SOURCE.{{ key }}
-
+                {%- for key in unique_keys %}
+                    DBT_INTERNAL_DEST.{{ key }} = DBT_INTERNAL_SOURCE.{{ key }}
                     {% if not loop.last %}
                         and
-                    {% endif %}
-                {% endfor %}
+                    {%- endif %}
+                {%- endfor %}
 
-                {% if incremental_predicates %}
-                    {% for predicate in incremental_predicates %}
+                {%- if incremental_predicates %}
+                    {%- for predicate in incremental_predicates %}
                         and ({{ predicate }})
-                    {% endfor %}
+                    {% endfor -%}
                 {% endif %}
             ;
 

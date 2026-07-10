@@ -21,6 +21,10 @@ with jonosijat as (
         funktiotulokset,
         dw_metadata_dw_stored_at
     from {{ ref('int_valintalaskenta_jonosijat') }}
+    {% if is_incremental() %}
+      where dw_metadata_dw_stored_at >= coalesce((select max(dw_metadata_dw_stored_at) from {{ this }}), '1900-01-01')
+    {% endif %}
+
 ),
 
 final as (
