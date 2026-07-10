@@ -15,7 +15,7 @@
 with source as not materialized (
     select * from {{ ref('int_hakemus_tiedot') }}
     {% if is_incremental() %}
-        where dw_metadata_dw_stored_at >= (
+        where dw_metadata_dw_stored_at > (
             select
                 coalesce(
                     max(dw_metadata_dw_stored_at),

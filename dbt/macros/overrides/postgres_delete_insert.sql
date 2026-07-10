@@ -24,11 +24,17 @@ MR/10.7.2026
         {% if unique_keys %}
 
             delete from {{ target }} as DBT_INTERNAL_DEST
-            using {{ source }} as DBT_INTERNAL_SOURCE
+            using (
+            select distinct
+            {% for key in unique_keys %}
+                {{ key }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+            from {{ source }}
+    ) as DBT_INTERNAL_SOURCE
             where
                 {% for key in unique_keys %}
                     DBT_INTERNAL_DEST.{{ key }}
-                    is not distinct from
+                    =
                     DBT_INTERNAL_SOURCE.{{ key }}
 
                     {% if not loop.last %}
