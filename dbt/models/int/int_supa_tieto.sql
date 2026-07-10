@@ -1,7 +1,7 @@
 {{
   config(
     materialized = 'incremental',
-    incremental_strategy= 'insert+delete',
+    incremental_strategy= 'delete+insert',
     unlogged=true,
     indexes = [
         {'columns':['hakemus_oid']},
