@@ -1090,19 +1090,5 @@ models:
         data_type: date
       - name: virta_opiskeluikeus_id
         data_type: text
-      - name: organisaatio_oid
-        data_type: text
-      - name: supa_nimi_fi
-        data_type: text
-      - name: supa_nimi_sv
-        data_type: text
-      - name: supa_nimi_en
-        data_type: text
-      - name: virta_nimi_fi
-        data_type: text
-      - name: virta_nimi_sv
-        data_type: text
-      - name: virta_nimi_en
-        data_type: text
       - name: muokattu
         data_type: timestamp with time zone
