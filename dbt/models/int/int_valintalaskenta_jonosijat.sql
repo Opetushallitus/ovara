@@ -1,10 +1,23 @@
+{{
+  config(
+    materialized = 'incremental',
+    unique_key = 'valinnanvaihe_id',
+    incremental_strategy = 'delete+insert',
+    indexes = [
+        {'columns': ['dw_metadata_dw_stored_at']},
+        {'columns': ['valinnanvaihe_id']}
+    ]
+
+    )
+}}
 with valintatapajonot as (
     select
         valintatapajono_oid,
         valinnanvaihe_id,
         valintatapajono_nimi,
         valintatapajonot,
-        hakukohde_oid
+        hakukohde_oid,
+        dw_metadata_dw_stored_at
     from {{ ref('int_valintalaskenta_valintatapajonot') }}
 )
 
@@ -22,7 +35,8 @@ select
     (josi.obj ->> 'hylattyValisijoittelussa')::boolean as hylatty_valisijoittelussa,
     (josi.obj -> 'syotetytArvot')::jsonb as syotetyt_arvot,
     (josi.obj -> 'funktioTulokset')::jsonb as funktioTulokset,
-    (josi.obj -> 'jarjestyskriteerit')::jsonb as jarjestyskriteerit
+    (josi.obj -> 'jarjestyskriteerit')::jsonb as jarjestyskriteerit,
+    vajo.dw_metadata_dw_stored_at
 
 from valintatapajonot as vajo
 cross join lateral (select jsonb_array_elements(valintatapajonot->'jonosijat')) as josi(obj)
