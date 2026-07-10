@@ -994,6 +994,7 @@ models:
         data_type: text
       - name: vastaanotto_aikaleima
         data_type: timestamp with time zone
+
   - name: gen_ylioppilas
     description: |-
       Tämä malli sisältää SUPAsta tietoa jos hakija on ylioppilas. Ehtona on yoOpiskeluoikeus jonka SupaTila on "VALMIS", ja jos valmistumisvuosia on useampi näytetään tässä ensimmäinen.
@@ -1005,6 +1006,7 @@ models:
         data_type: boolean
       - name: valmistumis_vuosi
         data_type: integer
+
   - name: gen_valintalaskenta_jonosija_funktiotulokset
     description: Valintalaskennan funktiotuloksia
     columns:
@@ -1052,6 +1054,7 @@ models:
         data_type: text
       - name: prioriteetti
         data_type: jsonb
+
   - name: gen_valintalaskenta_jonosija_syotetyt_arvot
     description: Valintalaskennan syötettyjä arvoja
     columns:
@@ -1073,3 +1076,33 @@ models:
         data_type: text
       - name: laskennallinen_arvo
         data_type: text
+
+  - name: gen_valintarekisteri_yos
+    description: Tämä malli sisältää päätettäviä opiskeluoikeuksia ja päätelty päivä
+    columns:
+      - name: henkilo_oid
+        data_type: text
+      - name: hakemus_oid
+        data_type: text
+      - name: hakukohde_oid
+        data_type: text
+      - name: paatelty_aloituspvm
+        data_type: date
+      - name: virta_opiskeluikeus_id
+        data_type: text
+      - name: organisaatio_oid
+        data_type: text
+      - name: supa_nimi_fi
+        data_type: text
+      - name: supa_nimi_sv
+        data_type: text
+      - name: supa_nimi_en
+        data_type: text
+      - name: virta_nimi_fi
+        data_type: text
+      - name: virta_nimi_sv
+        data_type: text
+      - name: virta_nimi_en
+        data_type: text
+      - name: muokattu
+        data_type: timestamp with time zone

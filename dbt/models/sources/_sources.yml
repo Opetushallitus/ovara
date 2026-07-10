@@ -47,3 +47,4 @@ sources:
     - name: valintarekisteri_jonosija
     - name: valintarekisteri_lukuvuosimaksu
     - name: valintaperusteet_avain
+    - name: valintarekisteri_yhdenopiskeluoikeudensaados

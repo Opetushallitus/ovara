@@ -44,11 +44,10 @@ models:
       kouta:
         +tags: kouta
 
-
     dw:
       +schema: dw
       # materialized=incremental set in dw macro
-      +full_refresh: false
+      +full_refresh: "{{ false if target.name == 'prod' else none }}"
       +indexes:
         - columns: ['dw_metadata_dw_stored_at']
       +docs:
