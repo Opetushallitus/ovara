@@ -3,7 +3,6 @@
     materialized = 'incremental',
     incremental_strategy= 'delete+insert',
     unique_key = 'hakemus_oid',
-    unlogged=true,
     indexes = [
         {'columns':['hakemus_oid']},
         {'columns':['dw_metadata_dw_stored_at']},

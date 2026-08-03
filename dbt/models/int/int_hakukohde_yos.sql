@@ -40,8 +40,11 @@ haku as (
     select
         haku_oid,
         kohdejoukkokoodiuri,
-        kohdejoukontarkennekoodiuri
+        kohdejoukontarkennekoodiuri,
+        min(haaj.obj ->> 'alkaa')::timestamptz as haku_alkaa
     from {{ ref('int_haku') }}
+    cross join lateral (select jsonb_array_elements(hakuajat)) as haaj(obj)
+    group by 1,2,3
 ),
 
 alat_ja_asteet as (
@@ -65,6 +68,13 @@ koulutusaste as (
     group by a.koulutus_oid
 ),
 
+koulutuksen_alkaminen as (
+    select
+        hakukohde_oid,
+        koulutus_alkaa
+    from {{ ref('int_hakukohde_paatelty_koulutuksen_alkaminen') }}
+),
+
 rows as (
 	select
 	a.hakukohde_oid,
@@ -72,12 +82,15 @@ rows as (
 	d.kohdejoukkokoodiuri,
 	d.kohdejoukontarkennekoodiuri,
 	c.johtaatutkintoon,
-	e.koulutusasteet
+    e.koulutusasteet,
+    d.haku_alkaa,
+    f.koulutus_alkaa
 	from hakukohde a
 	join toteutus b on a.toteutus_oid =b.toteutus_oid
 	join koulutus c on b.koulutus_oid =c.koulutus_oid
 	join haku d on a.haku_oid =d.haku_oid
 	join koulutusaste e on c.koulutus_oid = e.koulutus_oid
+    left join koulutuksen_alkaminen f on a.hakukohde_oid = f.hakukohde_oid
 ),
 
 ei_yos_hakukohteet as materialized (
@@ -94,6 +107,8 @@ select
 		and johtaatutkintoon
 		and coalesce(kohdejoukontarkennekoodiuri not in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1'), true)
 		and coalesce (kohdejoukkokoodiuri = 'haunkohdejoukko_12#1',false)
+        and coalesce(haku_alkaa >= '2026-08-01'::timestamptz, false)
+        and coalesce(koulutus_alkaa >= '2027-01-01'::timestamptz, false)
 		and not exists (
 			select 1 from ei_yos_hakukohteet e
             where e.jarjestyspaikka_oid = rows.jarjestyspaikka_oid)

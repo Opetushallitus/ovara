@@ -2,7 +2,6 @@
     config(
     materialized = 'incremental',
     incremental_strategy= 'append',
-    unlogged=true,
     indexes = [
         {'columns':['hakemus_oid']},
         {'columns':['dw_metadata_dw_stored_at']},
