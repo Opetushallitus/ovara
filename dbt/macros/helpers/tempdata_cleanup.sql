@@ -11,9 +11,9 @@
         {% do run_query(sql) %}
         {% set sql = 'delete from stg.stg_'+table+' where dw_metadata_dbt_copied_at < (select start_time from raw.completed_dbt_runs where raw_table = \''+table+'\')' %}
         {% do run_query(sql) %}
-        {% set sql = 'vacuum full raw.'+table %}
+        {% set sql = 'vacuum raw.'+table %}
         {% do run_query(sql) %}
-        {% set sql = 'vacuum full stg.stg_'+table %}
+        {% set sql = 'vacuum stg.stg_'+table %}
         {% do run_query(sql) %}
     {% endfor %}
 {{ print ('Cleaning completed') }}
