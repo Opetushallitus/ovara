@@ -2,7 +2,7 @@
   config(
     materialized = 'incremental',
     unique_key = 'hakemus_oid',
-    incremental_strategy = 'merge',
+    incremental_strategy = 'delete+insert',
     indexes = [
         {'columns':['haku_oid']},
         {'columns':['henkilo_oid']}
@@ -71,6 +71,14 @@ hakemus as (
     {% endif %}
 ),
 
+ensikertalainen as (
+    select * from {{ ref('int_ensikertalainen') }}
+),
+
+pohjakoulutus as (
+    select * from {{ ref('int_pohjakoulutus') }}
+),
+
 kansalaisuus as (
     select
         hakemus_oid,
@@ -121,9 +129,18 @@ final as (
         hake.kiinnostunut_oppisopimuksesta,
         hake.pohjakoulutus_kk,
         hake.pohjakoulutus_kk_valmistumisvuosi,
+        enke.isensikertalainen,
+        enke.menettamisenperuste as ensikertalaisuuden_menettämisperuste,
+        enke.menettamisenpaivamaara as ensikertalaisuuden_menettämisen_paivamaara,
+        poko.pohjakoulutus,
+        poko.pohjakoulutus_nimi ->> 'fi' as pohjakoulutus_nimi_fi,
+        poko.pohjakoulutus_nimi ->> 'sv' as pohjakoulutus_nimi_sv,
+        poko.pohjakoulutus_nimi ->> 'en' as pohjakoulutus_nimi_en,
         hake.dw_metadata_dw_stored_at
     from hakemus as hake
     inner join kansalaisuus as kans on hake.hakemus_oid = kans.hakemus_oid
+    left join ensikertalainen as enke on hake.haku_oid = enke.haku_oid and hake.henkilo_oid=enke.henkilo_oid
+    left join pohjakoulutus as poko on hake.hakemus_oid = poko.hakemus_oid
 )
 
 select * from final
