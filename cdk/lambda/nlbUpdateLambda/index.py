@@ -1,5 +1,6 @@
 import os
 import socket
+import time
 import boto3
 
 def update_ips(rds_endpoint, nlb_target_group_arn, db_port, client):
@@ -70,8 +71,7 @@ def update_ips(rds_endpoint, nlb_target_group_arn, db_port, client):
       print('DeRegister IP: ', target_ip, 'Port; ', target_port)
       deregister_oldip(target_ip, target_port)
 
-def handler(event, context):
-  client = boto3.client('elbv2')
+def run_updates(client):
   update_ips(
     rds_endpoint=os.environ.get('RDS_ENDPOINT'),
     nlb_target_group_arn=os.environ.get('TARGET_GROUP_ARN'),
@@ -84,3 +84,17 @@ def handler(event, context):
     db_port=os.environ.get('READONLY_RDS_PORT'),
     client=client
   )
+
+def handler(event, context):
+  client = boto3.client('elbv2')
+
+  # If triggered by SNS event (e.g. failover), retry with delays to allow DNS propagation
+  if 'Records' in event:
+    print('Event-triggered invocation, running with retries for DNS propagation...')
+    for attempt in range(3):
+      print(f'Attempt {attempt + 1}/3')
+      run_updates(client)
+      if attempt < 2:
+        time.sleep(10)
+  else:
+    run_updates(client)
