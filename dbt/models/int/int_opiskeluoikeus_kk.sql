@@ -165,7 +165,7 @@ final as (
         vira.nimi_en as virta_rahoituslahde_nimi_en,
         koko.koulutusaste,
         virta_opiskeluoikeuden_tila in ('1','2','4','7') and
-	        virta_rahoituslahde not in ('4') and
+	        coalesce(virta_rahoituslahde,'-1') not in ('4') and
 	        virta_opiskeluoikeuden_tyyppi in ('1','2','3','4') and
 	        coalesce(virta_opiskeluoikeuden_luokittelu,'0') not in ('6','7')
         as yos
