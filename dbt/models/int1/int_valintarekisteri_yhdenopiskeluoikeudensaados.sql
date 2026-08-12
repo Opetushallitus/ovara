@@ -11,10 +11,13 @@
 }}
 
 with source as (
-    select * from {{ ref('dw_valintarekisteri_yhdenopiskeluoikeudensaados') }}
+    select distinct on (hakutoive_id) * from {{ ref('dw_valintarekisteri_yhdenopiskeluoikeudensaados') }}
     {% if is_incremental() %}
       where dw_metadata_stg_stored_at >= coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}), '1900-01-01')
     {% endif %}
+    order by
+        hakutoive_id asc,
+        muokattu desc
 ),
 
 final as (
