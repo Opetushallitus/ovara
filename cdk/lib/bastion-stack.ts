@@ -2,9 +2,12 @@ import * as cdk from 'aws-cdk-lib';
 import * as asg from 'aws-cdk-lib/aws-autoscaling';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as scheduler from 'aws-cdk-lib/aws-scheduler';
+import * as schedulerTargets from 'aws-cdk-lib/aws-scheduler-targets';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -99,9 +102,12 @@ export class BastionStack extends cdk.Stack {
         autoScalingGroupName: `${config.environment}-BastionAutoScalingGroup`,
         vpc: vpc,
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),
-        machineImage: ec2.MachineImage.latestAmazonLinux2023({
-          cpuType: ec2.AmazonLinuxCpuType.ARM_64,
-        }),
+        // resolve:ssm-viittaus resolvoidaan jokaisen instanssin käynnistyshetkellä, joten
+        // instanssin korvaus riittää AMI:n päivittämiseen ilman uutta deployta. Vertaa
+        // MachineImage.latestAmazonLinux2023(), joka paistaa AMI:n templateen deploy-hetkellä.
+        machineImage: ec2.MachineImage.resolveSsmParameterAtLaunch(
+          '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64'
+        ),
         blockDevices: [
           {
             deviceName: '/dev/xvda',
@@ -142,6 +148,38 @@ export class BastionStack extends cdk.Stack {
     bastionAutoScalingGroup.userData.addCommands(
       'sudo mkdir -p /etc/cron.d && echo "*/15 * * * * root aws secretsmanager get-secret-value --secret-id bastion/public_keys | jq -cr \'.SecretString\' | sudo -u ec2-user tee /home/ec2-user/.ssh/authorized_keys > /dev/null" | sudo tee /etc/cron.d/update-ec2-user-ssh-public-keys > /dev/null'
     );
+
+    // Bastion-instanssit korvataan kuukausittain, jotta ne käynnistyvät uusimmalla
+    // AMI-versiolla tietoturvapäivitysten vuoksi. Ajo osuu kuukauden ensimmäiseen
+    // lauantain ja sunnuntain väliseen yöhön, jolloin bastionin lyhyt katkos ei haittaa.
+    new scheduler.Schedule(this, `${config.environment}-BastionAmiRefreshSchedule`, {
+      scheduleName: `${config.environment}-bastion-ami-refresh`,
+      description: 'Korvaa bastion-instanssit kuukausittain uusimmalla AMI-versiolla',
+      schedule: scheduler.ScheduleExpression.cron({
+        minute: '0',
+        hour: '3',
+        weekDay: 'SUN#1',
+        timeZone: cdk.TimeZone.EUROPE_HELSINKI,
+      }),
+      target: new schedulerTargets.Universal({
+        service: 'autoscaling',
+        action: 'startInstanceRefresh',
+        policyStatements: [
+          new iam.PolicyStatement({
+            actions: ['autoscaling:StartInstanceRefresh'],
+            resources: [bastionAutoScalingGroup.autoScalingGroupArn],
+          }),
+        ],
+        input: scheduler.ScheduleTargetInput.fromObject({
+          AutoScalingGroupName: bastionAutoScalingGroup.autoScalingGroupName,
+          // Kapasiteetti on 1, joten vanha instanssi on terminoitava ennen uuden
+          // käynnistämistä. Oletusarvo 90 % estäisi refreshin etenemisen kokonaan.
+          // SkipMatching on jätettävä pois: launch templaten versio ei muutu AMI:n
+          // päivittyessä, joten refresh ohittaisi instanssin virheellisesti.
+          Preferences: { MinHealthyPercentage: 0 },
+        }),
+      }),
+    });
 
     const nlbListener = bastionNetworkLoadBalancer.addListener(
       `${config.environment}-bastion-nlb-ssh-listener`,
