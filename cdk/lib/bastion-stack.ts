@@ -105,8 +105,10 @@ export class BastionStack extends cdk.Stack {
         // resolve:ssm-viittaus resolvoidaan jokaisen instanssin käynnistyshetkellä, joten
         // instanssin korvaus riittää AMI:n päivittämiseen ilman uutta deployta. Vertaa
         // MachineImage.latestAmazonLinux2023(), joka paistaa AMI:n templateen deploy-hetkellä.
+        // kernel-default seuraa AL2023:n kulloistakin oletuskerneliä, joten kernel-versio
+        // ei jää lukkoon vaan päivittyy AWS:n vaihtaessa oletusta.
         machineImage: ec2.MachineImage.resolveSsmParameterAtLaunch(
-          '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64'
+          '/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64'
         ),
         blockDevices: [
           {
