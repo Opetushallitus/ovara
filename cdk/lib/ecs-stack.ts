@@ -634,7 +634,7 @@ export class EcsStack extends cdk.Stack {
       this,
       `${config.environment}-lampiSiirtajaFailedErrorMetricFilter`,
       {
-        filterPattern: logs.FilterPattern.literal('?"Error" ?"ERROR" ?"error"'),
+        filterPattern: logs.FilterPattern.literal('"ERROR" -"WARN" -"INFO"'),
         logGroup: lampiSiirtajaLogGroup,
         metricName: lampiSiirtajaFailedErrorMetricName,
         metricNamespace: ovaraCustomMetricsNamespace,
