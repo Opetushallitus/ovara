@@ -28,7 +28,16 @@ dbt run-operation create_raw_tables --target=prod
 
 is_error="0"
 
-if [[ -z "$1" ]]; then
+# Kontille annetut parametrit välitetään dbt build -komennolle sellaisenaan.
+# Tyhjät parametrit suodatetaan pois, jotta dbt ei saa tyhjää argumenttia.
+extra_parameters=()
+for parameter in "$@"; do
+  if [[ -n "$parameter" ]]; then
+    extra_parameters+=("$parameter")
+  fi
+done
+
+if [[ ${#extra_parameters[@]} -eq 0 ]]; then
   echo "Running DBT without any extra paramaters"
   if dbt build --target=prod --exclude "resource_type:seed"; then
   	is_error="0"
@@ -37,8 +46,8 @@ if [[ -z "$1" ]]; then
   fi
   echo "Finished running DBT"
 else
-  echo "Running DBT with extra paramaters: $1"
-  if dbt build --target=prod --exclude "resource_type:seed" "$1"; then
+  echo "Running DBT with extra paramaters: ${extra_parameters[*]}"
+  if dbt build --target=prod --exclude "resource_type:seed" "${extra_parameters[@]}"; then
   	is_error="0"
   else
     is_error="1"
