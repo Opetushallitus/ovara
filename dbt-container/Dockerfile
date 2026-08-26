@@ -11,4 +11,4 @@ RUN \
   bash install.sh && \
   rm install.sh
 
-ENTRYPOINT ["bash", "/root/run.sh", ""]
+ENTRYPOINT ["bash", "/root/run.sh"]
