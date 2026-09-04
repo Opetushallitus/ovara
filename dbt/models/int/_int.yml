@@ -149,7 +149,7 @@ models:
 
   - name: int_koulutus_koulutuskoodi
     config:
-        enabled: false
+      enabled: false
     description: Koulutusten koulutuskoodit purettu auki tauluun
     columns:
       - name: oid
@@ -483,3 +483,14 @@ models:
         data_type: timestamp with time zone
       - name: organisaatio_oid
         data_type: text
+  - name: int_hakukohde_yos
+    description: |-
+      Tämä malli luo YOS-käsittelyä varten tarvittavat tiedot. Raportti on parametroìtu jos halutaan että päivämäärärajaus vaikuttaa yos päättelyyn tai ei.
+      Tämä parametri löytyy taulusta raw.parameters arvolla yos_pvm_rajaus, ja arvot siellä voi olla false tai true. Jos arvo on true, otetaan YOS-logiikassa huomioon päivämäärärajausta. Tälle ole erillistä ylläpitoa, vaan parametri vaihdetaan suoraan kannassa ```update raw.parameters set value = 'true' where parameter = 'yos_pvm_rajaus'``
+    columns:
+      - name: hakukohde_oid
+        data_type: text
+      - name: koulutusasteet
+        data_type: jsonb
+      - name: yos
+        data_type: boolean

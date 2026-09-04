@@ -6,6 +6,21 @@
     ]
     )
 }}
+
+{% if execute %}
+
+    {% set parameter_query %}
+        select value::boolean
+        from raw.parameters
+        where parameter = 'yos_pvm_rajaus'
+    {% endset %}
+
+    {% set parameter_result = run_query(parameter_query) %}
+    {% set add_yos_pvm_rajaus = parameter_result.rows[0][0] %}
+
+{% endif %}
+
+
 with hakukohde as (
     select
         hakukohde_oid,
@@ -107,8 +122,10 @@ select
 		and johtaatutkintoon
 		and coalesce(kohdejoukontarkennekoodiuri not in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1'), true)
 		and coalesce (kohdejoukkokoodiuri = 'haunkohdejoukko_12#1',false)
+        {%- if add_yos_pvm_rajaus %}
         and coalesce(haku_alkaa >= '2026-08-01'::timestamptz, false)
         and coalesce(koulutus_alkaa >= '2027-01-01'::timestamptz, false)
+        {% endif -%}
 		and not exists (
 			select 1 from ei_yos_hakukohteet e
             where e.jarjestyspaikka_oid = rows.jarjestyspaikka_oid)
