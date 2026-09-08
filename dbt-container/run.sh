@@ -34,7 +34,9 @@ done
 
 if [[ ${#extra_parameters[@]} -eq 0 ]]; then
   dbt seed -s tag:seed --target=prod
-  dbt run-operation create_raw_tables --target=prod
+
+#  kommentoitu pois koska nämä taulut tarvitaan reilusti aikaisemmin kehitysvaiheessa
+#  dbt run-operation create_raw_tables --target=prod
 fi
 
 is_error="0"
