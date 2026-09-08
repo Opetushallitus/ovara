@@ -8,7 +8,7 @@
 }}
 
 with koulutus as (
-    select * from {{ ref('int_kouta_koulutus') }}
+    select * from {{ ref('int_koulutus') }}
 ),
 
 final as (
