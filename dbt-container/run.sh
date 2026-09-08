@@ -23,13 +23,6 @@ fi
 echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
-if [[ ${#extra_parameters[@]} -eq 0 ]]; then
-  dbt seed -s tag:seed --target=prod
-  dbt run-operation create_raw_tables --target=prod
-fi
-
-is_error="0"
-
 # Kontille annetut parametrit välitetään dbt build -komennolle sellaisenaan.
 # Tyhjät parametrit suodatetaan pois, jotta dbt ei saa tyhjää argumenttia.
 extra_parameters=()
@@ -38,6 +31,14 @@ for parameter in "$@"; do
     extra_parameters+=("$parameter")
   fi
 done
+
+if [[ ${#extra_parameters[@]} -eq 0 ]]; then
+  dbt seed -s tag:seed --target=prod
+  dbt run-operation create_raw_tables --target=prod
+fi
+
+is_error="0"
+
 
 if [[ ${#extra_parameters[@]} -eq 0 ]]; then
   echo "Running DBT without any extra paramaters"
