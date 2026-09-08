@@ -48,8 +48,8 @@ if [[ ${#extra_parameters[@]} -eq 0 ]]; then
   fi
   echo "Finished running DBT"
 else
-  echo "Running DBT with extra paramaters: ${extra_parameters[*]}"
-  if dbt build --target=prod "${extra_parameters[@]}"; then
+  echo "Running DBT with extra parameters: ${extra_parameters[*]}"
+  if dbt build --target=prod --exclude "resource_type:seed" "${extra_parameters[@]}"; then
   	is_error="0"
   else
     is_error="1"
