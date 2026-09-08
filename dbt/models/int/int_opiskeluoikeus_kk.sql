@@ -97,13 +97,23 @@ koulutuskoodit as (
         split_part(versioitu_koodiuri, '#', 2)::int desc
 ),
 
+koulutuskoodi as (
+    select
+        koodiarvo,
+        nimi_fi as koulutus_nimi_fi,
+        nimi_sv as koulutus_nimi_sv,
+        nimi_en as koulutus_nimi_en
+    from {{ ref('int_koodisto_koulutus') }}
+    where viimeisin_versio
+),
+
 rows as (
 	select
 	    kkoo."tunniste",
 		opoi.henkilo_oid,
-	    kkoo."nimi"->>'fi' as nimi_fi,
-	    kkoo."nimi"->>'sv' as nimi_sv,
-	    kkoo."nimi"->>'en' as nimi_en,
+	    coalesce (kkoo."nimi"->>'fi', koul.koulutus_nimi_fi) as nimi_fi,
+	    coalesce (kkoo."nimi"->>'sv', koul.koulutus_nimi_sv) as nimi_sv,
+	    coalesce (kkoo."nimi"->>'en', koul.koulutus_nimi_en) as nimi_en,
 	    kkoo."kieli",
 	    kkoo."alkuPvm" as alku_pvm,
 	    kkoo."loppuPvm" as loppu_pvm,
@@ -145,6 +155,8 @@ rows as (
 	    "isTutkintoonJohtava"   boolean,
         "liittyvaOpiskeluoikeusAvain" text
 	) on true
+
+    left join koulutuskoodi as koul on kkoo."koulutusKoodi" = koul.koodiarvo
 ),
 
 final as (
@@ -165,7 +177,7 @@ final as (
         vira.nimi_en as virta_rahoituslahde_nimi_en,
         koko.koulutusaste,
         virta_opiskeluoikeuden_tila in ('1','2','4','7') and
-	        virta_rahoituslahde not in ('4') and
+	        coalesce(virta_rahoituslahde,'-1') not in ('4') and
 	        virta_opiskeluoikeuden_tyyppi in ('1','2','3','4') and
 	        coalesce(virta_opiskeluoikeuden_luokittelu,'0') not in ('6','7')
         as yos
