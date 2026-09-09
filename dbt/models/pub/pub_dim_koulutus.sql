@@ -10,7 +10,7 @@ with koulutus as (
     select
         *,
         koulutuksetkoodiuri ->> 0 as koulutus_koodi
-    from {{ ref('int_kouta_koulutus') }}
+    from {{ ref('int_koulutus') }}
 ),
 
 opintojenlaajuusyksikko as (

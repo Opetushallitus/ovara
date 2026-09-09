@@ -48,7 +48,7 @@ koulutus as (
         koulutus_oid,
         koulutuksetkoodiuri,
         johtaatutkintoon
-    from {{ ref('int_kouta_koulutus') }}
+    from {{ ref('int_koulutus') }}
 ),
 
 haku as (

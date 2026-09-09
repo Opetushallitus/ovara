@@ -23,11 +23,6 @@ fi
 echo "Merkitään DynamoDB:hen että prosessi on ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='true' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null
 
-dbt seed -s tag:seed --target=prod
-dbt run-operation create_raw_tables --target=prod
-
-is_error="0"
-
 # Kontille annetut parametrit välitetään dbt build -komennolle sellaisenaan.
 # Tyhjät parametrit suodatetaan pois, jotta dbt ei saa tyhjää argumenttia.
 extra_parameters=()
@@ -38,6 +33,16 @@ for parameter in "$@"; do
 done
 
 if [[ ${#extra_parameters[@]} -eq 0 ]]; then
+  dbt seed -s tag:seed --target=prod
+
+#  kommentoitu pois koska nämä taulut tarvitaan reilusti aikaisemmin kehitysvaiheessa
+#  dbt run-operation create_raw_tables --target=prod
+fi
+
+is_error="0"
+
+
+if [[ ${#extra_parameters[@]} -eq 0 ]]; then
   echo "Running DBT without any extra paramaters"
   if dbt build --target=prod --exclude "resource_type:seed"; then
   	is_error="0"
@@ -46,7 +51,7 @@ if [[ ${#extra_parameters[@]} -eq 0 ]]; then
   fi
   echo "Finished running DBT"
 else
-  echo "Running DBT with extra paramaters: ${extra_parameters[*]}"
+  echo "Running DBT with extra parameters: ${extra_parameters[*]}"
   if dbt build --target=prod --exclude "resource_type:seed" "${extra_parameters[@]}"; then
   	is_error="0"
   else
@@ -57,24 +62,26 @@ fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
-if [ $is_error -eq "0" ]; then
-	start=$(date +%s)
-	dbt run-operation tempdata_cleanup --target=prod
-	echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
+if [[ ${#extra_parameters[@]} -eq 0 ]]; then
+  if [ $is_error -eq "0" ]; then
+    start=$(date +%s)
+    dbt run-operation tempdata_cleanup --target=prod
+    echo "Siivouksen kesto `expr $(date +%s) - ${start}` s"
 
-	echo "Generoidaan dokumentaatio"
-	dbt docs generate --target=prod
+    echo "Generoidaan dokumentaatio"
+    dbt docs generate --target=prod
 
-	echo "Kopioidaan dokumentaatio S3:een"
-	aws s3 cp ./target/catalog.json s3://$OVARA_DOC_BUCKET/dbt/catalog.json
-	aws s3 cp ./target/index.html s3://$OVARA_DOC_BUCKET/dbt/index.html
-	aws s3 cp ./target/manifest.json s3://$OVARA_DOC_BUCKET/dbt/manifest.json
+    echo "Kopioidaan dokumentaatio S3:een"
+    aws s3 cp ./target/catalog.json s3://$OVARA_DOC_BUCKET/dbt/catalog.json
+    aws s3 cp ./target/index.html s3://$OVARA_DOC_BUCKET/dbt/index.html
+    aws s3 cp ./target/manifest.json s3://$OVARA_DOC_BUCKET/dbt/manifest.json
+  fi
+
+  echo "Kopioidaan lokit S3:een"
+  CURRENT_TIME="$(TZ=Europe/Helsinki date +%Y-%m-%d_%H:%M:%S%Z)"
+  echo "$CURRENT_TIME"
+  aws s3 cp ./logs s3://$DBT_LOGS_BUCKET/$CURRENT_TIME --recursive --include 'logs/dbt.log*' --content-type 'text/plain'
 fi
-
-echo "Kopioidaan lokit S3:een"
-CURRENT_TIME="$(TZ=Europe/Helsinki date +%Y-%m-%d_%H:%M:%S%Z)"
-echo "$CURRENT_TIME"
-aws s3 cp ./logs s3://$DBT_LOGS_BUCKET/$CURRENT_TIME --recursive --include 'logs/dbt.log*' --content-type 'text/plain'
 
 echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='dbt-scheduled-task' RETURNING ALL NEW *" > /dev/null

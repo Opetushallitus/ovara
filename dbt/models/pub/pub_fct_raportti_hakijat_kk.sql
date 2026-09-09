@@ -11,7 +11,8 @@
 }}
 
 with haku as (
-    select * from {{ ref('int_kouta_haku') }}
+    select haku_oid from {{ ref('int_kouta_haku') }}
+    where haun_tyyppi = 'korkeakoulu'
 ),
 
 hakutoive as (
@@ -22,7 +23,9 @@ hakutoive as (
         henkilo_oid,
         hakukohde_oid
     from {{ ref('int_hakutoive') }} as hate
-    inner join haku on hate.haku_oid = haku.haku_oid and haku.haun_tyyppi = 'korkeakoulu'
+    where exists (
+        select 1 from haku where hate.haku_oid = haku.haku_oid
+    )
 ),
 
 maksuvelvollisuus as (
@@ -42,7 +45,7 @@ final as (
         mave.maksuvelvollisuus
     from hakutoive as hato
     left join hakemus as hake on hato.hakutoive_id = hake.hakutoive_id
-    left join maksuvelvollisuus as mave on hake.hakutoive_id = mave.hakutoive_id
+    left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
 
 
 )

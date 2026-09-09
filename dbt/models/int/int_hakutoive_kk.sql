@@ -37,8 +37,6 @@ hakemus as (
                 '1900-01-01'::timestamptz
         )
     {% endif %}
-    and kasittelymerkinnat @> '[{"requirement": "eligibility-state"}]'
-    and tiedot ? 'higher-completed-base-education'
 ),
 
 hakutoive as (
