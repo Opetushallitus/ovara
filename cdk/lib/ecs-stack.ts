@@ -171,8 +171,7 @@ export class EcsStack extends cdk.Stack {
                 this,
                 `${config.environment}-dbtThreads`,
                 {
-                  parameterName: `/${config.environment}/ecs/dbt-runner/threads`,
-                  forceDynamicReference: true,
+                  parameterName: `/${config.environment}/ecs/dbt-runner/threads`
                 }
               )
             ),
