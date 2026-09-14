@@ -166,6 +166,15 @@ export class EcsStack extends cdk.Stack {
                 }
               )
             ),
+            DBT_THREADS_PROD: ecs.Secret.fromSsmParameter(
+              ssm.StringParameter.fromStringParameterAttributes(
+                this,
+                `${config.environment}-dbtThreads`,
+                {
+                  parameterName: `/${config.environment}/ecs/dbt-runner/threads`
+                }
+              )
+            ),
           },
         },
         schedule: dbtRunnerSchedule,
