@@ -9,7 +9,7 @@
 
 with hakemus as (
     select * from {{ ref('int_ataru_hakemus') }}
-    where kasittelymerkinnat is not null
+    where jsonb_typeof(kasittelymerkinnat) = 'array'
 ),
 
 final as (
