@@ -9,7 +9,9 @@ import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import { ContainerInsights } from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
+import * as events from 'aws-cdk-lib/aws-events';
 import { CfnRule } from 'aws-cdk-lib/aws-events';
+import * as eventsTargets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Effect } from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
@@ -76,6 +78,54 @@ export class EcsStack extends cdk.Stack {
     });
 
     const ovaraCustomMetricsNamespace = `${config.environment}-OvaraCustomMetrics`;
+
+    // Kontin käynnistymisen ja epäonnistuneen lopetuksen valvonta. Näihin ei voi
+    // käyttää lokipohjaisia metriikkasuodattimia, koska kontti ei ehdi kirjoittaa
+    // lokiriviä lainkaan jos sen käynnistys epäonnistuu.
+    const addTaskFailureRules = (
+      scheduledTask: ecsPatterns.ScheduledFargateTask,
+      namePrefix: string,
+      taskDescription: string
+    ) => {
+      const taskGroup = `family:${scheduledTask.taskDefinition.family}`;
+
+      new events.Rule(this, `${config.environment}-${namePrefix}-failed-to-start-rule`, {
+        ruleName: `${config.environment}-${namePrefix}-failed-to-start-rule`,
+        description: `${taskDescription}: kontin käynnistys epäonnistui`,
+        eventPattern: {
+          source: ['aws.ecs'],
+          detailType: ['ECS Task State Change'],
+          detail: {
+            clusterArn: [ecsCluster.clusterArn],
+            lastStatus: ['STOPPED'],
+            stopCode: ['TaskFailedToStart'],
+            group: [taskGroup],
+          },
+        },
+        targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
+      });
+
+      // exitCode-ehto on pakollinen: myös onnistunut ajo päättyy
+      // EssentialContainerExited-koodilla, joten ilman sitä hälytys lähtisi joka ajosta.
+      new events.Rule(this, `${config.environment}-${namePrefix}-exited-nonzero-rule`, {
+        ruleName: `${config.environment}-${namePrefix}-exited-nonzero-rule`,
+        description: `${taskDescription}: kontti päättyi virheeseen`,
+        eventPattern: {
+          source: ['aws.ecs'],
+          detailType: ['ECS Task State Change'],
+          detail: {
+            clusterArn: [ecsCluster.clusterArn],
+            lastStatus: ['STOPPED'],
+            stopCode: ['EssentialContainerExited'],
+            group: [taskGroup],
+            containers: {
+              exitCode: [{ 'anything-but': [0] }],
+            },
+          },
+        },
+        targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
+      });
+    };
 
     /* DBT Runner starts */
 
@@ -171,7 +221,7 @@ export class EcsStack extends cdk.Stack {
                 this,
                 `${config.environment}-dbtThreads`,
                 {
-                  parameterName: `/${config.environment}/ecs/dbt-runner/threads`
+                  parameterName: `/${config.environment}/ecs/dbt-runner/threads`,
                 }
               )
             ),
@@ -337,6 +387,8 @@ export class EcsStack extends cdk.Stack {
       metricNamespace: ovaraCustomMetricsNamespace,
       metricValue: '$kesto',
     });
+
+    addTaskFailureRules(dbtRunnerScheduledFargateTask, 'dbt-task', 'DBT-ajo');
 
     /* DBT Runner ends */
 
@@ -683,6 +735,12 @@ export class EcsStack extends cdk.Stack {
       metricNamespace: ovaraCustomMetricsNamespace,
       metricValue: '$kesto',
     });
+
+    addTaskFailureRules(
+      lampiSiirtajaScheduledFargateTask,
+      'lampi-siirtaja-task',
+      'Ovaran tietojen siirto Lampeen'
+    );
 
     /* Lampi-siirtäjä ends */
 

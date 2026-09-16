@@ -17,11 +17,21 @@ aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET on
 start=$(date +%s)
 
 cd /root
-java -jar ovara-lampi-siirtaja.jar
+# if-rakenne ohittaa set -e:n, jotta prosessilukko ehditään vapauttaa ennen
+# virheeseen poistumista.
+if java -jar ovara-lampi-siirtaja.jar; then
+  is_error="0"
+else
+  is_error="1"
+fi
 
 echo "Ajon kesto `expr $(date +%s) - ${start}` s"
 
 echo "Merkitään DynamoDB:hen että prosessi ei ole enää ajossa"
 aws dynamodb execute-statement --statement "UPDATE ecsProsessiOnKaynnissa SET onKaynnissa='false' WHERE prosessi='lampi-scheduled-task' RETURNING ALL NEW *"
+
+if [ $is_error -eq "1" ]; then
+  exit 1
+fi
 
 exit 0
