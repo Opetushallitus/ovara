@@ -52,7 +52,7 @@ export const tiedostot: Tiedostot = {
     intervalHours: 6,
   },
   onr_henkilo: {
-    lampiKey: 'fulldump/oppijanumerorekisteri/v3/json/henkilo.json',
+    lampiKey: 'fulldump/oppijanumerorekisteri/v4/json/henkilo.json',
     ovaraKeyTemplate: 'onr/onr_henkilo__{}__{}_{}.json',
     batchSize: 500000,
   },
