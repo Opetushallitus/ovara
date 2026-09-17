@@ -358,6 +358,29 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
+    // run.sh:n omat ERROR-rivit samaan metriikkaan. CloudWatch ei salli ?-operaattorin ja
+    // poissulkevien termien yhdistämistä samaan suodattimeen (?-termit jätettäisiin
+    // hiljaisesti huomiotta), joten kirjainkoon variantit tehdään omina suodattiminaan.
+    // Pelkkä pieni kirjainkoko ("error") jätetty pois, koska se osuisi liian herkästi
+    // dbt:n omaan tulosteeseen (esim. SQL-teksti ja polut).
+    const dbtRunnerErrorTerms = [
+      { suffix: 'Upper', term: 'ERROR' },
+      { suffix: 'Capitalized', term: 'Error' },
+    ];
+
+    dbtRunnerErrorTerms.forEach(({ suffix, term }) => {
+      new logs.MetricFilter(
+        this,
+        `${config.environment}-dbtRunnerError${suffix}MetricFilter`,
+        {
+          filterPattern: logs.FilterPattern.literal(`"${term}" -"WARN" -"INFO"`),
+          logGroup: dbtTaskLogGroup,
+          metricName: dbtRunnerFailedErrorMetricName,
+          metricNamespace: ovaraCustomMetricsNamespace,
+        }
+      );
+    });
+
     const dbtRunnerFailedErrorAlarm = new cloudwatch.Alarm(this, 'AlarmId', {
       metric: dbtRunnerFailedErrorMetric,
       evaluationPeriods: 3,

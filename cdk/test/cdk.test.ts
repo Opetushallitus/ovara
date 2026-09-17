@@ -154,4 +154,38 @@ describe('EcsStack lokipohjaiset hälytykset', () => {
       ]),
     });
   });
+
+  // CloudWatch ei salli ?-operaattorin ja poissulkevien termien yhdistämistä samaan
+  // suodattimeen, joten kirjainkoon variantit ovat omia suodattimiaan samaan metriikkaan.
+  test.each(['ERROR', 'Error'])(
+    'dbt-kontin %s-suodatin ohjautuu DbtRunnerFailedError-metriikkaan',
+    (term) => {
+      buildEcsStackTemplate().hasResourceProperties('AWS::Logs::MetricFilter', {
+        FilterPattern: `"${term}" -"WARN" -"INFO"`,
+        MetricTransformations: Match.arrayWith([
+          Match.objectLike({ MetricName: 'DbtRunnerFailedError' }),
+        ]),
+      });
+    }
+  );
+
+  test('dbt-kontin virhesuodattimia on kolme ja kaikki samassa metriikassa', () => {
+    const filters = buildEcsStackTemplate().findResources('AWS::Logs::MetricFilter');
+
+    const dbtErrorPatterns = Object.values(filters)
+      .filter((f) =>
+        f.Properties.MetricTransformations.some(
+          (t: { MetricName: string }) => t.MetricName === 'DbtRunnerFailedError'
+        )
+      )
+      .map((f) => f.Properties.FilterPattern);
+
+    expect(dbtErrorPatterns.sort()).toEqual(
+      [
+        '"Done. PASS" -"ERROR=0"',
+        '"ERROR" -"WARN" -"INFO"',
+        '"Error" -"WARN" -"INFO"',
+      ].sort()
+    );
+  });
 });
