@@ -121,6 +121,57 @@ describe('EcsStack ECS-tehtävien valvonta', () => {
     expect(new Set(taskGroups).size).toBe(2);
   });
 
+  test('jokainen sääntö lähettää Chatbotin custom notification -viestin', () => {
+    const rules = buildEcsStackTemplate().findResources('AWS::Events::Rule');
+
+    const taskRules = Object.values(rules).filter((rule) =>
+      String(rule.Properties.Name).includes('-task-')
+    );
+    expect(taskRules).toHaveLength(4);
+
+    taskRules.forEach((rule) => {
+      const transformer = rule.Properties.Targets[0].InputTransformer;
+      expect(transformer).toBeDefined();
+
+      // InputTemplate on merkkijono, tai Fn::Join jos region on token.
+      const raw = transformer.InputTemplate;
+      const template: string =
+        typeof raw === 'string'
+          ? raw
+          : raw['Fn::Join'][1]
+              .map((part: unknown) => (typeof part === 'string' ? part : 'eu-west-1'))
+              .join('');
+      const message = JSON.parse(template);
+
+      expect(message.version).toBe('1.0');
+      expect(message.source).toBe('custom');
+      expect(message.content.textType).toBe('client-markdown');
+      expect(message.content.description.length).toBeGreaterThan(0);
+      expect(message.content.title.length).toBeLessThanOrEqual(250);
+
+      // stopCode on aina mukana; taskArn yksilöi tehtävän.
+      expect(Object.values(transformer.InputPathsMap)).toEqual(
+        expect.arrayContaining(['$.detail.stopCode', '$.detail.taskArn'])
+      );
+    });
+  });
+
+  // EventBridge ei escapeta poimittuja arvoja, joten vapaamuotoiset kentät rikkoisivat
+  // JSONin jos ne sisältäisivät lainausmerkkejä.
+  test('viesteissä ei käytetä vapaamuotoisia kenttiä', () => {
+    const rules = buildEcsStackTemplate().findResources('AWS::Events::Rule');
+
+    Object.values(rules)
+      .filter((rule) => String(rule.Properties.Name).includes('-task-'))
+      .forEach((rule) => {
+        const paths = Object.values(
+          rule.Properties.Targets[0].InputTransformer.InputPathsMap
+        );
+        expect(paths).not.toContain('$.detail.stoppedReason');
+        expect(paths).not.toContain('$.detail.containers[0].reason');
+      });
+  });
+
   test('hälytykset ohjataan Slack-integraation SNS-topiciin', () => {
     const template = buildEcsStackTemplate();
     const rules = template.findResources('AWS::Events::Rule');
@@ -137,13 +188,13 @@ describe('EcsStack ECS-tehtävien valvonta', () => {
 describe('EcsStack lokipohjaiset hälytykset', () => {
   // Nämä suodattimet ovat sopimus sovelluksen tulostamien lokirivien kanssa:
   // sanamuodon muuttaminen rikkoo valvonnan hiljaisesti.
-  test('dbt-ajon virhesuodatin tunnistaa epäonnistuneen ajon yhteenvetorivin', () => {
-    buildEcsStackTemplate().hasResourceProperties('AWS::Logs::MetricFilter', {
-      FilterPattern: '"Done. PASS" -"ERROR=0"',
-      MetricTransformations: Match.arrayWith([
-        Match.objectLike({ MetricName: 'DbtRunnerFailedError' }),
-      ]),
-    });
+  // dbt:n oma "Done. PASS ... ERROR=n" -yhteenvetorivin suodatin on kommentoitu pois
+  // ecs-stack.ts:ssä (ks. TODO): tarkoitus on siirtyä exit code -pohjaiseen hälytykseen.
+  test('dbt-ajon yhteenvetorivin suodatinta ei enää luoda', () => {
+    const filters = buildEcsStackTemplate().findResources('AWS::Logs::MetricFilter');
+
+    const patterns = Object.values(filters).map((f) => f.Properties.FilterPattern);
+    expect(patterns).not.toContain('"Done. PASS" -"ERROR=0"');
   });
 
   test('Lampi-siirtäjän virhesuodatin tunnistaa ERROR-tason lokirivit', () => {
@@ -169,7 +220,7 @@ describe('EcsStack lokipohjaiset hälytykset', () => {
     }
   );
 
-  test('dbt-kontin virhesuodattimia on kolme ja kaikki samassa metriikassa', () => {
+  test('dbt-kontin virhesuodattimia on kaksi ja molemmat samassa metriikassa', () => {
     const filters = buildEcsStackTemplate().findResources('AWS::Logs::MetricFilter');
 
     const dbtErrorPatterns = Object.values(filters)
@@ -181,11 +232,7 @@ describe('EcsStack lokipohjaiset hälytykset', () => {
       .map((f) => f.Properties.FilterPattern);
 
     expect(dbtErrorPatterns.sort()).toEqual(
-      [
-        '"Done. PASS" -"ERROR=0"',
-        '"ERROR" -"WARN" -"INFO"',
-        '"Error" -"WARN" -"INFO"',
-      ].sort()
+      ['"ERROR" -"WARN" -"INFO"', '"Error" -"WARN" -"INFO"'].sort()
     );
   });
 });

@@ -85,10 +85,44 @@ export class EcsStack extends cdk.Stack {
     const addTaskFailureRules = (
       scheduledTask: ecsPatterns.ScheduledFargateTask,
       namePrefix: string,
-      taskDescription: string
+      taskDescription: string,
+      taskLogGroupName: string
     ) => {
       const taskGroup = `family:${scheduledTask.taskDefinition.family}`;
 
+      // CloudWatch-konsolin URL-fragmentissa '/' kirjoitetaan kahdesti enkoodattuna
+      // muotoon $252F, esim. /aws/ecs/task/x -> $252Faws$252Fecs$252Ftask$252Fx.
+      // Nimi otetaan merkkijonona, ei LogGroup-oliosta, koska logGroupName on token.
+      const logGroupPath = taskLogGroupName.split('/').join('$252F');
+      const logGroupUrl =
+        `https://${this.region}.console.aws.amazon.com/cloudwatch/home` +
+        `?region=${this.region}#logsV2:log-groups/log-group/${logGroupPath}`;
+
+      // Chatbotin oma ECS-esitys ei näytä stopCodea eikä exit codea, joten viesti
+      // rakennetaan Chatbotin custom notification -skeemaan.
+      //
+      // TÄRKEÄÄ: viestiin otetaan vain kenttiä, jotka eivät voi sisältää lainausmerkkejä
+      // tai rivinvaihtoja. EventBridge ei escapeta input transformerin poimimia arvoja,
+      // ja CDK sijoittaa ne JSON-merkkijonon sisään, joten esim. stoppedReason
+      // ("CannotPullContainerError: ... \"manifest unknown\"") rikkoisi JSONin ja viesti
+      // jäisi kokonaan lähettämättä. Vapaamuotoiset kentät vaatisivat välinä Lambdan.
+      const slackMessage = (heading: string, lines: Array<string>) =>
+        events.RuleTargetInput.fromObject({
+          version: '1.0',
+          source: 'custom',
+          content: {
+            textType: 'client-markdown',
+            title: `:rotating_light: ${config.environment}: ${heading}`,
+            description: lines.join('\n'),
+            nextSteps: [`Lokit: <${logGroupUrl}|${taskLogGroupName}>`],
+            keywords: [config.environment, 'ECS', namePrefix],
+          },
+        });
+
+      // Huom: containers[0] on kiinteä indeksi – input transformer ei osaa valita sitä
+      // konttia jonka exit code on nollasta poikkeava. Task definitioneissamme on vain
+      // yksi kontti, joten indeksi 0 on oikea. Jos AWS injektoi sivuvaunukontin
+      // (esim. GuardDuty runtime monitoring), tieto voi koskea väärää konttia.
       new events.Rule(this, `${config.environment}-${namePrefix}-failed-to-start-rule`, {
         ruleName: `${config.environment}-${namePrefix}-failed-to-start-rule`,
         description: `${taskDescription}: kontin käynnistys epäonnistui`,
@@ -102,7 +136,15 @@ export class EcsStack extends cdk.Stack {
             group: [taskGroup],
           },
         },
-        targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
+        targets: [
+          new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic, {
+            message: slackMessage(`${taskDescription} – kontin käynnistys epäonnistui`, [
+              `*Pysäytyskoodi:* ${events.EventField.fromPath('$.detail.stopCode')}`,
+              `*Tehtävä:* ${events.EventField.fromPath('$.detail.taskArn')}`,
+              `*Pysäytetty:* ${events.EventField.fromPath('$.detail.stoppedAt')}`,
+            ]),
+          }),
+        ],
       });
 
       // exitCode-ehto on pakollinen: myös onnistunut ajo päättyy
@@ -123,7 +165,18 @@ export class EcsStack extends cdk.Stack {
             },
           },
         },
-        targets: [new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic)],
+        targets: [
+          new eventsTargets.SnsTopic(props.slackAlarmIntegrationSnsTopic, {
+            message: slackMessage(`${taskDescription} – kontti päättyi virhekoodiin`, [
+              `*Kontti:* ${events.EventField.fromPath('$.detail.containers[0].name')}` +
+                ` (exit code ${events.EventField.fromPath('$.detail.containers[0].exitCode')})`,
+              `*Pysäytyskoodi:* ${events.EventField.fromPath('$.detail.stopCode')}`,
+              `*Tehtävä:* ${events.EventField.fromPath('$.detail.taskArn')}`,
+              `*Käynnistetty:* ${events.EventField.fromPath('$.detail.startedAt')}`,
+              `*Pysäytetty:* ${events.EventField.fromPath('$.detail.stoppedAt')}`,
+            ]),
+          }),
+        ],
       });
     };
 
@@ -347,7 +400,9 @@ export class EcsStack extends cdk.Stack {
       statistic: cloudwatch.Stats.SUM,
     });
 
-    new logs.MetricFilter(
+    //Todo, poistetaan tämä "tuplahäly" kun on varmistettu että virheitä sisältäneen dbt-ajon exit-koodi on jotain muuta kuin 0
+    // ja siitä seuraa uuden mallin mukainen exit code-hälytys
+    /*    new logs.MetricFilter(
       this,
       `${config.environment}-dbtRunnerFailedErrorMetricFilter`,
       {
@@ -356,7 +411,7 @@ export class EcsStack extends cdk.Stack {
         metricName: dbtRunnerFailedErrorMetricName,
         metricNamespace: ovaraCustomMetricsNamespace,
       }
-    );
+    );*/
 
     // run.sh:n omat ERROR-rivit samaan metriikkaan. CloudWatch ei salli ?-operaattorin ja
     // poissulkevien termien yhdistämistä samaan suodattimeen (?-termit jätettäisiin
@@ -411,7 +466,12 @@ export class EcsStack extends cdk.Stack {
       metricValue: '$kesto',
     });
 
-    addTaskFailureRules(dbtRunnerScheduledFargateTask, 'dbt-task', 'DBT-ajo');
+    addTaskFailureRules(
+      dbtRunnerScheduledFargateTask,
+      'dbt-task',
+      'DBT-ajo',
+      `/aws/ecs/task/${dbtFargateTaskName}`
+    );
 
     /* DBT Runner ends */
 
@@ -762,7 +822,8 @@ export class EcsStack extends cdk.Stack {
     addTaskFailureRules(
       lampiSiirtajaScheduledFargateTask,
       'lampi-siirtaja-task',
-      'Ovaran tietojen siirto Lampeen'
+      'Ovaran tietojen siirto Lampeen',
+      `/aws/ecs/task/${lampiSiirtajaFargateTaskName}`
     );
 
     /* Lampi-siirtäjä ends */
