@@ -26,6 +26,9 @@ public class DatabaseToS3 {
     Class.forName("org.postgresql.Driver");
   }
 
+  private static final int EXPORT_MAX_YRITYKSET = 3;
+  private static final long EXPORT_RETRY_VIIVE_MS = 10_000L;
+
   private static final String GET_TABLE_NAMES_SQL =
       """
         select table_name as tablename
@@ -79,7 +82,50 @@ public class DatabaseToS3 {
   }
 
   private S3ExportResult exportTableToS3(String schemaName, String tableName) throws Exception {
-    LOG.info("Aloitetaan scheman {} taulun {} vienti Ovaran S3-ämpäriin", schemaName, tableName);
+    Exception viimeisinVirhe = null;
+
+    for (int yritys = 1; yritys <= EXPORT_MAX_YRITYKSET; yritys++) {
+      try {
+        return exportTableToS3Once(schemaName, tableName, yritys);
+      } catch (Exception e) {
+        viimeisinVirhe = e;
+        LOG.warn(
+            "Scheman {} taulun {} vienti Ovaran S3-ämpäriin epäonnistui (yritys {}/{})",
+            schemaName,
+            tableName,
+            yritys,
+            EXPORT_MAX_YRITYKSET,
+            e);
+
+        if (yritys < EXPORT_MAX_YRITYKSET) {
+          long odotusMs = EXPORT_RETRY_VIIVE_MS * yritys;
+          LOG.info(
+              "Odotetaan {} ms ennen scheman {} taulun {} viennin uudelleenyritystä",
+              odotusMs,
+              schemaName,
+              tableName);
+          Thread.sleep(odotusMs);
+        }
+      }
+    }
+
+    LOG.error(
+        "Scheman {} taulun {} vienti Ovaran S3-ämpäriin epäonnistui {} yrityksen jälkeen",
+        schemaName,
+        tableName,
+        EXPORT_MAX_YRITYKSET,
+        viimeisinVirhe);
+    throw new RuntimeException(viimeisinVirhe);
+  }
+
+  private S3ExportResult exportTableToS3Once(String schemaName, String tableName, int yritys)
+      throws Exception {
+    LOG.info(
+        "Aloitetaan scheman {} taulun {} vienti Ovaran S3-ämpäriin (yritys {}/{})",
+        schemaName,
+        tableName,
+        yritys,
+        EXPORT_MAX_YRITYKSET);
     ResultSetHandler<S3ExportResult> h = new BeanHandler<S3ExportResult>(S3ExportResult.class);
 
     Connection connection = getConnection();
@@ -103,10 +149,6 @@ public class DatabaseToS3 {
           s3ExportResult.toString());
 
       return s3ExportResult;
-    } catch (Exception e) {
-      LOG.error(
-          "Scheman {} taulun {} vienti Ovaran S3-ämpäriin epäonnistui", schemaName, tableName, e);
-      throw new RuntimeException(e);
     } finally {
       DbUtils.close(connection);
     }
