@@ -32,10 +32,11 @@ public class App {
     LampiSiirtajaService service = new LampiSiirtajaService(config);
     try {
       service.run();
+      LOG.info("Ovaran tietojen siirto Lampeen valmistui");
     } catch (Throwable t) {
+      // Poistutaan virhekoodilla, jotta ECS näkee ajon epäonnistuneen.
       LOG.error("Ovaran tietojen siirto Lampeen epäonnistui", t);
+      System.exit(1);
     }
-
-    LOG.info("Ovaran tietojen siirto Lampeen valmistui");
   }
 }
