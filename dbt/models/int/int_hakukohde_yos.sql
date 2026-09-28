@@ -120,7 +120,7 @@ select
 	koulutusasteet,
 	koulutusasteet ?| ARRAY['62', '63', '71', '72']
 		and johtaatutkintoon
-		and coalesce(kohdejoukontarkennekoodiuri not in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1'), true)
+		and coalesce(kohdejoukontarkennekoodiuri not in ('haunkohdejoukontarkenne_010#1', 'haunkohdejoukontarkenne_3#1', 'haunkohdejoukontarkenne_11#1'), true)
 		and coalesce (kohdejoukkokoodiuri = 'haunkohdejoukko_12#1',false)
         {%- if add_yos_pvm_rajaus %}
         and coalesce(haku_alkaa >= '2026-08-01'::timestamptz, false)
