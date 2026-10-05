@@ -50,7 +50,6 @@ final as (
         opetusaikakuvaus ->> 'en' as opetusaika_kuvaus_en,
         opetustapakoodiurit as opetustapa_koodiurit,
         opetustapakuvaus as opetustapa_kuvaus,
-        maksullisuustyyppi as maksullisuus_tyyppi,
         maksullisuuskuvaus ->> 'fi' as maksullisuus_kuvaus_fi,
         maksullisuuskuvaus ->> 'sv' as maksullisuus_kuvaus_sv,
         maksullisuuskuvaus ->> 'en' as maksullisuus_kuvaus_en,
