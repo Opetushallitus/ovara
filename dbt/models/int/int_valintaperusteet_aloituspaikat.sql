@@ -16,24 +16,25 @@ rows as (
         hakukohde_oid,
         (
             jsonb_array_elements(
-                jsonb_array_elements(valinnanvaiheet)->'valintatapajono'
-            )->> 'aloituspaikat'
+                jsonb_array_elements(valinnanvaiheet) -> 'valintatapajono'
+            ) ->> 'aloituspaikat'
         )::int as aloituspaikat,
         (
             jsonb_array_elements(
-                jsonb_array_elements(valinnanvaiheet)->'valintatapajono'
-            )->> 'siirretaanSijoitteluun'
-        )::boolean as siirretaanSijoitteluun
+                jsonb_array_elements(valinnanvaiheet) -> 'valintatapajono'
+            ) ->> 'siirretaanSijoitteluun'
+        )::boolean as siirretaansijoitteluun
     from hakukohde
 ),
 
 final as (
     select
         hakukohde_oid,
-        sum (
+        sum(
             case
-                when siirretaanSijoitteluun then aloituspaikat
-                else 0 end
+                when siirretaansijoitteluun then aloituspaikat
+                else 0
+            end
         ) as aloituspaikat
     from rows
     group by hakukohde_oid

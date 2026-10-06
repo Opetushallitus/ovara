@@ -34,7 +34,7 @@ final as (
             at time zone 'europe/helsinki'
         )::timestamptz) as muokattu,
         (data ->> 'deleted')::boolean as poistettu,
-        data ->> 'source'::varchar as source,
+        data ->> 'source'::varchar as source, --noqa: RF04
         {{ metadata_columns() }}
     from source
 )

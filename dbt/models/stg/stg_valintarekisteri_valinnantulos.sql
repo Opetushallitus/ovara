@@ -28,7 +28,7 @@ raw as (
         data."hyvaksyttyVarasijalta" as hyvaksyttyVarasijalta,
         data."hyvaksyPeruuntunut" as hyvaksyPeruuntunut,
         data."valinnantilanViimeisinMuutos" as valinnantilanViimeisinMuutos,
-        data."muokattu" as muokattu,
+        data.muokattu,
         {{ metadata_columns() }}  --noqa: LXR,PRS, LT02
     from source
     cross join lateral json_to_record(data) as data (
@@ -55,7 +55,7 @@ raw as (
 final as (
     select
         {{ dbt_utils.generate_surrogate_key (['hakukohde_oid','valintatapajono_oid','hakemus_oid']) }}
-        as valinnantulos_id,
+            as valinnantulos_id,
         *
     from raw
 )

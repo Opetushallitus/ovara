@@ -20,16 +20,17 @@
     )
 }}
 
-with final as  (
+with final as (
     select * from {{ ref('dw_supa_valintadata') }}
     {% if is_incremental() %}
-    where dw_metadata_dw_stored_at >= (
-        select coalesce (
-            max(dw_metadata_dw_stored_at),
-            '1900-01-01'
+        where dw_metadata_dw_stored_at >= (
+            select
+                coalesce(
+                    max(dw_metadata_dw_stored_at),
+                    '1900-01-01'
+                )
+            from {{ this }}
         )
-        from {{ this }}
-    )
     {% endif %}
 )
 
@@ -43,4 +44,4 @@ select
     dw_metadata_filename,
     dw_metadata_file_row_number,
     dw_metadata_dw_stored_at
- from final
+from final

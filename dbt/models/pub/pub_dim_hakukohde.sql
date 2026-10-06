@@ -111,7 +111,7 @@ step2 as (
         (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksen_alkamisvuosi,
         (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::date as koulutuksen_alkamispaivamaara,
         koulutuksen_alkamiskausi ->> 'henkilokohtaisenSuunnitelmanLisatiedot'
-        as henkilokohtaisen_suunnitelman_lisatiedot
+            as henkilokohtaisen_suunnitelman_lisatiedot
     from int
 ),
 

@@ -13,7 +13,7 @@
 with tulos as (
     select * from {{ ref('int_valintalaskenta_valintalaskennan_tulos') }}
     {% if is_incremental() %}
-    where dw_metadata_dw_stored_at > coalesce((select max(dw_metadata_dw_stored_at) from {{ this }}), '1900-01-01')
+        where dw_metadata_dw_stored_at > coalesce((select max(dw_metadata_dw_stored_at) from {{ this }}), '1900-01-01')
     {% endif %}
 ),
 
@@ -36,12 +36,12 @@ final as (
         vajo.obj ->> 'kaikkiEhdonTayttavatHyvaksytaan' as kaikki_ehdon_tayttavat_hyvaksytaan,
         vajo.obj::jsonb as valintatapajonot,
         dw_metadata_dw_stored_at
-    from tulos a
-    cross join lateral (select json_array_elements(valintatapajonot) ) as vajo(obj)
+    from tulos as a
+    cross join lateral (select json_array_elements(valintatapajonot)) as vajo (obj)
 
 )
 
 select * from final
 {% if target.name != 'prod' %}
-limit 100
+    limit 100 --noqa: AM09
 {% endif %}

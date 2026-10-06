@@ -47,12 +47,12 @@ arvosanat as (
 ),
 
 arvosanat_master as (
-    select distinct
+    select
         onr1.master_oid,
-        jsonb_object_agg(key, value) as arvosanat
+        jsonb_object_agg(e.key, e.value) as arvosanat
     from arvosanat as arsa
-    join onr as onr1 on arsa.henkilo_oid=onr1.henkilo_oid
-    cross join lateral jsonb_each(arsa.arvosanat::jsonb) as e(key, value)
+    inner join onr as onr1 on arsa.henkilo_oid = onr1.henkilo_oid
+    cross join lateral jsonb_each(arsa.arvosanat::jsonb) as e (key, value)
     group by onr1.master_oid
 ),
 
@@ -60,8 +60,8 @@ final as (
     select
         onr1.henkilo_oid,
         arma.arvosanat
-    from arvosanat_master arma
-    join onr onr1 on arma.master_oid=onr1.master_oid
+    from arvosanat_master as arma
+    inner join onr as onr1 on arma.master_oid = onr1.master_oid
 )
 
 select * from final

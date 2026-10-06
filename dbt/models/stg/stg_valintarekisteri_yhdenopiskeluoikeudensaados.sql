@@ -24,4 +24,3 @@ select
     {{ hakutoive_id() }},
     *
 from final
-

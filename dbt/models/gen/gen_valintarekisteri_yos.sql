@@ -16,7 +16,7 @@ final as (
     {{ dbt_utils.star(
         from=ref('int_valintarekisteri_yos'),
         except=['hakutoive_id' ]
-    )}}
+    ) }}
     from source
 )
 

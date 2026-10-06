@@ -20,7 +20,7 @@ final as (
         paat.obj ->> 'virtaOpiskeluOikeusId' as virta_opiskeluikeus_id,
         yois.muokattu
     from source as yois
-    cross join lateral (select jsonb_array_elements(paatettavat_oikeudet)) as paat(obj)
+    cross join lateral (select jsonb_array_elements(paatettavat_oikeudet)) as paat (obj)
 )
 
 select * from final

@@ -12,7 +12,7 @@ with source as ( -- noqa: PRS
 ), -- noqa: PRS
 
 rows as (
-     select
+    select
         hakemusoid,
         jsonb_array_elements(hakutoiveet) as hakutoive
     from source
@@ -21,8 +21,8 @@ rows as (
 int as (
     select
         hakemusoid as hakemus_oid,
-        hakutoive->>'hakukohdeOid' as hakukohde_oid,
-        hakutoive->>'harkinnanvaraisuudenSyy' as harkinnanvaraisuuden_syy
+        hakutoive ->> 'hakukohdeOid' as hakukohde_oid,
+        hakutoive ->> 'harkinnanvaraisuudenSyy' as harkinnanvaraisuuden_syy
     from rows
 ),
 

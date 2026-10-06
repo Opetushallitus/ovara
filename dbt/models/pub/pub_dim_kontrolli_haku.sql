@@ -81,7 +81,7 @@ alkamisajankohta as (
             end,
             '{"type": "eialkamiskautta"}'::jsonb
         )
-        as koulutuksen_alkamiskausi
+            as koulutuksen_alkamiskausi
     from alkamisajankohta_rivit
 ),
 

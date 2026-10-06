@@ -18,35 +18,36 @@
     )
 }}
 
-with raw as  (
+with raw as (
     select * from {{ ref('dw_supa_harkinnanvaraisuus') }}
     {% if is_incremental() %}
-    where dw_metadata_dw_stored_at >= (
-        select coalesce (
-            max(dw_metadata_dw_stored_at),
-            '1900-01-01'
+        where dw_metadata_dw_stored_at >= (
+            select
+                coalesce(
+                    max(dw_metadata_dw_stored_at),
+                    '1900-01-01'
+                )
+            from {{ this }}
         )
-        from {{ this }}
-    )
     {% endif %}
 ),
 
 int as (
     select
         hakemus_oid,
-        rows.value ->> 'hakukohdeOid' as hakukohde_oid,
-        rows.value ->> 'harkinnanvaraisuudenSyy' as harkinnanvaraisuus_syy,
-        (rows.value ->> 'yliajettu')::bool as harkinnanvaraisuus_yliajettu,
+        hava.value ->> 'hakukohdeOid' as hakukohde_oid,
+        hava.value ->> 'harkinnanvaraisuudenSyy' as harkinnanvaraisuus_syy,
+        (hava.value ->> 'yliajettu')::bool as harkinnanvaraisuus_yliajettu,
         dw_metadata_source_timestamp_at,
         dw_metadata_stg_stored_at,
         dw_metadata_dbt_copied_at,
         dw_metadata_filename,
         dw_metadata_file_row_number,
         dw_metadata_dw_stored_at
-    from raw hark
+    from raw as hark
     cross join lateral json_array_elements(
-        hark."data" -> 'harkinnanvaraisuudet'
-    ) as rows (value)
+        hark.data -> 'harkinnanvaraisuudet'
+    ) as hava (value)
 ),
 
 final as (
@@ -56,7 +57,7 @@ final as (
                 'hakukohde_oid']
             ) }} as hakutoive_id,
         *
-        from int
+    from int
 )
 
 select * from final

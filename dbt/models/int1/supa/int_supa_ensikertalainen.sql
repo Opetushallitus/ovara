@@ -19,16 +19,17 @@
     )
 }}
 
-with raw as  (
+with raw as (
     select * from {{ ref('dw_supa_ensikertalainen') }}
     {% if is_incremental() %}
-    where dw_metadata_dw_stored_at >= (
-        select coalesce (
-            max(dw_metadata_dw_stored_at),
-            '1900-01-01'
+        where dw_metadata_dw_stored_at >= (
+            select
+                coalesce(
+                    max(dw_metadata_dw_stored_at),
+                    '1900-01-01'
+                )
+            from {{ this }}
         )
-        from {{ this }}
-    )
     {% endif %}
 )
 
@@ -36,7 +37,7 @@ select
     hakemus_oid,
     data ->> 'henkiloOid' as henkilo_oid,
     data ->> 'hakuOid' as haku_oid,
-    (data->> 'isEnsikertalainen')::bool as isensikertalainen,
+    (data ->> 'isEnsikertalainen')::bool as isensikertalainen,
     data -> 'menettamisenPeruste' ->> 'peruste' as menettamisen_peruste,
     (data -> 'menettamisenPeruste' ->> 'paivamaara')::timestamptz as menettamisen_paivamaara,
     dw_metadata_source_timestamp_at,
