@@ -23,10 +23,10 @@ final as (
         yksilollistaminen,
         suorituskieli,
         muokattu,
-        "source" as lahde,
+        source as lahde,
         vahvistettu,
         arvot::jsonb
-from source
+    from source
 )
 
 select * from final

@@ -34,7 +34,7 @@ final as (
         syar.obj ->> 'osallistuminen' as osallistuminen,
         syar.obj ->> 'laskennallinenArvo' as laskennallinen_arvo
     from jonosijat as josi
-    cross join lateral (select jsonb_array_elements(syotetyt_arvot)) as syar(obj)
+    cross join lateral (select jsonb_array_elements(syotetyt_arvot)) as syar (obj)
 )
 
 select * from final

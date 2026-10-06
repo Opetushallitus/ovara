@@ -15,7 +15,7 @@ with source as (
 
 final as (
     select
-    resourceid as resource_id,
+        resourceid as resource_id,
         {{ dbt_utils.star(
             from=ref('int_sure_opiskelija'),
             except=['poistettu', 'source', 'resourceid']

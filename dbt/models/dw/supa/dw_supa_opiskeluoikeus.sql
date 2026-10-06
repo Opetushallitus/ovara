@@ -15,9 +15,11 @@ with source as (
     select distinct on (henkilo_oid) *
     from {{ ref('stg_supa_opiskeluoikeus') }}
     {% if is_incremental() %}
-      where dw_metadata_stg_stored_at > coalesce((select max(dw_metadata_stg_stored_at) from {{ this }}), '1900-01-01')
+        where dw_metadata_stg_stored_at > coalesce(
+            (select max(t.dw_metadata_stg_stored_at) from {{ this }} as t), '1900-01-01'
+        )
     {% endif %}
-    order by henkilo_oid, aikaleima desc
+    order by henkilo_oid asc, aikaleima desc
 )
 
 select

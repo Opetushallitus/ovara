@@ -40,11 +40,11 @@ osallistui as (
 final as (
     select
         hato.*,
-        coalesce(osal.osallistui_paasykoe,false) as osallistui_paasykoe,
-        coalesce(osal.osallistui_lisanaytto,false) as osallistui_lisanaytto,
+        coalesce(osal.osallistui_paasykoe, false) as osallistui_paasykoe,
+        coalesce(osal.osallistui_lisanaytto, false) as osallistui_lisanaytto,
         case when haut.haku_oid is null then 'sure' else 'supa' end as jarjestelma
     from hakutoive as hato
-    left join haut on hato.haku_oid=haut.haku_oid
+    left join haut on hato.haku_oid = haut.haku_oid
     left join osallistui as osal on hato.hakutoive_id = osal.hakutoive_id
 )
 

@@ -36,7 +36,7 @@ final as (
         jaki.obj -> 'kuvaus' ->> 'EN' as kuvaus_en,
         jaki.obj -> 'prioriteetti' as prioriteetti
     from jonosijat as josi
-    cross join lateral (select jsonb_array_elements(jarjestyskriteerit)) as jaki(obj)
+    cross join lateral (select jsonb_array_elements(jarjestyskriteerit)) as jaki (obj)
 )
 
 select * from final
