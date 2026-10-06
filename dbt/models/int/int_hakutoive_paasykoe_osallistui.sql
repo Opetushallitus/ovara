@@ -11,7 +11,7 @@ with pistetieto as (
         hakemus_oid,
         valintakoe_tunniste,
         osallistuminen
-        from {{ ref('int_valintalaskenta_pistetieto') }}
+    from {{ ref('int_valintalaskenta_pistetieto') }}
 ),
 
 valintaperuste as (
@@ -45,8 +45,8 @@ final as (
             vape.tyyppi = 'syotettavanarvontyypit_muu'
             and osal.osallistui
         ) as osallistui_lisanaytto
-    from osallistui osal
-    join valintaperuste vape
+    from osallistui as osal
+    inner join valintaperuste as vape
         on osal.valintakoe_tunniste = vape.tunniste
     group by
         osal.hakemus_oid,

@@ -24,7 +24,8 @@ hakutoive as (
         hakukohde_oid
     from {{ ref('int_hakutoive') }} as hate
     where exists (
-        select 1 from haku where hate.haku_oid = haku.haku_oid
+        select 1 from haku
+        where hate.haku_oid = haku.haku_oid
     )
 ),
 
@@ -46,7 +47,6 @@ final as (
     from hakutoive as hato
     left join hakemus as hake on hato.hakutoive_id = hake.hakutoive_id
     left join maksuvelvollisuus as mave on hato.hakutoive_id = mave.hakutoive_id
-
 
 )
 

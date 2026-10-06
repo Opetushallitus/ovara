@@ -25,7 +25,7 @@ raw as (
 final as (
     select
         {{ dbt_utils.generate_surrogate_key (['hakukohde_oid','henkilo_oid']) }}
-        as ilmoittautuminen_id,
+            as ilmoittautuminen_id,
         *
     from raw
 )

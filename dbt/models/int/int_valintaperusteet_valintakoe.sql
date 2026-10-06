@@ -29,18 +29,19 @@ final as (
         vako."lahetetaankoKoekutsut" as valintakoe_lahetetaanko_koekutsut
     from valintaperusteet as vape
     cross join lateral jsonb_array_elements(vape.valinnanvaiheet) as vava
-    cross join lateral jsonb_to_recordset(vava -> 'valintakoe') as vako (
-                "oid" text,
-                "nimi" text,
-                "kuvaus" text,
-                "peritty" bool,
-                "tunniste" text,
-                "aktiivinen" bool,
-                "kutsunKohde" text,
-                "lastModified" timestamptz,
-                "kutsutaankoKaikki" bool,
-                "lahetetaankoKoekutsut" bool
-    )
+    cross join
+        lateral jsonb_to_recordset(vava -> 'valintakoe') as vako (
+            "oid" text,
+            "nimi" text,
+            "kuvaus" text,
+            "peritty" bool,
+            "tunniste" text,
+            "aktiivinen" bool,
+            "kutsunKohde" text,
+            "lastModified" timestamptz,
+            "kutsutaankoKaikki" bool,
+            "lahetetaankoKoekutsut" bool
+        )
     where jsonb_array_length(vava -> 'valintakoe') > 0
 )
 

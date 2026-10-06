@@ -29,7 +29,7 @@ final as (
         data ->> 'pisteet'::varchar as pisteet,
         --data ->> 'myonnetty'::varchar as myonnetty,
         (data ->> 'myonnetty')::timestamptz as myonnetty,
-        data ->> 'source'::varchar as source,
+        data ->> 'source'::varchar as source, --noqa: RF04
         data ->> 'jarjestys'::varchar as jarjestys,
         data -> 'lahdeArvot' ->> 'arvot'::varchar as arvot,
         {{ metadata_columns() }}

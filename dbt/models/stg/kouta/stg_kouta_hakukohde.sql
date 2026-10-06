@@ -41,7 +41,7 @@ final as (
         (data -> 'hakuajat')::jsonb as hakuajat,
         (data -> 'metadata' -> 'valintakokeidenYleiskuvaus')::jsonb as valintakokeidenYleiskuvaus,
         (data -> 'metadata' -> 'valintaperusteenValintakokeidenLisatilaisuudet')::jsonb
-        as valintaperusteenValintakokeidenLisatilaisuudet,
+            as valintaperusteenValintakokeidenLisatilaisuudet,
         (data -> 'metadata' -> 'kynnysehto')::jsonb as kynnysehto,
         (data -> 'metadata' ->> 'kaytetaanHaunAlkamiskautta')::boolean as kaytetaanHaunAlkamiskautta,
         (data -> 'metadata' -> 'koulutuksenAlkamiskausi')::jsonb as koulutuksenAlkamiskausi,

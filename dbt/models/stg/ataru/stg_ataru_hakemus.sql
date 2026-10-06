@@ -52,7 +52,7 @@ final as (
         ) = 'kyllä') as sahkoinenviestintalupa,
         (lower((data -> 'keyValues' ->> 'koulutusmarkkinointilupa'::varchar)) = 'kyllä') as koulutusmarkkinointilupa,
         (lower((data -> 'keyValues' ->> 'valintatuloksen-julkaisulupa'::varchar)) = 'kyllä')
-        as valintatuloksen_julkaisulupa,
+            as valintatuloksen_julkaisulupa,
         (
             case
                 when data -> 'keyValues' ->> 'asiointikieli' = '' then null
@@ -62,7 +62,7 @@ final as (
         data -> 'keyValues' ->> 'email'::varchar as sahkoposti,
         data -> 'keyValues' ->> 'phone'::varchar as puhelin,
         data -> 'keyValues' ->> 'secondary-completed-base-education–country'::varchar
-        as pohjakoulutuksen_maa_toinen_aste,
+            as pohjakoulutuksen_maa_toinen_aste,
         (data -> 'applicationPaymentState')::jsonb as hakemusmaksut,
         (data -> 'toinenaste')::jsonb as toinen_aste,
         (data ->> 'modified_time')::timestamptz as muokattu,

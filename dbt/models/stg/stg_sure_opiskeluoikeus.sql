@@ -26,7 +26,7 @@ final as (
         data ->> 'henkiloOid'::varchar as henkilooid,
         data ->> 'komo'::varchar as komo,
         data ->> 'myontaja'::varchar as myontaja,
-        data ->> 'source'::varchar as source,
+        data ->> 'source'::varchar as source, --noqa: RF04
         --to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as inserted, #Changed column name to muokattu
         --to_timestamp((data ->> ('inserted')::varchar)::bigint /1000 ) as muokattu,
         ((

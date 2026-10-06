@@ -95,7 +95,7 @@ final as (
                     'en', concat(one ->> 'en', ', ', two ->> 'en', ', ', three ->> 'en')
                 )
         end
-        as organisaatio_nimi,
+            as organisaatio_nimi,
         toimipiste,
         toimipiste_nimi,
         oppilaitos,

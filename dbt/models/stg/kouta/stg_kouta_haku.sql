@@ -25,7 +25,7 @@ final as (
         (data ->> 'ajastettuJulkaisu')::timestamptz as ajastettuJulkaisu,
         (data ->> 'ajastettuHaunJaHakukohteidenArkistointi')::timestamptz as ajastettuHaunJaHakukohteidenArkistointi,
         (data ->> 'ajastettuHaunJaHakukohteidenArkistointiAjettu')::timestamptz
-        as ajastettuHaunJaHakukohteidenArkistointiAjettu,
+            as ajastettuHaunJaHakukohteidenArkistointiAjettu,
         data ->> 'kohdejoukkoKoodiUri'::varchar as kohdejoukkoKoodiUri,
         data ->> 'kohdejoukonTarkenneKoodiUri'::varchar as kohdejoukonTarkenneKoodiUri,
         data ->> 'hakulomaketyyppi'::varchar as hakulomaketyyppi,

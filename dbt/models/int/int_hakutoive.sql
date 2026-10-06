@@ -76,7 +76,7 @@ int as (
                 )::timestamptz
             )
         )
-        as viimeinen_vastaanottopaiva,
+            as viimeinen_vastaanottopaiva,
         vaot.vastaanottotieto,
         ilmo.tila as ilmoittautumisen_tila,
         vali.valintatapajonot,

@@ -64,8 +64,8 @@ final as (
         {{ dbt_utils.generate_surrogate_key([
                 'hato.hakemus_oid',
                 'hato.hakukohde_oid'
-         ]) }}
-        as hakutoive_id,
+        ]) }}
+            as hakutoive_id,
         hato.hakemus_oid,
         hato.hakukohde_oid,
         coalesce(sote.sora_terveys, '0') = '1' as sora_terveys,

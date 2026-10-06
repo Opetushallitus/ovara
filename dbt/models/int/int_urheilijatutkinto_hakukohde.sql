@@ -11,7 +11,7 @@ with raw as ( --noqa: PRS
         hakemus_oid,
         lomake_id,
         hakukohde,
-        jsonb_object_keys(tiedot) as keys,
+        jsonb_object_keys(tiedot) as keys, --noqa: RF04
         tiedot
     from {{ ref('int_ataru_hakemus') }}
     where
@@ -31,19 +31,21 @@ rows as (
         hakukohde,
         lomake_id,
         case
-    	    when keys in ('ammatillinen_perustutkinto_urheilijana') then keys
-	        else key_hakukohde
+            when keys in ('ammatillinen_perustutkinto_urheilijana') then keys
+            else key_hakukohde
         end as hakukohde_oid,
-		case
-	        when keys in ('ammatillinen_perustutkinto_urheilijana') then null
-       		else key_avain
-       	end as kysymys_id,
+        case
+            when keys in ('ammatillinen_perustutkinto_urheilijana') then null
+            else key_avain
+        end as kysymys_id,
         tiedot ->> keys as arvo
     from raw
-   join lateral (
-   		select (regexp_match(keys, '1\.2\.246\.562.*'))[1]::text as key_hakukohde) as key_hakukohde on true
-   	join lateral (
-   		select (regexp_match(keys, '.*(?=_1\.2\.246)'))[1]::text as key_avain ) as key_avain on true
+    inner join lateral (
+        select (regexp_match(keys, '1\.2\.246\.562.*'))[1]::text as key_hakukohde
+    ) as key_hakukohde on true
+    inner join lateral (
+        select (regexp_match(keys, '.*(?=_1\.2\.246)'))[1]::text as key_avain
+    ) as key_avain on true
     where
         (
             keys like '1dc3311d-2235-40d6-88d2-de2bd63e087b%'
@@ -61,28 +63,28 @@ int as (
         hako.hakukohde_oid
     from rows
     inner join hakukohde as hako on
-    	rows.lomake_id = hako.lomake_id
-    	and rows.hakukohde ? hako.hakukohde_oid
-    	and (
-    		rows.hakukohde_oid = hako.kysymys_id
-    		or rows.hakukohde_oid = hako.hakukohde_oid
-    		)
+        rows.lomake_id = hako.lomake_id
+        and rows.hakukohde ? hako.hakukohde_oid
+        and (
+            rows.hakukohde_oid = hako.kysymys_id
+            or rows.hakukohde_oid = hako.hakukohde_oid
+        )
         and hako.kysymys_id in (
             '1dc3311d-2235-40d6-88d2-de2bd63e087b',
             'ammatillinen_perustutkinto_urheilijana'
-    	)
+        )
 ),
 
 final as (
     select
-    	hakemus_oid,
-    	hakukohde_oid,
+        hakemus_oid,
+        hakukohde_oid,
         case
             when kysymys_id = '1dc3311d-2235-40d6-88d2-de2bd63e087b' and arvo = '0' then true
             when kysymys_id = '1dc3311d-2235-40d6-88d2-de2bd63e087b' and arvo = '1' then false
             when kysymys_id = 'ammatillinen_perustutkinto_urheilijana' and arvo = '0' then true
             when kysymys_id = 'ammatillinen_perustutkinto_urheilijana' and arvo = '1' then false
-       end as urheilijatutkinto_kiinnostaa
+        end as urheilijatutkinto_kiinnostaa
     from int
 )
 

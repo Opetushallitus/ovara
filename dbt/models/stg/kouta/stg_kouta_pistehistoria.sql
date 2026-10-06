@@ -21,17 +21,16 @@ rows as (
         data ->> 'hakuOid'::varchar as hakuOid,
         data ->> 'valintatapajonoTyyppi'::varchar as valintatapajonoTyyppi,
         (data ->> 'aloituspaikat')::int as aloituspaikat,
-        (data->> 'ensisijaisestiHakeneet')::int as ensisijaisestiHakeneet,
+        (data ->> 'ensisijaisestiHakeneet')::int as ensisijaisestiHakeneet,
         {{ muokattu_column() }},
         {{ metadata_columns() }}
     from source
 ),
 
-final as
-(
+final as (
     select
-    {{ dbt_utils.generate_surrogate_key(['tarjoaja','hakukohdekoodi','vuosi']) }} as id,
-    *
+        {{ dbt_utils.generate_surrogate_key(['tarjoaja','hakukohdekoodi','vuosi']) }} as id,
+        *
     from rows
 )
 

@@ -14,7 +14,7 @@ with source as (
 ),
 
 final as (
-select
+    select
         hakukohde_oid,
         vapa.tunniste,
         vapa.kuvaus,
@@ -29,7 +29,7 @@ select
         vapa."osallistuminenTunniste" as osallistuminen_tunniste,
         vapa."syötettavanArvonTyyppi" ->> 'uri' as tyyppi
     from source
-    cross join lateral jsonb_to_recordset(data-> 'valintaperusteDTO') as vapa(
+    cross join lateral jsonb_to_recordset(data -> 'valintaperusteDTO') as vapa (
         tunniste text,
         kuvaus text,
         min text,
@@ -47,5 +47,6 @@ select
 )
 
 select
-     {{ dbt_utils.generate_surrogate_key(['hakukohde_oid', 'tunniste']) }} as hakukohde_valintaperuste_id,
-    * from final
+    {{ dbt_utils.generate_surrogate_key(['hakukohde_oid', 'tunniste']) }} as hakukohde_valintaperuste_id,
+    *
+from final

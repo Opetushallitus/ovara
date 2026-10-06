@@ -27,16 +27,17 @@ hakemus as (
         dw_metadata_dw_stored_at,
         tila
     from {{ ref('int_ataru_hakemus') }} as hake
-    where exists (
-        select 1 from haku
-        where hake.haku_oid = haku.haku_oid
-    )
-    {% if is_incremental() %}
-        and dw_metadata_dw_stored_at >= coalesce(
+    where
+        exists (
+            select 1 from haku
+            where hake.haku_oid = haku.haku_oid
+        )
+        {% if is_incremental() %}
+            and dw_metadata_dw_stored_at >= coalesce(
                 (select max(dw_metadata_dw_stored_at) from {{ this }}),
                 '1900-01-01'::timestamptz
-        )
-    {% endif %}
+            )
+        {% endif %}
 ),
 
 hakutoive as (
@@ -57,12 +58,12 @@ final as (
         hake.dw_metadata_dw_stored_at
     from
         hakemus as hake
-    join hakutoive as hato on hake.hakemus_oid = hato.hakemus_oid
+    inner join hakutoive as hato on hake.hakemus_oid = hato.hakemus_oid
     left join lateral (
         select elem.value from jsonb_array_elements(hake.kasittelymerkinnat) as elem
         where
             elem.value ->> 'requirement' = 'eligibility-state' and elem.value ->> 'hakukohde' = hato.hakukohde_oid
-        limit 1
+        limit 1 --noqa:AM09
     ) as elem on true
     where hake.tila <> 'inactivated'
 )
