@@ -19,7 +19,7 @@ final as (
         kame.requirement,
         kame.state
     from hakemus as hake
-    cross join lateral jsonb_to_recordset(hake.kasittelymerkinnat) as kame(
+    cross join lateral jsonb_to_recordset(hake.kasittelymerkinnat) as kame (
         state text,
         hakukohde text,
         requirement text

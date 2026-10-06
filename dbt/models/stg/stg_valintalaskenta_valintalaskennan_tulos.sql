@@ -18,7 +18,7 @@ with source as (
 final as (
     select
         data ->> 'valinnanvaiheoid'::varchar as valinnanvaihe_id,
-         (data ->> 'lastModified')::timestamptz as muokattu,
+        (data ->> 'lastModified')::timestamptz as muokattu,
         data,
         {{ metadata_columns() }}
     from source

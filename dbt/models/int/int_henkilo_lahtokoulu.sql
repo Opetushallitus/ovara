@@ -10,15 +10,14 @@
     )
 }}
 
-with opiskeluoikeus as
-(
+with opiskeluoikeus as (
     select
         henkilo_oid,
         data,
         dw_metadata_dw_stored_at
     from {{ ref('int_supa_opiskeluoikeus') }}
     {% if is_incremental() %}
-      where dw_metadata_dw_stored_at > coalesce((select max(dw_metadata_dw_stored_at) from {{ this }}), '1900-01-01')
+        where dw_metadata_dw_stored_at > coalesce((select max(dw_metadata_dw_stored_at) from {{ this }}), '1900-01-01')
     {% endif %}
 ),
 
@@ -32,10 +31,10 @@ final as (
         lako."arvosanaPuuttuu" as arvosana_puuttuu,
         lako."suorituksenAlku" as suorituksen_alku,
         lako."suorituksenLoppu" as suorituksen_loppu,
-        lako."valmistumisvuosi" as valmistumisvuosi,
+        lako.valmistumisvuosi,
         opoi.dw_metadata_dw_stored_at
     from opiskeluoikeus as opoi
-    cross join lateral jsonb_to_recordset(data->'lahtokoulut') as lako(
+    cross join lateral jsonb_to_recordset(data -> 'lahtokoulut') as lako (
         tila text,
         luokka text,
         "oppilaitosOid" text,
@@ -44,8 +43,7 @@ final as (
         "suorituksenAlku" date,
         "suorituksenLoppu" date,
         "valmistumisvuosi" int
-
-        )
+    )
 )
 
 select * from final

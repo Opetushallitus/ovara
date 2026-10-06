@@ -8,11 +8,10 @@
 }}
 
 with raw as (
-	select distinct on (master_oid)
-		*
-	from {{ ref('int_ylioppilas_rivit') }}
+    select distinct on (master_oid) *
+    from {{ ref('int_ylioppilas_rivit') }}
     where on_ylioppilas
-	order by master_oid, valmistumis_paiva asc
+    order by master_oid asc, valmistumis_paiva asc
 ),
 
 onr as (
@@ -23,12 +22,12 @@ onr as (
 ),
 
 final as (
-	select
+    select
         onr.henkilo_oid,
         raw.on_ylioppilas,
         extract(year from raw.valmistumis_paiva)::int as valmistumis_vuosi
-	from raw
-	join onr on raw.master_oid = onr.master_oid
+    from raw
+    inner join onr on raw.master_oid = onr.master_oid
 )
 
 select * from final

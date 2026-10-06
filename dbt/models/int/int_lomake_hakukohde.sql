@@ -13,7 +13,7 @@ with lomake as ( --noqa: PRS
         id as lomake_id,
         muokattu,
         versio_id,
-		content
+        content
     from {{ ref('dw_ataru_lomake') }}
     where kaksois_urheilija_tutkinto
 ),

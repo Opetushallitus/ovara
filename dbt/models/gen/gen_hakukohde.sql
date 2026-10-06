@@ -13,7 +13,7 @@ with hakukohde as (
 ),
 
 yos as (
-    select * from {{ref('int_hakukohde_yos') }}
+    select * from {{ ref('int_hakukohde_yos') }}
 ),
 
 final as (

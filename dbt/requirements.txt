@@ -1,5 +1,5 @@
 dbt-core==1.11.*
 dbt-postgres==1.11.*
-sqlfluff==3.3.1
-sqlfluff-templater-dbt==3.3.1
+sqlfluff==4.4.*
+sqlfluff-templater-dbt==4.4.*
 chardet<6

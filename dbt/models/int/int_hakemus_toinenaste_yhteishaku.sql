@@ -48,7 +48,7 @@ final as (
         toas."valintatuloksenJulkaisulupa" as valintatuloksen_julkaisu_lupa,
         toas."kiinnostunutOppisopimusKoulutuksesta" as kiinnostunut_oppisopimuskoulutuksesta,
         toas."kiinnostunutUrheilijanAmmatillisestaKoulutuksesta"
-        as kiinnostunut_urheilijan_ammatillisesta_koulutuksesta,
+            as kiinnostunut_urheilijan_ammatillisesta_koulutuksesta,
 
         urli.laji as urh_laji,
         urli.seura as urh_seura,

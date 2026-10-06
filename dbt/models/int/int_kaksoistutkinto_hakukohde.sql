@@ -27,20 +27,20 @@
 with raw as ( --noqa: PRS
     select
         *,
-        jsonb_object_keys(tiedot) as keys
-        from (
-            select
-                hakemus_oid,
-                lomake_id,
-                hakukohde,
-                tiedot,
-                dw_metadata_dw_stored_at
-            from "ovara"."int1"."int_ataru_hakemus"
-            {% if is_incremental() %}
-                cross join (select max(dw_metadata_dw_stored_at) as max_timestamp from "ovara"."int"."int_kaksoistutkinto_hakukohde")
-                where dw_metadata_dw_stored_at > max_timestamp
-            {% endif %}
-        ) a
+        jsonb_object_keys(tiedot) as keys --noqa:RF04
+    from (
+        select
+            hakemus_oid,
+            lomake_id,
+            hakukohde,
+            tiedot,
+            dw_metadata_dw_stored_at
+        from {{ ref('int_ataru_hakemus') }}
+        {% if is_incremental() %}
+            cross join (select max(dw_metadata_dw_stored_at) as max_timestamp from {{ this }})
+            where dw_metadata_dw_stored_at > max_timestamp
+        {% endif %}
+    ) as a
     where
         tiedot ?| array[
             '4fe08958-c0b7-4847-8826-e42503caa662'::text,
@@ -61,22 +61,29 @@ rows as (
         lomake_id,
         dw_metadata_dw_stored_at,
         case
-	        when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then keys
-	        else key_hakukohde
-		    end
-	    as hakukohde_oid,
-		case
-	        when keys in ('lukio_opinnot_ammatillisen_perustutkinnon_ohella', 'ammatilliset_opinnot_lukio_opintojen_ohella-amm') then null
-       		else key_avain
-       	end as kysymys_id,
+            when keys in (
+                'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
+                'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
+            ) then keys
+            else key_hakukohde
+        end as hakukohde_oid,
+        case
+            when keys in (
+                'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
+                'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
+            ) then null
+            else key_avain
+        end as kysymys_id,
         tiedot ->> keys as arvo,
         key_avain
     from raw
-   join lateral (
-   		select (regexp_match(keys, '1\.2\.246\.562.*'))[1]::text as key_hakukohde) as key_hakukohde on true
+    inner join lateral (
+        select (regexp_match(keys, '1\.2\.246\.562.*'))[1]::text as key_hakukohde
+    ) as key_hakukohde on true
 
-   	join lateral (
-   		select (regexp_match(keys, '.*(?=_1\.2\.246)'))[1]::text as key_avain ) as key_avain on true
+    inner join lateral (
+        select (regexp_match(keys, '.*(?=_1\.2\.246)'))[1]::text as key_avain
+    ) as key_avain on true
 
     where
         (
@@ -96,25 +103,26 @@ int as (
         coalesce(hako.hakukohde_oid, rows.hakukohde_oid) as hakukohde_oid,
         rows.dw_metadata_dw_stored_at
     from rows
-    left join hakukohde as hako on
-    	rows.lomake_id = hako.lomake_id
-    	and rows.hakukohde ? hako.hakukohde_oid
-    	and (
-    		rows.hakukohde_oid = hako.kysymys_id
-    		or rows.hakukohde_oid = hako.hakukohde_oid
-    		)
-        and hako.kysymys_id in (
-            '4fe08958-c0b7-4847-8826-e42503caa662',
-            '32b8440f-d6f0-4a8b-8f67-873344cc3488',
-            'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
-            'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
-    	)
+    left join hakukohde as hako
+        on
+            rows.lomake_id = hako.lomake_id
+            and rows.hakukohde ? hako.hakukohde_oid
+            and (
+                rows.hakukohde_oid = hako.kysymys_id
+                or rows.hakukohde_oid = hako.hakukohde_oid
+            )
+            and hako.kysymys_id in (
+                '4fe08958-c0b7-4847-8826-e42503caa662',
+                '32b8440f-d6f0-4a8b-8f67-873344cc3488',
+                'lukio_opinnot_ammatillisen_perustutkinnon_ohella',
+                'ammatilliset_opinnot_lukio_opintojen_ohella-amm'
+            )
 ),
 
 final as (
     select
-    	hakemus_oid,
-    	hakukohde_oid,
+        hakemus_oid,
+        hakukohde_oid,
         case
             when kysymys_id = '32b8440f-d6f0-4a8b-8f67-873344cc3488' and arvo = '0' then true
             when kysymys_id = '32b8440f-d6f0-4a8b-8f67-873344cc3488' and arvo = '1' then false
@@ -124,8 +132,8 @@ final as (
             when kysymys_id = 'ammatilliset_opinnot_lukio_opintojen_ohella' and arvo = '1' then false
             when kysymys_id = '4fe08958-c0b7-4847-8826-e42503caa662' and arvo = '0' then true
             when kysymys_id = '4fe08958-c0b7-4847-8826-e42503caa662' and arvo = '1' then false
-       end as kaksoistutkinto_kiinnostaa,
-       dw_metadata_dw_stored_at
+        end as kaksoistutkinto_kiinnostaa,
+        dw_metadata_dw_stored_at
     from int
 )
 

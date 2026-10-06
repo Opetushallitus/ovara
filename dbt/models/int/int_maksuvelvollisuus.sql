@@ -16,7 +16,10 @@ with kk_haku as (
 
 hakemus as ( --noqa: PRS
     select * from {{ ref('int_ataru_hakemus') }} as hake
-    where exists (select 1 from kk_haku as haku where hake.haku_oid=haku.haku_oid )
+    where exists (
+        select 1 from kk_haku as haku
+        where hake.haku_oid = haku.haku_oid
+    )
 ),
 
 rows as (

@@ -17,7 +17,7 @@ with henkilo as (
         muokattu
     from {{ ref('int_onr_henkilo') }}
     {% if is_incremental() %}
-      where muokattu >= coalesce((select max(muokattu) from {{ this }}), '1900-01-01')
+        where muokattu >= coalesce((select max(muokattu) from {{ this }}), '1900-01-01')
     {% endif %}
 ),
 

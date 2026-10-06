@@ -11,31 +11,39 @@ with haut as (
 ),
 
 
-matching_hakemukset AS (
-    select b.hakemus_oid
-    from {{ ref('int_ataru_hakemus') }} b
-    join haut h
-      on h.haku_oid = b.haku_oid
+matching_hakemukset as (
+    select hake.hakemus_oid
+    from {{ ref('int_ataru_hakemus') }} as hake
+    where
+        exists (
+            select 1 from haut
+            where hake.haku_oid = haut.haku_oid
+        )
 ),
 
 raw as (
     select
-        a.hakutoive_id,
-        a.hakemus_oid,
-        a.hakukohde_oid,
-        a.harkinnanvaraisuuden_syy
-    from {{ ref('int_sure_harkinnanvaraisuus') }} a
-    join matching_hakemukset b on a.hakemus_oid=b.hakemus_oid
+        hava.hakutoive_id,
+        hava.hakemus_oid,
+        hava.hakukohde_oid,
+        hava.harkinnanvaraisuuden_syy
+    from {{ ref('int_sure_harkinnanvaraisuus') }} as hava
+    where
+        exists (
+            select 1 from matching_hakemukset as maha
+            where hava.hakemus_oid = maha.hakemus_oid
+        )
 
     union all
     select
-        a.hakutoive_id,
-        a.hakemus_oid,
-        a.hakukohde_oid,
-        a.harkinnanvaraisuus_syy
-    from {{ ref('int_supa_harkinnanvaraisuus') }} a
+        havp.hakutoive_id,
+        havp.hakemus_oid,
+        havp.hakukohde_oid,
+        havp.harkinnanvaraisuus_syy
+    from {{ ref('int_supa_harkinnanvaraisuus') }} as havp
     where not exists (
-        select 1 from matching_hakemukset b where a.hakemus_oid=b.hakemus_oid
+        select 1 from matching_hakemukset as mah2
+        where havp.hakemus_oid = mah2.hakemus_oid
     )
 )
 

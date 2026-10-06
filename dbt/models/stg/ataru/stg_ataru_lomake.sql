@@ -18,7 +18,7 @@ final as (
         or content @> '[{"id": "32b8440f-d6f0-4a8b-8f67-873344cc3488"}]'
         or content @> '[{"id": "lukio_opinnot_ammatillisen_perustutkinnon_ohella"}]'
         or content @> '[{"id": "ammatilliset_opinnot_lukio_opintojen_ohella"}]'
-        as kaksois_urheilija_tutkinto
+            as kaksois_urheilija_tutkinto
     from (
         select
             (data ->> 'key')::uuid as id,

@@ -139,7 +139,7 @@ final as (
         hake.dw_metadata_dw_stored_at
     from hakemus as hake
     inner join kansalaisuus as kans on hake.hakemus_oid = kans.hakemus_oid
-    left join ensikertalainen as enke on hake.haku_oid = enke.haku_oid and hake.henkilo_oid=enke.henkilo_oid
+    left join ensikertalainen as enke on hake.haku_oid = enke.haku_oid and hake.henkilo_oid = enke.henkilo_oid
     left join pohjakoulutus as poko on hake.hakemus_oid = poko.hakemus_oid
 )
 

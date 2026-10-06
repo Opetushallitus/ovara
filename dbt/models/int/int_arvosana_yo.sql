@@ -24,10 +24,11 @@ final as (
 
     select
         *,
-        'sure' from
-    sure b
+        'sure' as lahde
+    from sure as b
     where not exists (
-        select 1 from supa a where a.henkilo_oid=b.henkilo_oid
+        select 1 from supa as a
+        where a.henkilo_oid = b.henkilo_oid
     )
 )
 

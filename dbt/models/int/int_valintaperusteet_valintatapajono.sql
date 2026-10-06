@@ -19,7 +19,7 @@ final as (
         vajo.oid as valintatapajono_id,
         vajo.nimi as valintatapajono_nimi,
         vajo.tyyppi as valintatapajono_tyyppi,
-        vv->>'valinnanVaiheOid' as valinnanvaihe_id,
+        vv ->> 'valinnanVaiheOid' as valinnanvaihe_id,
         vava.hakukohde_oid,
         vajo."lastModified" as muokattu,
         vajo.prioriteetti,
