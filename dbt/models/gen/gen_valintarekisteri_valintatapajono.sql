@@ -27,7 +27,8 @@ final as (
         kaikkiehdontayttavathyvaksytaan as kaikki_ehdon_tayttavat_hyvaksytaan,
         poissaolevataytto as poissaoleva_taytto,
         prioriteetti,
-        sijoiteltuilmanvarasijasaantojaniidenollessavoimassa as sijoiteltu_ilman_varasijasaanto_ja_niidenollessa_voimassa,
+        sijoiteltuilmanvarasijasaantojaniidenollessavoimassa
+            as sijoiteltu_ilman_varasijasaanto_ja_niidenollessa_voimassa,
         tasasijasaanto,
         valintaesityshyvaksytty as valintaesitys_hyvaksytty,
         varasijantayttopaivat as varasijan_tayttopaivat,

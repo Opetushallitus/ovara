@@ -124,7 +124,8 @@ final as (
     left join ilmoittautuminen as ilmo
         on vatu.henkilo_oid = ilmo.henkilo_oid and vatu.hakukohde_oid = ilmo.hakukohde_oid
     left join vastaanotto as vaot
-        on vatu.henkilo_oid = vaot.henkilo_oid
+        on
+            vatu.henkilo_oid = vaot.henkilo_oid
             and vatu.hakukohde_oid = vaot.hakukohde_oid
             and vatu.valinnan_tila in ('HYVAKSYTTY', 'VARASIJALTA_HYVAKSYTTY')
 )

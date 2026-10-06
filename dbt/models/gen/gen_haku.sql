@@ -27,17 +27,17 @@ final as (
         haku.haku_nimi ->> 'en' as haku_nimi_en,
         haku.externalid as ulkoinen_tunniste,
         (haku.koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz
-        as koulutuksen_tarkka_alkamisaika,
+            as koulutuksen_tarkka_alkamisaika,
         (haku.koulutuksen_alkamiskausi ->> 'koulutuksenPaattymispaivamaara')::timestamptz
-        as koulutuksen_tarkka_paattymispaiva,
+            as koulutuksen_tarkka_paattymispaiva,
         (haku.koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksen_alkamisvuosi,
         haku.koulutuksen_alkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri' as koulutuksen_alkamiskausiuri,
         haku.koulutuksen_alkamiskausi -> 'henkilokohtaisenSuunnitelmanLisatiedot' ->> 'fi'
-        as henkilokohtaisen_suunnitelman_lisatiedot_fi,
+            as henkilokohtaisen_suunnitelman_lisatiedot_fi,
         haku.koulutuksen_alkamiskausi -> 'henkilokohtaisenSuunnitelmanLisatiedot' ->> 'sv'
-        as henkilokohtaisen_suunnitelman_lisatiedot_sv,
+            as henkilokohtaisen_suunnitelman_lisatiedot_sv,
         haku.koulutuksen_alkamiskausi -> 'henkilokohtaisenSuunnitelmanLisatiedot' ->> 'en'
-        as henkilokohtaisen_suunnitelman_lisatiedot_en,
+            as henkilokohtaisen_suunnitelman_lisatiedot_en,
         haku.tila,
         haku.hakutapakoodiuri,
         haku.hakukohteenliittamisentakaraja as hakukohteen_liittamisen_takaraja,

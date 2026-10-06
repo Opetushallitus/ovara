@@ -22,15 +22,15 @@ final as (
         organisaatio_oid,
         (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamispaivamaara')::timestamptz as koulutuksen_tarkka_alkamisaika,
         (koulutuksen_alkamiskausi ->> 'koulutuksenPaattymispaivamaara')::timestamptz
-        as koulutuksen_tarkka_paattymispaiva,
+            as koulutuksen_tarkka_paattymispaiva,
         (koulutuksen_alkamiskausi ->> 'koulutuksenAlkamisvuosi')::int as koulutuksen_alkamisvuosi,
         koulutuksen_alkamiskausi ->> 'koulutuksenAlkamiskausiKoodiUri' as koulutuksen_alkamiskausiuri,
         koulutuksen_alkamiskausi -> 'henkilokohtaisenSuunnitelmanLisatiedot' ->> 'fi'
-        as henkilokohtaisen_suunnitelman_lisatiedot_fi,
+            as henkilokohtaisen_suunnitelman_lisatiedot_fi,
         koulutuksen_alkamiskausi -> 'henkilokohtaisenSuunnitelmanLisatiedot' ->> 'sv'
-        as henkilokohtaisen_suunnitelman_lisatiedot_sv,
+            as henkilokohtaisen_suunnitelman_lisatiedot_sv,
         koulutuksen_alkamiskausi -> 'henkilokohtaisenSuunnitelmanLisatiedot' ->> 'en'
-        as henkilokohtaisen_suunnitelman_lisatiedot_en,
+            as henkilokohtaisen_suunnitelman_lisatiedot_en,
         externalid as ulkoinen_tunniste,
         tila,
         esikatselu,
