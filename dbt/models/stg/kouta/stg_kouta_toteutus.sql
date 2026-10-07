@@ -33,7 +33,6 @@ final as (
         (data -> 'metadata' -> 'opetus' -> 'opetustapaKuvaus')::jsonb as opetustapaKuvaus,
         (data -> 'metadata' -> 'opetus' -> 'maksut')::jsonb as maksut,
         (data -> 'metadata' -> 'opetus' -> 'maksullisuusKuvaus')::jsonb as maksullisuusKuvaus,
-        (data -> 'metadata' -> 'opetus' ->> 'maksunMaara')::float as maksunMaara,
         (data -> 'metadata' -> 'opetus' -> 'koulutuksenAlkamiskausi')::jsonb as koulutuksenAlkamiskausi,
         (data -> 'metadata' -> 'opetus' -> 'lisatiedot')::jsonb as lisatiedot,
         (data -> 'metadata' -> 'opetus' ->> 'onkoApuraha')::boolean as onkoApuraha,
