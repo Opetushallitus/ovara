@@ -53,7 +53,6 @@ final as (
         maksullisuuskuvaus ->> 'fi' as maksullisuus_kuvaus_fi,
         maksullisuuskuvaus ->> 'sv' as maksullisuus_kuvaus_sv,
         maksullisuuskuvaus ->> 'en' as maksullisuus_kuvaus_en,
-        maksunmaara as maksun_maara,
         lisatiedot ->> 'fi' as toteutus_lisatiedot_fi,
         lisatiedot ->> 'sv' as toteutus_lisatiedot_sv,
         lisatiedot ->> 'en' as toteutus_lisatiedot_en,
