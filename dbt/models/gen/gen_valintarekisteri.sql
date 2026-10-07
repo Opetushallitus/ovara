@@ -80,6 +80,11 @@ vastaanotto as not materialized (
     from {{ ref('int_valintarekisteri_vastaanotto') }}
 ),
 
+passivoidut_hakemukset as (
+    select hakemus_oid from {{ ref('int_ataru_hakemus') }}
+    where tila = 'inactivated'
+),
+
 final as (
     select
         vatu.hakukohde_oid,
@@ -131,3 +136,8 @@ final as (
 )
 
 select * from final
+where not exists (
+    select 1 from passivoidut_hakemukset
+    where final.hakemus_oid = passivoidut_hakemukset.hakemus_oid
+)
+
