@@ -173,6 +173,8 @@ models:
         data_type: text
       - name: jarjestyspaikka_oid
         data_type: text
+      - name: oppilaitos_oid
+        data_type: text
       - name: ulkoinen_tunniste
         data_type: text
       - name: hakukohde_nimi_fi
