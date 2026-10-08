@@ -16,12 +16,20 @@ yos as (
     select * from {{ ref('int_hakukohde_yos') }}
 ),
 
+hakukohde_nimet as (
+    select
+        jarjestyspaikka_oid,
+        oppilaitos
+    from {{ ref('int_organisaatio_hakukohteiden_nimet') }}
+),
+
 final as (
     select
         hako.hakukohde_oid,
         toteutus_oid,
         haku_oid,
-        jarjestyspaikka_oid,
+        hako.jarjestyspaikka_oid,
+        hani.oppilaitos as oppilaitos_oid,
         ulkoinen_tunniste,
         hakukohde_nimi ->> 'fi' as hakukohde_nimi_fi,
         hakukohde_nimi ->> 'sv' as hakukohde_nimi_sv,
@@ -83,6 +91,7 @@ final as (
         yos1.yos
     from hakukohde as hako
     left join yos as yos1 on hako.hakukohde_oid = yos1.hakukohde_oid
+    left join hakukohde_nimet as hani on hako.jarjestyspaikka_oid = hani.jarjestyspaikka_oid
 )
 
 select * from final
