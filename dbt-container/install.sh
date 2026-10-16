@@ -2,23 +2,24 @@
 
 set -eu
 
-case "$(uname -m)" in
-  aarch64) ARCHITECTURE="arm64" ;;
-  x86_64) ARCHITECTURE="amd64" ;;
-  *) ARCHITECTURE=$(uname -m) ;;
-esac
-echo $ARCHITECTURE
-
 echo "Installing needed software"
-apk --no-cache add \
-  python3 \
-  py3-pip \
-  aws-cli \
+apt-get update
+apt-get install -y --no-install-recommends \
+  ca-certificates \
+  curl \
+  jq \
   tzdata \
-  jq
+  unzip
 
-ln -sf /usr/bin/python3 /usr/bin/python
-ln -sf /usr/bin/pip3 /usr/bin/pip
+# AWS CLI v2 asennetaan virallisesta paketista, koska Debianin awscli-paketti on v1.
+curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o /tmp/awscliv2.zip
+unzip -q /tmp/awscliv2.zip -d /tmp
+/tmp/aws/install
+rm -rf /tmp/awscliv2.zip /tmp/aws
+
+apt-get purge -y unzip
+apt-get autoremove -y
+rm -rf /var/lib/apt/lists/*
 
 echo "Listing contents of /root folder"
 ls -Al /root

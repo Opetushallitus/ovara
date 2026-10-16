@@ -1,6 +1,7 @@
-FROM alpine:3.20
-RUN apk upgrade --no-cache
-RUN apk --no-cache add bash
+FROM python:3.12-slim-bookworm
+RUN apt-get update && \
+  apt-get upgrade -y && \
+  rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/
 COPY ./dbt-container/run.sh ./

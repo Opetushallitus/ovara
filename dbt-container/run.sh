@@ -24,7 +24,7 @@ if ! . venv/bin/activate; then
 fi
 
 # asetetaan pipefail, koska muuten putken paluuarvo olisi jq:n eikä aws:n.
-if ! IS_RUNNING=$(set -o pipefail; aws dynamodb execute-statement --statement "SELECT onKaynnissa FROM ecsProsessiOnKaynnissa WHERE prosessi='dbt-scheduled-task'" | jq -r ' .Items.[0].onKaynnissa.S '); then
+if ! IS_RUNNING=$(set -o pipefail; aws dynamodb execute-statement --statement "SELECT onKaynnissa FROM ecsProsessiOnKaynnissa WHERE prosessi='dbt-scheduled-task'" | jq -r ' .Items[0].onKaynnissa.S '); then
   log_error "Prosessilukon tilan lukeminen DynamoDB:stä epäonnistui"
 fi
 echo "Onko edellinen ajo käynnissä: $IS_RUNNING"
