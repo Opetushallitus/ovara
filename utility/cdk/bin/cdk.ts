@@ -2,6 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import * as cdkNag from 'cdk-nag';
+
 import { EcrStack } from '../lib/ecr-stack';
 
 const app = new cdk.App();
