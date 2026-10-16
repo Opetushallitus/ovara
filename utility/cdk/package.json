@@ -1,9 +1,6 @@
 {
   "name": "cdk",
   "version": "0.1.0",
-  "bin": {
-    "cdk": "bin/cdk.js"
-  },
   "scripts": {
     "lint": "eslint ./bin ./lib --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
@@ -20,7 +17,7 @@
     "@types/node": "24.9.2",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
-    "aws-cdk": "2.1031.1",
+    "aws-cdk": "2.1144.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
