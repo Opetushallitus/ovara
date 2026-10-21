@@ -20,21 +20,46 @@ onr as (
     from {{ ref('int_onr_henkilo') }}
 ),
 
-arvosanat as (
+jarjestys as (
+    select array['L', 'E', 'M', 'C', 'B', 'A', 'I+', 'I', 'I-', 'I=']::text[] as a
+),
+
+arvosana_rows as (
     select
         henkilo_oid,
-        jsonb_object_agg(
-            aineet_elem -> 'koodi' ->> 'arvo',
-            aineet_elem -> 'arvosana' ->> 'arvo'
-        ) as arvosanat
+        (aineet_elem -> 'koodi' ->> 'arvo')::text as aine,
+        aineet_elem -> 'arvosana' ->> 'arvo' as arvosana
     from opoi
-    cross join
-        lateral (
-            select value as root_elem from jsonb_array_elements(opoi.data -> 'yoOpiskeluoikeudet')
-            where value -> 'yoTutkinto' ->> 'supaTila' = 'VALMIS'
-        ) as yooo
+    cross join lateral (
+        select value as root_elem
+        from jsonb_array_elements(opoi.data -> 'yoOpiskeluoikeudet')
+        where value -> 'yoTutkinto' ->> 'supaTila' = 'VALMIS'
+    ) as yooo
     cross join lateral jsonb_array_elements(root_elem -> 'yoTutkinto' -> 'aineet') as aineet_elem
-    group by henkilo_oid
+),
+
+paras_arvosana as (
+    select
+        henkilo_oid,
+        aine,
+        coalesce(
+            j.a[min(array_position(j.a, arvosana))],
+            max(arvosana)
+        ) as arvosana
+    from arvosana_rows
+    cross join jarjestys j
+    group by
+        henkilo_oid,
+        aine,
+        j.a
+),
+
+arvosanat as (
+	select
+	    henkilo_oid,
+	    jsonb_object_agg(aine, arvosana) as arvosanat
+	from paras_arvosana
+	group by henkilo_oid
 ),
 
 arvosanat_master as (
