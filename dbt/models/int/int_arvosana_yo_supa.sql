@@ -20,10 +20,14 @@ onr as (
     from {{ ref('int_onr_henkilo') }}
 ),
 
+jarjestys as (
+    select array['L', 'E', 'M', 'C', 'B', 'A', 'I+', 'I', 'I-', 'I=']::text[] as a
+),
+
 arvosana_rows as (
     select
         henkilo_oid,
-        aineet_elem -> 'koodi' ->> 'arvo' as aine,
+        (aineet_elem -> 'koodi' ->> 'arvo')::text as aine,
         aineet_elem -> 'arvosana' ->> 'arvo' as arvosana
     from opoi
     cross join lateral (
@@ -39,13 +43,15 @@ paras_arvosana as (
         henkilo_oid,
         aine,
         coalesce(
-        (array['L','E','M','C','B','A','I'])[
-            min(array_position(array['L','E','M','C','B','A','I'], arvosana))
-        ],
-        max(arvosana)
-       ) as arvosana
+            j.a[min(array_position(j.a, arvosana))],
+            max(arvosana)
+        ) as arvosana
     from arvosana_rows
-    group by henkilo_oid, aine
+    cross join jarjestys j
+    group by
+        henkilo_oid,
+        aine,
+        j.a
 ),
 
 arvosanat as (
