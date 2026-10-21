@@ -1,4 +1,4 @@
-dbt-core==1.11.*
+dbt-core==1.12.*
 dbt-postgres==1.11.*
 sqlfluff==4.4.*
 sqlfluff-templater-dbt==4.4.*
