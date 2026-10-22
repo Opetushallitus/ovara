@@ -12,7 +12,7 @@ key="$1"
 case $key in
     -h | --help | help )
     echo '''
-Usage: deploy.sh [-h] [-d] [-v VERSION] deploy/build/delete environment stack
+Usage: deploy.sh [-h] [-d] [-v VERSION] deploy/build/diff/delete environment stack
 
 Light weight version of cdk.sh in cloud-base
 
@@ -21,14 +21,17 @@ positional arguments:
   delete                deletes the stack from target environment, environment must be supplied.
   build                 only builds the Lambda & synthesizes CDK (useful when developing)
   diff                  show difference between running environment and the template generated from code
-  stack                 name of the stack (BastionStack, DatabaseStack, NetworkStack or All)
   environment           Environment name (tuotanto, testi or kehitys)
+  stack                 name of the stack (ExternalRolesStack, MonitorStack, Route53Stack,
+                        CertificateStack, NetworkStack, S3Stack, DatabaseStack, EcsStack,
+                        LambdaStack, BastionStack or all)
 
 optional arguments:
   -h, --help            Show this help message and exit
   -d, --dependencies    Clean and install dependencies before deployment (i.e. run npx npm ci)
   -v VERSION, --version VERSION
-                          Frontend version to deploy (e.g. -v ci-256)
+                          ECS container image tag to deploy (e.g. -v ci-256).
+                          Only used by deploy and diff.
   '''
     exit 0
     ;;

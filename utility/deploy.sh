@@ -20,10 +20,10 @@ Usage: deploy.sh [-h] [-d] deploy/build/delete stack
 Light weight version of cdk.sh in cloud-base
 
 positional arguments:
-  deploy                builds and deploys the stack to target environment, environment must be supplied.
-  delete                deletes the stack from target environment, environment must be supplied.
-  build                 only builds the Lambda & synthesizes CDK (useful when developing)
-  stack                 name of the stack (BastionStack, DatabaseStack, NetworkStack or All)
+  deploy                builds and deploys the stack to the utility account
+  delete                deletes the stack from the utility account
+  build                 only synthesizes the CDK template (useful when developing)
+  stack                 name of the stack (EcrStack or all)
 
 optional arguments:
   -h, --help            Show this help message and exit
@@ -70,26 +70,26 @@ fi
 
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
-    cd "${git_root}/utility/cdk/" && npm i -g aws-cdk && npm ci
+    cd "${git_root}/utility/cdk/" && npm ci
 fi
 
 if [[ "${build}" == "true" ]]; then
     echo "Building code and synthesizing CDK template"
     cd "${git_root}/utility/cdk/"
     npm run build
-    cdk synth --region eu-west-1 --profile $aws_profile
+    npx cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
 if [[ "${deploy}" == "true" ]]; then
    echo "Building code, synhesizing CDK code and deploying to environment: utility"
    export ENVIRONMENT=$environment
    cd "${git_root}/utility/cdk/"
-   cdk deploy $stack --profile $aws_profile
+   npx cdk deploy $stack --profile $aws_profile
 fi
 
 if [[ "${delete}" == "true" ]]; then
    echo "Deleting stack from environment: utility"
    export ENVIRONMENT=$environment
    cd "${git_root}/utility/cdk/"
-   cdk destroy $stack --profile $aws_profile
+   npx cdk destroy $stack --profile $aws_profile
 fi
