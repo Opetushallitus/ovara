@@ -12,7 +12,7 @@ final as (
     select
         henkilo_oid,
         suoritus ->> 'tunniste' as tunniste,
-        suoritus ->> 'opiskeluoikeusTyyppi' as tyyppi,
+        suoritus ->> 'entiteetinTyyppi' as tyyppi,
         suoritus -> 'metadata' ->> 'lahdejarjestelma' as lahdejarjestelma,
         suoritus ->> 'supaTila' as tila,
         case
