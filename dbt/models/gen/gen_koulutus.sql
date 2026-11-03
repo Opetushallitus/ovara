@@ -49,7 +49,9 @@ final as (
         linkkieperusteisiin as linkki_eperusteisiin,
         teemakuva,
         eperusteid,
-        luokittelutermit
+        luokittelutermit,
+        eqf,
+        nqf
     from koulutus
 )
 
