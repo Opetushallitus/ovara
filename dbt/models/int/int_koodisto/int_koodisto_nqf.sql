@@ -1,3 +1,3 @@
 {%- set koodisto = 'nqf' -%}
 
-{{ generate_koodisto_table(koodisto,false) }}
+{{ generate_koodisto_table(koodisto,true) }}

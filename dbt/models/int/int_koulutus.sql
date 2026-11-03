@@ -17,7 +17,8 @@ final as (
     select
         {{ dbt_utils.star (
             from = ref('int_kouta_koulutus'),
-            except = ['koulutusalakoodiurit']
+            except = ['koulutusalakoodiurit'],
+            relation_alias = 'koul'
         ) }},
         coalesce(
             kala.koulutusala,
@@ -46,7 +47,7 @@ final as (
         from jsonb_array_elements_text(koul.koulutuksetkoodiuri) as kku (koulutus_koodi)
         left join alat on kku.koulutus_koodi = alat.versioitu_koodiuri
     ) as kala on true
-    left join eqf_nqf as eqnf on split_part(koul.koulutuksetkoodiuri ->> 0, '#', 1) = eqnf.koulutus_koodi
+    left join eqf_nqf as eqnf on koul.koulutus_oid = eqnf.koulutus_oid
 )
 
 select * from final
