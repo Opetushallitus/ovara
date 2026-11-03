@@ -31,10 +31,12 @@ select
     org.oppilaitostyyppi,
     org.oppilaitosnumero,
     opla.oppilaitos_nimi,
+    opla.oppilaitos as oppilaitos_oid,
     opla.oppilaitos_nimi -> 'fi' as oppilaitos_nimi_fi,
     opla.oppilaitos_nimi -> 'sv' as oppilaitos_nimi_sv,
     opla.oppilaitos_nimi -> 'en' as oppilaitos_nimi_en,
     opla.toimipiste_nimi,
+    opla.toimipiste as toimipiste_oid,
     opla.toimipiste_nimi -> 'fi' as toimipiste_nimi_fi,
     opla.toimipiste_nimi -> 'sv' as toimipiste_nimi_sv,
     opla.toimipiste_nimi -> 'en' as toimipiste_nimi_en
