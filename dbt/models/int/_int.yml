@@ -502,11 +502,9 @@ models:
         data_tests:
           - dbt_constraints.primary_key
       - name: eqf
-        data_type: text
+        data_type: jsonb
       - name: nqf
-        data_type: text
-      - name: koulutus_oid
-        data_type: text
+        data_type: jsonb
 
   - name: int_koulutus
     columns:
