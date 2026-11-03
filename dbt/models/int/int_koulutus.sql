@@ -6,7 +6,11 @@ alat as (
     select
         versioitu_koodiuri,
         kansallinenkoulutusluokitus2016koulutusalataso2
-    from int.int_koodisto_kkl2016koulutusalataso2_relaatio_koulutus
+    from {{ ref('int_koodisto_kkl2016koulutusalataso2_relaatio_koulutus') }}
+),
+
+eqf_nqf as (
+    select * from  {{ ref('int_eqf_nqf') }}
 ),
 
 final as (
@@ -22,7 +26,9 @@ final as (
                     then koul.koulutusalakoodiurit
                 else '["muu/tuntematon"]'::jsonb
             end
-        ) as koulutusalakoodiurit
+        ) as koulutusalakoodiurit,
+        eqnf.eqf,
+        eqnf.nqf
     from koulutus as koul
     left join lateral (
         select (
@@ -40,6 +46,7 @@ final as (
         from jsonb_array_elements_text(koul.koulutuksetkoodiuri) as kku (koulutus_koodi)
         left join alat on kku.koulutus_koodi = alat.versioitu_koodiuri
     ) as kala on true
+    left join eqf_nqf as eqnf on split_part(koul.koulutuksetkoodiuri ->> 0, '#', 1) = eqnf.koulutus_koodi
 )
 
 select * from final
