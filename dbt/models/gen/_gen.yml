@@ -635,21 +635,21 @@ models:
       - name: oppilaitos_oid
         data_type: text
       - name: oppilaitos_nimi_fi
-        data_type: jsonb
+        data_type: text
       - name: oppilaitos_nimi_sv
-        data_type: jsonb
+        data_type: text
       - name: oppilaitos_nimi_en
-        data_type: jsonb
+        data_type: text
       - name: toimipiste_nimi
         data_type: jsonb
       - name: toimipiste_oid
         data_type: text
       - name: toimipiste_nimi_fi
-        data_type: jsonb
+        data_type: text
       - name: toimipiste_nimi_sv
-        data_type: jsonb
+        data_type: text
       - name: toimipiste_nimi_en
-        data_type: jsonb
+        data_type: text
 
   - name: gen_toteutus
     columns:
