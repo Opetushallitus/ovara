@@ -20,6 +20,9 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+vars:
+  dbt_constraints_skip_tests_if_enforced: true
+
 models:
   ovara:
     stg:
