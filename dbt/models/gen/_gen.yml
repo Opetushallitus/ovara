@@ -1114,3 +1114,77 @@ models:
         data_type: text
       - name: muokattu
         data_type: timestamp with time zone
+
+  - name: gen_koutalight_koulutus
+    columns:
+      - name: koulutus_id
+        data_type: uuid
+        data_tests:
+          - dbt_constraints.primary_key
+      - name: external_id
+        data_type: text
+      - name: tila
+        data_type: text
+      - name: koulutus_nimi
+        data_type: jsonb
+      - name: koulutus_nimi_fi
+        data_type: text
+      - name: koulutus_nimi_sv
+        data_type: text
+      - name: koulutus_nimi_en
+        data_type: text
+      - name: omistaja_organisaatio
+        data_type: text
+      - name: luotu
+        data_type: timestamp without time zone
+      - name: kuvaus
+        data_type: jsonb
+      - name: kuvaus_fi
+        data_type: text
+      - name: kuvaus_sv
+        data_type: text
+      - name: kuvaus_en
+        data_type: text
+      - name: hakuaika_alkaa
+        data_type: timestamp without time zone
+      - name: hakuaika_paattyy
+        data_type: timestamp without time zone
+      - name: aloituspaikat_lkm
+        data_type: integer
+      - name: is_tyovoimakoulutus
+        data_type: boolean
+      - name: johtaa_tutkintoon
+        data_type: boolean
+      - name: is_maksullinen
+        data_type: boolean
+      - name: hakulomake_linkki
+        data_type: jsonb
+      - name: hakulomake_linkki_fi
+        data_type: text
+      - name: hakulomake_linkki_sv
+        data_type: text
+      - name: hakulomake_linkki_en
+        data_type: text
+      - name: maksullisuus_kuvaus
+        data_type: jsonb
+      - name: maksullisuus_kuvaus_fi
+        data_type: text
+      - name: maksullisuus_kuvaus_sv
+        data_type: text
+      - name: maksullisuus_kuvaus_en
+        data_type: text
+      - name: kielivalinta
+        data_type: json
+      - name: tarjoajat
+        data_type: json
+      - name: ammattinimikkeet
+        data_type: json
+      - name: asiasanat
+        data_type: json
+      - name: opetuskielet
+        data_type: json
+      - name: osaaminen_urit_json
+        data_type: json
+      - name: muokattu
+        data_type: timestamp with time zone
+    description: SIsältää Koutalight:in koulutustarjonta
