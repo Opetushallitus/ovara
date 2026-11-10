@@ -513,6 +513,10 @@ models:
         data_type: integer
       - name: luokittelutermit
         data_type: jsonb
+      - name: eqf
+        data_type: jsonb
+      - name: nqf
+        data_type: jsonb
 
   - name: gen_ohjausparametri_haku
     description: Hakujen ohjausparametreja
