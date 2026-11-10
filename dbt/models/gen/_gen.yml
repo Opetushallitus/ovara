@@ -601,7 +601,7 @@ models:
         data_type: text
 
   - name: gen_organisaatio
-    description: |
+    description: |-
       Yhteiskäyttöisiltä ei tule englanninkielistä nimeä. Tähän on luotu sarake tätä varten jotta ei jatkossa tarvita koodimuutoksia
     columns:
       - name: organisaatio_oid
@@ -633,6 +633,26 @@ models:
       - name: oppilaitostyyppi
         data_type: text
       - name: oppilaitosnumero
+        data_type: text
+      - name: oppilaitos_nimi
+        data_type: jsonb
+      - name: oppilaitos_oid
+        data_type: text
+      - name: oppilaitos_nimi_fi
+        data_type: text
+      - name: oppilaitos_nimi_sv
+        data_type: text
+      - name: oppilaitos_nimi_en
+        data_type: text
+      - name: toimipiste_nimi
+        data_type: jsonb
+      - name: toimipiste_oid
+        data_type: text
+      - name: toimipiste_nimi_fi
+        data_type: text
+      - name: toimipiste_nimi_sv
+        data_type: text
+      - name: toimipiste_nimi_en
         data_type: text
 
   - name: gen_toteutus
