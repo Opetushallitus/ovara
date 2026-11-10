@@ -1118,3 +1118,97 @@ models:
         data_type: text
       - name: muokattu
         data_type: timestamp with time zone
+  - name: gen_supa_suoritus_kk
+    columns:
+      - name: henkilo_oid
+        data_type: text
+      - name: entiteetin_tyyppi
+        data_type: text
+      - name: luonti_hetki
+        data_type: timestamp with time zone
+      - name: paivitys_hetki
+        data_type: timestamp with time zone
+      - name: parserointi_hetki
+        data_type: timestamp with time zone
+      - name: lahde_tunniste
+        data_type: text
+      - name: lahde_jarjestelma
+        data_type: text
+      - name: lahde_versio
+        data_type: text
+      - name: parser_versio
+        data_type: integer
+      - name: tunniste
+        data_type: uuid
+      - name: opiskeluoikeus_tunniste
+        data_type: uuid
+      - name: opiskeluoikeus_tyyppi
+        data_type: text
+      - name: parent_tunniste
+        data_type: uuid
+      - name: lapsi_tunnisteet
+        data_type: jsonb
+      - name: juuri_suoritus_polku
+        data_type: jsonb
+      - name: virta_tila_arvo
+        data_type: text
+      - name: virta_tila_koodisto
+        data_type: text
+      - name: virta_tila_versio
+        data_type: integer
+      - name: opiskeluoikeus_alku_pvm
+        data_type: date
+      - name: opiskeluoikeus_loppu_pvm
+        data_type: date
+      - name: opiskeluoikeus_kieli
+        data_type: text
+      - name: nimi_fi
+        data_type: text
+      - name: nimi_sv
+        data_type: text
+      - name: nimi_en
+        data_type: text
+      - name: supa_tila
+        data_type: text
+      - name: komo_tunniste
+        data_type: text
+      - name: myontaja
+        data_type: text
+      - name: suoritus_pvm
+        data_type: date
+      - name: opiskeluoikeus_avain
+        data_type: text
+      - name: aloitus_pvm
+        data_type: date
+      - name: opinto_pisteet
+        data_type: numeric
+      - name: opintoviikot
+        data_type: numeric
+      - name: hyvaksiluku_pvm
+        data_type: date
+      - name: kieli
+        data_type: text
+      - name: koulutus_koodi
+        data_type: text
+      - name: jarjestava_rooli
+        data_type: text
+      - name: jarjestava_koodi
+        data_type: text
+      - name: jarjestava_osuus
+        data_type: numeric
+      - name: arvosana
+        data_type: text
+      - name: arvosana_asteikko
+        data_type: text
+      - name: koulutusala
+        data_type: integer
+      - name: koulutusala_koodisto
+        data_type: text
+      - name: opinnaytetyo
+        data_type: boolean
+      - name: avain
+        data_type: text
+      - name: opiskeluoikeus_virta_tunniste
+        data_type: text
+      - name: dw_metadata_stg_stored_at
+        data_type: timestamp with time zone

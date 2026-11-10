@@ -1,0 +1,1 @@
+select * from {{ ref('int_supa_suoritus_kk_flat') }}
