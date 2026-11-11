@@ -53,9 +53,7 @@ final as (
         maksullisuuskuvaus ->> 'fi' as maksullisuus_kuvaus_fi,
         maksullisuuskuvaus ->> 'sv' as maksullisuus_kuvaus_sv,
         maksullisuuskuvaus ->> 'en' as maksullisuus_kuvaus_en,
-        lisatiedot ->> 'fi' as toteutus_lisatiedot_fi,
-        lisatiedot ->> 'sv' as toteutus_lisatiedot_sv,
-        lisatiedot ->> 'en' as toteutus_lisatiedot_en,
+        lisatiedot as toteutus_lisatiedot,
         onkoapuraha as onko_apuraha,
         suunniteltukestovuodet as suunniteltu_kesto_vuodet,
         suunniteltukestokuukaudet as suunniteltu_kesto_kuukaudet,
@@ -99,7 +97,10 @@ final as (
         sorakuvausid as sorakuvaus_id,
         kielivalinta,
         teemakuva,
-        ispieniosaamiskokonaisuus as onko_pieni_osaamiskokonaisuus
+        ispieniosaamiskokonaisuus as onko_pieni_osaamiskokonaisuus,
+        osaamistavoitteet ->> 'fi' as osaamistavoite_fi,
+        osaamistavoitteet ->> 'sv' as osaamistavoite_sv,
+        osaamistavoitteet ->> 'en' as osaamistavoite_en
     from toteutus
 )
 

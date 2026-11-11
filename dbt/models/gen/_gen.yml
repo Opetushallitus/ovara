@@ -723,16 +723,12 @@ models:
         data_type: jsonb
       - name: opetustapa_kuvaus
         data_type: jsonb
-      - name: maksullisuus_tyyppi
-        data_type: text
       - name: maksullisuus_kuvaus_fi
         data_type: text
       - name: maksullisuus_kuvaus_sv
         data_type: text
       - name: maksullisuus_kuvaus_en
         data_type: text
-      - name: maksun_maara
-        data_type: double precision
       - name: toteutus_lisatiedot_fi
         data_type: text
       - name: toteutus_lisatiedot_sv
@@ -1192,3 +1188,22 @@ models:
       - name: muokattu
         data_type: timestamp with time zone
     description: SIsältää Koutalight:in koulutustarjonta
+  - name: gen_toteutus_lisatiedot
+    description: Sisältää toteutuksen lisätietoja. Yksi sarake per toteutus ja lisätietotyyppi. Mukana myös koodiston lisätietotyypin nimi
+    columns:
+      - name: toteutus_oid
+        data_type: text
+      - name: lisatieto_tyyppi
+        data_type: text
+      - name: teksti_fi
+        data_type: text
+      - name: teksti_sv
+        data_type: text
+      - name: teksti_en
+        data_type: text
+      - name: lisatieto_nimi_fi
+        data_type: text
+      - name: lisatieto_nimi_sv
+        data_type: text
+      - name: lisatieto_nimi_en
+        data_type: text
