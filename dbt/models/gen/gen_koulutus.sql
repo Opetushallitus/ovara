@@ -53,7 +53,9 @@ final as (
         eqf,
         nqf,
         osaamismerkkikoodiuri as osaamismerkki_koodiuri,
-        osaamistavoitteet as osaamis_tavoitteet
+        osaamistavoitteet ->> fi as osaamistavoite_fi,
+        osaamistavoitteet ->> sv as osaamistavoite_sv,
+        osaamistavoitteet ->> en as osaamistavoite_en
     from koulutus
 )
 
