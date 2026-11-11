@@ -49,7 +49,9 @@ final as (
         linkkieperusteisiin as linkki_eperusteisiin,
         teemakuva,
         eperusteid,
-        luokittelutermit
+        luokittelutermit,
+        osaamismerkkikoodiuri as osaamismerkki_koodiuri,
+        osaamistavoitteet as osaamis_tavoitteet
     from koulutus
 )
 
