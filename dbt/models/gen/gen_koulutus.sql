@@ -52,6 +52,8 @@ final as (
         luokittelutermit,
         eqf,
         nqf
+        osaamismerkkikoodiuri as osaamismerkki_koodiuri,
+        osaamistavoitteet as osaamis_tavoitteet
     from koulutus
 )
 
