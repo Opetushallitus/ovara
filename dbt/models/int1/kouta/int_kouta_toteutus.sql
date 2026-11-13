@@ -33,7 +33,8 @@ final as (
                     'koulutusoid',
                     'organisaatiooid',
                     'oid',
-                    'koulutuksenalkamiskausi'
+                    'koulutuksenalkamiskausi',
+                    'data'
                 ]
             )
         }}

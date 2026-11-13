@@ -56,6 +56,7 @@ final as (
         data ->> 'muokkaaja'::varchar as muokkaaja,
         data ->> 'organisaatioOid'::varchar as organisaatioOid,
         (data -> 'kielivalinta')::jsonb as kielivalinta,
+        data,
         {{ muokattu_column() }},
         data -> 'enrichedData' -> 'esitysnimi' ->> 'fi'::varchar as nimi_fi,
         data -> 'enrichedData' -> 'esitysnimi' ->> 'sv'::varchar as nimi_sv,

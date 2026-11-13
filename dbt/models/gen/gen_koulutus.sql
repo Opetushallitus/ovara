@@ -51,7 +51,11 @@ final as (
         eperusteid,
         luokittelutermit,
         eqf,
-        nqf
+        nqf,
+        osaamismerkkikoodiuri as osaamismerkki_koodiuri,
+        osaamistavoitteet ->> 'fi' as osaamistavoite_fi,
+        osaamistavoitteet ->> 'sv' as osaamistavoite_sv,
+        osaamistavoitteet ->> 'en' as osaamistavoite_en
     from koulutus
 )
 
