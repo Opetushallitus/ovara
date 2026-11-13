@@ -15,7 +15,8 @@ hak2 as (
     select
         haku_oid,
         haku_vuosi,
-        haku_kausi
+        haku_kausi,
+        jarjestetyt_hakutoiveet
     from {{ ref('int_haku') }}
 ),
 
@@ -60,7 +61,13 @@ final as (
         haku.organisaatiooid as organisaatio_oid,
         hak2.haku_vuosi,
         hak2.haku_kausi,
-        haku.hakuajat
+        haku.hakuajat,
+        hak2.jarjestetyt_hakutoiveet as hakutoiveiden_priorisointi,
+        case
+            when length (haku.haku_oid) = 35
+            then 'kouta'
+            else 'tarjonta'
+        end as lahdejarjestelma
     from haku
     left join hak2 on haku.haku_oid = hak2.haku_oid
 )
