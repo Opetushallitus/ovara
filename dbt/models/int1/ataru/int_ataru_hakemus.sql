@@ -15,7 +15,6 @@
             "create index if not exists ix_dw_metadata_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc);",
             "create index if not exists idx_hakemus_filtered on {{ this }} (haku_oid) where kasittelymerkinnat @> '[{\"requirement\": \"eligibility-state\"}]' and tiedot ? 'higher-completed-base-education';"
             "create index if not exists idx_ataru_hakemus_oid_not_active on {{ this }} (hakemus_oid) where tila <> 'active';",
-            "{{ create_pk('hakemus_oid') }}"
         ]
     )
 }}
@@ -50,13 +49,19 @@ final as (
             'hakemusmaksun_tila',
             'kiinnostunut_oppisopimuksesta',
             'pohjakoulutus_kk',
-            'pohjakoulutus_kk_valmistumisvuosi'
+            'pohjakoulutus_kk_valmistumisvuosi',
+            'kasittelymerkinnat'
             ]) }},
         case
             when tila = 'inactivated'
                 then true::boolean
             else false::boolean
         end as poistettu,
+        case
+            when jsonb_typeof(kasittelymerkinnat) = 'array'
+            then kasittelymerkinnat
+            else '[]'::jsonb
+        end as kasittelymerkinnat,
         hakemusmaksut ->> 'state' as hakemusmaksun_tila,
         tiedot ->> '74fb6885-879d-4748-a2bc-aaeb32616ba1' = '0' as kiinnostunut_oppisopimuksesta,
         tiedot -> 'higher-completed-base-education' as pohjakoulutus_kk,
