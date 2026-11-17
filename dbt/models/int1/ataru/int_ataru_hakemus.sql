@@ -50,13 +50,19 @@ final as (
             'hakemusmaksun_tila',
             'kiinnostunut_oppisopimuksesta',
             'pohjakoulutus_kk',
-            'pohjakoulutus_kk_valmistumisvuosi'
+            'pohjakoulutus_kk_valmistumisvuosi',
+            'kasittelymerkinnat'
             ]) }},
         case
             when tila = 'inactivated'
                 then true::boolean
             else false::boolean
         end as poistettu,
+        case
+            when jsonb_typeof(kasittelymerkinnat) = 'array'
+            then kasittelymerkinnat
+            else '[]'::jsonb
+        end as kasittelymerkinnat,
         hakemusmaksut ->> 'state' as hakemusmaksun_tila,
         tiedot ->> '74fb6885-879d-4748-a2bc-aaeb32616ba1' = '0' as kiinnostunut_oppisopimuksesta,
         tiedot -> 'higher-completed-base-education' as pohjakoulutus_kk,
