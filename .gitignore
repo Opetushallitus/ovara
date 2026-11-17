@@ -26,3 +26,6 @@ target
 
  ## Claude Code
 .claude
+
+# pnpm
+pnpm-debug.log*

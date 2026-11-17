@@ -171,7 +171,7 @@ export class LambdaStack extends cdk.Stack {
             beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
             beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
             afterBundling: (inputDir: string, outputDir: string): Array<string> => [
-              `cp ${inputDir}/lambda/siirtotiedosto/eu-west-1-bundle.pem ${outputDir}`,
+              `cp ${inputDir}/cdk/lambda/siirtotiedosto/eu-west-1-bundle.pem ${outputDir}`,
             ],
           },
         },
@@ -355,7 +355,7 @@ export class LambdaStack extends cdk.Stack {
               beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
               beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
               afterBundling: (inputDir: string, outputDir: string): Array<string> => [
-                `cp ${inputDir}/lambda/lampi/eu-west-1-bundle.pem ${outputDir}`,
+                `cp ${inputDir}/cdk/lambda/lampi/eu-west-1-bundle.pem ${outputDir}`,
               ],
             },
           },
