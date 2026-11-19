@@ -2,7 +2,7 @@
 
 This is a blank project for CDK development with TypeScript.
 
-Install dependencies from the repository root with `pnpm install`. See the root README for Node.js and pnpm setup.
+Install dependencies from the repository root with `pnpm install --frozen-lockfile`. See the root README for Node.js and pnpm setup.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 

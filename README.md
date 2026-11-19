@@ -65,13 +65,18 @@ Ota käyttöön `.nvmrc`-tiedoston Node-versio ja asenna pnpm:
 nvm use
 npm install --global corepack
 corepack enable
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 Corepack käyttää juuren `package.json`-tiedostoon lukittua pnpm-versiota.
-`pnpm install` asentaa molempien projektien riippuvuudet yhteisestä `pnpm-lock.yaml`-tiedostosta.
+`pnpm install --frozen-lockfile` asentaa molempien projektien riippuvuudet yhteisestä `pnpm-lock.yaml`-tiedostosta.
 Riippuvuuksia muutetaan esimerkiksi komennolla `pnpm --filter ./cdk add <paketti>`;
-commitoi myös päivitetty lukitustiedosto.
+commitoi myös päivitetty lukitustiedosto. Kehitysympäristössä riippuvuuskomennot
+saavat päivittää lukitusta; deploy-skriptit asentavat aina `--frozen-lockfile`-valitsimella.
+
+Husky ja esbuild hallitaan workspacen juuressa. Myös lint-staged ajetaan juuresta,
+ja se käyttää kullekin tiedostolle lähintä projektikohtaista konfiguraatiota
+(`cdk/package.json` tai `utility/cdk/package.json`).
 
 ```sh
 pnpm --filter ./cdk run build

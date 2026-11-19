@@ -22,9 +22,9 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      only-allow:
-        specifier: 1.2.2
-        version: 1.2.2
+      lint-staged:
+        specifier: ^16.2.6
+        version: 16.2.6
 
   cdk:
     dependencies:
@@ -85,6 +85,9 @@ importers:
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
+      stream-chain:
+        specifier: ^2.2.5
+        version: 2.2.5
       stream-json:
         specifier: ^1.9.1
         version: 1.9.1
@@ -125,9 +128,6 @@ importers:
       cdk-nag:
         specifier: ^2.37.55
         version: 2.37.55(aws-cdk-lib@2.273.0(constructs@10.8.1))(constructs@10.8.1)
-      esbuild:
-        specifier: ^0.25.11
-        version: 0.25.11
       eslint:
         specifier: ^9.39.4
         version: 9.39.5
@@ -149,15 +149,9 @@ importers:
       globals:
         specifier: ^16.4.0
         version: 16.4.0
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
       jest:
         specifier: ^30.2.0
         version: 30.2.0(@types/node@24.9.2)(ts-node@10.9.2(@types/node@24.9.2)(typescript@5.9.3))
-      lint-staged:
-        specifier: ^16.2.6
-        version: 16.2.6
       prettier:
         specifier: ^3.6.2
         version: 3.9.10
@@ -2926,10 +2920,6 @@ packages:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
 
-  only-allow@1.2.2:
-    resolution: {integrity: sha512-uxyNYDsCh5YIJ780G7hC5OHjVUr9reHsbZNMM80L9tZlTpb3hUzb36KXgW4ZUGtJKQnGA3xegmWg1BxhWV0jJA==}
-    hasBin: true
-
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -3551,10 +3541,6 @@ packages:
   which-collection@1.0.2:
     resolution: {integrity: sha512-K4jVyjnBdgvc86Y6BkaLZEN933SwYOuBFkdmBu9ZfkcAbdVbpITnDmjvZ/aQjRXQrv5EPkTnD1s39GiiqbngCw==}
     engines: {node: '>= 0.4'}
-
-  which-pm-runs@1.1.0:
-    resolution: {integrity: sha512-n1brCuqClxfFfq/Rb0ICg9giSZqCS+pLtccdag6C2HyufBrh3fBOiy9nb6ggRMvWOVH5GrdJskj5iGTZNxd7SA==}
-    engines: {node: '>=4'}
 
   which-typed-array@1.1.24:
     resolution: {integrity: sha512-wk4Mf4pR5mRP7eYuuTBCIQ9d0ud2Fv2jRLQpfgnRjbOxAFHmjKFValgTpitVKzJJS8ajnYQV2Du1SZ8j6b/EUQ==}
@@ -7500,10 +7486,6 @@ snapshots:
     dependencies:
       mimic-function: 5.0.1
 
-  only-allow@1.2.2:
-    dependencies:
-      which-pm-runs: 1.1.0
-
   optionator@0.9.4:
     dependencies:
       deep-is: 0.1.4
@@ -8181,8 +8163,6 @@ snapshots:
       is-set: 2.0.3
       is-weakmap: 2.0.2
       is-weakset: 2.0.4
-
-  which-pm-runs@1.1.0: {}
 
   which-typed-array@1.1.24:
     dependencies:

@@ -28,7 +28,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            Show this help message and exit
-  -d, --dependencies    Clean and install dependencies before deployment (i.e. run pnpm install --frozen-lockfile)
+  -d, --dependencies    Install dependencies from the lockfile before deployment (i.e. run pnpm install --frozen-lockfile)
   -v VERSION, --version VERSION
                           ECS container image tag to deploy (e.g. -v ci-256).
                           Only used by deploy and diff.
@@ -73,6 +73,11 @@ optional arguments:
     ;;
 esac
 done
+
+if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pnpm is required. Run corepack enable and install the repository dependencies first." >&2
+    exit 1
+fi
 
 git_root=$(git rev-parse --show-toplevel)
 environment=${POSITIONAL[~-1]}
