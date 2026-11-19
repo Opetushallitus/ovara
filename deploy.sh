@@ -110,6 +110,11 @@ if [[ -n "${dependencies}" ]]; then
     cd "${git_root}/cdk/" && pnpm install --frozen-lockfile
 fi
 
+if [[ "${build}${diff}${deploy}" == *true* ]] && [[ ! -x "${git_root}/node_modules/.bin/esbuild" ]]; then
+    echo "esbuild not found in ${git_root}/node_modules. Run pnpm install in the repository root or use the -d flag." >&2
+    exit 1
+fi
+
 if [[ "${build}" == "true" ]]; then
     echo "Building code and synthesizing CDK template"
     export ENVIRONMENT=$environment
