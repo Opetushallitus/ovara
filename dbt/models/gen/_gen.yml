@@ -15,6 +15,8 @@ models:
     columns:
       - name: hakemus_oid
         data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
       - name: versio_id
         data_type: integer
       - name: lomake_id
@@ -89,11 +91,31 @@ models:
         data_type: jsonb
       - name: pohjakoulutus_kk_valmistumisvuosi
         data_type: jsonb
+      - name: isensikertalainen
+        data_type: boolean
+      - name: ensikertalaisuuden_menettämisperuste
+        data_type: text
+        quote: true
+      - name: ensikertalaisuuden_menettämisen_paivamaara
+        data_type: timestamp with time zone
+        quote: true
+      - name: pohjakoulutus
+        data_type: integer
+      - name: pohjakoulutus_nimi_fi
+        data_type: text
+      - name: pohjakoulutus_nimi_sv
+        data_type: text
+      - name: pohjakoulutus_nimi_en
+        data_type: text
+      - name: lahdejarjestelma
+        data_type: text
 
   - name: gen_haku
     columns:
       - name: haku_oid
         data_type: text
+        data_tests:
+          - dbt_constraints.primary_key
       - name: haku_nimi_fi
         data_type: text
       - name: haku_nimi_sv
@@ -159,6 +181,12 @@ models:
       - name: haku_vuosi
         data_type: text
       - name: haku_kausi
+        data_type: text
+      - name: hakuajat
+        data_type: jsonb
+      - name: hakutoiveiden_priorisointi
+        data_type: boolean
+      - name: lahdejarjestelma
         data_type: text
 
   - name: gen_hakukohde
@@ -289,6 +317,13 @@ models:
         data_type: jsonb
       - name: alin_hyvaksytty_keskiarvo
         data_type: jsonb
+      - name: koulutusasteet
+        data_type: jsonb
+      - name: yos
+        data_type: boolean
+      - name: lahdejarjestelma
+        data_type: text
+        description: Atarun Oidit ovat 35 merkkiä pitkiä
 
   - name: gen_hakutoive
     columns:
@@ -517,6 +552,16 @@ models:
         data_type: jsonb
       - name: nqf
         data_type: jsonb
+      - name: osaamismerkki_koodiuri
+        data_type: text
+      - name: osaamistavoite_fi
+        data_type: text
+      - name: osaamistavoite_sv
+        data_type: text
+      - name: osaamistavoite_en
+        data_type: text
+      - name: lahdejarjestelma
+        data_type: text
 
   - name: gen_ohjausparametri_haku
     description: Hakujen ohjausparametreja
@@ -823,6 +868,14 @@ models:
         data_type: jsonb
       - name: onko_pieni_osaamiskokonaisuus
         data_type: boolean
+      - name: toteutus_lisatiedot
+        data_type: jsonb
+      - name: osaamistavoite_fi
+        data_type: text
+      - name: osaamistavoite_sv
+        data_type: text
+      - name: osaamistavoite_en
+        data_type: text
 
   - name: gen_valinnanvaihe
     columns:

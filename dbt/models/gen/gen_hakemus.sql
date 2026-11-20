@@ -6,11 +6,8 @@
     indexes = [
         {'columns':['haku_oid']},
         {'columns':['henkilo_oid']}
-    ],
-    post_hook = [
-            "create index if not exists ix_dw_metadata_dw_stored_at on {{ this }} (dw_metadata_dw_stored_at desc)",
-            "{{ create_pk('hakemus_oid') }}"
     ]
+
     )
 }}
 
@@ -136,6 +133,11 @@ final as (
         poko.pohjakoulutus_nimi ->> 'fi' as pohjakoulutus_nimi_fi,
         poko.pohjakoulutus_nimi ->> 'sv' as pohjakoulutus_nimi_sv,
         poko.pohjakoulutus_nimi ->> 'en' as pohjakoulutus_nimi_en,
+        case
+            when length(hake.hakemus_oid) = 35
+            then 'ataru'
+            else 'haku_appp'
+        end as lahdejarjestelma,
         hake.dw_metadata_dw_stored_at
     from hakemus as hake
     inner join kansalaisuus as kans on hake.hakemus_oid = kans.hakemus_oid

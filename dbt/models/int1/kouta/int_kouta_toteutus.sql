@@ -23,7 +23,7 @@ final as (
         koulutusoid as koulutus_oid,
         organisaatiooid as organisaatio_oid,
         koulutuksenalkamiskausi as koulutuksen_alkamiskausi,
-
+        lisatiedot::jsonb as lisatiedot,
         {{
             dbt_utils.star(from=ref('dw_kouta_toteutus'),
                 except=[
@@ -34,6 +34,7 @@ final as (
                     'organisaatiooid',
                     'oid',
                     'koulutuksenalkamiskausi',
+                    'lisatiedot',
                     'data'
                 ]
             )
