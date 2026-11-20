@@ -1,3 +1,5 @@
+import * as path from 'node:path';
+
 import * as cdk from 'aws-cdk-lib';
 import { CfnOutput } from 'aws-cdk-lib';
 import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
@@ -19,6 +21,15 @@ import * as cdkNag from 'cdk-nag';
 import { Construct } from 'constructs';
 
 import { Config, GenericStackProps } from './config';
+
+// Keep the bundling root explicit: the shared lockfile lives at the repository root.
+const projectRoot = path.resolve(__dirname, '../..');
+const depsLockFilePath = path.join(projectRoot, 'pnpm-lock.yaml');
+const databaseCertificatePath = (lambdaDirectory: string): string =>
+  path.relative(
+    projectRoot,
+    path.resolve(__dirname, '../lambda', lambdaDirectory, 'eu-west-1-bundle.pem')
+  );
 
 export interface LambdaStackProps extends GenericStackProps {
   vpc: ec2.IVpc;
@@ -150,6 +161,8 @@ export class LambdaStack extends cdk.Stack {
       'Transferfile loader',
       {
         functionName: siirtotiedostoLambdaName,
+        projectRoot,
+        depsLockFilePath,
         entry: 'lambda/siirtotiedosto/TransferfileToDatabase.ts',
         handler: 'main',
         runtime: lambda.Runtime.NODEJS_24_X,
@@ -171,7 +184,7 @@ export class LambdaStack extends cdk.Stack {
             beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
             beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
             afterBundling: (inputDir: string, outputDir: string): Array<string> => [
-              `cp ${inputDir}/lambda/siirtotiedosto/eu-west-1-bundle.pem ${outputDir}`,
+              `cp "${path.join(inputDir, databaseCertificatePath('siirtotiedosto'))}" "${outputDir}"`,
             ],
           },
         },
@@ -323,6 +336,8 @@ export class LambdaStack extends cdk.Stack {
         lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName,
         {
           functionName: lampiYleiskayttoistenSiirtotiedostotKopiointiLambdaName,
+          projectRoot,
+          depsLockFilePath,
           entry: 'lambda/lampi/YleiskayttoisetSiirtotiedostotKopiointi.ts',
           handler: 'main',
           runtime: lambda.Runtime.NODEJS_24_X,
@@ -355,7 +370,7 @@ export class LambdaStack extends cdk.Stack {
               beforeBundling: (inputDir: string, outputDir: string): Array<string> => [],
               beforeInstall: (inputDir: string, outputDir: string): Array<string> => [],
               afterBundling: (inputDir: string, outputDir: string): Array<string> => [
-                `cp ${inputDir}/lambda/lampi/eu-west-1-bundle.pem ${outputDir}`,
+                `cp "${path.join(inputDir, databaseCertificatePath('lampi'))}" "${outputDir}"`,
               ],
             },
           },
@@ -449,6 +464,8 @@ export class LambdaStack extends cdk.Stack {
       lampiTiedostoMuuttunutLambdaName,
       {
         functionName: lampiTiedostoMuuttunutLambdaName,
+        projectRoot,
+        depsLockFilePath,
         entry: 'lambda/lampi/LampiFileChangedReceiver.ts',
         handler: 'handler',
         runtime: lambda.Runtime.NODEJS_24_X,

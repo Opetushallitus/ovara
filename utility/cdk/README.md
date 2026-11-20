@@ -2,13 +2,15 @@
 
 This is a blank project for CDK development with TypeScript.
 
+Install dependencies from the repository root with `pnpm install --frozen-lockfile`. See the root README for Node.js and pnpm setup.
+
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+- `pnpm run build` compile typescript to js
+- `pnpm run watch` watch for changes and compile
+- `pnpm run test` perform the jest unit tests
+- `pnpm exec cdk deploy` deploy this stack to your default AWS account/region
+- `pnpm exec cdk diff` compare deployed stack with current state
+- `pnpm exec cdk synth` emits the synthesized CloudFormation template

@@ -1,0 +1,14 @@
+{
+  "name": "ovara",
+  "private": true,
+  "packageManager": "pnpm@10.26.1",
+  "scripts": {
+    "preinstall": "node scripts/require-pnpm.cjs",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.11",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6"
+  }
+}
