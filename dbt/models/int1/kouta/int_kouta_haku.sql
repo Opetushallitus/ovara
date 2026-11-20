@@ -83,7 +83,15 @@ final as (
         inta.koulutuksenalkamiskausi as koulutuksen_alkamiskausi,
         koal.koulutuksen_alkamiskausi_json,
         {{ dbt_utils.star(from=ref('dw_kouta_haku'),
-            except=['oid','nimi_fi','nimi_sv','nimi_en','koulutuksenalkamiskausi']) }},
+            except=[
+                'oid',
+                'nimi_fi',
+                'nimi_sv',
+                'nimi_en',
+                'koulutuksenalkamiskausi',
+                'data'
+            ])
+        }},
         kojo.haun_tyyppi
     from int as inta
     left join koulutuksen_alkamiskausi as koal on inta.oid = koal.haku_oid
