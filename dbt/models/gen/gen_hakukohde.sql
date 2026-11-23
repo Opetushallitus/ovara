@@ -88,7 +88,12 @@ final as (
         kielivalinta,
         hakukohteenlinja -> 'alinHyvaksyttyKeskiarvo' as alin_hyvaksytty_keskiarvo,
         yos1.koulutusasteet,
-        yos1.yos
+        yos1.yos,
+        case
+            when length (hako.hakukohde_oid) = 35
+            then 'kouta'
+            else 'tarjonta'
+        end as lahdejarjestelma
     from hakukohde as hako
     left join yos as yos1 on hako.hakukohde_oid = yos1.hakukohde_oid
     left join hakukohde_nimet as hani on hako.jarjestyspaikka_oid = hani.jarjestyspaikka_oid

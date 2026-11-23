@@ -79,7 +79,7 @@ final as (
         haun_tyyppi,
         para.vastaanotto_paattyy,
         para.hakijakohtainen_paikan_vastaanottoaika,
-        para.jarjestetyt_hakutoiveet,
+        coalesce(para.jarjestetyt_hakutoiveet, false) as jarjestetyt_hakutoiveet,
         haku.hakutapakoodiuri = 'hakutapa_05#1' as siirtohaku,
         case
             when extract(month from coalesce(haaj.paattyy, haaj.alkaa)) between 1 and 7

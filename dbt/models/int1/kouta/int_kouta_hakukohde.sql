@@ -37,8 +37,11 @@ final as (
                 'nimi_fi',
                 'nimi_sv',
                 'nimi_en',
-                'valintaperusteid']
-            ) }}
+                'valintaperusteid',
+                'data'
+                ]
+            )
+        }}
     from hakukohde
 )
 

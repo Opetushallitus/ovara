@@ -30,8 +30,16 @@ final as (
         ) as koulutus_nimi,
         organisaatiooid as organisaatio_oid,
         {{ dbt_utils.star(from=ref('dw_kouta_koulutus'),
-            except=['nimi_fi','nimi_sv','nimi_en','organisaatiooid','oid']) }}
-
+            except=[
+                'nimi_fi',
+                'nimi_sv',
+                'nimi_en',
+                'organisaatiooid',
+                'oid',
+                'data'
+                ]
+            )
+        }}
     from int
 )
 

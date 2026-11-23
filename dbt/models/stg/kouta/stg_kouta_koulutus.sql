@@ -53,6 +53,7 @@ final as (
         data -> 'enrichedData' -> 'esitysnimi' ->> 'sv'::varchar as nimi_sv,
         data -> 'enrichedData' -> 'esitysnimi' ->> 'en'::varchar as nimi_en,
         data -> 'enrichedData' ->> 'muokkaajanNimi' as muokkaajanNimi,
+        data,
         {{ metadata_columns() }}
     from source
 

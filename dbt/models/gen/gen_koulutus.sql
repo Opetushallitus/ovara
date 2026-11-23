@@ -55,7 +55,12 @@ final as (
         osaamismerkkikoodiuri as osaamismerkki_koodiuri,
         osaamistavoitteet ->> 'fi' as osaamistavoite_fi,
         osaamistavoitteet ->> 'sv' as osaamistavoite_sv,
-        osaamistavoitteet ->> 'en' as osaamistavoite_en
+        osaamistavoitteet ->> 'en' as osaamistavoite_en,
+        case
+            when length (koulutus_oid) = 35
+            then 'kouta'
+            else 'tarjonta'
+        end as lahdejarjestelma
     from koulutus
 )
 

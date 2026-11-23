@@ -42,6 +42,7 @@ final as (
         (data -> 'kielivalinta')::jsonb as kielivalinta,
         {{ muokattu_column() }},
         data -> 'enrichedData' ->> 'muokkaajanNimi' as muokkaajanNimi,
+        data,
         {{ metadata_columns() }}
     from source
 )
