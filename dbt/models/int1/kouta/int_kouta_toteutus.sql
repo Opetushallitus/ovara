@@ -16,9 +16,9 @@ final as (
     select
         oid as toteutus_oid,
         jsonb_build_object(
-            'en', coalesce(nimi_en, nimi_fi, nimi_sv),
+            'fi', coalesce(nimi_fi, nimi_sv, nimi_en),
             'sv', coalesce(nimi_sv, nimi_fi, nimi_en),
-            'fi', coalesce(nimi_fi, nimi_sv, nimi_en)
+            'en', coalesce(nimi_en, nimi_fi, nimi_sv)
         ) as toteutus_nimi,
         koulutusoid as koulutus_oid,
         organisaatiooid as organisaatio_oid,
