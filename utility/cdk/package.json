@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "scripts": {
     "lint": "eslint ./bin ./lib --max-warnings 0",
-    "lint:fix": "npm run lint -- --fix",
-    "build": "npm run lint && tsc",
+    "lint:fix": "pnpm run lint --fix",
+    "build": "pnpm run lint && tsc",
     "watch": "tsc -w",
-    "test": "npm run lint && jest",
-    "cdk": "npm run lint && cdk"
+    "test": "pnpm run lint && jest",
+    "cdk": "pnpm run lint && cdk"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.1",
@@ -43,5 +43,6 @@
     "*.ts": [
       "eslint --fix"
     ]
-  }
+  },
+  "private": true
 }

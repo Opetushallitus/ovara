@@ -2,13 +2,12 @@
   "name": "opiskelijavalinnan-raportointi",
   "version": "0.1.0",
   "scripts": {
-    "prepare": "cd ../ && husky",
     "lint": "eslint ./bin ./lib --ignore-pattern \"**/*.js\" --ignore-pattern \"**/*.d.ts\" --max-warnings 0",
-    "lint:fix": "npm run lint -- --fix",
-    "build": "npm run lint && tsc",
+    "lint:fix": "pnpm run lint --fix",
+    "build": "pnpm run lint && tsc",
     "watch": "tsc -w",
-    "test": "npm run lint && jest",
-    "cdk": "npm run lint && cdk"
+    "test": "pnpm run lint && jest",
+    "cdk": "pnpm run lint && cdk"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.1",
@@ -21,7 +20,6 @@
     "@typescript-eslint/parser": "^8.46.2",
     "aws-cdk": "^2.1144.0",
     "cdk-nag": "^2.37.55",
-    "esbuild": "^0.25.11",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -29,9 +27,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-unused-imports": "^4.3.0",
     "globals": "^16.4.0",
-    "husky": "^9.1.7",
     "jest": "^30.2.0",
-    "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
@@ -57,17 +53,10 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8",
     "source-map-support": "^0.5.21",
+    "stream-chain": "^2.2.5",
     "stream-json": "^1.9.1",
     "string-format": "^2.0.0",
     "uuid": "^13.0.0"
-  },
-  "overrides": {
-    "brace-expansion@<1.1.20": "1.1.20",
-    "fast-xml-builder@<1.1.7": "1.1.7",
-    "fast-xml-parser@<5.5.6": "5.5.6",
-    "lodash@<4.18.0": "4.18.0",
-    "underscore@<1.13.8": "1.13.8",
-    "validator@<13.15.22": "13.15.22"
   },
   "lint-staged": {
     "*.{json,md}": [
@@ -76,5 +65,6 @@
     "*.ts": [
       "eslint --fix"
     ]
-  }
+  },
+  "private": true
 }

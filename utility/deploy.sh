@@ -27,7 +27,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            Show this help message and exit
-  -d, --dependencies    Clean and install dependencies before deployment (i.e. run npm ci)
+  -d, --dependencies    Install dependencies from the lockfile before deployment (i.e. run pnpm install --frozen-lockfile)
   '''
     exit 0
     ;;
@@ -59,6 +59,11 @@ optional arguments:
 esac
 done
 
+if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pnpm is required. Run corepack enable and install the repository dependencies first." >&2
+    exit 1
+fi
+
 git_root=$(git rev-parse --show-toplevel)
 aws_profile="oph-opiskelijavalinnan-raportointi-utility"
 stack_parameter=${POSITIONAL[~-1]}
@@ -70,26 +75,26 @@ fi
 
 if [[ -n "${dependencies}" ]]; then
     echo "Installing CDK dependencies.."
-    cd "${git_root}/utility/cdk/" && npm ci
+    cd "${git_root}/utility/cdk/" && pnpm install --frozen-lockfile
 fi
 
 if [[ "${build}" == "true" ]]; then
     echo "Building code and synthesizing CDK template"
     cd "${git_root}/utility/cdk/"
-    npm run build
-    npx cdk synth --region eu-west-1 --profile $aws_profile
+    pnpm run build
+    pnpm exec cdk synth --region eu-west-1 --profile $aws_profile
 fi
 
 if [[ "${deploy}" == "true" ]]; then
    echo "Building code, synhesizing CDK code and deploying to environment: utility"
    export ENVIRONMENT=$environment
    cd "${git_root}/utility/cdk/"
-   npx cdk deploy $stack --profile $aws_profile
+   pnpm exec cdk deploy $stack --profile $aws_profile
 fi
 
 if [[ "${delete}" == "true" ]]; then
    echo "Deleting stack from environment: utility"
    export ENVIRONMENT=$environment
    cd "${git_root}/utility/cdk/"
-   npx cdk destroy $stack --profile $aws_profile
+   pnpm exec cdk destroy $stack --profile $aws_profile
 fi
